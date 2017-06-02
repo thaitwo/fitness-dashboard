@@ -1,1 +1,1 @@
-# fitness-dashboard
+# Charts Dashboard
