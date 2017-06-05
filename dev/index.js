@@ -1,21 +1,23 @@
-// Needs to be imported for webpack to compile SCSS files
-import './scss/style.scss';
+import './scss/style.scss';       // Import required for Webpack to compile
 import Chart from 'chart.js';
+const moment = require('moment');
+moment().format();
 
-const ctx = document.getElementById('myChart').getContext('2d');
-const chart = new Chart(ctx, {
+const stepsChartId = document.getElementById('stepsChart');
+const stepsChart = new Chart(stepsChartId, {
   // The type of chart we want to create
-  type: 'line',
+  type: 'bar',
 
   // The data for our dataset
   data: {
-    labels: ["January", "February", "March", "April", "May", "June", "July"],
+    labels: ["Jun 1", "Jun 2", "Jun 3", "Jun 4", "Jun 5", "Jun 6", "Jun 7"],
+    display: true,
     datasets: [{
       label: "Steps Taken",
-      backgroundColor: 'rgba(77,182,172, .2)',
+      backgroundColor: 'rgba(77,182,172, 1)',
       borderColor: 'rgb(77,182,172)',
       borderWidth: 3,
-      data: [0, 10, 5, 8, 20, 23, 26],
+      data: [11259, 9320, 8309, 9347, 10238, 9830, 8836],
       hoverRadius: 3,
       radius: 2,
       lineTension: 0
@@ -25,7 +27,7 @@ const chart = new Chart(ctx, {
   // Configuration options go here
   options: {
     layout: {
-      padding: 50
+      padding: 10
     },
     legend: {
       labels: {
@@ -34,7 +36,17 @@ const chart = new Chart(ctx, {
         fontFamily: "'Montserrat', sans-serif",
       }
     },
-    // responsive: false,
+    scales: {
+      yAxes: [{
+        scaleLabel: {
+          display: true,
+          labelString: 'Steps'
+        },
+        ticks: {
+          stepSize: 5000
+        }
+      }]
+    },
     title: {
       display: true,
       text: 'Steps'
@@ -42,41 +54,88 @@ const chart = new Chart(ctx, {
   }
 });
 
-const chart2 = document.getElementById("chart2");
-const myChart2 = new Chart(chart2, {
+const sleepChartId = document.getElementById("sleepChart");
+const sleepChart = new Chart(sleepChartId, {
   type: 'doughnut',
   data: {
-    labels: ["Green", "Blue", "Orange"],
+    labels: ["Sleep", ""],
     datasets: [{
-      label: '# of Votes',
-      data: [9, 2, 5],
+      label: 'Sleep',
+      data: [7, 5],
       backgroundColor: [
         'rgba(75, 192, 192, .8)',
-        'rgba(54, 162, 235, .8)',
-        'rgba(255, 159, 64, .8)'
       ],
-      // borderColor: [
-      //   'rgba(255,99,132,1)',
-      //   'rgba(54, 162, 235, 1)',
-      //   'rgba(255, 206, 86, 1)',
-      //   'rgba(75, 192, 192, 1)',
-      //   'rgba(153, 102, 255, 1)',
-      //   'rgba(255, 159, 64, 1)'
-      // ],
-      // borderWidth: 1
     }]
   },
   options: {
     layout: {
       padding: 20
     },
-    // responsive: false,
-    // scales: {
-    //   yAxes: [{
-    //     ticks: {
-    //       beginAtZero:true
-    //     }
-    //   }]
-    // }
+  }
+});
+
+const weightChartId = document.getElementById("weightChart");
+const weightChart = new Chart(weightChartId, {
+  type: 'doughnut',
+  data: {
+    labels: ["Weight", ""],
+    datasets: [{
+      label: 'Weight',
+      data: [7, 5],
+      backgroundColor: [
+        'rgba(75, 192, 192, .8)',
+      ],
+    }]
+  },
+  options: {
+    layout: {
+      padding: 20
+    },
+    title: {
+      display: true,
+      text: 'Current Weight'
+    }
+  }
+});
+
+let distance = 2.0;
+let max = 3.0;
+
+const distanceChartId = document.getElementById("distanceChart");
+const distanceChart = new Chart(distanceChartId, {
+  type: 'horizontalBar',
+  data: {
+    labels: ["", ""],
+    datasets: [{
+      // label: 'Distance',
+      data: [distance],
+      backgroundColor: 'rgba(75, 192, 192, .8)'
+    }, {
+      data: [max - distance],
+      backgroundColor: 'rgba(0, 0, 0, .1)'
+    }]
+  },
+  options: {
+    layout: {
+      padding: 10
+    },
+    scales: {
+      xAxes: [{
+        display: false,
+        stacked: true
+      }],
+      yAxes: [{
+        ticks: {
+          beginAtZero: true,
+          stepSize: 1
+        },
+        display: false,
+        stacked: true
+      }]
+    },
+    title: {
+      display: true,
+      text: 'Distance Traveled'
+    }
   }
 });

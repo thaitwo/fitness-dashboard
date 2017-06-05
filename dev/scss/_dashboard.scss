@@ -1,3 +1,51 @@
-.content-container {
-	background-color: $bluegrey-0;
+.clear:after {
+  content: "";
+  display: table;
+  clear: both;
 }
+
+.container-fluid {
+  height: 100%;
+}
+
+.content-container {
+	background-color: $bluegrey-50;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.nopadding {
+   padding: 0 !important;
+   margin: 0 !important;
+}
+
+.logo {
+  height: 60px;
+  margin: 0;
+  padding-left: 30px;
+
+  a {
+    color: $white;
+    font-family: $font-primary;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 60px;
+  }
+}
+
+.page-title {
+  font-family: $font-primary;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 60px;
+  margin: 60px 30px 15px 30px;
+}
+
+.top-bar {
+    background-color: rgba($bluegrey-400, .9);
+    box-shadow: 0 2px 4px rgba(0,0,0,.12);
+    height: 60px;
+    position: fixed;
+    width: 100%;
+    z-index: 100;
+  }
