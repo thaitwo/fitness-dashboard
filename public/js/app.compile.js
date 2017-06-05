@@ -16184,12 +16184,15 @@ if (typeof window !== 'undefined') {
 "use strict";
 
 
+__webpack_require__(167);
+
 var _chart = __webpack_require__(117);
 
 var _chart2 = _interopRequireDefault(_chart);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Needs to be imported for webpack to compile SCSS files
 var ctx = document.getElementById('myChart').getContext('2d');
 var chart = new _chart2.default(ctx, {
   // The type of chart we want to create
@@ -16200,26 +16203,68 @@ var chart = new _chart2.default(ctx, {
     labels: ["January", "February", "March", "April", "May", "June", "July"],
     datasets: [{
       label: "Steps Taken",
-      backgroundColor: 'rgb(255, 99, 132)',
-      borderColor: 'rgb(255, 99, 132)',
-      data: [0, 10, 5, 2, 20, 30, 45]
+      backgroundColor: 'rgba(77,182,172, .2)',
+      borderColor: 'rgb(77,182,172)',
+      borderWidth: 3,
+      data: [0, 10, 5, 8, 20, 23, 26],
+      hoverRadius: 3,
+      radius: 2,
+      lineTension: 0
     }]
   },
 
   // Configuration options go here
   options: {
     layout: {
-      padding: {
-        left: 200,
-        right: 200,
-        top: 0,
-        bottom: 200
+      padding: 50
+    },
+    legend: {
+      labels: {
+        // This more specific font property overrides the global property
+        fontColor: 'black',
+        fontFamily: "'Montserrat', sans-serif"
       }
     },
+    // responsive: false,
     title: {
       display: true,
       text: 'Steps'
     }
+  }
+});
+
+var chart2 = document.getElementById("chart2");
+var myChart2 = new _chart2.default(chart2, {
+  type: 'doughnut',
+  data: {
+    labels: ["Green", "Blue", "Orange"],
+    datasets: [{
+      label: '# of Votes',
+      data: [9, 2, 5],
+      backgroundColor: ['rgba(75, 192, 192, .8)', 'rgba(54, 162, 235, .8)', 'rgba(255, 159, 64, .8)']
+      // borderColor: [
+      //   'rgba(255,99,132,1)',
+      //   'rgba(54, 162, 235, 1)',
+      //   'rgba(255, 206, 86, 1)',
+      //   'rgba(75, 192, 192, 1)',
+      //   'rgba(153, 102, 255, 1)',
+      //   'rgba(255, 159, 64, 1)'
+      // ],
+      // borderWidth: 1
+    }]
+  },
+  options: {
+    layout: {
+      padding: 20
+    }
+    // responsive: false,
+    // scales: {
+    //   yAxes: [{
+    //     ticks: {
+    //       beginAtZero:true
+    //     }
+    //   }]
+    // }
   }
 });
 
@@ -28919,6 +28964,12 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 167 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
 
 /***/ })
 /******/ ]);
