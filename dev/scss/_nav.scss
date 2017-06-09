@@ -6,12 +6,12 @@
 
 /* Hide for mobile, show later */
 .sidebar {
-  border-right: 2px solid rgba($bluegrey-900, .12);
+  // border-right: 2px solid rgba($bluegrey-900, .12);
   display: none;
 }
 @media (min-width: 768px) {
   .sidebar {
-    background-color: $white;
+    background-color: $bluegrey-900;
     // border-right: 1px solid #eee;
     bottom: 0;
     display: block;
@@ -22,6 +22,14 @@
     position: fixed;
     top: 0;
     z-index: 1000;
+  }
+}
+
+.nav > li > a {
+
+  &:hover,
+  &:focus {
+    background-color: transparent;
   }
 }
 
@@ -37,8 +45,8 @@
 }
 
 .nav-sidebar > li > a {
-  border-left: 3px solid transparent;
-  color: rgba($bluegrey-300, 1);
+  border-left: 4px solid transparent;
+  color: rgba($white, .3);
   font-family: $font-primary;
   font-size: 14px;
   font-weight: 400;
@@ -51,34 +59,47 @@
     }
 
   &:hover {
-    color: rgba($bluegrey-900, .6);
+    color: rgba($white, .6);
     background: none;
+    border-left: 4px solid rgba($white, .3);
+  }
+
+  &.active {
+    background-color: none;
+    border-left: 4px solid $salmon;
+    color: $white;
+
+    i {
+      color: $salmon;
+    }
   }
 }
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:focus {
-  color: rgba($teal-300, 1);
-  background-color: rgba($teal-300, .2);
-  border-left: 4px solid $teal-300;
+  color: $white;
+  // background-color: rgba($salmon, .2);
+  border-left: 4px solid $salmon;
 
   i {
-    color: $teal-300;
+    color: $salmon;
   }
 }
 
 .navbar-form {
-  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 58px;
   margin: 0;
-  // padding: 12px 15px 12px 30px;
   padding-left: 0;
-  width: 500px;
+  width: 300px;
 
   input {
     font-family: FontAwesome;
   }
 
   input[type="text"]::-webkit-input-placeholder {
-    color: rgba($black, .1);
+    color: rgba($bluegrey-900, .12);
     font-family: $font-primary, FontAwesome;
     font-weight: 400;
     transition: all .3s;
@@ -94,21 +115,23 @@
 
   .form-control {
     background: rgba($white, 0);
-    border: none;
-    border-radius: 0;
+    border: 1px solid rgba($bluegrey-900, .12);
+    border-radius: 100px;
     box-shadow: none;
-    color: rgba(0,0,0, .6);
+    color: rgba($black, .8);
     font-family: $font-primary;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
-    height: 58px;
-    padding-left: 30px;
+    height: 34px;
+    padding-left: 15px;
     transition: all .5s;
     width: 100%;
 
     &:hover,
     &:focus {
-      // background: $white;
+      background: rgba($salmon, .04);
+      border: 1px solid rgba($salmon, .6);
+      // box-shadow: inset 0 1px 2px rgba($bluegrey-900, .24);
     }
   }
 }
@@ -123,7 +146,7 @@
     font-family: $font-primary;
     font-size: 14px;
     font-weight: 400;
-    line-height: 60px;
+    // line-height: 60px;
     padding: 0 30px;
     position: absolute;
     text-decoration: none;

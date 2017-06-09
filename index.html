@@ -12,49 +12,71 @@
     <div class="row">
       <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
         <h1 class="logo"><a href="./index.html">HealthFit</a></h1>
-        <ul class="nav nav-sidebar">
-          <li class="active"><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>Dashboard<span class="sr-only">(current)</span></a></li>
-          <li><a href="#"><i class="fa fa-trophy fa-lg" aria-hidden="true"></i>Goals</a></li>
-          <li><a href="#"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>Challenges</a></li>
-          <li><a href="#"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>Settings</a></li>
+        <ul id="nav-sidebar" class="nav nav-sidebar">
+          <li><a href="#" id="dashboard" class="active"><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>Dashboard</a></li>
+          <li><a href="#" id="goals"><i class="fa fa-trophy fa-lg" aria-hidden="true"></i>Goals</a></li>
+          <li><a href="#" id="challenges"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>Challenges</a></li>
+          <li><a href="#" id="settings"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>Settings</a></li>
         </ul>
         <div class="log-out"><a href="#"><i class="fa fa-power-off fa-lg" aria-hidden="true"></i>Log Out</a></div>
       </div>
       <div class="col-sm-9 col-md-9 col-lg-10 col-sm-offset-3 col-md-offset-3 col-lg-offset-2 content-container">
-        <div class="top-bar">
-          <form class="navbar-form navbar-left">
+        <div class="top-bar col-lg-10">
+          <h2 class="page-title">Dashboard</h2>
+          <form class="navbar-form navbar-right">
             <input type="text" class="form-control" placeholder="&#xF002  Search">
           </form>
         </div>
 
-        <h2 class="page-title">Dashboard</h2>
+        <div class="dashboard-content-container">
+          <div class="clear">
+            <div class="chart-container col-md-8 col-lg-8">
+              <h2 class="container-title">Steps Taken</h2>
+              <ul id="time-intervals" class="time-intervals">
+                <li id="daily" class="active">Daily</li>
+                <li id="weekly">Weekly</li>
+                <li id="monthly">Monthly</li>
+                <li id="yearly">Yearly</li>
+                <li id="all-time">All Time</li>
+              </ul>
+              <canvas id="stepsChart"></canvas>
+            </div>
+            <div class="chart-container is-large col-md-3">
+              <h2 class="container-title">Sleep Analytics</h2>
+              <canvas id="sleepChart""></canvas>
+            </div>
+          </div>
 
-        <div class="clear">
-          <div class="chart-container col-md-8">
-            <h2 class="container-title">Steps Taken</h2>
-            <ul id="time-intervals" class="time-intervals">
-              <li id="daily" class="selected">Daily</li>
-              <li id="weekly">Weekly</li>
-              <li id="monthly">Monthly</li>
-              <li id="yearly">Yearly</li>
-              <li id="all-time">All Time</li>
-            </ul>
-            <canvas id="stepsChart"></canvas>
-          </div>
-          <div class="chart-container is-large col-md-3">
-            <canvas id="sleepChart""></canvas>
-          </div>
-        </div>
+          <div class="col-lg-8 clear">
+            <div class="chart-container is-small col-md-3 col-lg-6">
+              <h2 class="container-title">Distance Covered</h2>
+              <canvas id="distanceChart"></canvas>
+            </div>
 
-        <div>
-          <div class="chart-container is-small col-md-3">
-            <canvas id="distanceChart"></canvas>
+            <div class="chart-container col-md-3 col-lg-5">
+              <h2 class="container-title">Weight</h2>
+              <canvas id="weightChart" width="300" height="300"></canvas>
+            </div>
           </div>
-          <div class="chart-container col-md-3">
-            <canvas id="weightChart" width="300" height="300"></canvas>
-          </div>
+
           <div class="chart-container is-small col-md-3">
-            <canvas id="caloriesChart"></canvas>
+              <h2 class="container-title">Calories Burned</h2>
+              <canvas id="caloriesChart"></canvas>
+            </div>
+
+          <div>
+            <div class="chart-container is-small col-md-3">
+              <h2 class="container-title">Distance Covered</h2>
+              <canvas id="distanceChart"></canvas>
+            </div>
+            <div class="chart-container col-md-3">
+              <h2 class="container-title">Weight</h2>
+              <canvas id="weightChart" width="300" height="300"></canvas>
+            </div>
+            <div class="chart-container is-small col-md-3">
+              <h2 class="container-title">Calories Burned</h2>
+              <canvas id="caloriesChart"></canvas>
+            </div>
           </div>
         </div>
 

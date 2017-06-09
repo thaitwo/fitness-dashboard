@@ -15,14 +15,13 @@ class Graph {
       display: true,
       datasets: [{
         // label: "Steps Taken",
-        // fill: false,
-        backgroundColor: 'rgba(77,182,172, 1)',
-        borderColor: 'rgb(77,182,172)',
+        fill: false,
+        backgroundColor: '#FA8072',
+        borderColor: '#FA8072',
         borderWidth: 3,
         data: [6059, 7320, 8209, 6347, 5238, 6830, 7836],
         hoverRadius: 3,
         radius: 2,
-        lineTension: 0
       }]
     };
 
@@ -45,7 +44,7 @@ class Graph {
         padding: {
           top: 0,
           right: 20,
-          bottom: 20,
+          bottom: 30,
           left: 20
         }
       },
@@ -62,15 +61,24 @@ class Graph {
           gridLines : {
             display : false
           },
+          ticks: {
+            fontColor: '#B0BEC5',
+            fontFamily: "'Montserrat', sans-serif",
+            fontStyle: 'normal'
+          }
         }],
         yAxes: [{
           gridLines: {
             color: 'rgba(0,0,0,0.04)',
             drawBorder: false,
-            // zeroLineWidth: 0
+            zeroLineColor: 'rgba(0,0,0,0.04)',
+            tickMarkLength: 0
           },
           ticks: {
             beginAtZero:true,
+            fontColor: '#B0BEC5',
+            fontFamily: "'Montserrat', sans-serif",
+            fontStyle: 'normal',
             min: 0,
             padding: 15
           }

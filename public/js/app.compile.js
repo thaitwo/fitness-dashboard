@@ -16166,14 +16166,13 @@ var Graph = function () {
       display: true,
       datasets: [{
         // label: "Steps Taken",
-        // fill: false,
-        backgroundColor: 'rgba(77,182,172, 1)',
-        borderColor: 'rgb(77,182,172)',
+        fill: false,
+        backgroundColor: '#FA8072',
+        borderColor: '#FA8072',
         borderWidth: 3,
         data: [6059, 7320, 8209, 6347, 5238, 6830, 7836],
         hoverRadius: 3,
-        radius: 2,
-        lineTension: 0
+        radius: 2
       }]
     };
 
@@ -16199,7 +16198,7 @@ var Graph = function () {
           padding: {
             top: 0,
             right: 20,
-            bottom: 20,
+            bottom: 30,
             left: 20
           }
         },
@@ -16215,16 +16214,25 @@ var Graph = function () {
           xAxes: [{
             gridLines: {
               display: false
+            },
+            ticks: {
+              fontColor: '#B0BEC5',
+              fontFamily: "'Montserrat', sans-serif",
+              fontStyle: 'normal'
             }
           }],
           yAxes: [{
             gridLines: {
               color: 'rgba(0,0,0,0.04)',
-              drawBorder: false
-              // zeroLineWidth: 0
+              drawBorder: false,
+              zeroLineColor: 'rgba(0,0,0,0.04)',
+              tickMarkLength: 0
             },
             ticks: {
               beginAtZero: true,
+              fontColor: '#B0BEC5',
+              fontFamily: "'Montserrat', sans-serif",
+              fontStyle: 'normal',
               min: 0,
               padding: 15
             }
@@ -16296,14 +16304,15 @@ var App = function () {
     this.stepsChartId = document.getElementById('stepsChart');
     this.renderGraphs();
     this.stepsGraph;
+    this.activateSidebarMenu();
     this.activateChartIntervalMenu();
 
     this.weeklyData = {
       labels: ['May 1', 'May 8', 'May 15', 'May 22', 'May 29', 'Jun 5'],
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(77,182,172, 1)',
-        borderColor: 'rgb(77,182,172)',
+        backgroundColor: '#FA8072',
+        borderColor: '#FA8072',
         borderWidth: 3,
         data: [61059, 71320, 81209, 61347, 51238, 61830],
         hoverRadius: 3,
@@ -16316,8 +16325,8 @@ var App = function () {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(77,182,172, 1)',
-        borderColor: 'rgb(77,182,172)',
+        backgroundColor: '#FA8072',
+        borderColor: '#FA8072',
         borderWidth: 3,
         data: [610590, 713200, 812090, 613470, 512380, 618300, 718360, 717770, 813460, 727340, 829670, 785670],
         hoverRadius: 3,
@@ -16330,8 +16339,8 @@ var App = function () {
       labels: ['2014', '2015', '2016', '2017'],
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(77,182,172, 1)',
-        borderColor: 'rgb(77,182,172)',
+        backgroundColor: '#FA8072',
+        borderColor: '#FA8072',
         borderWidth: 3,
         data: [65203, 61059, 71320, 81209],
         hoverRadius: 3,
@@ -16341,41 +16350,84 @@ var App = function () {
     };
   }
 
+  // getGraphData() {
+  //   .axios()
+
+
+  //   .done(this.renderGraphs(this))
+  //   .success()
+  // }
+
   _createClass(App, [{
-    key: 'activateChartIntervalMenu',
-    value: function activateChartIntervalMenu() {
+    key: 'activateSidebarMenu',
+    value: function activateSidebarMenu() {
       var _this = this;
 
+      var navSidebarId = document.querySelector('#nav-sidebar');
+
+      navSidebarId.addEventListener('click', function (event) {
+        var id = event.target.id;
+
+        if (event.target.tagName === 'A') {
+          _this.updateActiveClass('#nav-sidebar', event.target);
+          _this.udpatePageTitle(id);
+        }
+      });
+    }
+  }, {
+    key: 'udpatePageTitle',
+    value: function udpatePageTitle(title) {
+      var pageTitleContainer = document.querySelector('.page-title');
+
+      pageTitleContainer.innerHTML = title;
+    }
+  }, {
+    key: 'activateChartIntervalMenu',
+    value: function activateChartIntervalMenu() {
+      var _this2 = this;
+
       var timeIntervalsId = document.querySelector('#time-intervals');
-      var interval = timeIntervalsId.getElementsByTagName('li');
 
       timeIntervalsId.addEventListener('click', function (event) {
         var id = event.target.id;
         id = id.toUpperCase();
 
         if (event.target.tagName === 'LI') {
+          _this2.updateActiveClass('#time-intervals', event.target);
 
           switch (id) {
             case 'DAILY':
-              _this.updateGraph(_this.dailyData, id);
+              _this2.updateGraph(_this2.dailyData, id);
               break;
             case 'WEEKLY':
-              _this.updateGraph(_this.weeklyData, id);
+              _this2.updateGraph(_this2.weeklyData, id);
               break;
             case 'MONTHLY':
-              _this.updateGraph(_this.monthlyData, id);
+              _this2.updateGraph(_this2.monthlyData, id);
               break;
             case 'YEARLY':
-              _this.updateGraph(_this.yearlyData, id);
+              _this2.updateGraph(_this2.yearlyData, id);
               break;
             case 'ALL-TIME':
-              _this.updateGraph(_this.allTimeData, id);
+              _this2.updateGraph(_this2.allTimeData, id);
               break;
             default:
               alert('Click a button');
           };
         }
       });
+    }
+  }, {
+    key: 'updateActiveClass',
+    value: function updateActiveClass(containerName, clickedElement) {
+      var containerClass = document.querySelector(containerName);
+      var selectedElements = containerClass.getElementsByClassName('active');
+
+      while (selectedElements.length) {
+        selectedElements[0].classList.remove('active');
+      }
+
+      clickedElement.classList.add('active');
     }
   }, {
     key: 'updateGraph',

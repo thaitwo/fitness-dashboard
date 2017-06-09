@@ -43,12 +43,11 @@ table {
 
 /* Hide for mobile, show later */
 .sidebar {
-  border-right: 2px solid rgba(38, 50, 56, 0.12);
   display: none; }
 
 @media (min-width: 768px) {
   .sidebar {
-    background-color: #FFFFFF;
+    background-color: #263238;
     bottom: 0;
     display: block;
     left: 0;
@@ -60,6 +59,9 @@ table {
     top: 0;
     z-index: 1000; } }
 
+.nav > li > a:hover, .nav > li > a:focus {
+  background-color: transparent; }
+
 /* Sidebar navigation */
 .nav-sidebar {
   margin-bottom: 20px;
@@ -69,8 +71,8 @@ table {
   padding: 0 0 0 20px; }
 
 .nav-sidebar > li > a {
-  border-left: 3px solid transparent;
-  color: #90a4ae;
+  border-left: 4px solid transparent;
+  color: rgba(255, 255, 255, 0.3);
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
   font-weight: 400;
@@ -80,43 +82,55 @@ table {
   .nav-sidebar > li > a i {
     width: 35px; }
   .nav-sidebar > li > a:hover {
-    color: rgba(38, 50, 56, 0.6);
-    background: none; }
+    color: rgba(255, 255, 255, 0.6);
+    background: none;
+    border-left: 4px solid rgba(255, 255, 255, 0.3); }
+  .nav-sidebar > li > a.active {
+    background-color: none;
+    border-left: 4px solid #FA8072;
+    color: #FFFFFF; }
+    .nav-sidebar > li > a.active i {
+      color: #FA8072; }
 
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:focus {
-  color: #4db6ac;
-  background-color: rgba(77, 182, 172, 0.2);
-  border-left: 4px solid #4DB6AC; }
+  color: #FFFFFF;
+  border-left: 4px solid #FA8072; }
   .nav-sidebar > .active > a i,
   .nav-sidebar > .active > a:focus i {
-    color: #4DB6AC; }
+    color: #FA8072; }
 
 .navbar-form {
-  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 58px;
   margin: 0;
   padding-left: 0;
-  width: 500px; }
+  width: 300px; }
   .navbar-form input {
     font-family: FontAwesome; }
   .navbar-form input[type="text"]::-webkit-input-placeholder {
-    color: rgba(0, 0, 0, 0.1);
+    color: rgba(38, 50, 56, 0.12);
     font-family: "Montserrat", sans-serif, FontAwesome;
     font-weight: 400;
     transition: all .3s; }
   .navbar-form .form-control {
     background: rgba(255, 255, 255, 0);
-    border: none;
-    border-radius: 0;
+    border: 1px solid rgba(38, 50, 56, 0.12);
+    border-radius: 100px;
     box-shadow: none;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(0, 0, 0, 0.8);
     font-family: "Montserrat", sans-serif;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
-    height: 58px;
-    padding-left: 30px;
+    height: 34px;
+    padding-left: 15px;
     transition: all .5s;
     width: 100%; }
+    .navbar-form .form-control:hover, .navbar-form .form-control:focus {
+      background: rgba(250, 128, 114, 0.04);
+      border: 1px solid rgba(250, 128, 114, 0.6); }
 
 .log-out a {
   background-color: rgba(38, 50, 56, 0.05);
@@ -126,7 +140,6 @@ table {
   font-family: "Montserrat", sans-serif;
   font-size: 14px;
   font-weight: 400;
-  line-height: 60px;
   padding: 0 30px;
   position: absolute;
   text-decoration: none;
@@ -150,37 +163,41 @@ table {
   padding-left: 0;
   padding-right: 0; }
 
+.dashboard-content-container {
+  margin-top: 92px; }
+
 .nopadding {
   padding: 0 !important;
   margin: 0 !important; }
 
 .logo {
-  background-color: white;
+  background-color: #192226;
   border-bottom: 2px solid rgba(38, 50, 56, 0.12);
   height: 60px;
   margin: 0;
   padding-left: 33px; }
   .logo a {
-    color: #4DB6AC;
+    color: #FA8072;
     font-family: "Montserrat", sans-serif;
     font-size: 24px;
     font-weight: 600;
     line-height: 60px; }
 
 .page-title {
-  color: rgba(0, 0, 0, 0.3);
+  color: rgba(38, 50, 56, 0.7);
+  float: left;
   font-family: "Montserrat", sans-serif;
   font-size: 24px;
   font-weight: 300;
-  line-height: 60px;
-  margin: 60px 30px 15px 30px; }
+  line-height: 58px;
+  margin-left: 15px;
+  text-transform: uppercase; }
 
 .top-bar {
   background-color: white;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
   height: 58px;
   position: fixed;
-  width: 100%;
   z-index: 100; }
 
 .chart-container {
@@ -203,10 +220,10 @@ table {
   border-radius: 2px;
   float: right;
   margin-right: 20px;
-  margin-top: 20px; }
+  margin-top: 28px; }
   .time-intervals li {
     background-color: #FFFFFF;
-    color: #B0BEC5;
+    color: #CFD8DC;
     cursor: pointer;
     display: inline-block;
     float: left;
@@ -220,19 +237,22 @@ table {
     transition: all .3s;
     width: 80px; }
     .time-intervals li:hover {
-      background-color: #ECEFF1; }
-    .time-intervals li.selected {
-      background-color: #ECEFF1; }
+      background-color: #ECEFF1;
+      color: rgba(38, 50, 56, 0.3); }
+    .time-intervals li.active {
+      background-color: #ECEFF1;
+      color: rgba(38, 50, 56, 0.7); }
     .time-intervals li a:hover {
       background-color: rgba(77, 182, 172, 0.2);
       color: #4DB6AC; }
 
 .container-title {
+  color: rgba(38, 50, 56, 0.7);
   float: left;
   font-family: "Montserrat", sans-serif;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 400;
   line-height: 26px;
   margin-left: 20px;
-  margin-top: 20px;
+  margin-top: 28px;
   text-transform: uppercase; }
