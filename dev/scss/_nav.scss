@@ -6,11 +6,12 @@
 
 /* Hide for mobile, show later */
 .sidebar {
+  border-right: 2px solid rgba($bluegrey-900, .12);
   display: none;
 }
 @media (min-width: 768px) {
   .sidebar {
-    background-color: $bluegrey-900;
+    background-color: $white;
     // border-right: 1px solid #eee;
     bottom: 0;
     display: block;
@@ -36,51 +37,105 @@
 }
 
 .nav-sidebar > li > a {
-  color: rgba($white, .3);
+  border-left: 3px solid transparent;
+  color: rgba($bluegrey-300, 1);
   font-family: $font-primary;
   font-size: 14px;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 60px;
   padding: 0 30px;
+  transition: all .3s;
 
     i {
-      padding-right: 10px;
+      width: 35px;
     }
 
   &:hover {
-    background-color: $bluegrey-800;
+    color: rgba($bluegrey-900, .6);
+    background: none;
   }
 }
 .nav-sidebar > .active > a,
 .nav-sidebar > .active > a:focus {
-  color: rgba($white, .8);
-  background-color: $teal-300;
+  color: rgba($teal-300, 1);
+  background-color: rgba($teal-300, .2);
+  border-left: 4px solid $teal-300;
+
+  i {
+    color: $teal-300;
+  }
 }
 
 .navbar-form {
   height: 60px;
   margin: 0;
-  padding: 12px 15px 12px 30px;
-  width: 300px;
+  // padding: 12px 15px 12px 30px;
+  padding-left: 0;
+  width: 500px;
 
-  input[type="placeholder"] {
-    color: rgba(77,182,172, .4);
+  input {
+    font-family: FontAwesome;
   }
 
-  .form-control {
-    background: rgba($white, 1);
-    border: none;
-    border-radius: 2px;
-    box-shadow: none;
-    color: rgba(0,0,0, .8);
-    font-family: $font-primary;
-    height: 36px;
+  input[type="text"]::-webkit-input-placeholder {
+    color: rgba($black, .1);
+    font-family: $font-primary, FontAwesome;
+    font-weight: 400;
     transition: all .3s;
+  }
+
+  // input[type="text"]:hover::-webkit-input-placeholder {
+  //   color: rgba($black, .3);
+  // }
+
+  // input[type="text"]:focus::-webkit-input-placeholder {
+  //   color: rgba($black, .3);
+  // }
+
+  .form-control {
+    background: rgba($white, 0);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    color: rgba(0,0,0, .6);
+    font-family: $font-primary;
+    font-size: 16px;
+    font-weight: 300;
+    height: 58px;
+    padding-left: 30px;
+    transition: all .5s;
     width: 100%;
 
     &:hover,
     &:focus {
-      background: $white;
+      // background: $white;
+    }
+  }
+}
+
+.log-out {
+
+  a {
+    background-color: rgba($bluegrey-900, .05);
+    border-left: 3px solid transparent;
+    bottom: 0;
+    color: rgba($bluegrey-900, .3);
+    font-family: $font-primary;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 60px;
+    padding: 0 30px;
+    position: absolute;
+    text-decoration: none;
+    transition: all .3s;
+    width: 100%;
+
+    i {
+      width: 35px;
+    }
+
+    &:hover {
+      color: $teal-300;
     }
   }
 }

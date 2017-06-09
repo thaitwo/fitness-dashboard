@@ -3,27 +3,27 @@
 <head>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="public/css/style.compile.css">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,500,600" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600" rel="stylesheet">
   <script src="https://use.fontawesome.com/c05b0eed4c.js"></script>
   <title>HealthFit</title>
 </head>
 <body>
   <div class="container-fluid">
     <div class="row">
-      <div class="col-sm-3 col-md-2 sidebar">
+      <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
         <h1 class="logo"><a href="./index.html">HealthFit</a></h1>
         <ul class="nav nav-sidebar">
-          <li class="active"><a href="#"><i class="fa fa-th fa-lg" aria-hidden="true"></i>Dashboard<span class="sr-only">(current)</span></a></li>
+          <li class="active"><a href="#"><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>Dashboard<span class="sr-only">(current)</span></a></li>
           <li><a href="#"><i class="fa fa-trophy fa-lg" aria-hidden="true"></i>Goals</a></li>
           <li><a href="#"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>Challenges</a></li>
           <li><a href="#"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>Settings</a></li>
-          <li><a href="#"><i class="fa fa-power-off fa-lg" aria-hidden="true"></i>Log Out</a></li>
         </ul>
+        <div class="log-out"><a href="#"><i class="fa fa-power-off fa-lg" aria-hidden="true"></i>Log Out</a></div>
       </div>
-      <div class="col-sm-9 col-md-10 col-md-offset-2 content-container">
+      <div class="col-sm-9 col-md-9 col-lg-10 col-sm-offset-3 col-md-offset-3 col-lg-offset-2 content-container">
         <div class="top-bar">
           <form class="navbar-form navbar-left">
-            <input type="text" class="form-control" placeholder="Search">
+            <input type="text" class="form-control" placeholder="&#xF002  Search">
           </form>
         </div>
 
@@ -31,21 +31,31 @@
 
         <div class="clear">
           <div class="chart-container col-md-8">
+            <h2 class="container-title">Steps Taken</h2>
+            <ul id="time-intervals" class="time-intervals">
+              <li id="daily" class="selected">Daily</li>
+              <li id="weekly">Weekly</li>
+              <li id="monthly">Monthly</li>
+              <li id="yearly">Yearly</li>
+              <li id="all-time">All Time</li>
+            </ul>
             <canvas id="stepsChart"></canvas>
           </div>
-          <div class="chart-container col-md-3">
+          <div class="chart-container is-large col-md-3">
             <canvas id="sleepChart""></canvas>
           </div>
         </div>
 
-        <div class="chart-container col-md-4">
-          <canvas id="distanceChart"></canvas>
-        </div>
-        <div class="chart-container col-md-3">
-          <canvas id="weightChart"></canvas>
-        </div>
-        <div class="chart-container col-md-3">
-          <canvas id="currentDistanceChart"></canvas>
+        <div>
+          <div class="chart-container is-small col-md-3">
+            <canvas id="distanceChart"></canvas>
+          </div>
+          <div class="chart-container col-md-3">
+            <canvas id="weightChart" width="300" height="300"></canvas>
+          </div>
+          <div class="chart-container is-small col-md-3">
+            <canvas id="caloriesChart"></canvas>
+          </div>
         </div>
 
       </div>
