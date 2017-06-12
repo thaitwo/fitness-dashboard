@@ -32,17 +32,50 @@
           <div class="clear">
             <div class="chart-container col-md-8 col-lg-8">
               <h2 class="container-title">Steps Taken</h2>
-              <ul id="time-intervals" class="time-intervals">
+
+
+
+              <!-- <div class="btn-group">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>
+                </button>
+
+                <ul id="time-intervals" class="dropdown-menu time-intervals">
+                  <li id="daily" class="active">Daily</li>
+                  <li id="weekly">Weekly</li>
+                  <li id="monthly">Monthly</li>
+                  <li id="yearly">Yearly</li>
+                  <li id="all-time">All Time</li>
+                </ul>
+              </div> -->
+
+
+              <!-- <div class="dropdown-container">
+                <button type="button" id="dropdown-intervals">INTERVALS</button>
+
+                <ul id="time-intervals" class="time-intervals visible">
+                  <li id="daily" class="active">Daily</li>
+                  <li id="weekly">Weekly</li>
+                  <li id="monthly">Monthly</li>
+                  <li id="yearly">Yearly</li>
+                  <li id="all-time">All Time</li>
+                </ul>
+              </div> -->
+
+
+              <!-- <ul id="time-intervals" class="time-intervals">
                 <li id="daily" class="active">Daily</li>
                 <li id="weekly">Weekly</li>
                 <li id="monthly">Monthly</li>
                 <li id="yearly">Yearly</li>
                 <li id="all-time">All Time</li>
-              </ul>
+              </ul> -->
               <canvas id="stepsChart"></canvas>
             </div>
             <div class="chart-container is-large col-md-3">
               <h2 class="container-title">Sleep Analytics</h2>
+
+              <div id="test-dropdown"></div>
+
               <canvas id="sleepChart""></canvas>
             </div>
           </div>
@@ -84,6 +117,11 @@
     </div>
   </div>
 
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+  integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+  crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   <script src="public/js/app.compile.js"></script>
 </body>
 </html>

@@ -14,55 +14,6 @@
   }
 }
 
-.time-intervals {
-  background-color: $bluegrey-50;
-  border-top: 1px solid $bluegrey-50;
-  border-right: 1px solid $bluegrey-50;
-  border-bottom: 1px solid $bluegrey-50;
-  border-left: 0;
-  border-radius: 2px;
-  float: right;
-  margin-right: 20px;
-  margin-top: 28px;
-
-  li {
-    background-color: $white;
-    color: $bluegrey-100;
-    cursor: pointer;
-    display: inline-block;
-    float: left;
-    font-family: $font-primary;
-    font-size: 12px;
-    font-weight: 300;
-    line-height: 26px;
-    margin-left: 1px;
-    text-align: center;
-    text-decoration: none;
-    transition: all .3s;
-    width: 80px;
-    // border-radius: 3px;
-    // border-left: 1px solid $bluegrey-100;
-
-    &:hover {
-      background-color: $bluegrey-50;
-      color: rgba($bluegrey-900, .3);
-    }
-
-    &.active {
-      background-color: $bluegrey-50;
-      color: rgba($bluegrey-900, .7);
-    }
-
-    a {
-
-      &:hover {
-        background-color: rgba($teal-300, .2);
-        color: $teal-300;
-      }
-    }
-  }
-}
-
 .container-title {
   color: rgba($bluegrey-900, .7);
   float: left;
@@ -73,4 +24,9 @@
   margin-left: 20px;
   margin-top: 28px;
   text-transform: uppercase;
+}
+
+#test-intervals {
+  background-color: red;
+  display: block;
 }

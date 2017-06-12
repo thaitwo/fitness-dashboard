@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 120);
+/******/ 	return __webpack_require__(__webpack_require__.s = 121);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1899,7 +1899,7 @@ function loadLocale(name) {
             module && module.exports) {
         try {
             oldLocale = globalLocale._abbr;
-            __webpack_require__(125)("./" + name);
+            __webpack_require__(126)("./" + name);
             // because defineLocale currently also sets the global locale, we
             // want to undo that for lazy loaded locales
             getSetGlobalLocale(oldLocale);
@@ -4534,15 +4534,15 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(169)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(170)(module)))
 
 /***/ }),
 /* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var convert = __webpack_require__(124);
-var string = __webpack_require__(121);
+var convert = __webpack_require__(125);
+var string = __webpack_require__(122);
 
 var Color = function (obj) {
 	if (obj instanceof Color) {
@@ -16118,15 +16118,62 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var GetData = function GetData() {
-  _classCallCheck(this, GetData);
+var Dropdown = function () {
+  function Dropdown(menuId, buttonId, listId, arrayOfListItems) {
+    _classCallCheck(this, Dropdown);
 
-  this.weekly = ['5/1-5/7', '5/8-5/14', '5/15-5/21', '5/22-5/28', '5/29-6/4', '6/5-6/11'], this.weeklyData = [61059, 71320, 81209, 61347, 51238, 61830], this.monthly = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'], this.monthlyData = [61059, 71320, 81209, 61347, 51238, 61830, 71836, 71777, 81346, 72734, 82967, 78567], this.yearly = ['2015', '2016', '2017'], this.yearlyData = [61059, 71320, 81209];
-};
+    this.menuId = menuId;
+    this.buttonId = buttonId;
+    this.listId = listId;
+    this.arrayOfListItems = arrayOfListItems;
+    // this.menuContainer = $(this.menuId);
+    this.renderMenu();
+  }
 
-exports.default = GetData;
+  _createClass(Dropdown, [{
+    key: 'activateDropdownMenu',
+    value: function activateDropdownMenu() {
+      var dropdownButton = $(this.buttonId);
+
+      // console.log('MENU LIST: ', );
+
+      dropdownButton.on('click', function (event) {
+        // console.log('THIS: ', this);
+        menuList.show();
+      });
+    }
+  }, {
+    key: 'createMenuListItem',
+    value: function createMenuListItem() {
+      var listContainer = document.getElementById(this.listId);
+      this.arrayOfListItems.forEach(function (item) {
+        listContainer.appendChild('<li>' + item + '</li>');
+      });
+    }
+  }, {
+    key: 'generateMenuList',
+    value: function generateMenuList() {
+
+      return '\n      <button id="' + this.buttonId + '">' + this.buttonId + '</button>\n\n      <ul id="' + this.listId + '" class="' + this.listId + '">\n      </ul>\n    ';
+    }
+  }, {
+    key: 'renderMenu',
+    value: function renderMenu() {
+      var menuContainer = document.getElementById(this.menuId);
+      menuContainer.innerHTML = this.generateMenuList();
+      this.createMenuListItem();
+      // this.activateDropdownMenu();
+    }
+  }]);
+
+  return Dropdown;
+}();
+
+exports.default = Dropdown;
 
 /***/ }),
 /* 118 */
@@ -16139,9 +16186,30 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var GetData = function GetData() {
+  _classCallCheck(this, GetData);
+
+  this.weekly = ['5/1-5/7', '5/8-5/14', '5/15-5/21', '5/22-5/28', '5/29-6/4', '6/5-6/11'], this.weeklyData = [61059, 71320, 81209, 61347, 51238, 61830], this.monthly = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'], this.monthlyData = [61059, 71320, 81209, 61347, 51238, 61830, 71836, 71777, 81346, 72734, 82967, 78567], this.yearly = ['2015', '2016', '2017'], this.yearlyData = [61059, 71320, 81209];
+};
+
+exports.default = GetData;
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chart = __webpack_require__(126);
+var _chart = __webpack_require__(127);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -16196,7 +16264,7 @@ var Graph = function () {
       return {
         layout: {
           padding: {
-            top: 0,
+            top: 10,
             right: 20,
             bottom: 30,
             left: 20
@@ -16269,13 +16337,13 @@ var Graph = function () {
 exports.default = Graph;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16283,13 +16351,17 @@ exports.default = Graph;
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(119);
+__webpack_require__(120);
 
-var _graph = __webpack_require__(118);
+var _Dropdown = __webpack_require__(117);
+
+var _Dropdown2 = _interopRequireDefault(_Dropdown);
+
+var _graph = __webpack_require__(119);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _getData = __webpack_require__(117);
+var _getData = __webpack_require__(118);
 
 var _getData2 = _interopRequireDefault(_getData);
 
@@ -16304,8 +16376,10 @@ var App = function () {
     this.stepsChartId = document.getElementById('stepsChart');
     this.renderGraphs();
     this.stepsGraph;
+    this.testDropdown;
     this.activateSidebarMenu();
-    this.activateChartIntervalMenu();
+    // this.activateChartIntervalMenu();
+    this.activateDropdown();
 
     this.weeklyData = {
       labels: ['May 1', 'May 8', 'May 15', 'May 22', 'May 29', 'Jun 5'],
@@ -16380,6 +16454,13 @@ var App = function () {
       var pageTitleContainer = document.querySelector('.page-title');
 
       pageTitleContainer.innerHTML = title;
+    }
+  }, {
+    key: 'activateDropdown',
+    value: function activateDropdown() {
+      var arr = ['Weekly', 'Monthly', 'Yearly', 'All-time'];
+      this.testDropdown = new _Dropdown2.default('test-dropdown', 'test-button', 'test-intervals', arr);
+      // this.testDropdown.createMenuListItem(arr)
     }
   }, {
     key: 'activateChartIntervalMenu',
@@ -16496,11 +16577,11 @@ new App();
 // export default App;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var colorNames = __webpack_require__(122);
+var colorNames = __webpack_require__(123);
 
 module.exports = {
    getRgba: getRgba,
@@ -16723,7 +16804,7 @@ for (var name in colorNames) {
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -16878,7 +16959,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports) {
 
 /* MIT license */
@@ -17582,10 +17663,10 @@ for (var key in cssKeywords) {
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var conversions = __webpack_require__(123);
+var conversions = __webpack_require__(124);
 
 var convert = function() {
    return new Converter();
@@ -17679,7 +17760,7 @@ Converter.prototype.getValues = function(space) {
 module.exports = convert;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -17928,68 +18009,68 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 125;
+webpackContext.id = 126;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * @namespace Chart
  */
-var Chart = __webpack_require__(147)();
+var Chart = __webpack_require__(148)();
 
+__webpack_require__(146)(Chart);
+__webpack_require__(160)(Chart);
+__webpack_require__(142)(Chart);
 __webpack_require__(145)(Chart);
-__webpack_require__(159)(Chart);
+__webpack_require__(150)(Chart);
 __webpack_require__(141)(Chart);
+__webpack_require__(143)(Chart);
 __webpack_require__(144)(Chart);
 __webpack_require__(149)(Chart);
-__webpack_require__(140)(Chart);
-__webpack_require__(142)(Chart);
-__webpack_require__(143)(Chart);
-__webpack_require__(148)(Chart);
-__webpack_require__(151)(Chart);
 __webpack_require__(152)(Chart);
-__webpack_require__(150)(Chart);
-__webpack_require__(146)(Chart);
 __webpack_require__(153)(Chart);
-
+__webpack_require__(151)(Chart);
+__webpack_require__(147)(Chart);
 __webpack_require__(154)(Chart);
+
 __webpack_require__(155)(Chart);
 __webpack_require__(156)(Chart);
 __webpack_require__(157)(Chart);
+__webpack_require__(158)(Chart);
 
-__webpack_require__(165)(Chart);
-__webpack_require__(163)(Chart);
-__webpack_require__(164)(Chart);
 __webpack_require__(166)(Chart);
+__webpack_require__(164)(Chart);
+__webpack_require__(165)(Chart);
 __webpack_require__(167)(Chart);
 __webpack_require__(168)(Chart);
+__webpack_require__(169)(Chart);
 
 // Controllers must be loaded after elements
 // See Chart.core.datasetController.dataElementType
-__webpack_require__(134)(Chart);
 __webpack_require__(135)(Chart);
 __webpack_require__(136)(Chart);
 __webpack_require__(137)(Chart);
 __webpack_require__(138)(Chart);
 __webpack_require__(139)(Chart);
+__webpack_require__(140)(Chart);
 
-__webpack_require__(127)(Chart);
 __webpack_require__(128)(Chart);
 __webpack_require__(129)(Chart);
 __webpack_require__(130)(Chart);
 __webpack_require__(131)(Chart);
 __webpack_require__(132)(Chart);
 __webpack_require__(133)(Chart);
+__webpack_require__(134)(Chart);
 
 // Loading built-it plugins
 var plugins = [];
 
 plugins.push(
-    __webpack_require__(160)(Chart),
     __webpack_require__(161)(Chart),
-    __webpack_require__(162)(Chart)
+    __webpack_require__(162)(Chart),
+    __webpack_require__(163)(Chart)
 );
 
 Chart.plugins.register(plugins);
@@ -18001,7 +18082,7 @@ if (typeof window !== 'undefined') {
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18019,7 +18100,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18036,7 +18117,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18054,7 +18135,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18072,7 +18153,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18090,7 +18171,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18108,7 +18189,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18162,7 +18243,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18552,7 +18633,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18681,7 +18762,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18991,7 +19072,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19331,7 +19412,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19561,7 +19642,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19735,7 +19816,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19910,7 +19991,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20067,7 +20148,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20925,7 +21006,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21262,7 +21343,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21388,7 +21469,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22379,7 +22460,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22702,7 +22783,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22765,7 +22846,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23208,7 +23289,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23586,7 +23667,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24350,7 +24431,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24401,7 +24482,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24616,7 +24697,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25561,7 +25642,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25672,7 +25753,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25766,7 +25847,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25873,7 +25954,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26088,7 +26169,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26378,7 +26459,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26386,7 +26467,7 @@ module.exports = function(Chart) {
 
 // By default, select the browser (DOM) platform.
 // @TODO Make possible to select another platform at build time.
-var implementation = __webpack_require__(158);
+var implementation = __webpack_require__(159);
 
 module.exports = function(Chart) {
 	/**
@@ -26454,7 +26535,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26770,7 +26851,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27321,7 +27402,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27554,7 +27635,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27693,7 +27774,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27890,7 +27971,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28003,7 +28084,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28256,7 +28337,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28786,7 +28867,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29235,7 +29316,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {

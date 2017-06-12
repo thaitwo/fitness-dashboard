@@ -150,6 +150,45 @@ table {
   .log-out a:hover {
     color: #4DB6AC; }
 
+.btn-default {
+  border: 1px solid #ECEFF1;
+  border-radius: 2px;
+  width: 160px; }
+
+.btn-group {
+  float: right;
+  margin-right: 20px;
+  margin-top: 28px; }
+
+.visible {
+  display: block; }
+
+.time-intervals {
+  border-left: 0;
+  border-radius: 2px;
+  display: none; }
+  .time-intervals li {
+    background-color: #FFFFFF;
+    color: #CFD8DC;
+    cursor: pointer;
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 26px;
+    margin: 0 10px;
+    padding: 0 5px;
+    text-align: center;
+    text-decoration: none;
+    transition: all .3s; }
+    .time-intervals li:hover {
+      color: rgba(38, 50, 56, 0.3); }
+    .time-intervals li.active {
+      border-bottom: 3px solid #FA8072;
+      color: rgba(38, 50, 56, 0.7); }
+    .time-intervals li a:hover {
+      background-color: rgba(77, 182, 172, 0.2);
+      color: #4DB6AC; }
+
 .clear:after {
   content: "";
   display: table;
@@ -211,41 +250,6 @@ table {
   .chart-container.is-large {
     height: 300px; }
 
-.time-intervals {
-  background-color: #ECEFF1;
-  border-top: 1px solid #ECEFF1;
-  border-right: 1px solid #ECEFF1;
-  border-bottom: 1px solid #ECEFF1;
-  border-left: 0;
-  border-radius: 2px;
-  float: right;
-  margin-right: 20px;
-  margin-top: 28px; }
-  .time-intervals li {
-    background-color: #FFFFFF;
-    color: #CFD8DC;
-    cursor: pointer;
-    display: inline-block;
-    float: left;
-    font-family: "Montserrat", sans-serif;
-    font-size: 12px;
-    font-weight: 300;
-    line-height: 26px;
-    margin-left: 1px;
-    text-align: center;
-    text-decoration: none;
-    transition: all .3s;
-    width: 80px; }
-    .time-intervals li:hover {
-      background-color: #ECEFF1;
-      color: rgba(38, 50, 56, 0.3); }
-    .time-intervals li.active {
-      background-color: #ECEFF1;
-      color: rgba(38, 50, 56, 0.7); }
-    .time-intervals li a:hover {
-      background-color: rgba(77, 182, 172, 0.2);
-      color: #4DB6AC; }
-
 .container-title {
   color: rgba(38, 50, 56, 0.7);
   float: left;
@@ -256,3 +260,7 @@ table {
   margin-left: 20px;
   margin-top: 28px;
   text-transform: uppercase; }
+
+#test-intervals {
+  background-color: red;
+  display: block; }

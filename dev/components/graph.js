@@ -42,7 +42,7 @@ class Graph {
     return {
       layout: {
         padding: {
-          top: 0,
+          top: 10,
           right: 20,
           bottom: 30,
           left: 20

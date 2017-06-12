@@ -1,4 +1,5 @@
 import './scss/style.scss';
+import Dropdown from './components/Dropdown.js';
 import Graph from './components/graph.js';
 import GetData from './components/get-data.js';
 
@@ -8,8 +9,10 @@ class App {
     this.stepsChartId = document.getElementById('stepsChart');
     this.renderGraphs();
     this.stepsGraph;
+    this.testDropdown;
     this.activateSidebarMenu();
-    this.activateChartIntervalMenu();
+    // this.activateChartIntervalMenu();
+    this.activateDropdown();
 
     this.weeklyData = {
       labels: ['May 1', 'May 8', 'May 15', 'May 22', 'May 29', 'Jun 5'],
@@ -86,6 +89,14 @@ class App {
 
 
 
+  activateDropdown() {
+    const arr = ['Weekly', 'Monthly', 'Yearly', 'All-time'];
+    this.testDropdown = new Dropdown('test-dropdown', 'test-button', 'test-intervals', arr);
+    // this.testDropdown.createMenuListItem(arr)
+  }
+
+
+
   activateChartIntervalMenu() {
     const timeIntervalsId = document.querySelector('#time-intervals');
 
@@ -141,6 +152,8 @@ class App {
     // Create new graph
     this.stepsGraph = new Graph(this.stepsChartId, 'bar', intervalData, interval);
   }
+
+
 
   renderGraphs() {
     this.stepsGraph = new Graph(this.stepsChartId, 'bar');
