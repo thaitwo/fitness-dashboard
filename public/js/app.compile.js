@@ -16130,43 +16130,95 @@ var Dropdown = function () {
     this.buttonId = buttonId;
     this.listId = listId;
     this.arrayOfListItems = arrayOfListItems;
-    // this.menuContainer = $(this.menuId);
-    this.renderMenu();
+    this.menuContainer = $('#' + this.menuId);
+    this.topContainer = $('.container-fluid');
+
+    // RENDER DROPDOWN HTML (BUTTON AND <UL>)
+    this.renderDropdownHTML();
+
+    // REGISTER ELEMENTS
+    this.dropdownButtonLabel = $('.dropdown-button-label');
+    this.$menuList = $('#' + this.listId);
+    this.$dropdownButton = $('#' + this.buttonId);
+
+    // RENDER <LI> HTML
+    this.createMenuListItems();
+
+    // REGISTER <LI> ELEMENTS
+    this.$listItems = $('#' + this.listId + ' > li');
+    this.$firstListItem = $('#' + this.listId + ' > li:first');
+
+    // ACTIVATE MENU
+    this.activateDropdownMenu();
+    this.activateMenuLinks(this.$menuList);
   }
 
+  // UPDATE DROPDOWN BUTTON LABEL AND SELECTED <LI>
+
+
   _createClass(Dropdown, [{
+    key: 'activateMenuLinks',
+    value: function activateMenuLinks(listId) {
+      var _this = this;
+
+      listId.on('click', 'li', function (event) {
+        // GET DROPDOWN BUTTON VALUE
+        var selectedItem = $(event.target);
+        var selectedItemTextValue = selectedItem[0].innerText;
+
+        // UPDATE DROPDOWN BUTTON LABEL
+        _this.dropdownButtonLabel.text(selectedItemTextValue);
+
+        // REMOVE 'IS-ACTIVE' CLASS FROM ALL <LI>
+        _this.$listItems.removeClass('is-active');
+
+        // ADD 'IS-ACTIVE' CLASS TO SELECTED <LI>
+        selectedItem.addClass('is-active');
+      });
+    }
+
+    // ADD 'IS-ACTIVE' CLASS TO FIRST <LI>
+    // SHOW <UL> ON DROPDOWN BUTTON CLICK
+
+  }, {
     key: 'activateDropdownMenu',
     value: function activateDropdownMenu() {
-      var dropdownButton = $(this.buttonId);
+      var _this2 = this;
 
-      // console.log('MENU LIST: ', );
+      this.$firstListItem.addClass('is-active');
 
-      dropdownButton.on('click', function (event) {
-        // console.log('THIS: ', this);
-        menuList.show();
+      this.$dropdownButton.on('click', function (event) {
+        event.stopPropagation();
+        _this2.$menuList.toggleClass('is-visible');
+      });
+      this.topContainer.on('click', function () {
+        _this2.$menuList.removeClass('is-visible');
       });
     }
+
+    // GENERATE HTML OF LIST ITEMS WITHIN <UL>
+
   }, {
-    key: 'createMenuListItem',
-    value: function createMenuListItem() {
-      var listContainer = document.getElementById(this.listId);
+    key: 'createMenuListItems',
+    value: function createMenuListItems() {
+      var _this3 = this;
+
       this.arrayOfListItems.forEach(function (item) {
-        listContainer.appendChild('<li>' + item + '</li>');
+        _this3.$menuList.append('<li><i class="fa fa-check" aria-hidden="true"></i>' + item + '</li>');
       });
     }
-  }, {
-    key: 'generateMenuList',
-    value: function generateMenuList() {
 
-      return '\n      <button id="' + this.buttonId + '">' + this.buttonId + '</button>\n\n      <ul id="' + this.listId + '" class="' + this.listId + '">\n      </ul>\n    ';
+    // GENERATE HTML FOR DROPDOWN BUTTON AND <UL>
+
+  }, {
+    key: 'createMenuList',
+    value: function createMenuList() {
+      return '\n      <button id="' + this.buttonId + '" class="chart-dropdown">\n        <span class="dropdown-button-label">' + this.arrayOfListItems[0] + '</span>\n        <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>\n      </button>\n\n      <ul id="' + this.listId + '" class="chart-dropdown">\n      </ul>\n    ';
     }
   }, {
-    key: 'renderMenu',
-    value: function renderMenu() {
-      var menuContainer = document.getElementById(this.menuId);
-      menuContainer.innerHTML = this.generateMenuList();
-      this.createMenuListItem();
-      // this.activateDropdownMenu();
+    key: 'renderDropdownHTML',
+    value: function renderDropdownHTML() {
+      this.menuContainer.append(this.createMenuList());
     }
   }]);
 
@@ -16458,9 +16510,8 @@ var App = function () {
   }, {
     key: 'activateDropdown',
     value: function activateDropdown() {
-      var arr = ['Weekly', 'Monthly', 'Yearly', 'All-time'];
-      this.testDropdown = new _Dropdown2.default('test-dropdown', 'test-button', 'test-intervals', arr);
-      // this.testDropdown.createMenuListItem(arr)
+      var arr = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-time'];
+      this.testDropdown = new _Dropdown2.default('sleep-dropdown', 'test-button', 'test-intervals', arr);
     }
   }, {
     key: 'activateChartIntervalMenu',
@@ -16530,51 +16581,6 @@ var App = function () {
 }();
 
 new App();
-
-// class App {
-// 	constructor(props) {
-// 		super(props);
-
-//     this.$page = $('#page');
-//     this.barGraph;
-
-//     // Bind functino
-
-
-//     this.renderGraphs();
-//     this.activateNavBar();
-// 	}
-
-// activateNavBar() {
-//   const timeIntervalsId = document.querySelector('#time-intervals'),
-//     interval = timeIntervalsId.getElementsByTagName('li'),
-//     stepsCanvas = document.querySelector('canvas');
-
-
-//   timeIntervalsId.addEventListener('click', (event) => {
-//     this.updateGraph(event.target.id);
-
-//   })
-// }
-
-//   updateGraph(type) {
-//     this.barGraph.destroy();
-
-//     this.barGraph = new Graph(data, type, this.$page);
-//   }
-
-//   renderGraphs() {
-//     // kick off initial html that needs to be in dom
-//     const data = [];
-
-//     this.barGraph = new Graph(data, 'bar', this.$page);
-//     new Graph(data, 'bar', this.$page);
-//     new Graph(data, 'bar', this.$page);
-//     new Graph(data, 'bar', this.$page);
-//   }
-// }
-
-// export default App;
 
 /***/ }),
 /* 122 */

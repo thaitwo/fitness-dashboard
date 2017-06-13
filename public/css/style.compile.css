@@ -82,9 +82,8 @@ table {
   .nav-sidebar > li > a i {
     width: 35px; }
   .nav-sidebar > li > a:hover {
-    color: rgba(255, 255, 255, 0.6);
-    background: none;
-    border-left: 4px solid rgba(255, 255, 255, 0.3); }
+    color: #FFFFFF;
+    background: none; }
   .nav-sidebar > li > a.active {
     background-color: none;
     border-left: 4px solid #FA8072;
@@ -256,11 +255,75 @@ table {
   font-family: "Montserrat", sans-serif;
   font-size: 16px;
   font-weight: 400;
-  line-height: 26px;
+  line-height: 36px;
   margin-left: 20px;
-  margin-top: 28px;
+  margin-top: 18px;
   text-transform: uppercase; }
 
-#test-intervals {
-  background-color: red;
-  display: block; }
+.sleep-dropdown {
+  float: right;
+  margin-top: 18px; }
+
+button.chart-dropdown {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 2px;
+  color: #CFD8DC;
+  font-family: "Montserrat", sans-serif;
+  font-size: 14px;
+  font-weight: 300;
+  height: 36px;
+  margin-right: 20px;
+  padding: 10px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all .3s; }
+  button.chart-dropdown:hover {
+    background: rgba(236, 239, 241, 0.36);
+    color: #FA8072; }
+  button.chart-dropdown:focus {
+    outline: none; }
+  button.chart-dropdown i {
+    padding-left: 10px; }
+
+ul.chart-dropdown {
+  background: #FFFFFF;
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0 0 16px rgba(0, 0, 0, 0.12), 0 16px 16px rgba(0, 0, 0, 0.24);
+  display: none;
+  margin-top: -1px;
+  position: absolute;
+  right: 35px;
+  top: 20px;
+  width: 120px; }
+  ul.chart-dropdown.is-visible {
+    display: block; }
+  ul.chart-dropdown li {
+    border-bottom: 1px solid #ECEFF1;
+    color: rgba(38, 50, 56, 0.36);
+    display: block;
+    font-family: "Montserrat", sans-serif;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 40px;
+    padding: 0 24px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all .3s; }
+    ul.chart-dropdown li:last-child {
+      border: none; }
+    ul.chart-dropdown li:hover {
+      background: rgba(236, 239, 241, 0.24);
+      color: #FA8072;
+      cursor: pointer; }
+    ul.chart-dropdown li i {
+      display: none; }
+    ul.chart-dropdown li.is-active {
+      color: #000000;
+      position: relative; }
+      ul.chart-dropdown li.is-active i {
+        display: block;
+        left: 8px;
+        position: absolute;
+        top: 14px; }

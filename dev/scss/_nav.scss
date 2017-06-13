@@ -59,9 +59,8 @@
     }
 
   &:hover {
-    color: rgba($white, .6);
+    color: $white;
     background: none;
-    border-left: 4px solid rgba($white, .3);
   }
 
   &.active {

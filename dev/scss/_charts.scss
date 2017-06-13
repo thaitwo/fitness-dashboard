@@ -20,13 +20,101 @@
   font-family: $font-primary;
   font-size: 16px;
   font-weight: 400;
-  line-height: 26px;
+  line-height: 36px;
   margin-left: 20px;
-  margin-top: 28px;
+  margin-top: 18px;
   text-transform: uppercase;
 }
 
-#test-intervals {
-  background-color: red;
-  display: block;
+.sleep-dropdown {
+  float: right;
+  margin-top: 18px;
+}
+
+button.chart-dropdown {
+  background: $white;
+  border: none;
+  border-radius: 2px;
+  color: $bluegrey-100;
+  font-family: $font-primary;
+  font-size: 14px;
+  font-weight: 300;
+  height: 36px;
+  margin-right: 20px;
+  padding: 10px 15px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all .3s;
+
+  &:hover {
+    background: rgba($bluegrey-50, .36);
+    color: $salmon;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  i {
+    padding-left: 10px;
+    // float: right;
+  }
+}
+
+ul.chart-dropdown {
+  background: $white;
+  border: none;
+  border-radius: 2px;
+  box-shadow: 0 0 16px rgba($black, .12),
+              0 16px 16px rgba($black, .24);
+  display: none;
+  margin-top: -1px;
+  position: absolute;
+  right: 35px;
+  top: 20px;
+  width: 120px;
+
+  &.is-visible {
+    display: block;
+  }
+
+  li {
+    border-bottom: 1px solid $bluegrey-50;
+    color: rgba($bluegrey-900, .36);
+    display: block;
+    font-family: $font-primary;
+    font-size: 12px;
+    font-weight: 300;
+    line-height: 40px;
+    padding: 0 24px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all .3s;
+
+    &:last-child {
+      border: none;
+    }
+
+    &:hover{
+      background: rgba($bluegrey-50, .24);
+      color: $salmon;
+      cursor: pointer;
+    }
+
+    i {
+      display: none;
+    }
+
+    &.is-active {
+      color: $black;
+      position: relative;
+
+      i {
+        display: block;
+        left: 8px;
+        position: absolute;
+        top: 14px;
+      }
+    }
+  }
 }

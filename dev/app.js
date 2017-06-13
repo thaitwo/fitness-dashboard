@@ -90,9 +90,8 @@ class App {
 
 
   activateDropdown() {
-    const arr = ['Weekly', 'Monthly', 'Yearly', 'All-time'];
-    this.testDropdown = new Dropdown('test-dropdown', 'test-button', 'test-intervals', arr);
-    // this.testDropdown.createMenuListItem(arr)
+    const arr = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-time'];
+    this.testDropdown = new Dropdown('sleep-dropdown', 'test-button', 'test-intervals', arr);
   }
 
 
@@ -161,59 +160,3 @@ class App {
 }
 
 new App();
-
-
-
-
-
-
-
-
-
-
-
-
-// class App {
-// 	constructor(props) {
-// 		super(props);
-
-//     this.$page = $('#page');
-//     this.barGraph;
-
-//     // Bind functino
-
-
-//     this.renderGraphs();
-//     this.activateNavBar();
-// 	}
-
-  // activateNavBar() {
-  //   const timeIntervalsId = document.querySelector('#time-intervals'),
-  //     interval = timeIntervalsId.getElementsByTagName('li'),
-  //     stepsCanvas = document.querySelector('canvas');
-
-
-  //   timeIntervalsId.addEventListener('click', (event) => {
-  //     this.updateGraph(event.target.id);
-
-  //   })
-  // }
-
-//   updateGraph(type) {
-//     this.barGraph.destroy();
-
-//     this.barGraph = new Graph(data, type, this.$page);
-//   }
-
-//   renderGraphs() {
-//     // kick off initial html that needs to be in dom
-//     const data = [];
-
-//     this.barGraph = new Graph(data, 'bar', this.$page);
-//     new Graph(data, 'bar', this.$page);
-//     new Graph(data, 'bar', this.$page);
-//     new Graph(data, 'bar', this.$page);
-//   }
-// }
-
-// export default App;
