@@ -6,43 +6,46 @@ import Chart from 'chart.js';
 */
 
 class Graph {
-  constructor(containerId, type, data, interval) {
-    this.containerId = containerId;
-    this.type = type;
+  // @parameters (string, string, object, object)
+  constructor(canvasId, graphType, data, options) {
+    this.canvasId = canvasId;
+    this.graphType = graphType || 'bar';
 
-    this.data = data || {
-      labels: ["Jun 1", "Jun 2", "Jun 3", "Jun 4", "Jun 5", "Jun 6", "Jun 7"],
-      display: true,
-      datasets: [{
-        // label: "Steps Taken",
-        fill: false,
-        backgroundColor: '#FA8072',
-        borderColor: '#FA8072',
-        borderWidth: 3,
-        data: [6059, 7320, 8209, 6347, 5238, 6830, 7836],
-        hoverRadius: 3,
-        radius: 2,
-      }]
-    };
+    this.data = data ||
+      {
+        labels: ["Jun 1", "Jun 2", "Jun 3", "Jun 4", "Jun 5", "Jun 6", "Jun 7"],
+        display: true,
+        datasets: [{
+          backgroundColor: 'rgba(250, 128, 114, .2)',
+          borderColor: '#FA8072',
+          borderWidth: 2,
+          data: [6059, 7320, 8209, 6347, 5238, 6830, 7836],
+          hoverRadius: 12,
+          radius: 4,
+          lineTension: 0
+        }]
+      };
 
-    this.interval = interval;
-    this.options = this.getOptions();
+    this.options = options || this.getOptions();
     this.graph;
 
     this.render();
   }
 
+  // DESTROY CHART
   destroy() {
     if (this.graph) {
       this.graph.destroy();
     }
   }
 
+
+  // RENDER OPTIONS OBJECT
   getOptions() {
     return {
       layout: {
         padding: {
-          top: 10,
+          top: 30,
           right: 20,
           bottom: 30,
           left: 20
@@ -83,23 +86,15 @@ class Graph {
             padding: 15
           }
         }]
-      },
-      title: {
-        display: true,
-        fontColor: '#CFD8DC',
-        fontFamily: "'Montserrat', sans-serif",
-        fontSize: 16,
-        fontStyle: 'normal',
-        padding: 30,
-        position: 'top',
-        text: this.interval || 'DAILY'
       }
     }
   }
 
+
+  // RENDER NEW CHART
   render() {
-    this.graph = new Chart(this.containerId, {
-      type: this.type,
+    this.graph = new Chart(this.canvasId, {
+      type: this.graphType,
 
       data: this.data,
 

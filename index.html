@@ -29,11 +29,18 @@
         </div>
 
         <div class="dashboard-content-container">
-          <div class="clear">
+          <div class="clearfix">
             <div class="chart-container col-md-8 col-lg-8">
-              <h2 class="container-title">Steps Taken</h2>
 
-              <div id="sleep-dropdown" class="sleep-dropdown"></div>
+            <div class="clearfix">
+              <div class="l-left">
+                <div id="categories-dropdown" class="menu-dropdown"></div>
+              </div>
+
+              <div class="l-left">
+                <div id="time-dropdown" class="menu-dropdown"></div>
+              </div>
+            </div>
 
               <!-- <div class="btn-group">
                 <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>
@@ -71,41 +78,42 @@
               </ul> -->
               <canvas id="stepsChart"></canvas>
             </div>
+
             <div class="chart-container is-large col-md-3">
-              <h2 class="container-title">Sleep</h2>
+              <h2 class="container-header">Sleep</h2>
 
               <canvas id="sleepChart""></canvas>
             </div>
           </div>
 
-          <div class="col-lg-8 clear">
+          <div class="col-lg-8 clearfix">
             <div class="chart-container is-small col-md-3 col-lg-6">
-              <h2 class="container-title">Distance Covered</h2>
+              <h2 class="container-header">Distance Covered</h2>
               <canvas id="distanceChart"></canvas>
             </div>
 
             <div class="chart-container col-md-3 col-lg-5">
-              <h2 class="container-title">Weight</h2>
+              <h2 class="container-header">Weight</h2>
               <canvas id="weightChart" width="300" height="300"></canvas>
             </div>
           </div>
 
           <div class="chart-container is-small col-md-3">
-              <h2 class="container-title">Calories Burned</h2>
+              <h2 class="container-header">Calories Burned</h2>
               <canvas id="caloriesChart"></canvas>
             </div>
 
           <div>
             <div class="chart-container is-small col-md-3">
-              <h2 class="container-title">Distance Covered</h2>
+              <h2 class="container-header">Distance Covered</h2>
               <canvas id="distanceChart"></canvas>
             </div>
             <div class="chart-container col-md-3">
-              <h2 class="container-title">Weight</h2>
+              <h2 class="container-header">Weight</h2>
               <canvas id="weightChart" width="300" height="300"></canvas>
             </div>
             <div class="chart-container is-small col-md-3">
-              <h2 class="container-title">Calories Burned</h2>
+              <h2 class="container-header">Calories Burned</h2>
               <canvas id="caloriesChart"></canvas>
             </div>
           </div>

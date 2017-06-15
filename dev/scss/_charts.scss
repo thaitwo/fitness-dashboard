@@ -2,8 +2,9 @@
   background-color: $white;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(0,0,0,.12);
-  margin-bottom: 30px;
-  margin-left: 30px;
+  margin: 15px;
+  // margin-bottom: 30px;
+  // margin-left: 30px;
 
   &.is-small {
     height: 140px;
@@ -14,52 +15,116 @@
   }
 }
 
-.container-title {
-  color: rgba($bluegrey-900, .7);
+.container-header {
+  // color: rgba($bluegrey-900, .7);
   float: left;
-  font-family: $font-primary;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 36px;
-  margin-left: 20px;
+  // font-family: $font-primary;
+  // font-size: 16px;
+  // font-weight: 400;
+  // line-height: 36px;
+  // margin-left: 4px;
   margin-top: 18px;
-  text-transform: uppercase;
+  position: relative;
+  // text-transform: uppercase;
 }
 
-.sleep-dropdown {
+.chart-dropdown-container {
   float: right;
   margin-top: 18px;
+  position: relative;
 }
 
-button.chart-dropdown {
-  background: $white;
-  border: none;
-  border-radius: 2px;
-  color: $bluegrey-100;
+.menu-dropdown {
   font-family: $font-primary;
-  font-size: 14px;
-  font-weight: 300;
-  height: 36px;
-  margin-right: 20px;
-  padding: 10px 15px;
-  text-align: center;
-  text-transform: uppercase;
+  position: relative;
   transition: all .3s;
 
-  &:hover {
-    background: rgba($bluegrey-50, .36);
-    color: $salmon;
+  &.float-left {
+    float: left;
   }
 
-  &:focus {
+  &.float-right {
+    float: right;
+  }
+
+  button {
+    background: none;
+    border: none;
+    border-radius: 2px;
+    color: rgba($bluegrey-900, .36);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 36px;
     outline: none;
+    padding: 0 15px;
+    text-transform: uppercase;
+    transition: all .3s;
+
+    &:hover {
+      background: rgba($bluegrey-50, .36);
+      color: $salmon;
+    }
+
+    i {
+      padding-left: 8px;
+    }
   }
 
-  i {
-    padding-left: 10px;
-    // float: right;
+  ul {
+    background: $white;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba($black, .12), 0 8px 8px rgba($black, .24);
+    display: none;
+    position: absolute;
+    top: 0;
+    z-index: 1000;
+
+    &.is-visible {
+      display: block;
+    }
+
+    li {
+      border-bottom: 1px solid $bluegrey-50;
+      color: rgba($bluegrey-900, .36);
+      display: block;
+      font-size: 12px;
+      font-weight: 300;
+      line-height: 40px;
+      padding: 0 24px;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all .3s;
+
+      &:last-child {
+        border: none;
+      }
+
+      &:hover{
+        background: rgba($bluegrey-50, .24);
+        color: $salmon;
+        cursor: pointer;
+      }
+
+      i {
+        display: none;
+      }
+
+      &.is-active {
+        color: $black;
+        position: relative;
+
+        i {
+          display: block;
+          left: 8px;
+          position: absolute;
+          top: 14px;
+        }
+      }
+    }
   }
 }
+
 
 ul.chart-dropdown {
   background: $white;
@@ -70,9 +135,9 @@ ul.chart-dropdown {
   display: none;
   margin-top: -1px;
   position: absolute;
-  right: 35px;
-  top: 20px;
-  width: 120px;
+  // right: 20px;
+  top: 0;
+  // width: 120px;
 
   &.is-visible {
     display: block;

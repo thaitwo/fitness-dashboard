@@ -16122,35 +16122,43 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+* Dropdown Menu
+*
+* @class
+* @param ($container) string - Id of container to create dropdown menu
+* @param (data) array - Array of menu items
+* @param (callback) function - Function
+* @returns (HTML) - Returns HTML for a dropdown menu
+*/
+
 var Dropdown = function () {
-  function Dropdown(menuId, buttonId, listId, arrayOfListItems) {
+  function Dropdown(containerId, data, callback) {
     _classCallCheck(this, Dropdown);
 
-    this.menuId = menuId;
-    this.buttonId = buttonId;
-    this.listId = listId;
-    this.arrayOfListItems = arrayOfListItems;
-    this.menuContainer = $('#' + this.menuId);
-    this.topContainer = $('.container-fluid');
+    this.containerId = containerId;
+    this.data = data;
+    this.callback = callback;
+    // this.className = className;
+    this.$topContainer = $('.container-fluid');
+    this.$menuContainer = $('#' + containerId);
 
-    // RENDER DROPDOWN HTML (BUTTON AND <UL>)
+    // RENDER DROPDOWN HTML (<button>, <ul>)
     this.renderDropdownHTML();
 
-    // REGISTER ELEMENTS
-    this.dropdownButtonLabel = $('.dropdown-button-label');
-    this.$menuList = $('#' + this.listId);
-    this.$dropdownButton = $('#' + this.buttonId);
+    // REGISTER ELEMENTS OF DROPDOWN MENU
+    this.$buttonContainer = $('button#' + containerId);
+    this.$buttonContainerLabel = $('button#' + containerId + ' .dropdown-button-label');
+    this.$ulContainer = $('ul#' + containerId);
 
-    // RENDER <LI> HTML
-    this.createMenuListItems();
-
-    // REGISTER <LI> ELEMENTS
-    this.$listItems = $('#' + this.listId + ' > li');
-    this.$firstListItem = $('#' + this.listId + ' > li:first');
+    // RENDER LIST ITEMS HTML
+    this.renderListItemsHTML();
+    this.$listItems = $('ul#' + containerId + ' > li');
+    this.$firstListItem = $('ul#' + containerId + ' > li:first');
 
     // ACTIVATE MENU
-    this.activateDropdownMenu();
-    this.activateMenuLinks(this.$menuList);
+    this.activateDropdownButton();
+    this.activateMenuLinks(this.$ulContainer);
   }
 
   // UPDATE DROPDOWN BUTTON LABEL AND SELECTED <LI>
@@ -16167,7 +16175,7 @@ var Dropdown = function () {
         var selectedItemTextValue = selectedItem[0].innerText;
 
         // UPDATE DROPDOWN BUTTON LABEL
-        _this.dropdownButtonLabel.text(selectedItemTextValue);
+        _this.$buttonContainerLabel.text(selectedItemTextValue);
 
         // REMOVE 'IS-ACTIVE' CLASS FROM ALL <LI>
         _this.$listItems.removeClass('is-active');
@@ -16181,44 +16189,49 @@ var Dropdown = function () {
     // SHOW <UL> ON DROPDOWN BUTTON CLICK
 
   }, {
-    key: 'activateDropdownMenu',
-    value: function activateDropdownMenu() {
+    key: 'activateDropdownButton',
+    value: function activateDropdownButton() {
       var _this2 = this;
 
       this.$firstListItem.addClass('is-active');
 
-      this.$dropdownButton.on('click', function (event) {
+      this.$buttonContainer.on('click', function (event) {
         event.stopPropagation();
-        _this2.$menuList.toggleClass('is-visible');
+        _this2.$ulContainer.toggleClass('is-visible');
       });
-      this.topContainer.on('click', function () {
-        _this2.$menuList.removeClass('is-visible');
+
+      this.$topContainer.on('click', function () {
+        _this2.$ulContainer.removeClass('is-visible');
       });
     }
 
     // GENERATE HTML OF LIST ITEMS WITHIN <UL>
 
   }, {
-    key: 'createMenuListItems',
-    value: function createMenuListItems() {
+    key: 'renderListItemsHTML',
+    value: function renderListItemsHTML() {
       var _this3 = this;
 
-      this.arrayOfListItems.forEach(function (item) {
-        _this3.$menuList.append('<li><i class="fa fa-check" aria-hidden="true"></i>' + item + '</li>');
+      this.data.map(function (item) {
+        _this3.$ulContainer.append('<li id="' + item.toLowerCase() + '"><i class="fa fa-check" aria-hidden="true"></i>' + item + '</li>');
+        // return `<li id="${item.toLowerCase()}"><i class="fa fa-check" aria-hidden="true"></i>${item}</li>`;
       });
     }
 
     // GENERATE HTML FOR DROPDOWN BUTTON AND <UL>
 
   }, {
-    key: 'createMenuList',
-    value: function createMenuList() {
-      return '\n      <button id="' + this.buttonId + '" class="chart-dropdown">\n        <span class="dropdown-button-label">' + this.arrayOfListItems[0] + '</span>\n        <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>\n      </button>\n\n      <ul id="' + this.listId + '" class="chart-dropdown">\n      </ul>\n    ';
-    }
-  }, {
     key: 'renderDropdownHTML',
     value: function renderDropdownHTML() {
-      this.menuContainer.append(this.createMenuList());
+
+      // Render <li> elements
+      // const listItems = this.renderListItemsHTML();
+      // console.log(this.renderListItemsHTML());
+
+      // Render entire dropdown HTML
+      var dropdownHTML = '\n      <button id="' + this.containerId + '">\n        <span class="dropdown-button-label">' + this.data[0] + '</span>\n        <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>\n      </button>\n\n      <ul id="' + this.containerId + '">\n      </ul>\n      ';
+
+      this.$menuContainer.append(dropdownHTML);
     }
   }]);
 
@@ -16275,48 +16288,53 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 */
 
 var Graph = function () {
-  function Graph(containerId, type, data, interval) {
+  // @parameters (string, string, object, object)
+  function Graph(canvasId, graphType, data, options) {
     _classCallCheck(this, Graph);
 
-    this.containerId = containerId;
-    this.type = type;
+    this.canvasId = canvasId;
+    this.graphType = graphType || 'bar';
 
     this.data = data || {
       labels: ["Jun 1", "Jun 2", "Jun 3", "Jun 4", "Jun 5", "Jun 6", "Jun 7"],
       display: true,
       datasets: [{
-        // label: "Steps Taken",
-        fill: false,
-        backgroundColor: '#FA8072',
+        backgroundColor: 'rgba(250, 128, 114, .2)',
         borderColor: '#FA8072',
-        borderWidth: 3,
+        borderWidth: 2,
         data: [6059, 7320, 8209, 6347, 5238, 6830, 7836],
-        hoverRadius: 3,
-        radius: 2
+        hoverRadius: 12,
+        radius: 4,
+        lineTension: 0
       }]
     };
 
-    this.interval = interval;
-    this.options = this.getOptions();
+    this.options = options || this.getOptions();
     this.graph;
 
     this.render();
   }
 
+  // DESTROY CHART
+
+
   _createClass(Graph, [{
-    key: "destroy",
+    key: 'destroy',
     value: function destroy() {
       if (this.graph) {
         this.graph.destroy();
       }
     }
+
+    // RENDER OPTIONS OBJECT
+
   }, {
-    key: "getOptions",
+    key: 'getOptions',
     value: function getOptions() {
       return {
         layout: {
           padding: {
-            top: 10,
+            top: 30,
             right: 20,
             bottom: 30,
             left: 20
@@ -16357,24 +16375,17 @@ var Graph = function () {
               padding: 15
             }
           }]
-        },
-        title: {
-          display: true,
-          fontColor: '#CFD8DC',
-          fontFamily: "'Montserrat', sans-serif",
-          fontSize: 16,
-          fontStyle: 'normal',
-          padding: 30,
-          position: 'top',
-          text: this.interval || 'DAILY'
         }
       };
     }
+
+    // RENDER NEW CHART
+
   }, {
-    key: "render",
+    key: 'render',
     value: function render() {
-      this.graph = new _chart2.default(this.containerId, {
-        type: this.type,
+      this.graph = new _chart2.default(this.canvasId, {
+        type: this.graphType,
 
         data: this.data,
 
@@ -16405,9 +16416,9 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 __webpack_require__(120);
 
-var _Dropdown = __webpack_require__(117);
+var _dropdown = __webpack_require__(117);
 
-var _Dropdown2 = _interopRequireDefault(_Dropdown);
+var _dropdown2 = _interopRequireDefault(_dropdown);
 
 var _graph = __webpack_require__(119);
 
@@ -16425,24 +16436,36 @@ var App = function () {
   function App() {
     _classCallCheck(this, App);
 
-    this.stepsChartId = document.getElementById('stepsChart');
+    this.stepsChartId = $('#stepsChart');
     this.renderGraphs();
     this.stepsGraph;
     this.testDropdown;
+    this.categoriesDropdown;
     this.activateSidebarMenu();
-    // this.activateChartIntervalMenu();
-    this.activateDropdown();
+    // this.activateDropdownMenu();
+    // this.activateDropdown();
+
+    var timeDropdownContainer = 'time-dropdown';
+    var categoriesDropdownContainer = $('categories-dropdown');
+
+    // this.updateTimeDropdown = this.updateTimeDropdown(timeDropdownContainer).bind(this);
+
+    var healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
+    var timeData = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
+
+    new _dropdown2.default('categories-dropdown', healthCategories);
+    new _dropdown2.default('time-dropdown', timeData);
 
     this.weeklyData = {
       labels: ['May 1', 'May 8', 'May 15', 'May 22', 'May 29', 'Jun 5'],
       display: true,
       datasets: [{
-        backgroundColor: '#FA8072',
+        backgroundColor: 'rgba(250, 128, 114, .2)',
         borderColor: '#FA8072',
         borderWidth: 3,
         data: [61059, 71320, 81209, 61347, 51238, 61830],
-        hoverRadius: 3,
-        radius: 2,
+        hoverRadius: 12,
+        radius: 4,
         lineTension: 0
       }]
     };
@@ -16451,12 +16474,12 @@ var App = function () {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
       display: true,
       datasets: [{
-        backgroundColor: '#FA8072',
+        backgroundColor: 'rgba(250, 128, 114, .2)',
         borderColor: '#FA8072',
-        borderWidth: 3,
+        borderWidth: 2,
         data: [610590, 713200, 812090, 613470, 512380, 618300, 718360, 717770, 813460, 727340, 829670, 785670],
-        hoverRadius: 3,
-        radius: 2,
+        hoverRadius: 12,
+        radius: 4,
         lineTension: 0
       }]
     };
@@ -16465,12 +16488,12 @@ var App = function () {
       labels: ['2014', '2015', '2016', '2017'],
       display: true,
       datasets: [{
-        backgroundColor: '#FA8072',
+        backgroundColor: 'rgba(250, 128, 114, .2)',
         borderColor: '#FA8072',
         borderWidth: 3,
         data: [65203, 61059, 71320, 81209],
-        hoverRadius: 3,
-        radius: 2,
+        hoverRadius: 12,
+        radius: 4,
         lineTension: 0
       }]
     };
@@ -16484,7 +16507,16 @@ var App = function () {
   //   .success()
   // }
 
+
   _createClass(App, [{
+    key: 'updateTimeDropdown',
+    value: function updateTimeDropdown(id) {
+      var dropdownContainer = $('');
+    }
+
+    // ACTIVATE SIDEBAR MENU
+
+  }, {
     key: 'activateSidebarMenu',
     value: function activateSidebarMenu() {
       var _this = this;
@@ -16496,52 +16528,80 @@ var App = function () {
 
         if (event.target.tagName === 'A') {
           _this.updateActiveClass('#nav-sidebar', event.target);
-          _this.udpatePageTitle(id);
+          _this.udpatePageHeader(id);
         }
       });
     }
+
+    // UPDATE PAGE HEADER
+
   }, {
-    key: 'udpatePageTitle',
-    value: function udpatePageTitle(title) {
+    key: 'udpatePageHeader',
+    value: function udpatePageHeader(headerText) {
       var pageTitleContainer = document.querySelector('.page-title');
 
-      pageTitleContainer.innerHTML = title;
+      pageTitleContainer.innerHTML = headerText;
     }
+
+    // ACTIVATE DROPDOWN MENU FOR CHART
+
   }, {
     key: 'activateDropdown',
-    value: function activateDropdown() {
-      var arr = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-time'];
-      this.testDropdown = new _Dropdown2.default('sleep-dropdown', 'test-button', 'test-intervals', arr);
-    }
+    value: function activateDropdown() {}
+    // const arr = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
+    // this.testDropdown = new Dropdown('steps-dropdown', 'steps-button', 'steps-intervals', arr);
+    // this.activateDropdownMenu('steps-intervals');
+
+    // const healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
+    // this.categoriesDropdown = new Dropdown('categories-dropdown', healthCategories, 'categories');
+    // this.activateDropdownMenu('health-categories', healthCategories, this.testData);
+
+
+    // For loop - for each
+
+
+    // UPDATE GRAPH WHEN DROPDOWN MENU ITEM IS SELECTED
+
   }, {
-    key: 'activateChartIntervalMenu',
-    value: function activateChartIntervalMenu() {
+    key: 'activateDropdownMenu',
+    value: function activateDropdownMenu(ulDropdownId, arrayOfListItems, arrayOfNewDataObjects) {
       var _this2 = this;
 
-      var timeIntervalsId = document.querySelector('#time-intervals');
+      var dropdownContainer = $('#' + ulDropdownId);
 
-      timeIntervalsId.addEventListener('click', function (event) {
+      dropdownContainer.on('click', function (event) {
         var id = event.target.id;
-        id = id.toUpperCase();
 
         if (event.target.tagName === 'LI') {
-          _this2.updateActiveClass('#time-intervals', event.target);
+          // this.updateActiveClass('#time-intervals', event.target);
 
           switch (id) {
-            case 'DAILY':
-              _this2.updateGraph(_this2.dailyData, id);
+            // for loop
+
+            // for (var i = 0; i < arrayOfListItems.length; i++) {
+            //   return case 'arrayOfListItems[i]':;
+
+            //   for (var x = 0; x < arrayOfNewDataObjects.length; x++) {
+            //     if (x === i) {
+            //       return this.updateGraph(arrayOfNewDataObjects[x]);
+            //     }
+            //   }
+            // }
+
+            case 'daily':
+              _this2.updateGraph(_this2.dailyData);
               break;
-            case 'WEEKLY':
-              _this2.updateGraph(_this2.weeklyData, id);
+            case 'weekly':
+              _this2.updateGraph(_this2.weeklyData);
               break;
-            case 'MONTHLY':
-              _this2.updateGraph(_this2.monthlyData, id);
+            case 'monthly':
+              _this2.updateGraph(_this2.monthlyData);
               break;
-            case 'YEARLY':
-              _this2.updateGraph(_this2.yearlyData, id);
+            case 'yearly':
+              _this2.updateGraph(_this2.yearlyData);
               break;
-            case 'ALL-TIME':
-              _this2.updateGraph(_this2.allTimeData, id);
+            case 'all-time':
+              _this2.updateGraph(_this2.allTimeData);
               break;
             default:
               alert('Click a button');
@@ -16549,6 +16609,9 @@ var App = function () {
         }
       });
     }
+
+    // UPDATE SELECTED LINK
+
   }, {
     key: 'updateActiveClass',
     value: function updateActiveClass(containerName, clickedElement) {
@@ -16561,19 +16624,25 @@ var App = function () {
 
       clickedElement.classList.add('active');
     }
+
+    // UPDATE GRAPH
+
   }, {
     key: 'updateGraph',
-    value: function updateGraph(intervalData, interval) {
+    value: function updateGraph(newDataObject) {
       // Destroy current graph
       this.stepsGraph.destroy();
 
       // Create new graph
-      this.stepsGraph = new _graph2.default(this.stepsChartId, 'bar', intervalData, interval);
+      this.stepsGraph = new _graph2.default(this.stepsChartId, 'line', newDataObject);
     }
+
+    // RENDER GRAPHS
+
   }, {
     key: 'renderGraphs',
     value: function renderGraphs() {
-      this.stepsGraph = new _graph2.default(this.stepsChartId, 'bar');
+      this.stepsGraph = new _graph2.default(this.stepsChartId, 'line');
     }
   }]);
 

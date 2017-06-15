@@ -1,6 +1,6 @@
 .clear:after {
   content: "";
-  display: table;
+  display: block;
   clear: both;
 }
 
@@ -15,7 +15,7 @@
 }
 
 .dashboard-content-container {
-  margin-top: 92px;
+  margin: 73px 15px 30px;
 }
 
 .nopadding {
