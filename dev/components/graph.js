@@ -9,7 +9,7 @@ class Graph {
   // @parameters (string, string, object, object)
   constructor(canvasId, graphType, data, options) {
     this.canvasId = canvasId;
-    this.graphType = graphType || 'bar';
+    this.graphType = graphType || 'line';
 
     this.data = data ||
       {

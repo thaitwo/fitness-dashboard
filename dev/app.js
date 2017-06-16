@@ -15,17 +15,18 @@ class App {
     // this.activateDropdownMenu();
     // this.activateDropdown();
 
+    this.updateTimeDropdown = this.updateTimeDropdown.bind(this);
+
     const timeDropdownContainer = 'time-dropdown';
     const categoriesDropdownContainer = $('categories-dropdown');
 
-    // this.updateTimeDropdown = this.updateTimeDropdown(timeDropdownContainer).bind(this);
 
     const healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
     const timeData = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
 
 
     new Dropdown('categories-dropdown', healthCategories);
-    new Dropdown('time-dropdown', timeData);
+    new Dropdown('time-dropdown', timeData, this.updateTimeDropdown);
 
 
 
@@ -81,10 +82,30 @@ class App {
   //   .success()
   // }
 
-
+  // UPDATE GRAPH WHEN TIME DROPDOWN MENU IS SELECTED
   updateTimeDropdown(id) {
-    const dropdownContainer = $(``)
+
+    switch(id) {
+      case 'daily':
+        this.updateGraph();
+        break;
+      case 'weekly':
+        this.updateGraph(this.weeklyData);
+        break;
+      case 'monthly':
+        this.updateGraph(this.monthlyData);
+        break;
+      case 'yearly':
+        this.updateGraph(this.yearlyData);
+        break;
+      case 'all-time':
+        this.updateGraph();
+        break;
+      default:
+        alert('Please select from the dropdown menu.');
+    }
   }
+
 
 
   // ACTIVATE SIDEBAR MENU
@@ -189,18 +210,18 @@ class App {
 
 
   // UPDATE GRAPH
-  updateGraph(newDataObject) {
+  updateGraph(newData) {
     // Destroy current graph
     this.stepsGraph.destroy();
 
     // Create new graph
-    this.stepsGraph = new Graph(this.stepsChartId, 'line', newDataObject);
+    this.stepsGraph = new Graph(this.stepsChartId, newData);
   }
 
 
   // RENDER GRAPHS
   renderGraphs() {
-    this.stepsGraph = new Graph(this.stepsChartId, 'line');
+    this.stepsGraph = new Graph(this.stepsChartId);
   }
 }
 

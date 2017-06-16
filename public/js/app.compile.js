@@ -16128,8 +16128,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @class
 * @param ($container) string - Id of container to create dropdown menu
 * @param (data) array - Array of menu items
-* @param (callback) function - Function
-* @returns (HTML) - Returns HTML for a dropdown menu
+* @param (callback) function - Callback function
+* @returns (HTML) - Returns HTML for a dropdown menu w/ click handlers
 */
 
 var Dropdown = function () {
@@ -16139,20 +16139,16 @@ var Dropdown = function () {
     this.containerId = containerId;
     this.data = data;
     this.callback = callback;
-    // this.className = className;
     this.$topContainer = $('.container-fluid');
     this.$menuContainer = $('#' + containerId);
 
-    // RENDER DROPDOWN HTML (<button>, <ul>)
+    // RENDER DROPDOWN HTML (<button>, <ul>, <li>)
     this.renderDropdownHTML();
 
     // REGISTER ELEMENTS OF DROPDOWN MENU
     this.$buttonContainer = $('button#' + containerId);
     this.$buttonContainerLabel = $('button#' + containerId + ' .dropdown-button-label');
     this.$ulContainer = $('ul#' + containerId);
-
-    // RENDER LIST ITEMS HTML
-    this.renderListItemsHTML();
     this.$listItems = $('ul#' + containerId + ' > li');
     this.$firstListItem = $('ul#' + containerId + ' > li:first');
 
@@ -16169,9 +16165,12 @@ var Dropdown = function () {
     value: function activateMenuLinks(listId) {
       var _this = this;
 
+      var that = this;
+
       listId.on('click', 'li', function (event) {
         // GET DROPDOWN BUTTON VALUE
         var selectedItem = $(event.target);
+        var id = event.target.id;
         var selectedItemTextValue = selectedItem[0].innerText;
 
         // UPDATE DROPDOWN BUTTON LABEL
@@ -16182,6 +16181,8 @@ var Dropdown = function () {
 
         // ADD 'IS-ACTIVE' CLASS TO SELECTED <LI>
         selectedItem.addClass('is-active');
+
+        that.callback(id);
       });
     }
 
@@ -16210,12 +16211,10 @@ var Dropdown = function () {
   }, {
     key: 'renderListItemsHTML',
     value: function renderListItemsHTML() {
-      var _this3 = this;
-
-      this.data.map(function (item) {
-        _this3.$ulContainer.append('<li id="' + item.toLowerCase() + '"><i class="fa fa-check" aria-hidden="true"></i>' + item + '</li>');
-        // return `<li id="${item.toLowerCase()}"><i class="fa fa-check" aria-hidden="true"></i>${item}</li>`;
-      });
+      return this.data.map(function (item) {
+        // this.$ulContainer.append(`<li id="${item.toLowerCase()}"><i class="fa fa-check" aria-hidden="true"></i>${item}</li>`);
+        return '<li id="' + item.toLowerCase() + '"><i class="fa fa-check" aria-hidden="true"></i>' + item + '</li>';
+      }).join('');
     }
 
     // GENERATE HTML FOR DROPDOWN BUTTON AND <UL>
@@ -16225,11 +16224,10 @@ var Dropdown = function () {
     value: function renderDropdownHTML() {
 
       // Render <li> elements
-      // const listItems = this.renderListItemsHTML();
-      // console.log(this.renderListItemsHTML());
+      var listItems = this.renderListItemsHTML();
 
       // Render entire dropdown HTML
-      var dropdownHTML = '\n      <button id="' + this.containerId + '">\n        <span class="dropdown-button-label">' + this.data[0] + '</span>\n        <i class="fa fa-angle-down fa-lg" aria-hidden="true"></i>\n      </button>\n\n      <ul id="' + this.containerId + '">\n      </ul>\n      ';
+      var dropdownHTML = '\n      <button id="' + this.containerId + '">\n        <span class="dropdown-button-label">' + this.data[0] + '</span>\n        <i class="fa fa-angle-down" aria-hidden="true"></i>\n      </button>\n\n      <ul id="' + this.containerId + '">\n        ' + listItems + '\n      </ul>\n      ';
 
       this.$menuContainer.append(dropdownHTML);
     }
@@ -16293,7 +16291,7 @@ var Graph = function () {
     _classCallCheck(this, Graph);
 
     this.canvasId = canvasId;
-    this.graphType = graphType || 'bar';
+    this.graphType = graphType || 'line';
 
     this.data = data || {
       labels: ["Jun 1", "Jun 2", "Jun 3", "Jun 4", "Jun 5", "Jun 6", "Jun 7"],
@@ -16445,16 +16443,16 @@ var App = function () {
     // this.activateDropdownMenu();
     // this.activateDropdown();
 
+    this.updateTimeDropdown = this.updateTimeDropdown.bind(this);
+
     var timeDropdownContainer = 'time-dropdown';
     var categoriesDropdownContainer = $('categories-dropdown');
-
-    // this.updateTimeDropdown = this.updateTimeDropdown(timeDropdownContainer).bind(this);
 
     var healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
     var timeData = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
 
     new _dropdown2.default('categories-dropdown', healthCategories);
-    new _dropdown2.default('time-dropdown', timeData);
+    new _dropdown2.default('time-dropdown', timeData, this.updateTimeDropdown);
 
     this.weeklyData = {
       labels: ['May 1', 'May 8', 'May 15', 'May 22', 'May 29', 'Jun 5'],
@@ -16507,11 +16505,32 @@ var App = function () {
   //   .success()
   // }
 
+  // UPDATE GRAPH WHEN TIME DROPDOWN MENU IS SELECTED
+
 
   _createClass(App, [{
     key: 'updateTimeDropdown',
     value: function updateTimeDropdown(id) {
-      var dropdownContainer = $('');
+
+      switch (id) {
+        case 'daily':
+          this.updateGraph();
+          break;
+        case 'weekly':
+          this.updateGraph(this.weeklyData);
+          break;
+        case 'monthly':
+          this.updateGraph(this.monthlyData);
+          break;
+        case 'yearly':
+          this.updateGraph(this.yearlyData);
+          break;
+        case 'all-time':
+          this.updateGraph();
+          break;
+        default:
+          alert('Please select from the dropdown menu.');
+      }
     }
 
     // ACTIVATE SIDEBAR MENU
@@ -16629,12 +16648,12 @@ var App = function () {
 
   }, {
     key: 'updateGraph',
-    value: function updateGraph(newDataObject) {
+    value: function updateGraph(newData) {
       // Destroy current graph
       this.stepsGraph.destroy();
 
       // Create new graph
-      this.stepsGraph = new _graph2.default(this.stepsChartId, 'line', newDataObject);
+      this.stepsGraph = new _graph2.default(this.stepsChartId, newData);
     }
 
     // RENDER GRAPHS
@@ -16642,7 +16661,7 @@ var App = function () {
   }, {
     key: 'renderGraphs',
     value: function renderGraphs() {
-      this.stepsGraph = new _graph2.default(this.stepsChartId, 'line');
+      this.stepsGraph = new _graph2.default(this.stepsChartId);
     }
   }]);
 
