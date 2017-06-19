@@ -158,7 +158,7 @@ table {
   .navbar-form .form-control {
     background: rgba(255, 255, 255, 0);
     border: 1px solid rgba(38, 50, 56, 0.12);
-    border-radius: 100px;
+    border-radius: 3px;
     box-shadow: none;
     color: rgba(0, 0, 0, 0.8);
     font-family: "Montserrat", sans-serif;
@@ -169,8 +169,8 @@ table {
     transition: all .5s;
     width: 100%; }
     .navbar-form .form-control:hover, .navbar-form .form-control:focus {
-      background: rgba(250, 128, 114, 0.04);
-      border: 1px solid rgba(250, 128, 114, 0.6); }
+      background-color: rgba(0, 0, 0, 0.01);
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.12); }
 
 .log-out a {
   background-color: rgba(38, 50, 56, 0.05);
