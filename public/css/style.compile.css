@@ -43,6 +43,75 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+.l-flex {
+  display: flex; }
+  .l-flex.flex-wrap {
+    flex-wrap: wrap; }
+  .l-flex.is-hori {
+    flex-direction: row; }
+  .l-flex.is-hori-reverse {
+    flex-direction: row-reverse; }
+  .l-flex.is-vert {
+    flex-direction: column; }
+  .l-flex.is-vert-reverse {
+    flex-direction: column-reverse; }
+  .l-flex.align-main-left {
+    justify-content: flex-start; }
+  .l-flex.align-main-right {
+    justify-content: flex-end; }
+  .l-flex.align-main-center {
+    justify-content: center; }
+  .l-flex.align-main-space-between {
+    justify-content: space-between; }
+  .l-flex.align-main-space-around {
+    justify-content: space-around; }
+  .l-flex.align-cross-top {
+    align-items: flex-start; }
+  .l-flex.align-cross-bottom {
+    align-items: flex-end; }
+  .l-flex.align-cross-center {
+    align-items: center; }
+  .l-flex.align-cross-stretch {
+    align-items: stretch; }
+  .l-flex.align-cross-baseline {
+    align-items: baseline; }
+
+.flex-col-1 {
+  flex-grow: 1; }
+
+.flex-col-2 {
+  flex-grow: 2; }
+
+.flex-col-3 {
+  flex-grow: 3; }
+
+.flex-col-4 {
+  flex-grow: 4; }
+
+.flex-col-5 {
+  flex-grow: 5; }
+
+.flex-col-6 {
+  flex-grow: 6; }
+
+.flex-col-7 {
+  flex-grow: 7; }
+
+.flex-col-8 {
+  flex-grow: 8; }
+
+.flex-col-9 {
+  flex-grow: 9; }
+
+.flex-col-10 {
+  flex-grow: 10; }
+
+.flex-col-11 {
+  flex-grow: 11; }
+
+.flex-col-12 {
+  flex-grow: 12; }
+
 /* LAYOUT
 ============================================================== */
 .clearfix:after {
@@ -80,6 +149,8 @@ table {
 .l-pad-top-8 {
   padding-top: 64px; }
 
+/* GRID
+============================================================== */
 /* NAVIGATION
 ============================================================== */
 /* Hide for mobile, show later */
@@ -98,6 +169,7 @@ table {
     padding: 0;
     position: fixed;
     top: 0;
+    width: 200px;
     z-index: 1000; } }
 
 .nav > li > a:hover, .nav > li > a:focus {
@@ -233,12 +305,25 @@ table {
   height: 100%; }
 
 .content-container {
+  left: 200px;
+  top: 58px;
+  right: 0;
+  position: absolute; }
+
+.box-container {
+  background-color: #FFFFFF;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); }
+
+.dashboard-container {
   background-color: #ECEFF1;
-  padding-left: 0;
-  padding-right: 0; }
+  left: 0;
+  right: 0;
+  position: absolute; }
 
 .dashboard-content-container {
-  margin: 73px 15px 30px; }
+  margin-left: 200px;
+  padding: 30px; }
 
 .nopadding {
   padding: 0 !important;
@@ -271,6 +356,9 @@ table {
   background-color: white;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
   height: 58px;
+  top: 0;
+  left: 200px;
+  right: 0;
   position: fixed;
   z-index: 100; }
 
@@ -278,11 +366,36 @@ table {
   background-color: #FFFFFF;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  margin: 15px; }
-  .chart-container.is-small {
-    height: 140px; }
-  .chart-container.is-large {
-    height: 300px; }
+  margin-bottom: 30px; }
+
+.company-list-container {
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 200px; }
+  .company-list-container li {
+    background-color: #ECEFF1;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    height: 60px;
+    padding: 14px 24px;
+    transition: all .3s; }
+    .company-list-container li:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      cursor: pointer; }
+    .company-list-container li .company-code {
+      color: rgba(0, 0, 0, 0.8);
+      display: block;
+      font-family: "Montserrat", sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      padding-bottom: 2px; }
+    .company-list-container li .company-name {
+      color: rgba(0, 0, 0, 0.4);
+      display: block;
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      font-weight: 300; }
 
 .chart-dropdown-container {
   float: right;

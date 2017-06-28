@@ -3,13 +3,30 @@
 }
 
 .content-container {
-	background-color: $bluegrey-50;
-  padding-left: 0;
-  padding-right: 0;
+  // margin-left: 200px;
+  // position: relative;
+  left: 200px;
+  top: 58px;
+  right: 0;
+  position: absolute;
+}
+
+.box-container {
+  background-color: $white;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0,0,0,.12);
+}
+
+.dashboard-container {
+  background-color: $bluegrey-50;
+  left: 0;
+  right: 0;
+  position: absolute;
 }
 
 .dashboard-content-container {
-  margin: 73px 15px 30px;
+  margin-left: 200px;
+  padding: 30px;
 }
 
 .nopadding {
@@ -46,11 +63,11 @@
 
 .top-bar {
   background-color: rgba($white, 1);
-  // border-bottom: 1px solid rgba($black, .1);
-  box-shadow: 0 0 4px rgba(0,0,0,0.12),
-              0 4px 8px rgba(0,0,0,0.12);
+  box-shadow: 0 0 4px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.12);
   height: 58px;
-  // margin-left: 2px;
+  top: 0;
+  left: 200px;
+  right: 0;
   position: fixed;
   z-index: 100;
 }

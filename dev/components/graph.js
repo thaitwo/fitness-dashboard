@@ -67,6 +67,7 @@ class Graph {
   // RENDER OPTIONS OBJECT
   getOptions() {
     return {
+      responsive: false,
       layout: {
         padding: {
           top: 30,

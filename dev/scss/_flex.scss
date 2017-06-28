@@ -1,0 +1,71 @@
+.l-flex {
+  display: flex;
+
+  &.flex-wrap {
+    flex-wrap: wrap;
+  }
+
+  &.is-hori {
+    flex-direction: row;
+  }
+
+  &.is-hori-reverse {
+    flex-direction: row-reverse;
+  }
+
+  &.is-vert {
+    flex-direction: column;
+  }
+
+  &.is-vert-reverse {
+    flex-direction: column-reverse;
+  }
+
+  &.align-main-left {
+    justify-content: flex-start;
+  }
+
+  &.align-main-right {
+    justify-content: flex-end;
+  }
+
+  &.align-main-center {
+    justify-content: center;
+  }
+
+  &.align-main-space-between {
+    justify-content: space-between;
+  }
+
+  &.align-main-space-around {
+    justify-content: space-around;
+  }
+
+  &.align-cross-top {
+    align-items: flex-start;
+  }
+
+  &.align-cross-bottom {
+    align-items: flex-end;
+  }
+
+  &.align-cross-center {
+    align-items: center;
+  }
+
+  &.align-cross-stretch {
+    align-items: stretch;
+  }
+
+  &.align-cross-baseline {
+    align-items: baseline;
+  }
+}
+
+@for $i from 1 through 12 {
+
+  .flex-col-#{$i} {
+    flex-grow: $i;
+  }
+}
+

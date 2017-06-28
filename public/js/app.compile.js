@@ -16404,6 +16404,7 @@ var Graph = function () {
     key: 'getOptions',
     value: function getOptions() {
       return {
+        responsive: false,
         layout: {
           padding: {
             top: 30,
@@ -26779,7 +26780,14 @@ var App = function () {
     _classCallCheck(this, App);
 
     this.stepsChartId = (0, _jquery2.default)('#stepsChart');
-    this.renderGraphs();
+    this.$companyList = (0, _jquery2.default)('#company-list');
+    // this.renderGraphs();
+
+    this.getCompanies();
+    this.getStockData('AAPL');
+
+    this.updateGraphOnCompanySelection();
+
     this.stepsGraph;
     this.testDropdown;
     this.categoriesDropdown;
@@ -26798,8 +26806,8 @@ var App = function () {
     var healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
     var timeData = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
 
-    // new Dropdown('categories-dropdown', healthCategories, this.updateCategoryDropdown.bind(this));
-    new _dropdown2.default('time-dropdown', timeData, this.updateTimeDropdown);
+    // new Dropdown('time-dropdown', timeData, this.updateTimeDropdown);
+
   }
 
   // getGraphData() {
@@ -26832,12 +26840,24 @@ var App = function () {
         url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
         dataType: 'json',
         success: function success(response) {
-          console.log('Request worked!');
+
           var priceData = _this.returnStockOpenPrice(response);
           var labels = _this.returnDateLabels(response);
 
           _this.stepsGraph = new _graph2.default(_this.stepsChartId, priceData, labels);
         }
+      });
+    }
+  }, {
+    key: 'updateGraphOnCompanySelection',
+    value: function updateGraphOnCompanySelection() {
+      var _this2 = this;
+
+      this.$companyList.on('click', function (event) {
+        event.preventDefault();
+
+        var id = event.target.textContent;
+        _this2.updateGraph(id);
       });
     }
 
@@ -26851,7 +26871,7 @@ var App = function () {
       }).reverse();
     }
 
-    // CREATE DATA ARRAY OF DATES
+    // CREATE DATA ARRAY OF DATE LABELS
 
   }, {
     key: 'returnDateLabels',
@@ -26860,20 +26880,32 @@ var App = function () {
         return day[0];
       }).reverse();
     }
+
+    // RENDER LIST OF 5 COMPANIES
+
   }, {
     key: 'returnCompanyList',
     value: function returnCompanyList(data) {
-      data.datasets.slice(0, 4).map(function (company) {
-        console.log(company.dataset_code);
+      var datasets = data.datasets,
+          name = data.name;
+
+
+      return datasets.slice(0, 20).map(function (company) {
+        var dataset_code = company.dataset_code,
+            name = company.name;
+
+        name = name.split('(')[0];
+
+        return '<li>\n                <span class="company-code">' + dataset_code + '</span>\n                <span class="company-name">' + name + '</span>\n              </li>';
       });
     }
 
     // GET LIST OF COMPANIES
 
   }, {
-    key: 'getData',
-    value: function getData(interval) {
-      var _this2 = this;
+    key: 'getCompanies',
+    value: function getCompanies(interval) {
+      var _this3 = this;
 
       _jquery2.default.ajax({
         // url: 'https://www.quandl.com/api/v1/datasets/CHRIS/CME_BZ1.json?collapse=daily&api_key=tskzGKweRxWgnbX2pafZ',
@@ -26888,15 +26920,18 @@ var App = function () {
           api_key: 'tskzGKweRxWgnbX2pafZ'
         },
         error: function error(xhr, message, _error) {
-          console.log('error');
           console.log(message, _error);
         },
         success: function success(data) {
-          console.log('DATA', data);
+          console.log('COMPANIES', data);
+          var companyList = _this3.returnCompanyList(data);
+
+          _this3.$companyList.append(companyList);
           // let newData = this.getDailyData(data);
           // let labels = this.getDailyLabels(data);
           // this.stepsGraph = new Graph(this.stepsChartId, this.stepsData(data));
           // this.stepsGraph = new Graph(this.stepsChartId, newData, labels);
+
 
           switch (interval) {
             // case 'daily':
@@ -26907,23 +26942,23 @@ var App = function () {
             // case 'weekly':
             //   break;
             case 'steps':
-              var stepsArray = _this2.stepsData(data);
-              _this2.updateGraph(stepsArray);
+              var stepsArray = _this3.stepsData(data);
+              _this3.updateGraph(stepsArray);
               // this.stepsGraph = new Graph(this.stepsChartId, stepsArray);
               break;
             case 'sleep':
-              var sleepArray = _this2.sleepData(data);
-              _this2.updateGraph(sleepArray);
+              var sleepArray = _this3.sleepData(data);
+              _this3.updateGraph(sleepArray);
               // this.stephsGraph = new Graph(this.stepsChartId, sleepArray);
               break;
             case 'weight':
-              var weightArray = _this2.weightData(data);
-              _this2.updateGraph(weightArray);
+              var weightArray = _this3.weightData(data);
+              _this3.updateGraph(weightArray);
               // this.stepsGraph = new Graph(this.stepsChartId, weightArray);
               break;
             case 'calories':
-              var caloriesArray = _this2.caloriesData(data);
-              _this2.updateGraph(caloriesArray);
+              var caloriesArray = _this3.caloriesData(data);
+              _this3.updateGraph(caloriesArray);
               // this.stepsGraph = new Graph(this.stepsChartId, caloriesArray);
               break;
           }
@@ -27013,7 +27048,7 @@ var App = function () {
       switch (id) {
         case 'daily':
           // const dataa = new GetData();
-          this.getData(id);
+          this.getCompanies(id);
           // this.updateGraph(dataa);
           break;
         case 'weekly':
@@ -27045,7 +27080,7 @@ var App = function () {
         case 'sleep':
         case 'weight':
         case 'calories':
-          this.getData(id);
+          this.getCompanies(id);
           break;
       }
     }
@@ -27055,7 +27090,7 @@ var App = function () {
   }, {
     key: 'activateSidebarMenu',
     value: function activateSidebarMenu() {
-      var _this3 = this;
+      var _this4 = this;
 
       var navSidebarId = document.querySelector('#nav-sidebar');
 
@@ -27063,8 +27098,8 @@ var App = function () {
         var id = event.target.id;
 
         if (event.target.tagName === 'A') {
-          _this3.updateActiveClass('#nav-sidebar', event.target);
-          _this3.udpatePageHeader(id);
+          _this4.updateActiveClass('#nav-sidebar', event.target);
+          _this4.udpatePageHeader(id);
         }
       });
     }
@@ -27098,7 +27133,7 @@ var App = function () {
   }, {
     key: 'activateDropdownMenu',
     value: function activateDropdownMenu(ulDropdownId, arrayOfListItems, arrayOfNewDataObjects) {
-      var _this4 = this;
+      var _this5 = this;
 
       var dropdownContainer = (0, _jquery2.default)('#' + ulDropdownId);
 
@@ -27122,19 +27157,19 @@ var App = function () {
             // }
 
             case 'daily':
-              _this4.updateGraph(_this4.dailyData);
+              _this5.updateGraph(_this5.dailyData);
               break;
             case 'weekly':
-              _this4.updateGraph(_this4.weeklyData);
+              _this5.updateGraph(_this5.weeklyData);
               break;
             case 'monthly':
-              _this4.updateGraph(_this4.monthlyData);
+              _this5.updateGraph(_this5.monthlyData);
               break;
             case 'yearly':
-              _this4.updateGraph(_this4.yearlyData);
+              _this5.updateGraph(_this5.yearlyData);
               break;
             case 'all-time':
-              _this4.updateGraph(_this4.allTimeData);
+              _this5.updateGraph(_this5.allTimeData);
               break;
             default:
               alert('Click a button');
@@ -27162,12 +27197,14 @@ var App = function () {
 
   }, {
     key: 'updateGraph',
-    value: function updateGraph(newData) {
+    value: function updateGraph(id) {
       // Destroy current graph
       this.stepsGraph.destroy();
 
+      this.getStockData(id);
+
       // Create new graph
-      this.stepsGraph = new _graph2.default(this.stepsChartId, newData);
+      // this.stepsGraph = new Graph(this.stepsChartId, newData);
     }
 
     // RENDER GRAPHS

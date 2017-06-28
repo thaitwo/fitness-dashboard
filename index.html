@@ -4,123 +4,70 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   <link rel="stylesheet" href="public/css/style.compile.css">
   <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
   <script src="https://use.fontawesome.com/c05b0eed4c.js"></script>
   <title>HealthFit</title>
 </head>
 <body>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
-        <h1 class="logo"><a href="./">HealthFit</a></h1>
-        <ul id="nav-sidebar" class="nav nav-sidebar">
-          <li><a href="#" id="dashboard" class="active"><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>Dashboard</a></li>
-          <li><a href="#" id="goals"><i class="fa fa-trophy fa-lg" aria-hidden="true"></i>Goals</a></li>
-          <li><a href="#" id="challenges"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>Challenges</a></li>
-          <li><a href="#" id="settings"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>Settings</a></li>
-        </ul>
-        <div class="log-out"><a href="#"><i class="fa fa-power-off fa-lg" aria-hidden="true"></i>Log Out</a></div>
+
+  <div class="sidebar">
+    <h1 class="logo"><a href="./">HealthFit</a></h1>
+    <ul id="nav-sidebar" class="nav nav-sidebar">
+      <li><a href="#" id="dashboard" class="active"><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>Dashboard</a></li>
+      <li><a href="#" id="goals"><i class="fa fa-trophy fa-lg" aria-hidden="true"></i>Goals</a></li>
+      <li><a href="#" id="challenges"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>Challenges</a></li>
+      <li><a href="#" id="settings"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>Settings</a></li>
+    </ul>
+    <div class="log-out"><a href="#"><i class="fa fa-power-off fa-lg" aria-hidden="true"></i>Log Out</a></div>
+  </div>
+
+  <div class="top-bar">
+    <h2 class="page-title">Dashboard</h2>
+    <form class="navbar-form navbar-right">
+      <input type="text" class="form-control" placeholder="&#xF002  Search">
+    </form>
+  </div>
+
+  <div class="content-container">
+
+    <div class="dashboard-container">
+
+      <div id="company-list-container" class="company-list-container">
+        <ul id="company-list" class=""></ul>
       </div>
-      <div class="col-sm-9 col-md-9 col-lg-10 col-sm-offset-3 col-md-offset-3 col-lg-offset-2 content-container">
-        <div class="top-bar col-lg-10">
-          <h2 class="page-title">Dashboard</h2>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="&#xF002  Search">
-          </form>
+
+      <div class="dashboard-content-container clearfix">
+
+        <div class="chart-container">
+
+        <!-- <div class="l-pad-top-2 clearfix">
+
+          <div class="l-left">
+            <div id="categories-dropdown" class="menu-dropdown"></div>
+          </div>
+
+          <div class="l-left">
+            <div id="time-dropdown" class="menu-dropdown"></div>
+          </div>
+
+        </div> -->
+
+        <canvas id="stepsChart" width="900" height="400"></canvas>
+      </div>
+
+      <div class="l-flex is-hori align-main-space-between">
+        <div class="box-container">
+          <h2 class="container-header">Distance Covered</h2>
+          <canvas id="distanceChart"></canvas>
         </div>
 
-        <div class="dashboard-content-container">
-          <div class="clearfix">
-            <div class="chart-container col-md-12 col-lg-11">
-
-            <div class="l-pad-top-2 clearfix">
-              <div class="l-left">
-                <div id="categories-dropdown" class="menu-dropdown"></div>
-              </div>
-
-              <div class="l-left">
-                <div id="time-dropdown" class="menu-dropdown"></div>
-              </div>
-            </div>
-
-              <!-- <div class="btn-group">
-                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="caret"></span>
-                </button>
-
-                <ul id="time-intervals" class="dropdown-menu time-intervals">
-                  <li id="daily" class="active">Daily</li>
-                  <li id="weekly">Weekly</li>
-                  <li id="monthly">Monthly</li>
-                  <li id="yearly">Yearly</li>
-                  <li id="all-time">All Time</li>
-                </ul>
-              </div> -->
-
-
-              <!-- <div class="dropdown-container">
-                <button type="button" id="dropdown-intervals">INTERVALS</button>
-
-                <ul id="time-intervals" class="time-intervals visible">
-                  <li id="daily" class="active">Daily</li>
-                  <li id="weekly">Weekly</li>
-                  <li id="monthly">Monthly</li>
-                  <li id="yearly">Yearly</li>
-                  <li id="all-time">All Time</li>
-                </ul>
-              </div> -->
-
-
-              <!-- <ul id="time-intervals" class="time-intervals">
-                <li id="daily" class="active">Daily</li>
-                <li id="weekly">Weekly</li>
-                <li id="monthly">Monthly</li>
-                <li id="yearly">Yearly</li>
-                <li id="all-time">All Time</li>
-              </ul> -->
-              <canvas id="stepsChart"></canvas>
-            </div>
-
-            <!-- <div class="chart-container is-large col-md-3">
-              <h2 class="container-header">Sleep</h2>
-
-              <canvas id="sleepChart""></canvas>
-            </div> -->
-          </div>
-
-          <div class="col-lg-8 clearfix">
-            <div class="chart-container is-small col-md-3 col-lg-6">
-              <h2 class="container-header">Distance Covered</h2>
-              <canvas id="distanceChart"></canvas>
-            </div>
-
-            <div class="chart-container col-md-3 col-lg-5">
-              <h2 class="container-header">Weight</h2>
-              <canvas id="weightChart" width="300" height="300"></canvas>
-            </div>
-          </div>
-
-          <div class="chart-container is-small col-md-3">
-              <h2 class="container-header">Calories Burned</h2>
-              <canvas id="caloriesChart"></canvas>
-            </div>
-
-          <div>
-            <div class="chart-container is-small col-md-3">
-              <h2 class="container-header">Distance Covered</h2>
-              <canvas id="distanceChart"></canvas>
-            </div>
-            <div class="chart-container col-md-3">
-              <h2 class="container-header">Weight</h2>
-              <canvas id="weightChart" width="300" height="300"></canvas>
-            </div>
-            <div class="chart-container is-small col-md-3">
-              <h2 class="container-header">Calories Burned</h2>
-              <canvas id="caloriesChart"></canvas>
-            </div>
-          </div>
+        <div class="box-container">
+          <h2 class="container-header">News</h2>
+          <canvas id="caloriesChart"></canvas>
         </div>
-
       </div>
     </div>
+
   </div>
 
   <script

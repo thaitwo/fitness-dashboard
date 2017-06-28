@@ -9,7 +9,14 @@ import GetData from './components/get-data.js';
 class App {
   constructor() {
     this.stepsChartId = $('#stepsChart');
-    this.renderGraphs();
+    this.$companyList = $('#company-list');
+    // this.renderGraphs();
+
+    this.getCompanies();
+    this.getStockData('AAPL');
+
+    this.updateGraphOnCompanySelection();
+
     this.stepsGraph;
     this.testDropdown;
     this.categoriesDropdown;
@@ -30,8 +37,7 @@ class App {
     const timeData = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
 
 
-    // new Dropdown('categories-dropdown', healthCategories, this.updateCategoryDropdown.bind(this));
-    new Dropdown('time-dropdown', timeData, this.updateTimeDropdown);
+    // new Dropdown('time-dropdown', timeData, this.updateTimeDropdown);
 
 
   }
@@ -62,12 +68,22 @@ class App {
       url: `https://www.quandl.com/api/v3/datasets/WIKI/${companyId}/data.json?api_key=tskzGKweRxWgnbX2pafZ`,
       dataType: 'json',
       success: (response) => {
-        console.log('Request worked!');
+
         let priceData = this.returnStockOpenPrice(response);
         let labels = this.returnDateLabels(response);
 
         this.stepsGraph = new Graph(this.stepsChartId, priceData, labels);
       }
+    })
+  }
+
+
+  updateGraphOnCompanySelection() {
+    this.$companyList.on('click', (event) => {
+      event.preventDefault();
+
+      let id = event.target.textContent;
+      this.updateGraph(id);
     })
   }
 
@@ -80,7 +96,7 @@ class App {
   }
 
 
-  // CREATE DATA ARRAY OF DATES
+  // CREATE DATA ARRAY OF DATE LABELS
   returnDateLabels(data) {
     return data.dataset_data.data.slice(0, 30).map((day) => {
       return day[0];
@@ -88,15 +104,24 @@ class App {
   }
 
 
+  // RENDER LIST OF 5 COMPANIES
   returnCompanyList(data) {
-    data.datasets.slice(0, 4).map((company) => {
-      console.log(company.dataset_code);
+    let { datasets, name } = data;
+
+    return datasets.slice(0, 20).map((company) => {
+      let { dataset_code, name } = company;
+      name = name.split('(',)[0];
+
+      return `<li>
+                <span class="company-code">${dataset_code}</span>
+                <span class="company-name">${name}</span>
+              </li>`;
     })
   }
 
 
   // GET LIST OF COMPANIES
-  getData(interval) {
+  getCompanies(interval) {
     $.ajax({
       // url: 'https://www.quandl.com/api/v1/datasets/CHRIS/CME_BZ1.json?collapse=daily&api_key=tskzGKweRxWgnbX2pafZ',
       // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
@@ -110,15 +135,20 @@ class App {
         api_key: 'tskzGKweRxWgnbX2pafZ'
       },
       error: (xhr, message, error) => {
-        console.log('error');
         console.log(message, error);
       },
       success: (data) => {
-        console.log('DATA', data);
+        console.log('COMPANIES', data);
+        let companyList = this.returnCompanyList(data);
+
+        this.$companyList.append(companyList);
         // let newData = this.getDailyData(data);
         // let labels = this.getDailyLabels(data);
         // this.stepsGraph = new Graph(this.stepsChartId, this.stepsData(data));
         // this.stepsGraph = new Graph(this.stepsChartId, newData, labels);
+
+
+
 
         switch(interval) {
           // case 'daily':
@@ -240,7 +270,7 @@ class App {
     switch(id) {
       case 'daily':
         // const dataa = new GetData();
-        this.getData(id);
+        this.getCompanies(id);
         // this.updateGraph(dataa);
         break;
       case 'weekly':
@@ -270,7 +300,7 @@ class App {
       case 'sleep':
       case 'weight':
       case 'calories':
-        this.getData(id);
+        this.getCompanies(id);
         break;
     }
   }
@@ -377,12 +407,14 @@ class App {
 
 
   // UPDATE GRAPH
-  updateGraph(newData) {
+  updateGraph(id) {
     // Destroy current graph
     this.stepsGraph.destroy();
 
+    this.getStockData(id);
+
     // Create new graph
-    this.stepsGraph = new Graph(this.stepsChartId, newData);
+    // this.stepsGraph = new Graph(this.stepsChartId, newData);
   }
 
 

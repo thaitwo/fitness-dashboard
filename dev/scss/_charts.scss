@@ -2,16 +2,44 @@
   background-color: $white;
   border-radius: 4px;
   box-shadow: 0 2px 6px rgba(0,0,0,.12);
-  margin: 15px;
-  // margin-bottom: 30px;
-  // margin-left: 30px;
+  margin-bottom: 30px;
+}
 
-  &.is-small {
-    height: 140px;
-  }
+.company-list-container {
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 200px;
 
-  &.is-large {
-    height: 300px;
+  li {
+    background-color: $bluegrey-50;
+    border-bottom: 1px solid rgba($black, .05);
+    height: 60px;
+    padding: 14px 24px;
+    transition: all .3s;
+
+    &:hover {
+      background-color: rgba($black, .1);
+      cursor: pointer;
+    }
+
+    .company-code {
+      color: rgba($black, .8);
+      display: block;
+      font-family: $font-primary;
+      font-size: 15px;
+      font-weight: 400;
+      padding-bottom: 2px;
+    }
+
+    .company-name {
+      color: rgba($black, .4);
+      display: block;
+      font-family: $font-primary;
+      font-size: 12px;
+      font-weight: 300;
+    }
   }
 }
 
