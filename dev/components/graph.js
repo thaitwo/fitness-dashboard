@@ -1,32 +1,15 @@
 import Chart from 'chart.js';
 
 /*
-**  GRAPH CLASS
-**  Create new class
+**  GRAPH
+**
 */
 
 class Graph {
-  // @parameters (string, string, object, object)
+  // @parameters (string, array, array, string, object)
   constructor(canvasId, newData, newLabels, graphType, options) {
     this.canvasId = canvasId;
     this.graphType = graphType || 'line';
-
-    // this.newData = data ||
-    //   {
-    //     labels: ["Jun 1", "Jun 2", "Jun 3", "Jun 4", "Jun 5", "Jun 6", "Jun 7"],
-    //     display: true,
-    //     datasets: [{
-    //       backgroundColor: 'rgba(250, 128, 114, .2)',
-    //       borderColor: '#FA8072',
-    //       borderWidth: 2,
-    //       data: [6059, 7320, 8209, 6347, 5238, 6830, 7836],
-    //       hoverRadius: 12,
-    //       radius: 4,
-    //       lineTension: 0
-    //     }]
-    //   };
-
-    // console.log('NEW DATA', newData);
 
     this.data =
       {
@@ -53,8 +36,9 @@ class Graph {
     this.options = options || this.getOptions();
     this.graph;
 
-    this.render();
+    this.renderGraph();
   }
+
 
   // DESTROY CHART
   destroy() {
@@ -121,12 +105,10 @@ class Graph {
 
 
   // RENDER NEW CHART
-  render() {
+  renderGraph() {
     this.graph = new Chart(this.canvasId, {
       type: this.graphType,
-
       data: this.data,
-
       options: this.getOptions()
     })
   }

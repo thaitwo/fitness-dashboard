@@ -1,64 +1,30 @@
-import $ from 'jquery';
-import './scss/style.scss';
-import Dropdown from './components/dropdown.js';
-import Graph from './components/graph.js';
-import GetData from './components/get-data.js';
 
-// tskzGKweRxWgnbX2pafZ
+import './scss/style.scss';
+import $ from 'jquery';
+import Router from './route.js';
+// import Companies from './views/companies.js';
+import Graph from './components/graph.js';
+
 
 class App {
   constructor() {
-    this.stepsChartId = $('#stepsChart');
+    // REGISTER ELEMENTS
+    this.$chartId = $('#chart');
     this.$companyList = $('#company-list');
-    // this.renderGraphs();
+    this.$pageTitleContainer = $('.page-title');
+    this.$sidebarNav = $('#nav-sidebar');
+    this.graph;
+    // this.updateGraph = this.updateGraph.bind(this);
 
-    this.getCompanies();
-    this.getStockData('AAPL');
+    this.router = new Router();
 
-    this.updateGraphOnCompanySelection();
-
-    this.stepsGraph;
-    this.testDropdown;
-    this.categoriesDropdown;
+    // ACTIVATE SIDEBAR
     this.activateSidebarMenu();
-    // this.activateDropdownMenu();
-    // this.activateDropdown();
 
-
-    // this.getStockData('AAPL');
-
-    this.updateTimeDropdown = this.updateTimeDropdown.bind(this);
-
-    const timeDropdownContainer = 'time-dropdown';
-    const categoriesDropdownContainer = $('categories-dropdown');
-
-
-    const healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
-    const timeData = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
-
-
-    // new Dropdown('time-dropdown', timeData, this.updateTimeDropdown);
-
-
+    // GET COMPANIES & RENDER / UPDATE GRAPH
+    this.renderInitialGraph();
+    this.activateCompanySelection();
   }
-
-  // getGraphData() {
-  //   .axios()
-
-
-
-  //   .done(this.renderGraphs(this))
-  //   .success()
-  // }
-
-  // On initial page load, get data for 'daily' interval
-  // Use data and create new graph
-  // On click, get new data for particular interval
-  // Use new data to create new graph
-
-  // To get interval data for specific stock
-  // Check id of current stock, then make ajax request for that stock
-
 
 
   // GET COMPANY STOCK DATA
@@ -67,362 +33,91 @@ class App {
       // https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=tskzGKweRxWgnbX2pafZ
       url: `https://www.quandl.com/api/v3/datasets/WIKI/${companyId}/data.json?api_key=tskzGKweRxWgnbX2pafZ`,
       dataType: 'json',
-      success: (response) => {
-
-        let priceData = this.returnStockOpenPrice(response);
-        let labels = this.returnDateLabels(response);
-
-        this.stepsGraph = new Graph(this.stepsChartId, priceData, labels);
-      }
+      success: this.renderGraph.bind(this)
     })
   }
 
 
-  updateGraphOnCompanySelection() {
-    this.$companyList.on('click', (event) => {
+  // RENDER GRAPH
+  renderGraph(data) {
+    // Get opening prices for company stock
+    let priceData = this.getSpecificCompanyData(data, 1);
+
+    // Get dates for the opening prices
+    let dateLabels = this.getSpecificCompanyData(data, 0);
+
+    // Create new graph for this company stock
+    this.graph = new Graph(this.$chartId, priceData, dateLabels);
+  }
+
+
+  // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+  getSpecificCompanyData(data, num) {
+    return data.dataset_data.data.slice(0, 30).map((day) => {
+      return day[num];
+    }).reverse()
+  }
+
+
+  // UPDATE GRAPH ON COMPANY SELECTION
+  activateCompanySelection() {
+    const that = this;
+
+    this.$companyList.on('click', 'button', function(event)  {
       event.preventDefault();
 
-      let id = event.target.textContent;
-      this.updateGraph(id);
+      let id = this.id;
+      that.updateGraph(id);
     })
   }
-
-
-  // CREATE DATA ARRAY OF STOCK PRICES
-  returnStockOpenPrice(data) {
-    return data.dataset_data.data.slice(0, 30).map((day) => {
-      return day[1];
-    }).reverse()
-  }
-
-
-  // CREATE DATA ARRAY OF DATE LABELS
-  returnDateLabels(data) {
-    return data.dataset_data.data.slice(0, 30).map((day) => {
-      return day[0];
-    }).reverse()
-  }
-
-
-  // RENDER LIST OF 5 COMPANIES
-  returnCompanyList(data) {
-    let { datasets, name } = data;
-
-    return datasets.slice(0, 20).map((company) => {
-      let { dataset_code, name } = company;
-      name = name.split('(',)[0];
-
-      return `<li>
-                <span class="company-code">${dataset_code}</span>
-                <span class="company-name">${name}</span>
-              </li>`;
-    })
-  }
-
-
-  // GET LIST OF COMPANIES
-  getCompanies(interval) {
-    $.ajax({
-      // url: 'https://www.quandl.com/api/v1/datasets/CHRIS/CME_BZ1.json?collapse=daily&api_key=tskzGKweRxWgnbX2pafZ',
-      // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
-      url: 'https://www.quandl.com/api/v3/datasets.json',
-      dataType: 'json',
-      data: {
-        database_code: 'WIKI',
-        per_page: '100',
-        sort_by: 'id',
-        page: '1',
-        api_key: 'tskzGKweRxWgnbX2pafZ'
-      },
-      error: (xhr, message, error) => {
-        console.log(message, error);
-      },
-      success: (data) => {
-        console.log('COMPANIES', data);
-        let companyList = this.returnCompanyList(data);
-
-        this.$companyList.append(companyList);
-        // let newData = this.getDailyData(data);
-        // let labels = this.getDailyLabels(data);
-        // this.stepsGraph = new Graph(this.stepsChartId, this.stepsData(data));
-        // this.stepsGraph = new Graph(this.stepsChartId, newData, labels);
-
-
-
-
-        switch(interval) {
-          // case 'daily':
-          //   const coolArray = this.dailyData(data);
-          //   // this.udpateGraph(coolArray);
-          //   // this.stepsGraph = new Graph(this.stepsChartId, coolArray);
-          //   break;
-          // case 'weekly':
-          //   break;
-          case 'steps':
-            const stepsArray = this.stepsData(data);
-            this.updateGraph(stepsArray);
-            // this.stepsGraph = new Graph(this.stepsChartId, stepsArray);
-            break;
-          case 'sleep':
-            const sleepArray = this.sleepData(data);
-            this.updateGraph(sleepArray);
-            // this.stephsGraph = new Graph(this.stepsChartId, sleepArray);
-            break;
-          case 'weight':
-            const weightArray = this.weightData(data);
-            this.updateGraph(weightArray);
-            // this.stepsGraph = new Graph(this.stepsChartId, weightArray);
-            break;
-          case 'calories':
-            const caloriesArray = this.caloriesData(data);
-            this.updateGraph(caloriesArray);
-            // this.stepsGraph = new Graph(this.stepsChartId, caloriesArray);
-            break;
-        }
-      }
-    })
-  }
-
-
-  getDailyData(data) {
-    let newArr = [];
-    console.log('DAILY', data.data[0]);
-
-    for (var i = 0; i < 30; i++) {
-      newArr.push(data.data[i][6])
-    }
-
-    return newArr.reverse();
-  }
-
-  getDailyLabels(data) {
-    let labelArray = [];
-
-    for (var i = 0; i < 30; i++) {
-      labelArray.push(data.data[i][0])
-    }
-
-    console.log('LABELS', labelArray);
-    return labelArray.reverse();
-  }
-
-
-
-
-  stepsData(data) {
-    let arr = data.activity.map((user) => {
-      return user.steps;
-    })
-    return arr;
-  }
-
-  sleepData(data) {
-    let arr = data.activity.map((user) => {
-      return user.sleep;
-    })
-
-    return arr;
-  }
-
-  weightData(data) {
-    let arr = data.activity.map((user) => {
-      return user.weight;
-    })
-
-    return arr;
-  }
-
-  caloriesData(data) {
-    let arr = data.activity.map((user) => {
-      return user.calories;
-    })
-
-    return arr;
-  }
-
-
-
-
-
-
-
-
-  dailyData(data) {
-    console.log('works');
-    let arr = data.activity.map((user) => {
-      return user.steps;
-    })
-    return arr;
-  }
-
-
-  weeklyData(data) {
-    let weeklyArray = data
-  }
-
-
-
-
-
-  // UPDATE GRAPH WHEN TIME DROPDOWN MENU IS SELECTED
-  updateTimeDropdown(id) {
-
-    switch(id) {
-      case 'daily':
-        // const dataa = new GetData();
-        this.getCompanies(id);
-        // this.updateGraph(dataa);
-        break;
-      case 'weekly':
-        // const data = new GetData();
-        this.updateGraph(data);
-        break;
-      case 'monthly':
-        this.updateGraph(this.monthlyData);
-        break;
-      case 'yearly':
-        this.updateGraph(this.yearlyData);
-        break;
-      case 'all-time':
-        this.updateGraph();
-        break;
-      default:
-        alert('Please select from the dropdown menu.');
-    }
-  }
-
-
-  // UPDATE GRAPH BASED ON CATEGORY
-  updateCategoryDropdown(id) {
-
-    switch(id) {
-      case 'steps':
-      case 'sleep':
-      case 'weight':
-      case 'calories':
-        this.getCompanies(id);
-        break;
-    }
-  }
-
 
 
   // ACTIVATE SIDEBAR MENU
   activateSidebarMenu() {
-    const navSidebarId = document.querySelector('#nav-sidebar');
+    const that = this;
 
-    navSidebarId.addEventListener('click', (event) => {
-      let id = event.target.id;
+    this.$sidebarNav.on('click', 'a', function(event) {
+      event.preventDefault();
+      let id = this.id;
 
-      if (event.target.tagName === 'A') {
-        this.updateActiveClass('#nav-sidebar', event.target);
-        this.udpatePageHeader(id);
-      }
+      // Change page and url
+      that.router.changePage(id)
+
+      that.updateActiveClass('#nav-sidebar', id);
+      that.udpatePageTitle(id);
     })
   }
-
 
 
   // UPDATE PAGE HEADER
-  udpatePageHeader(headerText) {
-    const pageTitleContainer = document.querySelector('.page-title');
-
-    pageTitleContainer.innerHTML = headerText;
+  udpatePageTitle(titleText) {
+    this.$pageTitleContainer.html(titleText);
   }
-
-
-
-  // ACTIVATE DROPDOWN MENU FOR CHART
-  activateDropdown() {
-    // const arr = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'All-Time'];
-    // this.testDropdown = new Dropdown('steps-dropdown', 'steps-button', 'steps-intervals', arr);
-    // this.activateDropdownMenu('steps-intervals');
-
-    // const healthCategories = ['Steps', 'Sleep', 'Weight', 'Calories'];
-    // this.categoriesDropdown = new Dropdown('categories-dropdown', healthCategories, 'categories');
-    // this.activateDropdownMenu('health-categories', healthCategories, this.testData);
-  }
-
-
-
-  // UPDATE GRAPH WHEN DROPDOWN MENU ITEM IS SELECTED
-  activateDropdownMenu(ulDropdownId, arrayOfListItems, arrayOfNewDataObjects) {
-    const dropdownContainer = $(`#${ulDropdownId}`);
-
-    dropdownContainer.on('click', (event) => {
-      const id = event.target.id;
-
-      if (event.target.tagName === 'LI') {
-        // this.updateActiveClass('#time-intervals', event.target);
-
-        switch(id) {
-          // for loop
-
-          // for (var i = 0; i < arrayOfListItems.length; i++) {
-          //   return case 'arrayOfListItems[i]':;
-
-          //   for (var x = 0; x < arrayOfNewDataObjects.length; x++) {
-          //     if (x === i) {
-          //       return this.updateGraph(arrayOfNewDataObjects[x]);
-          //     }
-          //   }
-          // }
-
-          case 'daily':
-            this.updateGraph(this.dailyData);
-            break;
-          case 'weekly':
-            this.updateGraph(this.weeklyData);
-            break;
-          case 'monthly':
-            this.updateGraph(this.monthlyData);
-            break;
-          case 'yearly':
-            this.updateGraph(this.yearlyData);
-            break;
-          case 'all-time':
-            this.updateGraph(this.allTimeData);
-            break;
-          default:
-            alert('Click a button');
-        };
-      }
-    })
-  }
-
 
 
   // UPDATE SELECTED LINK
-  updateActiveClass(containerName, clickedElement) {
-    const containerClass = document.querySelector(containerName);
-    const selectedElements = containerClass.getElementsByClassName('active');
+  updateActiveClass(containerName, clickedElementId) {
+    let activeElements = $(`${containerName} .active`);
+    let clickedElement = $(`${containerName} #${clickedElementId}`);
 
-    while (selectedElements.length) {
-      selectedElements[0].classList.remove('active');
-    }
-
-    clickedElement.classList.add('active');
+    activeElements.removeClass('active');
+    clickedElement.addClass('active');
   }
-
 
 
   // UPDATE GRAPH
   updateGraph(id) {
     // Destroy current graph
-    this.stepsGraph.destroy();
+    this.graph.destroy();
+    console.log(id);
 
     this.getStockData(id);
-
-    // Create new graph
-    // this.stepsGraph = new Graph(this.stepsChartId, newData);
   }
 
 
   // RENDER GRAPHS
-  renderGraphs() {
-    this.getStockData('CMG');
-
-    // this.stepsGraph = new Graph(this.stepsChartId, pricelist, );
+  renderInitialGraph() {
+    this.getStockData('AAPL');
   }
 }
 

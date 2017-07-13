@@ -1,10 +1,4 @@
-.container-fluid {
-  height: 100%;
-}
-
 .content-container {
-  // margin-left: 200px;
-  // position: relative;
   left: 200px;
   top: 58px;
   right: 0;
@@ -17,7 +11,7 @@
   box-shadow: 0 2px 6px rgba(0,0,0,.12);
 }
 
-.dashboard-container {
+.dashboard-canvas {
   background-color: $bluegrey-50;
   left: 0;
   right: 0;
@@ -47,6 +41,7 @@
     font-size: 24px;
     font-weight: 600;
     line-height: 60px;
+    text-decoration: none;
   }
 }
 
