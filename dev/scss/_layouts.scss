@@ -1,0 +1,35 @@
+/* LAYOUT
+============================================================== */
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.l-left {
+  float: left;
+}
+
+.l-right {
+  float: right;
+}
+
+$padding: 8px;
+
+@for $i from 1 through 8 {
+
+  @if ($i > 1) {
+    $num: $i - 1;
+    $padding: $padding + 8px;
+  }
+
+  .l-pad-top-#{$i} {
+    padding-top: $padding;
+  }
+}
+
+
+/* GRID
+============================================================== */
+
