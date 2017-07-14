@@ -33,12 +33,11 @@ class Router {
 
   // LISTEN FOR ROUTE CHANGES
   activateRouter() {
-    const that = this;
 
     // Root handler
     this.router.on(() => {
-        this.currentPage = new Watchlist(this.$canvas);
-      }).resolve();
+      this.currentPage = new Watchlist(this.$canvas);
+    }).resolve();
 
     // Routes handler
     this.router.on({
@@ -59,7 +58,7 @@ class Router {
 
     // Global hook => clear page & event handlers before loading new route/page
     this.router.hooks({
-      before: (done, params) => {
+      before: (done) => {
         if(this.currentPage) {
           this.currentPage.destroy();
         }

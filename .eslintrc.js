@@ -6,24 +6,17 @@ module.exports = {
     "es6": true
   },
   "extends": "eslint:recommended",
-  "ecmaFeatures": {
-    "jsx": true
-  },
   "parserOptions": {
     "ecmaFeatures": {
       "experimentalObjectRestSpread": true,
-      "jsx": true,
       "modules": true,
       "classes": true
     },
     "sourceType": "module"
   },
-  "plugins": [
-    "react"
-  ],
+  "plugins": [],
   "rules": {
     "no-console":0,
-    "react/jsx-uses-vars": 1,
     "indent": [
       "error",
       2,

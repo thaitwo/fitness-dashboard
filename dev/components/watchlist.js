@@ -20,7 +20,7 @@ class Watchlist {
   renderWatchlistGraphHTML() {
     let html =
       `
-        <div id="watchlist-container" class="watchlist-container">
+        <div id="watchlist-container" class="chart-watchlist-container">
           <ul id="watchlist"></ul>
         </div>
         <div class="dashboard-content-container clearfix">
@@ -41,7 +41,7 @@ class Watchlist {
       url: `https://www.quandl.com/api/v3/datasets/WIKI/${companyId}/data.json?api_key=tskzGKweRxWgnbX2pafZ`,
       dataType: 'json',
       success: this.renderGraph.bind(this)
-    })
+    });
   }
 
 
@@ -62,7 +62,7 @@ class Watchlist {
   getSpecificCompanyData(data, num) {
     return data.dataset_data.data.slice(0, 30).map((day) => {
       return day[num];
-    }).reverse()
+    }).reverse();
   }
 
 
@@ -75,7 +75,7 @@ class Watchlist {
 
       let id = this.id;
       that.updateGraph(id);
-    })
+    });
   }
 
 

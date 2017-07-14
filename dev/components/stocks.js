@@ -1,5 +1,5 @@
 import $ from 'jquery';
-import Graph from '../components/graph.js';
+
 
 class Stocks {
   constructor(container) {
@@ -7,7 +7,7 @@ class Stocks {
     // REGISTER ELEMENTS
     this.$container = container;
 
-    this.renderStocksPageHTML();
+    this.render();
 
     this.$stockListContainer = $('#stocks-list');
 
@@ -16,14 +16,15 @@ class Stocks {
   }
 
 
-  renderStocksPageHTML() {
+  // RENDER HTML
+  render() {
     let html =
       `
         <div class="stocks-canvas">
           <h3>Add stocks to watchlist</h3>
           <ul id="stocks-list" class="stocks-list"></ul>
         </div>
-      `
+      `;
     this.$container.append(html);
   }
 
@@ -45,14 +46,14 @@ class Stocks {
       error: (xhr, message, error) => {
         console.log(message, error);
       },
-      success: this.renderStocksList.bind(this)
-    })
+      success: this.renderStocks.bind(this)
+    });
   }
 
 
   // RENDER LIST OF COMPANIES
-  renderStocksList(data) {
-    let { datasets, name } = data;
+  renderStocks(data) {
+    let { datasets } = data;
 
     let list =  datasets.slice(0, 40).map((stock) => {
       let { dataset_code: stockCode, name: stockName } = stock;

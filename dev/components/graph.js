@@ -11,27 +11,26 @@ class Graph {
     this.canvasId = canvasId;
     this.graphType = graphType || 'line';
 
-    this.data =
-      {
-        labels: newLabels,
-        display: true,
-        datasets: [{
-          backgroundColor: 'rgba(250, 128, 114, .2)',
-          borderColor: '#FA8072',
-          borderWidth: 2,
-          data: newData,
-          hoverRadius: 12,
-          pointBackgroundColor: 'rgba(250, 128, 114, 1)',
-          pointBorderColor: '#fff',
-          pointBorderWidth: 2,
-          pointHoverBorderColor: '#fff',
-          pointHoverBackgroundColor: '#000',
-          pointHoverRadius: 5,
-          pointRadius: 5,
-          radius: 4,
-          lineTension: .4
-        }]
-      };
+    this.data = {
+      labels: newLabels,
+      display: true,
+      datasets: [{
+        backgroundColor: 'rgba(250, 128, 114, .2)',
+        borderColor: '#FA8072',
+        borderWidth: 2,
+        data: newData,
+        hoverRadius: 12,
+        pointBackgroundColor: 'rgba(250, 128, 114, 1)',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointHoverBorderColor: '#fff',
+        pointHoverBackgroundColor: '#000',
+        pointHoverRadius: 5,
+        pointRadius: 5,
+        radius: 4,
+        lineTension: .4
+      }]
+    };
 
     this.options = options || this.getOptions();
     this.graph;
@@ -65,7 +64,7 @@ class Graph {
         labels: {
           // This more specific font property overrides the global property
           fontColor: 'black',
-          fontFamily: "'Montserrat', sans-serif",
+          fontFamily: 'Montserrat, sans-serif',
         }
       },
       scales: {
@@ -77,7 +76,7 @@ class Graph {
           },
           ticks: {
             fontColor: '#B0BEC5',
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: 'Montserrat, sans-serif',
             fontStyle: 'normal',
             autoSkip: false
           }
@@ -91,16 +90,14 @@ class Graph {
           },
           ticks: {
             beginAtZero: false,
-            // stepSize: 1,
             fontColor: '#B0BEC5',
-            fontFamily: "'Montserrat', sans-serif",
+            fontFamily: 'Montserrat, sans-serif',
             fontStyle: 'normal',
-            // min: 0,
             padding: 15
           }
         }]
       }
-    }
+    };
   }
 
 
@@ -109,8 +106,8 @@ class Graph {
     this.graph = new Chart(this.canvasId, {
       type: this.graphType,
       data: this.data,
-      options: this.getOptions()
-    })
+      options: this.options
+    });
   }
 }
 

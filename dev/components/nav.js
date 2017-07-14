@@ -27,7 +27,7 @@ class Nav {
       event.preventDefault();
       let id = this.id;
 
-      that.updateActiveClass(`#${that.navContainerId}`, id);
+      that.updateActiveClass(id);
 
       // If marked true AND has text container, then change page URL and update header text
       if (that.routeOrNot == true && that.$textContainer) {
@@ -37,7 +37,7 @@ class Nav {
       else {
         that.udpateHeaderText(id);
       }
-    })
+    });
   }
 
 
@@ -48,12 +48,12 @@ class Nav {
 
 
   // UPDATE SELECTED LINK
-  updateActiveClass(containerName, clickedElementId) {
-    let activeElements = $(`${containerName} .active`);
-    let clickedElement = $(`${containerName} #${clickedElementId}`);
+  updateActiveClass(activeButtonId) {
+    let buttons = this.$navContainer.find('.active');
+    let activeButton = this.$navContainer.find(activeButtonId);
 
-    activeElements.removeClass('active');
-    clickedElement.addClass('active');
+    buttons.removeClass('active');
+    activeButton.addClass('active');
   }
 }
 
