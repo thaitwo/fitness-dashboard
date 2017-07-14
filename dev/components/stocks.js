@@ -11,14 +11,27 @@ class Stocks {
 
     this.$stockListContainer = $('#stocks-list');
 
-    // INITIALIZE
+    // INITIALIZE FETCH OF STOCKS
     this.getStocks();
+  }
+
+
+  renderStocksPageHTML() {
+    let html =
+      `
+        <div class="stocks-canvas">
+          <h3>Add stocks to watchlist</h3>
+          <ul id="stocks-list" class="stocks-list"></ul>
+        </div>
+      `
+    this.$container.append(html);
   }
 
 
   // GET LIST OF COMPANIES
   getStocks() {
     $.ajax({
+      // Below is what entire URL would look like:
       // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
       url: 'https://www.quandl.com/api/v3/datasets.json',
       dataType: 'json',
@@ -45,26 +58,17 @@ class Stocks {
       let { dataset_code: stockCode, name: stockName } = stock;
       stockName = stockName.split('(')[0];
 
-      return `<li>
-                <button id="${stockCode}">
-                  <span class="stock-code">${stockCode}</span>
-                  <span class="stock-name">${stockName}</span>
-                </button>
-              </li>`;
+      return `
+        <li>
+          <button id="${stockCode}">
+            <span class="stock-code">${stockCode}</span>
+            <span class="stock-name">${stockName}</span>
+          </button>
+        </li>
+      `;
     });
 
     this.$stockListContainer.append(list);
-  }
-
-
-  renderStocksPageHTML() {
-    let html = `
-      <div class="stocks-canvas">
-        <h3>Add stocks to watchlist</h3>
-        <ul id="stocks-list" class="stocks-list"></ul>
-      </div>
-    `
-    this.$container.append(html);
   }
 
 

@@ -13,26 +13,19 @@
       <ul id="nav-sidebar" class="nav-sidebar">
         <li><a href="#" id="dashboard" class="active"><i class="fa fa-bar-chart fa-lg" aria-hidden="true"></i>Dashboard</a></li>
         <li><a href="#" id="stocks"><i class="fa fa-trophy fa-lg" aria-hidden="true"></i>Stocks</a></li>
-        <li><a href="#" id="challenges"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>How It Works</a></li>
+        <li><a href="#" id="compare"><i class="fa fa-puzzle-piece fa-lg" aria-hidden="true"></i>Compare</a></li>
         <li><a href="#" id="settings"><i class="fa fa-cog fa-lg" aria-hidden="true"></i>Settings</a></li>
       </ul>
     </div>
     <div class="top-bar">
-      <h2 class="page-title">Dashboard</h2>
+      <h2 id="page-title" class="page-title">Dashboard</h2>
       <form class="search-form">
-        <input type="text" class="search-box" placeholder="&#xF002  Search">
+        <input type="text" class="search-box" placeholder="Search">
       </form>
     </div>
     <div class="content-container">
       <div class="dashboard-canvas">
-        <div id="watchlist-container" class="watchlist-container">
-          <ul id="watchlist"></ul>
-        </div>
-        <div class="dashboard-content-container clearfix">
-          <div class="chart-container">
-            <canvas id="chart" width="900" height="400"></canvas>
-          </div>
-        </div>
+        <!-- Make dynamic changes within this container -->
       </div>
     </div>
   </div>
