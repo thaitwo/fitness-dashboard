@@ -20,8 +20,13 @@ class Watchlist {
   renderWatchlistGraphHTML() {
     let html =
       `
-        <div id="watchlist-container" class="chart-watchlist-container">
-          <ul id="watchlist"></ul>
+        <div class="dashboard-stocks-container">
+          <div class="stocks-tabs">
+            <button id="tab-watchlist" class="tab is-active">Watch List</button>
+            <button id="tab-stockslist" class="tab">Stocks</button>
+          </div>
+          <ul id="stocks-list" class="stocks-list"></ul>
+          <ul id="watchlist" class="dashboard-watchlist"></ul>
         </div>
         <div class="dashboard-content-container clearfix">
           <div class="chart-container">

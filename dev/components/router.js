@@ -43,6 +43,7 @@ class Router {
     this.router.on({
       'dashboard/': () => {
         this.currentPage = new Watchlist(this.$canvas);
+        this.currentPage = new Stocks(this.$canvas);
       },
       'dashboard/stocks': () => {
         this.currentPage = new Stocks(this.$canvas);

@@ -1,4 +1,4 @@
-.stocks-canvas {
+.stocks-container {
   padding: 30px;
 
   h3 {
@@ -9,20 +9,27 @@
   }
 }
 
+.stocks-tabs {
+  height: 60px;
+}
+
 .stocks-list {
+  border-top: 1px solid rgba($black,.05);
+  float: left;
+  overflow-y: auto;
+  width: 100%;
 
   li {
+    border-bottom: 1px solid rgba(0,0,0,.05);
     float: left;
-    height: 100px;
-    margin: 0 15px 15px 0;
-    width: 220px;
+    height: 64px;
+    margin: 0;
+    width: 100%;
   }
 
   button {
     background-color: $white;
     border: none;
-    border-radius: 3px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.24);
     height: 100%;
     padding: 5px 20px;
     text-align: left;
@@ -33,7 +40,7 @@
     color: rgba($black, .8);
     display: block;
     font-family: $font-primary;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
     padding-bottom: 2px;
   }
@@ -42,8 +49,10 @@
     color: rgba($black, .4);
     display: block;
     font-family: $font-primary;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 300;
+    height: 16px;
+    overflow-y: hidden;
   }
 }
 

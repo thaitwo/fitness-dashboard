@@ -43,6 +43,26 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+/*
+** FONTS
+**
+*/
+/*
+** BLACK & WHITE
+**
+*/
+/*
+** TEAL
+**
+*/
+/*
+** GREY
+**
+*/
+/*
+** BLUEGREY
+**
+*/
 .l-flex {
   display: flex; }
   .l-flex.flex-wrap {
@@ -111,6 +131,20 @@ table {
 
 .flex-col-12 {
   flex-grow: 12; }
+
+.tab {
+  border: none;
+  float: left;
+  font-size: 14px;
+  height: 100%;
+  margin: 0;
+  outline: none;
+  padding: 0;
+  width: 50%; }
+  .tab:hover {
+    cursor: pointer; }
+  .tab.is-active {
+    background-color: #FFFFFF; }
 
 /* LAYOUT
 ============================================================== */
@@ -207,7 +241,7 @@ table {
   position: absolute; }
 
 .dashboard-content-container {
-  margin-left: 200px;
+  margin-left: 260px;
   padding: 30px; }
 
 .nopadding {
@@ -217,7 +251,7 @@ table {
 .logo {
   background-color: #192226;
   border-bottom: 2px solid rgba(38, 50, 56, 0.12);
-  height: 60px;
+  height: 56px;
   margin: 0;
   padding-left: 33px; }
   .logo a {
@@ -248,44 +282,50 @@ table {
   position: fixed;
   z-index: 100; }
 
-.stocks-canvas {
+.stocks-container {
   padding: 30px; }
-  .stocks-canvas h3 {
+  .stocks-container h3 {
     font-family: "Montserrat", sans-serif;
     font-size: 18px;
     font-weight: 300;
     margin: 0 0 30px; }
 
-.stocks-list li {
+.stocks-tabs {
+  height: 60px; }
+
+.stocks-list {
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
   float: left;
-  height: 100px;
-  margin: 0 15px 15px 0;
-  width: 220px; }
-
-.stocks-list button {
-  background-color: #FFFFFF;
-  border: none;
-  border-radius: 3px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.24);
-  height: 100%;
-  padding: 5px 20px;
-  text-align: left;
+  overflow-y: auto;
   width: 100%; }
-
-.stocks-list .stock-code {
-  color: rgba(0, 0, 0, 0.8);
-  display: block;
-  font-family: "Montserrat", sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  padding-bottom: 2px; }
-
-.stocks-list .stock-name {
-  color: rgba(0, 0, 0, 0.4);
-  display: block;
-  font-family: "Montserrat", sans-serif;
-  font-size: 12px;
-  font-weight: 300; }
+  .stocks-list li {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    float: left;
+    height: 64px;
+    margin: 0;
+    width: 100%; }
+  .stocks-list button {
+    background-color: #FFFFFF;
+    border: none;
+    height: 100%;
+    padding: 5px 20px;
+    text-align: left;
+    width: 100%; }
+  .stocks-list .stock-code {
+    color: rgba(0, 0, 0, 0.8);
+    display: block;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding-bottom: 2px; }
+  .stocks-list .stock-name {
+    color: rgba(0, 0, 0, 0.4);
+    display: block;
+    font-family: "Montserrat", sans-serif;
+    font-size: 11px;
+    font-weight: 300;
+    height: 16px;
+    overflow-y: hidden; }
 
 /* SEARCH
 ============================================================== */
@@ -321,27 +361,37 @@ table {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   margin-bottom: 30px; }
 
-.watchlist-container {
+.chart-watchlist-container {
+  background-color: #CFD8DC;
   height: 100%;
   top: 0;
   left: 0;
   position: absolute;
-  width: 200px; }
+  width: 260px; }
+
+.dashboard-stocks-container {
+  background-color: #FFFFFF;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  position: absolute;
+  width: 260px; }
 
 .chart-dropdown-container {
   float: right;
   margin-top: 18px;
   position: relative; }
 
-.menu-dropdown {
+.chart-menu-dropdown {
   font-family: "Montserrat", sans-serif;
   position: relative;
   transition: all .3s; }
-  .menu-dropdown.float-left {
+  .chart-menu-dropdown.float-left {
     float: left; }
-  .menu-dropdown.float-right {
+  .chart-menu-dropdown.float-right {
     float: right; }
-  .menu-dropdown button {
+  .chart-menu-dropdown button {
     background: none;
     border: none;
     border-radius: 2px;
@@ -354,12 +404,12 @@ table {
     padding: 0 15px;
     text-transform: uppercase;
     transition: all .3s; }
-    .menu-dropdown button:hover {
+    .chart-menu-dropdown button:hover {
       background: rgba(236, 239, 241, 0.36);
       color: #FA8072; }
-    .menu-dropdown button i {
+    .chart-menu-dropdown button i {
       padding-left: 8px; }
-  .menu-dropdown ul {
+  .chart-menu-dropdown ul {
     background: #FFFFFF;
     border-radius: 2px;
     box-shadow: 0 0 8px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.24);
@@ -367,9 +417,9 @@ table {
     position: absolute;
     top: 0;
     z-index: 1000; }
-    .menu-dropdown ul.is-visible {
+    .chart-menu-dropdown ul.is-visible {
       display: block; }
-    .menu-dropdown ul li {
+    .chart-menu-dropdown ul li {
       border-bottom: 1px solid #ECEFF1;
       color: rgba(38, 50, 56, 0.36);
       display: block;
@@ -380,18 +430,18 @@ table {
       text-decoration: none;
       text-transform: uppercase;
       transition: all .3s; }
-      .menu-dropdown ul li:last-child {
+      .chart-menu-dropdown ul li:last-child {
         border: none; }
-      .menu-dropdown ul li:hover {
+      .chart-menu-dropdown ul li:hover {
         background: rgba(236, 239, 241, 0.24);
         color: #FA8072;
         cursor: pointer; }
-      .menu-dropdown ul li i {
+      .chart-menu-dropdown ul li i {
         display: none; }
-      .menu-dropdown ul li.is-active {
+      .chart-menu-dropdown ul li.is-active {
         color: #000000;
         position: relative; }
-        .menu-dropdown ul li.is-active i {
+        .chart-menu-dropdown ul li.is-active i {
           display: block;
           left: 8px;
           position: absolute;

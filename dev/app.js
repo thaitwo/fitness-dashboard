@@ -1,5 +1,4 @@
 import './scss/style.scss';
-import $ from 'jquery';
 import Nav from './components/nav.js';
 
 

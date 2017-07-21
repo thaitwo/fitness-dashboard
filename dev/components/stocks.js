@@ -7,7 +7,7 @@ class Stocks {
     // REGISTER ELEMENTS
     this.$container = container;
 
-    this.render();
+    // this.render();
 
     this.$stockListContainer = $('#stocks-list');
 
@@ -20,8 +20,7 @@ class Stocks {
   render() {
     let html =
       `
-        <div class="stocks-canvas">
-          <h3>Add stocks to watchlist</h3>
+        <div class="dashboard-stocks-container">
           <ul id="stocks-list" class="stocks-list"></ul>
         </div>
       `;
