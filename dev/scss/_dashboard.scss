@@ -2,6 +2,7 @@
   left: 200px;
   top: 58px;
   right: 0;
+  bottom: 0;
   position: absolute;
 }
 
@@ -13,9 +14,10 @@
 
 .dashboard-canvas {
   background-color: $bluegrey-50;
-  left: 0;
-  right: 0;
-  position: absolute;
+  height: 100%;
+  // left: 0;
+  // right: 0;
+  // position: absolute;
 }
 
 .dashboard-content-container {

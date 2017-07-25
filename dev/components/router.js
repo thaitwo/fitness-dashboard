@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
-import Watchlist from './watchlist.js';
+// import Watchlist from './watchlist.js';
 import Stocks from './stocks';
 const DASHBOARD_URL = 'dashboard/';
 
@@ -26,7 +26,7 @@ class Router {
       this.router.navigate(`${DASHBOARD_URL}`);
     }
     else {
-      this.router.navigate(`${DASHBOARD_URL}${pageId}`);
+      this.router.navigate(`${pageId}`);
     }
   }
 
@@ -36,22 +36,18 @@ class Router {
 
     // Root handler
     this.router.on(() => {
-      this.currentPage = new Watchlist(this.$canvas);
+      this.currentPage = new Stocks(this.$canvas);
     }).resolve();
 
     // Routes handler
     this.router.on({
-      'dashboard/': () => {
-        this.currentPage = new Watchlist(this.$canvas);
+      '/performance': () => {
         this.currentPage = new Stocks(this.$canvas);
       },
-      'dashboard/stocks': () => {
-        this.currentPage = new Stocks(this.$canvas);
+      '/prices': () => {
+        // this.currentPage = new Stocks(this.$canvas);
       },
-      'dashboard/compare': () => {
-        // Insert functionality
-      },
-      'dashboard/settings': () => {
+      '/compare': () => {
         // Insert functionality
       }
     })
