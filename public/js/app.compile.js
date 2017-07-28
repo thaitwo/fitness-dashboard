@@ -26714,10 +26714,10 @@ var Router = function () {
 
       // Routes handler
       this.router.on({
-        '/performance': function performance() {
+        '/watchlist': function watchlist() {
           _this.currentPage = new _stocks2.default(_this.$canvas);
         },
-        '/prices': function prices() {
+        '/stocks': function stocks() {
           // this.currentPage = new Stocks(this.$canvas);
         },
         '/compare': function compare() {

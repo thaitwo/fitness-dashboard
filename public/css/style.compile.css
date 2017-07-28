@@ -139,21 +139,6 @@ table {
   font-weight: 300;
   margin-bottom: 16px; }
 
-.tab {
-  border: none;
-  float: left;
-  font-size: 14px;
-  height: 100%;
-  margin: 0;
-  outline: none;
-  padding: 0;
-  width: 50%; }
-  .tab:hover {
-    color: rgba(0, 0, 0, 0.5);
-    cursor: pointer; }
-  .tab.is-active {
-    background-color: #FFFFFF; }
-
 /* LAYOUT
 ============================================================== */
 .clearfix:after {

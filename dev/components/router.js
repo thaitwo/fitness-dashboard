@@ -41,10 +41,10 @@ class Router {
 
     // Routes handler
     this.router.on({
-      '/performance': () => {
+      '/watchlist': () => {
         this.currentPage = new Stocks(this.$canvas);
       },
-      '/prices': () => {
+      '/stocks': () => {
         // this.currentPage = new Stocks(this.$canvas);
       },
       '/compare': () => {
