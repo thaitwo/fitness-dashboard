@@ -16,25 +16,29 @@
 .stocks-list {
   border-top: 1px solid rgba($black,.05);
   float: left;
-  overflow-y: auto;
   width: 100%;
 
   li {
-    border-bottom: 1px solid rgba(0,0,0,.05);
     float: left;
-    height: 64px;
-    margin: 0;
-    width: 100%;
+    margin: 8px;
   }
 
   button {
     background-color: $white;
     border: none;
-    height: 100%;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba($black, .12);
+    height: 80px;
     outline: none;
-    padding: 5px 20px;
+    padding: 16px;
     text-align: left;
-    width: 100%;
+    transition: all .3s;
+    width: 260px;
+
+    &:hover {
+      box-shadow: 0 4px 8px rgba($black, .24);
+      cursor: pointer;
+    }
   }
 
   .stock-code {

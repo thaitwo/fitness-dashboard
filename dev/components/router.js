@@ -36,16 +36,16 @@ class Router {
 
     // Root handler
     this.router.on(() => {
-      this.currentPage = new Stocks(this.$canvas);
+      // this.currentPage = new Stocks(this.$canvas);
     }).resolve();
 
     // Routes handler
     this.router.on({
       '/watchlist': () => {
-        this.currentPage = new Stocks(this.$canvas);
+        // this.currentPage = new Stocks(this.$canvas);
       },
       '/stocks': () => {
-        // this.currentPage = new Stocks(this.$canvas);
+        this.currentPage = new Stocks(this.$canvas);
       },
       '/compare': () => {
         // Insert functionality

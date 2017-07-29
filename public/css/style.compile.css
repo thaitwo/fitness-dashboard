@@ -216,13 +216,6 @@ table {
   width: 200px;
   z-index: 1000; }
 
-.content-container {
-  left: 200px;
-  top: 58px;
-  right: 0;
-  bottom: 0;
-  position: absolute; }
-
 .box-container {
   background-color: #FFFFFF;
   border-radius: 2px;
@@ -230,7 +223,12 @@ table {
 
 .dashboard-canvas {
   background-color: #ECEFF1;
-  height: 100%; }
+  bottom: 0;
+  left: 200px;
+  right: 0;
+  overflow: auto;
+  position: absolute;
+  top: 58px; }
 
 .dashboard-content-container {
   margin-left: 260px;
@@ -288,22 +286,24 @@ table {
 .stocks-list {
   border-top: 1px solid rgba(0, 0, 0, 0.05);
   float: left;
-  overflow-y: auto;
   width: 100%; }
   .stocks-list li {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     float: left;
-    height: 64px;
-    margin: 0;
-    width: 100%; }
+    margin: 8px; }
   .stocks-list button {
     background-color: #FFFFFF;
     border: none;
-    height: 100%;
+    border-radius: 2px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
+    height: 80px;
     outline: none;
-    padding: 5px 20px;
+    padding: 16px;
     text-align: left;
-    width: 100%; }
+    transition: all .3s;
+    width: 260px; }
+    .stocks-list button:hover {
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24);
+      cursor: pointer; }
   .stocks-list .stock-code {
     color: rgba(0, 0, 0, 0.8);
     display: block;

@@ -26709,16 +26709,16 @@ var Router = function () {
 
       // Root handler
       this.router.on(function () {
-        _this.currentPage = new _stocks2.default(_this.$canvas);
+        // this.currentPage = new Stocks(this.$canvas);
       }).resolve();
 
       // Routes handler
       this.router.on({
         '/watchlist': function watchlist() {
-          _this.currentPage = new _stocks2.default(_this.$canvas);
+          // this.currentPage = new Stocks(this.$canvas);
         },
         '/stocks': function stocks() {
-          // this.currentPage = new Stocks(this.$canvas);
+          _this.currentPage = new _stocks2.default(_this.$canvas);
         },
         '/compare': function compare() {
           // Insert functionality
@@ -26787,10 +26787,11 @@ var Stocks = function () {
     if (_store2.default.get('stocks')) {
       this.renderStocks();
     } else {
-      this.getStocks();
+      this.getStocks(1);
     }
 
-    this.activateCompanySelection();
+    this.activateScroll();
+    // this.activateCompanySelection();
   }
 
   // RENDER HTML
@@ -26799,7 +26800,7 @@ var Stocks = function () {
   _createClass(Stocks, [{
     key: 'render',
     value: function render() {
-      var html = '\n        <div class="dashboard-stocks-container">\n          <ul id="stocks-list" class="stocks-list"></ul>\n        </div>\n        <div class="dashboard-content-container clearfix">\n          <h3 id="stock-name-header" class="text-header"></h3>\n          <div class="chart-container">\n            <canvas id="chart" width="900" height="400"></canvas>\n          </div>\n        </div>\n      ';
+      var html = '\n        <div class="stocks-container">\n          <h3>All Stocks</h3>\n          <ul id="stocks-list" class="stocks-list"></ul>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -26807,7 +26808,7 @@ var Stocks = function () {
 
   }, {
     key: 'getStocks',
-    value: function getStocks() {
+    value: function getStocks(num) {
       var _this = this;
 
       _jquery2.default.ajax({
@@ -26819,7 +26820,7 @@ var Stocks = function () {
           database_code: 'WIKI',
           per_page: '100',
           sort_by: 'id',
-          page: '1',
+          page: '' + num,
           api_key: 'tskzGKweRxWgnbX2pafZ'
         },
         error: function error(xhr, message, _error) {
@@ -26843,6 +26844,8 @@ var Stocks = function () {
       var datasets = stocks.datasets;
 
 
+      console.log(datasets);
+
       var list = datasets.slice(0, 100).map(function (stock) {
         var stockCode = stock.dataset_code,
             name = stock.name;
@@ -26853,8 +26856,8 @@ var Stocks = function () {
       });
 
       this.$stockListContainer.append(list);
-      this.$stockHeader.html(firstStockName);
-      this.getPrice(firstStockId);
+      // this.$stockHeader.html(firstStockName);
+      // this.getPrice(firstStockId);
     }
 
     // GET COMPANY STOCK DATA
@@ -26924,6 +26927,21 @@ var Stocks = function () {
       // console.log(id);
 
       this.getPrice(id);
+    }
+  }, {
+    key: 'activateScroll',
+    value: function activateScroll() {
+      var _this2 = this;
+
+      var count = 1;
+      // console.log(this.$container.height());
+      // console.log(this.$stockListContainer.height());
+      this.$container.scroll(function () {
+        if (_this2.$container.scrollTop() + _this2.$container.innerHeight() >= _this2.$stockListContainer.height()) {
+          count++;
+          _this2.getStocks(count);
+        }
+      });
     }
 
     // CLEAR DASHBOARD CANVAS

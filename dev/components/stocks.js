@@ -18,10 +18,11 @@ class Stocks {
       this.renderStocks();
     }
     else {
-      this.getStocks();
+      this.getStocks(1);
     }
 
-    this.activateCompanySelection();
+    this.activateScroll();
+    // this.activateCompanySelection();
   }
 
 
@@ -29,14 +30,9 @@ class Stocks {
   render() {
     let html =
       `
-        <div class="dashboard-stocks-container">
+        <div class="stocks-container">
+          <h3>All Stocks</h3>
           <ul id="stocks-list" class="stocks-list"></ul>
-        </div>
-        <div class="dashboard-content-container clearfix">
-          <h3 id="stock-name-header" class="text-header"></h3>
-          <div class="chart-container">
-            <canvas id="chart" width="900" height="400"></canvas>
-          </div>
         </div>
       `;
     this.$container.append(html);
@@ -44,7 +40,7 @@ class Stocks {
 
 
   // GET LIST OF COMPANIES
-  getStocks() {
+  getStocks(num) {
     $.ajax({
       // Below is what entire URL would look like:
       // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
@@ -54,7 +50,7 @@ class Stocks {
         database_code: 'WIKI',
         per_page: '100',
         sort_by: 'id',
-        page: '1',
+        page: `${num}`,
         api_key: 'tskzGKweRxWgnbX2pafZ'
       },
       error: (xhr, message, error) => {
@@ -75,6 +71,8 @@ class Stocks {
     const firstStockName = stocks.datasets[0].name.split('(')[0];
     const { datasets } = stocks;
 
+    console.log(datasets);
+
     const list =  datasets.slice(0, 100).map((stock) => {
       const { dataset_code: stockCode, name } = stock;
       const stockName = name.split('(')[0];
@@ -90,8 +88,8 @@ class Stocks {
     });
 
     this.$stockListContainer.append(list);
-    this.$stockHeader.html(firstStockName);
-    this.getPrice(firstStockId);
+    // this.$stockHeader.html(firstStockName);
+    // this.getPrice(firstStockId);
   }
 
 
@@ -151,6 +149,19 @@ class Stocks {
     // console.log(id);
 
     this.getPrice(id);
+  }
+
+
+  activateScroll() {
+    let count = 1;
+    // console.log(this.$container.height());
+    // console.log(this.$stockListContainer.height());
+    this.$container.scroll(() => {
+      if (this.$container.scrollTop() + this.$container.innerHeight() >= this.$stockListContainer.height()) {
+        count++;
+        this.getStocks(count);
+      }
+    });
   }
 
 
