@@ -19,6 +19,7 @@
   "dependencies": {
     "chart.js": "^2.6.0",
     "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
     "moment": "^2.18.1",
     "navigo": "^5.2.0",
     "store2": "^2.5.1"
