@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 120);
+/******/ 	return __webpack_require__(__webpack_require__.s = 121);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1899,7 +1899,7 @@ function loadLocale(name) {
             module && module.exports) {
         try {
             oldLocale = globalLocale._abbr;
-            __webpack_require__(128)("./" + name);
+            __webpack_require__(129)("./" + name);
             // because defineLocale currently also sets the global locale, we
             // want to undo that for lazy loaded locales
             getSetGlobalLocale(oldLocale);
@@ -4534,7 +4534,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(174)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(118)(module)))
 
 /***/ }),
 /* 1 */
@@ -14801,8 +14801,8 @@ return jQuery;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var convert = __webpack_require__(127);
-var string = __webpack_require__(124);
+var convert = __webpack_require__(128);
+var string = __webpack_require__(125);
 
 var Color = function (obj) {
 	if (obj instanceof Color) {
@@ -26369,6 +26369,34 @@ return zhTw;
 
 /***/ }),
 /* 118 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+
+/***/ }),
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26384,7 +26412,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(122);
+var _router = __webpack_require__(123);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -26461,21 +26489,21 @@ var Nav = function () {
 exports.default = Nav;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(119);
+__webpack_require__(120);
 
-var _nav = __webpack_require__(118);
+var _nav = __webpack_require__(119);
 
 var _nav2 = _interopRequireDefault(_nav);
 
@@ -26493,7 +26521,7 @@ var App = function App() {
 new App();
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26505,7 +26533,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chart = __webpack_require__(129);
+var _chart = __webpack_require__(130);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -26571,12 +26599,13 @@ var Graph = function () {
     value: function getOptions() {
       return {
         responsive: false,
+        maintainAspectRatio: false,
         layout: {
           padding: {
             top: 30,
-            right: 20,
+            right: 30,
             bottom: 30,
-            left: 20
+            left: 30
           }
         },
         legend: {
@@ -26639,7 +26668,7 @@ var Graph = function () {
 exports.default = Graph;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26657,11 +26686,11 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(172);
+var _navigo = __webpack_require__(174);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stocks = __webpack_require__(123);
+var _stocks = __webpack_require__(124);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
@@ -26743,7 +26772,7 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26754,22 +26783,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+// import Graph from './graph.js';
+
 
 var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(192);
+var _lodash = __webpack_require__(173);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _store = __webpack_require__(173);
+var _store = __webpack_require__(175);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _graph = __webpack_require__(121);
+var _stockPopUp = __webpack_require__(181);
 
-var _graph2 = _interopRequireDefault(_graph);
+var _stockPopUp2 = _interopRequireDefault(_stockPopUp);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -26782,6 +26813,7 @@ var Stocks = function () {
     // REGISTER ELEMENTS
     this.$container = container;
     this.graph;
+    // this.popup;
 
     this.render();
     this.$chartId = (0, _jquery2.default)('#chart');
@@ -26796,7 +26828,9 @@ var Stocks = function () {
       this.getStocks(this.count);
     }
 
-    this.activateScroll();
+    new _stockPopUp2.default(this.$stockListContainer);
+
+    // this.activateScroll();
     // this.activateCompanySelection();
   }
 
@@ -26869,6 +26903,11 @@ var Stocks = function () {
       // this.$stockHeader.html(firstStockName);
       // this.getPrice(firstStockId);
     }
+  }, {
+    key: 'activatePopUp',
+    value: function activatePopUp() {
+      this.popup = new _stockPopUp2.default(this.$stockListContainer);
+    }
 
     // UPDATE GRAPH ON COMPANY SELECTION
 
@@ -26934,11 +26973,11 @@ var Stocks = function () {
 exports.default = Stocks;
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var colorNames = __webpack_require__(125);
+var colorNames = __webpack_require__(126);
 
 module.exports = {
    getRgba: getRgba,
@@ -27161,7 +27200,7 @@ for (var name in colorNames) {
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -27316,7 +27355,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports) {
 
 /* MIT license */
@@ -28020,10 +28059,10 @@ for (var key in cssKeywords) {
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var conversions = __webpack_require__(126);
+var conversions = __webpack_require__(127);
 
 var convert = function() {
    return new Converter();
@@ -28117,7 +28156,7 @@ Converter.prototype.getValues = function(space) {
 module.exports = convert;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -28366,68 +28405,68 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 128;
+webpackContext.id = 129;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * @namespace Chart
  */
-var Chart = __webpack_require__(150)();
+var Chart = __webpack_require__(151)();
 
+__webpack_require__(149)(Chart);
+__webpack_require__(163)(Chart);
+__webpack_require__(145)(Chart);
 __webpack_require__(148)(Chart);
-__webpack_require__(162)(Chart);
+__webpack_require__(153)(Chart);
 __webpack_require__(144)(Chart);
+__webpack_require__(146)(Chart);
 __webpack_require__(147)(Chart);
 __webpack_require__(152)(Chart);
-__webpack_require__(143)(Chart);
-__webpack_require__(145)(Chart);
-__webpack_require__(146)(Chart);
-__webpack_require__(151)(Chart);
-__webpack_require__(154)(Chart);
 __webpack_require__(155)(Chart);
-__webpack_require__(153)(Chart);
-__webpack_require__(149)(Chart);
 __webpack_require__(156)(Chart);
-
+__webpack_require__(154)(Chart);
+__webpack_require__(150)(Chart);
 __webpack_require__(157)(Chart);
+
 __webpack_require__(158)(Chart);
 __webpack_require__(159)(Chart);
 __webpack_require__(160)(Chart);
+__webpack_require__(161)(Chart);
 
-__webpack_require__(168)(Chart);
-__webpack_require__(166)(Chart);
-__webpack_require__(167)(Chart);
 __webpack_require__(169)(Chart);
+__webpack_require__(167)(Chart);
+__webpack_require__(168)(Chart);
 __webpack_require__(170)(Chart);
 __webpack_require__(171)(Chart);
+__webpack_require__(172)(Chart);
 
 // Controllers must be loaded after elements
 // See Chart.core.datasetController.dataElementType
-__webpack_require__(137)(Chart);
 __webpack_require__(138)(Chart);
 __webpack_require__(139)(Chart);
 __webpack_require__(140)(Chart);
 __webpack_require__(141)(Chart);
 __webpack_require__(142)(Chart);
+__webpack_require__(143)(Chart);
 
-__webpack_require__(130)(Chart);
 __webpack_require__(131)(Chart);
 __webpack_require__(132)(Chart);
 __webpack_require__(133)(Chart);
 __webpack_require__(134)(Chart);
 __webpack_require__(135)(Chart);
 __webpack_require__(136)(Chart);
+__webpack_require__(137)(Chart);
 
 // Loading built-it plugins
 var plugins = [];
 
 plugins.push(
-    __webpack_require__(163)(Chart),
     __webpack_require__(164)(Chart),
-    __webpack_require__(165)(Chart)
+    __webpack_require__(165)(Chart),
+    __webpack_require__(166)(Chart)
 );
 
 Chart.plugins.register(plugins);
@@ -28439,7 +28478,7 @@ if (typeof window !== 'undefined') {
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28457,7 +28496,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28474,7 +28513,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28492,7 +28531,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28510,7 +28549,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28528,7 +28567,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28546,7 +28585,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28600,7 +28639,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28990,7 +29029,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29119,7 +29158,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29429,7 +29468,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29769,7 +29808,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29999,7 +30038,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30173,7 +30212,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30348,7 +30387,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30505,7 +30544,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31363,7 +31402,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31700,7 +31739,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31826,7 +31865,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32817,7 +32856,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33140,7 +33179,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33203,7 +33242,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33646,7 +33685,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34024,7 +34063,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34788,7 +34827,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34839,7 +34878,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35054,7 +35093,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35999,7 +36038,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36110,7 +36149,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36204,7 +36243,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36311,7 +36350,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36526,7 +36565,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36816,7 +36855,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36824,7 +36863,7 @@ module.exports = function(Chart) {
 
 // By default, select the browser (DOM) platform.
 // @TODO Make possible to select another platform at build time.
-var implementation = __webpack_require__(161);
+var implementation = __webpack_require__(162);
 
 module.exports = function(Chart) {
 	/**
@@ -36892,7 +36931,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37208,7 +37247,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37759,7 +37798,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37992,7 +38031,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38131,7 +38170,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38328,7 +38367,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38441,7 +38480,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38694,7 +38733,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39224,7 +39263,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39673,835 +39712,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 172 */
-/***/ (function(module, exports, __webpack_require__) {
-
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(true)
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define("Navigo", [], factory);
-	else if(typeof exports === 'object')
-		exports["Navigo"] = factory();
-	else
-		root["Navigo"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
-/******/
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function isPushStateAvailable() {
-	  return !!(typeof window !== 'undefined' && window.history && window.history.pushState);
-	}
-	
-	function Navigo(r, useHash, hash) {
-	  this.root = null;
-	  this._routes = [];
-	  this._useHash = useHash;
-	  this._hash = typeof hash === 'undefined' ? '#' : hash;
-	  this._paused = false;
-	  this._destroyed = false;
-	  this._lastRouteResolved = null;
-	  this._notFoundHandler = null;
-	  this._defaultHandler = null;
-	  this._usePushState = !useHash && isPushStateAvailable();
-	  this._onLocationChange = this._onLocationChange.bind(this);
-	  this._genericHooks = null;
-	
-	  if (r) {
-	    this.root = useHash ? r.replace(/\/$/, '/' + this._hash) : r.replace(/\/$/, '');
-	  } else if (useHash) {
-	    this.root = this._cLoc().split(this._hash)[0].replace(/\/$/, '/' + this._hash);
-	  }
-	
-	  this._listen();
-	  this.updatePageLinks();
-	}
-	
-	function clean(s) {
-	  if (s instanceof RegExp) return s;
-	  return s.replace(/\/+$/, '').replace(/^\/+/, '^/');
-	}
-	
-	function regExpResultToParams(match, names) {
-	  if (names.length === 0) return null;
-	  if (!match) return null;
-	  return match.slice(1, match.length).reduce(function (params, value, index) {
-	    if (params === null) params = {};
-	    params[names[index]] = decodeURIComponent(value);
-	    return params;
-	  }, null);
-	}
-	
-	function replaceDynamicURLParts(route) {
-	  var paramNames = [],
-	      regexp;
-	
-	  if (route instanceof RegExp) {
-	    regexp = route;
-	  } else {
-	    regexp = new RegExp(route.replace(Navigo.PARAMETER_REGEXP, function (full, dots, name) {
-	      paramNames.push(name);
-	      return Navigo.REPLACE_VARIABLE_REGEXP;
-	    }).replace(Navigo.WILDCARD_REGEXP, Navigo.REPLACE_WILDCARD) + Navigo.FOLLOWED_BY_SLASH_REGEXP, Navigo.MATCH_REGEXP_FLAGS);
-	  }
-	  return { regexp: regexp, paramNames: paramNames };
-	}
-	
-	function getUrlDepth(url) {
-	  return url.replace(/\/$/, '').split('/').length;
-	}
-	
-	function compareUrlDepth(urlA, urlB) {
-	  return getUrlDepth(urlB) - getUrlDepth(urlA);
-	}
-	
-	function findMatchedRoutes(url) {
-	  var routes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-	
-	  return routes.map(function (route) {
-	    var _replaceDynamicURLPar = replaceDynamicURLParts(clean(route.route)),
-	        regexp = _replaceDynamicURLPar.regexp,
-	        paramNames = _replaceDynamicURLPar.paramNames;
-	
-	    var match = url.replace(/^\/+/, '/').match(regexp);
-	    var params = regExpResultToParams(match, paramNames);
-	
-	    return match ? { match: match, route: route, params: params } : false;
-	  }).filter(function (m) {
-	    return m;
-	  });
-	}
-	
-	function match(url, routes) {
-	  return findMatchedRoutes(url, routes)[0] || false;
-	}
-	
-	function root(url, routes) {
-	  var matched = routes.map(function (route) {
-	    return route.route === '' || route.route === '*' ? url : url.split(new RegExp(route.route + '($|\/)'))[0];
-	  });
-	  var fallbackURL = clean(url);
-	
-	  if (matched.length > 1) {
-	    return matched.reduce(function (result, url) {
-	      if (result.length > url.length) result = url;
-	      return result;
-	    }, matched[0]);
-	  } else if (matched.length === 1) {
-	    return matched[0];
-	  }
-	  return fallbackURL;
-	}
-	
-	function isHashChangeAPIAvailable() {
-	  return !!(typeof window !== 'undefined' && 'onhashchange' in window);
-	}
-	
-	function extractGETParameters(url) {
-	  return url.split(/\?(.*)?$/).slice(1).join('');
-	}
-	
-	function getOnlyURL(url, useHash, hash) {
-	  var onlyURL = url.split(/\?(.*)?$/)[0],
-	      split;
-	
-	  if (typeof hash === 'undefined') {
-	    // To preserve BC
-	    hash = '#';
-	  }
-	
-	  if (isPushStateAvailable() && !useHash) {
-	    onlyURL = onlyURL.split(hash)[0];
-	  } else {
-	    split = onlyURL.split(hash);
-	    onlyURL = split.length > 1 ? onlyURL.split(hash)[1] : split[0];
-	  }
-	
-	  return onlyURL;
-	}
-	
-	function manageHooks(handler, hooks, params) {
-	  if (hooks && (typeof hooks === 'undefined' ? 'undefined' : _typeof(hooks)) === 'object') {
-	    if (hooks.before) {
-	      hooks.before(function () {
-	        var shouldRoute = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-	
-	        if (!shouldRoute) return;
-	        handler();
-	        hooks.after && hooks.after(params);
-	      }, params);
-	    } else if (hooks.after) {
-	      handler();
-	      hooks.after && hooks.after(params);
-	    }
-	    return;
-	  }
-	  handler();
-	};
-	
-	function isHashedRoot(url, useHash, hash) {
-	  if (isPushStateAvailable() && !useHash) {
-	    return false;
-	  }
-	
-	  if (!url.match(hash)) {
-	    return false;
-	  }
-	
-	  var split = url.split(hash);
-	
-	  if (split.length < 2 || split[1] === '') {
-	    return true;
-	  }
-	
-	  return false;
-	};
-	
-	Navigo.prototype = {
-	  helpers: {
-	    match: match,
-	    root: root,
-	    clean: clean
-	  },
-	  navigate: function navigate(path, absolute) {
-	    var to;
-	
-	    path = path || '';
-	    if (this._usePushState) {
-	      to = (!absolute ? this._getRoot() + '/' : '') + path.replace(/^\/+/, '/');
-	      to = to.replace(/([^:])(\/{2,})/g, '$1/');
-	      history[this._paused ? 'replaceState' : 'pushState']({}, '', to);
-	      this.resolve();
-	    } else if (typeof window !== 'undefined') {
-	      path = path.replace(new RegExp('^' + this._hash), '');
-	      window.location.href = window.location.href.replace(/#$/, '').replace(new RegExp(this._hash + '.*$'), '') + this._hash + path;
-	    }
-	    return this;
-	  },
-	  on: function on() {
-	    var _this = this;
-	
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-	
-	    if (typeof args[0] === 'function') {
-	      this._defaultHandler = { handler: args[0], hooks: args[1] };
-	    } else if (args.length >= 2) {
-	      if (args[0] === '/') {
-	        var func = args[1];
-	
-	        if (_typeof(args[1]) === 'object') {
-	          func = args[1].uses;
-	        }
-	
-	        this._defaultHandler = { handler: func, hooks: args[2] };
-	      } else {
-	        this._add(args[0], args[1], args[2]);
-	      }
-	    } else if (_typeof(args[0]) === 'object') {
-	      var orderedRoutes = Object.keys(args[0]).sort(compareUrlDepth);
-	
-	      orderedRoutes.forEach(function (route) {
-	        _this.on(route, args[0][route]);
-	      });
-	    }
-	    return this;
-	  },
-	  off: function off(handler) {
-	    if (this._defaultHandler !== null && handler === this._defaultHandler.handler) {
-	      this._defaultHandler = null;
-	    } else if (this._notFoundHandler !== null && handler === this._notFoundHandler.handler) {
-	      this._notFoundHandler = null;
-	    }
-	    this._routes = this._routes.reduce(function (result, r) {
-	      if (r.handler !== handler) result.push(r);
-	      return result;
-	    }, []);
-	    return this;
-	  },
-	  notFound: function notFound(handler, hooks) {
-	    this._notFoundHandler = { handler: handler, hooks: hooks };
-	    return this;
-	  },
-	  resolve: function resolve(current) {
-	    var _this2 = this;
-	
-	    var handler, m;
-	    var url = (current || this._cLoc()).replace(this._getRoot(), '');
-	
-	    if (this._useHash) {
-	      url = url.replace(new RegExp('^\/' + this._hash), '/');
-	    }
-	
-	    var GETParameters = extractGETParameters(current || this._cLoc());
-	    var onlyURL = getOnlyURL(url, this._useHash, this._hash);
-	
-	    if (this._paused) return false;
-	
-	    if (this._lastRouteResolved && onlyURL === this._lastRouteResolved.url && GETParameters === this._lastRouteResolved.query) {
-	      if (this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.already) {
-	        this._lastRouteResolved.hooks.already(this._lastRouteResolved.params);
-	      }
-	      return false;
-	    }
-	
-	    m = match(onlyURL, this._routes);
-	
-	    if (m) {
-	      this._callLeave();
-	      this._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: m.route.hooks, params: m.params };
-	      handler = m.route.handler;
-	      manageHooks(function () {
-	        manageHooks(function () {
-	          m.route.route instanceof RegExp ? handler.apply(undefined, _toConsumableArray(m.match.slice(1, m.match.length))) : handler(m.params, GETParameters);
-	        }, m.route.hooks, m.params, _this2._genericHooks);
-	      }, this._genericHooks, m.params);
-	      return m;
-	    } else if (this._defaultHandler && (onlyURL === '' || onlyURL === '/' || onlyURL === this._hash || isHashedRoot(onlyURL, this._useHash, this._hash))) {
-	      manageHooks(function () {
-	        manageHooks(function () {
-	          _this2._callLeave();
-	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._defaultHandler.hooks };
-	          _this2._defaultHandler.handler(GETParameters);
-	        }, _this2._defaultHandler.hooks);
-	      }, this._genericHooks);
-	      return true;
-	    } else if (this._notFoundHandler) {
-	      manageHooks(function () {
-	        manageHooks(function () {
-	          _this2._callLeave();
-	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._notFoundHandler.hooks };
-	          _this2._notFoundHandler.handler(GETParameters);
-	        }, _this2._notFoundHandler.hooks);
-	      }, this._genericHooks);
-	    }
-	    return false;
-	  },
-	  destroy: function destroy() {
-	    this._routes = [];
-	    this._destroyed = true;
-	    clearTimeout(this._listenningInterval);
-	    if (typeof window !== 'undefined') {
-	      window.removeEventListener('popstate', this._onLocationChange);
-	      window.removeEventListener('hashchange', this._onLocationChange);
-	    }
-	  },
-	  updatePageLinks: function updatePageLinks() {
-	    var self = this;
-	
-	    if (typeof document === 'undefined') return;
-	
-	    this._findLinks().forEach(function (link) {
-	      if (!link.hasListenerAttached) {
-	        link.addEventListener('click', function (e) {
-	          var location = self.getLinkPath(link);
-	
-	          if (!self._destroyed) {
-	            e.preventDefault();
-	            self.navigate(location.replace(/\/+$/, '').replace(/^\/+/, '/'));
-	          }
-	        });
-	        link.hasListenerAttached = true;
-	      }
-	    });
-	  },
-	  generate: function generate(name) {
-	    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	
-	    var result = this._routes.reduce(function (result, route) {
-	      var key;
-	
-	      if (route.name === name) {
-	        result = route.route;
-	        for (key in data) {
-	          result = result.toString().replace(':' + key, data[key]);
-	        }
-	      }
-	      return result;
-	    }, '');
-	
-	    return this._useHash ? this._hash + result : result;
-	  },
-	  link: function link(path) {
-	    return this._getRoot() + path;
-	  },
-	  pause: function pause() {
-	    var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-	
-	    this._paused = status;
-	  },
-	  resume: function resume() {
-	    this.pause(false);
-	  },
-	  disableIfAPINotAvailable: function disableIfAPINotAvailable() {
-	    if (!isPushStateAvailable()) {
-	      this.destroy();
-	    }
-	  },
-	  lastRouteResolved: function lastRouteResolved() {
-	    return this._lastRouteResolved;
-	  },
-	  getLinkPath: function getLinkPath(link) {
-	    return link.pathname || link.getAttribute('href');
-	  },
-	  hooks: function hooks(_hooks) {
-	    this._genericHooks = _hooks;
-	  },
-	
-	  _add: function _add(route) {
-	    var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-	    var hooks = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-	
-	    if (typeof route === 'string') {
-	      route = encodeURI(route);
-	    }
-	    if ((typeof handler === 'undefined' ? 'undefined' : _typeof(handler)) === 'object') {
-	      this._routes.push({
-	        route: route,
-	        handler: handler.uses,
-	        name: handler.as,
-	        hooks: hooks || handler.hooks
-	      });
-	    } else {
-	      this._routes.push({ route: route, handler: handler, hooks: hooks });
-	    }
-	    return this._add;
-	  },
-	  _getRoot: function _getRoot() {
-	    if (this.root !== null) return this.root;
-	    this.root = root(this._cLoc().split('?')[0], this._routes);
-	    return this.root;
-	  },
-	  _listen: function _listen() {
-	    var _this3 = this;
-	
-	    if (this._usePushState) {
-	      window.addEventListener('popstate', this._onLocationChange);
-	    } else if (isHashChangeAPIAvailable()) {
-	      window.addEventListener('hashchange', this._onLocationChange);
-	    } else {
-	      var cached = this._cLoc(),
-	          current = void 0,
-	          _check = void 0;
-	
-	      _check = function check() {
-	        current = _this3._cLoc();
-	        if (cached !== current) {
-	          cached = current;
-	          _this3.resolve();
-	        }
-	        _this3._listenningInterval = setTimeout(_check, 200);
-	      };
-	      _check();
-	    }
-	  },
-	  _cLoc: function _cLoc() {
-	    if (typeof window !== 'undefined') {
-	      if (typeof window.__NAVIGO_WINDOW_LOCATION_MOCK__ !== 'undefined') {
-	        return window.__NAVIGO_WINDOW_LOCATION_MOCK__;
-	      }
-	      return clean(window.location.href);
-	    }
-	    return '';
-	  },
-	  _findLinks: function _findLinks() {
-	    return [].slice.call(document.querySelectorAll('[data-navigo]'));
-	  },
-	  _onLocationChange: function _onLocationChange() {
-	    this.resolve();
-	  },
-	  _callLeave: function _callLeave() {
-	    if (this._lastRouteResolved && this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.leave) {
-	      this._lastRouteResolved.hooks.leave();
-	    }
-	  }
-	};
-	
-	Navigo.PARAMETER_REGEXP = /([:*])(\w+)/g;
-	Navigo.WILDCARD_REGEXP = /\*/g;
-	Navigo.REPLACE_VARIABLE_REGEXP = '([^\/]+)';
-	Navigo.REPLACE_WILDCARD = '(?:.*)';
-	Navigo.FOLLOWED_BY_SLASH_REGEXP = '(?:\/$|$)';
-	Navigo.MATCH_REGEXP_FLAGS = '';
-	
-	exports.default = Navigo;
-	module.exports = exports['default'];
-
-/***/ }
-/******/ ])
-});
-;
-//# sourceMappingURL=navigo.js.map
-
-/***/ }),
 /* 173 */
-/***/ (function(module, exports) {
-
-/*! store2 - v2.5.1 - 2017-03-28
-* Copyright (c) 2017 Nathan Bubna; Licensed ,  */
-;(function(window, define) {
-    var _ = {
-        version: "2.5.1",
-        areas: {},
-        apis: {},
-
-        // utilities
-        inherit: function(api, o) {
-            for (var p in api) {
-                if (!o.hasOwnProperty(p)) {
-                    o[p] = api[p];
-                }
-            }
-            return o;
-        },
-        stringify: function(d) {
-            return d === undefined || typeof d === "function" ? d+'' : JSON.stringify(d);
-        },
-        parse: function(s) {
-            // if it doesn't parse, return as is
-            try{ return JSON.parse(s); }catch(e){ return s; }
-        },
-
-        // extension hooks
-        fn: function(name, fn) {
-            _.storeAPI[name] = fn;
-            for (var api in _.apis) {
-                _.apis[api][name] = fn;
-            }
-        },
-        get: function(area, key){ return area.getItem(key); },
-        set: function(area, key, string){ area.setItem(key, string); },
-        remove: function(area, key){ area.removeItem(key); },
-        key: function(area, i){ return area.key(i); },
-        length: function(area){ return area.length; },
-        clear: function(area){ area.clear(); },
-
-        // core functions
-        Store: function(id, area, namespace) {
-            var store = _.inherit(_.storeAPI, function(key, data, overwrite) {
-                if (arguments.length === 0){ return store.getAll(); }
-                if (typeof data === "function"){ return store.transact(key, data, overwrite); }// fn=data, alt=overwrite
-                if (data !== undefined){ return store.set(key, data, overwrite); }
-                if (typeof key === "string" || typeof key === "number"){ return store.get(key); }
-                if (!key){ return store.clear(); }
-                return store.setAll(key, data);// overwrite=data, data=key
-            });
-            store._id = id;
-            try {
-                var testKey = '_safariPrivate_';
-                area.setItem(testKey, 'sucks');
-                store._area = area;
-                area.removeItem(testKey);
-            } catch (e) {}
-            if (!store._area) {
-                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
-            }
-            store._ns = namespace || '';
-            if (!_.areas[id]) {
-                _.areas[id] = store._area;
-            }
-            if (!_.apis[store._ns+store._id]) {
-                _.apis[store._ns+store._id] = store;
-            }
-            return store;
-        },
-        storeAPI: {
-            // admin functions
-            area: function(id, area) {
-                var store = this[id];
-                if (!store || !store.area) {
-                    store = _.Store(id, area, this._ns);//new area-specific api in this namespace
-                    if (!this[id]){ this[id] = store; }
-                }
-                return store;
-            },
-            namespace: function(namespace, noSession) {
-                if (!namespace){
-                    return this._ns ? this._ns.substring(0,this._ns.length-1) : '';
-                }
-                var ns = namespace, store = this[ns];
-                if (!store || !store.namespace) {
-                    store = _.Store(this._id, this._area, this._ns+ns+'.');//new namespaced api
-                    if (!this[ns]){ this[ns] = store; }
-                    if (!noSession){ store.area('session', _.areas.session); }
-                }
-                return store;
-            },
-            isFake: function(){ return this._area.name === 'fake'; },
-            toString: function() {
-                return 'store'+(this._ns?'.'+this.namespace():'')+'['+this._id+']';
-            },
-
-            // storage functions
-            has: function(key) {
-                if (this._area.has) {
-                    return this._area.has(this._in(key));//extension hook
-                }
-                return !!(this._in(key) in this._area);
-            },
-            size: function(){ return this.keys().length; },
-            each: function(fn, and) {
-                for (var i=0, m=_.length(this._area); i<m; i++) {
-                    var key = this._out(_.key(this._area, i));
-                    if (key !== undefined) {
-                        if (fn.call(this, key, and || this.get(key)) === false) {
-                            break;
-                        }
-                    }
-                    if (m > _.length(this._area)) { m--; i--; }// in case of removeItem
-                }
-                return and || this;
-            },
-            keys: function() {
-                return this.each(function(k, list){ list.push(k); }, []);
-            },
-            get: function(key, alt) {
-                var s = _.get(this._area, this._in(key));
-                return s !== null ? _.parse(s) : alt || s;// support alt for easy default mgmt
-            },
-            getAll: function() {
-                return this.each(function(k, all){ all[k] = this.get(k); }, {});
-            },
-            transact: function(key, fn, alt) {
-                var val = this.get(key, alt),
-                    ret = fn(val);
-                this.set(key, ret === undefined ? val : ret);
-                return this;
-            },
-            set: function(key, data, overwrite) {
-                var d = this.get(key);
-                if (d != null && overwrite === false) {
-                    return data;
-                }
-                return _.set(this._area, this._in(key), _.stringify(data), overwrite) || d;
-            },
-            setAll: function(data, overwrite) {
-                var changed, val;
-                for (var key in data) {
-                    val = data[key];
-                    if (this.set(key, val, overwrite) !== val) {
-                        changed = true;
-                    }
-                }
-                return changed;
-            },
-            remove: function(key) {
-                var d = this.get(key);
-                _.remove(this._area, this._in(key));
-                return d;
-            },
-            clear: function() {
-                if (!this._ns) {
-                    _.clear(this._area);
-                } else {
-                    this.each(function(k){ _.remove(this._area, this._in(k)); }, 1);
-                }
-                return this;
-            },
-            clearAll: function() {
-                var area = this._area;
-                for (var id in _.areas) {
-                    if (_.areas.hasOwnProperty(id)) {
-                        this._area = _.areas[id];
-                        this.clear();
-                    }
-                }
-                this._area = area;
-                return this;
-            },
-
-            // internal use functions
-            _in: function(k) {
-                if (typeof k !== "string"){ k = _.stringify(k); }
-                return this._ns ? this._ns + k : k;
-            },
-            _out: function(k) {
-                return this._ns ?
-                    k && k.indexOf(this._ns) === 0 ?
-                        k.substring(this._ns.length) :
-                        undefined : // so each() knows to skip it
-                    k;
-            }
-        },// end _.storeAPI
-        storageAPI: {
-            length: 0,
-            has: function(k){ return this.items.hasOwnProperty(k); },
-            key: function(i) {
-                var c = 0;
-                for (var k in this.items){
-                    if (this.has(k) && i === c++) {
-                        return k;
-                    }
-                }
-            },
-            setItem: function(k, v) {
-                if (!this.has(k)) {
-                    this.length++;
-                }
-                this.items[k] = v;
-            },
-            removeItem: function(k) {
-                if (this.has(k)) {
-                    delete this.items[k];
-                    this.length--;
-                }
-            },
-            getItem: function(k){ return this.has(k) ? this.items[k] : null; },
-            clear: function(){ for (var k in this.list){ this.removeItem(k); } },
-            toString: function(){ return this.length+' items in '+this.name+'Storage'; }
-        }// end _.storageAPI
-    };
-
-    var store =
-        // safely set this up (throws error in IE10/32bit mode for local files)
-        _.Store("local", (function(){try{ return localStorage; }catch(e){}})());
-    store.local = store;// for completeness
-    store._ = _;// for extenders and debuggers...
-    // safely setup store.session (throws exception in FF for file:/// urls)
-    store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
-
-    if (typeof define === 'function' && define.amd !== undefined) {
-        define('store2', [], function () {
-            return store;
-        });
-    } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = store;
-    } else {
-        // expose the primary store fn to the global object and save conflicts
-        if (window.store){ _.conflict = window.store; }
-        window.store = store;
-    }
-
-})(this, this.define);
-
-
-/***/ }),
-/* 174 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
-/* 175 */,
-/* 176 */,
-/* 177 */,
-/* 178 */,
-/* 179 */,
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */,
-/* 184 */,
-/* 185 */,
-/* 186 */,
-/* 187 */,
-/* 188 */,
-/* 189 */,
-/* 190 */,
-/* 191 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || Function("return this")() || (1,eval)("this");
-} catch(e) {
-	// This works if the window reference is available
-	if(typeof window === "object")
-		g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 192 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -57590,7 +56801,953 @@ module.exports = g;
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(191), __webpack_require__(174)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(176), __webpack_require__(118)(module)))
+
+/***/ }),
+/* 174 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("Navigo", [], factory);
+	else if(typeof exports === 'object')
+		exports["Navigo"] = factory();
+	else
+		root["Navigo"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function isPushStateAvailable() {
+	  return !!(typeof window !== 'undefined' && window.history && window.history.pushState);
+	}
+	
+	function Navigo(r, useHash, hash) {
+	  this.root = null;
+	  this._routes = [];
+	  this._useHash = useHash;
+	  this._hash = typeof hash === 'undefined' ? '#' : hash;
+	  this._paused = false;
+	  this._destroyed = false;
+	  this._lastRouteResolved = null;
+	  this._notFoundHandler = null;
+	  this._defaultHandler = null;
+	  this._usePushState = !useHash && isPushStateAvailable();
+	  this._onLocationChange = this._onLocationChange.bind(this);
+	  this._genericHooks = null;
+	
+	  if (r) {
+	    this.root = useHash ? r.replace(/\/$/, '/' + this._hash) : r.replace(/\/$/, '');
+	  } else if (useHash) {
+	    this.root = this._cLoc().split(this._hash)[0].replace(/\/$/, '/' + this._hash);
+	  }
+	
+	  this._listen();
+	  this.updatePageLinks();
+	}
+	
+	function clean(s) {
+	  if (s instanceof RegExp) return s;
+	  return s.replace(/\/+$/, '').replace(/^\/+/, '^/');
+	}
+	
+	function regExpResultToParams(match, names) {
+	  if (names.length === 0) return null;
+	  if (!match) return null;
+	  return match.slice(1, match.length).reduce(function (params, value, index) {
+	    if (params === null) params = {};
+	    params[names[index]] = decodeURIComponent(value);
+	    return params;
+	  }, null);
+	}
+	
+	function replaceDynamicURLParts(route) {
+	  var paramNames = [],
+	      regexp;
+	
+	  if (route instanceof RegExp) {
+	    regexp = route;
+	  } else {
+	    regexp = new RegExp(route.replace(Navigo.PARAMETER_REGEXP, function (full, dots, name) {
+	      paramNames.push(name);
+	      return Navigo.REPLACE_VARIABLE_REGEXP;
+	    }).replace(Navigo.WILDCARD_REGEXP, Navigo.REPLACE_WILDCARD) + Navigo.FOLLOWED_BY_SLASH_REGEXP, Navigo.MATCH_REGEXP_FLAGS);
+	  }
+	  return { regexp: regexp, paramNames: paramNames };
+	}
+	
+	function getUrlDepth(url) {
+	  return url.replace(/\/$/, '').split('/').length;
+	}
+	
+	function compareUrlDepth(urlA, urlB) {
+	  return getUrlDepth(urlB) - getUrlDepth(urlA);
+	}
+	
+	function findMatchedRoutes(url) {
+	  var routes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+	
+	  return routes.map(function (route) {
+	    var _replaceDynamicURLPar = replaceDynamicURLParts(clean(route.route)),
+	        regexp = _replaceDynamicURLPar.regexp,
+	        paramNames = _replaceDynamicURLPar.paramNames;
+	
+	    var match = url.replace(/^\/+/, '/').match(regexp);
+	    var params = regExpResultToParams(match, paramNames);
+	
+	    return match ? { match: match, route: route, params: params } : false;
+	  }).filter(function (m) {
+	    return m;
+	  });
+	}
+	
+	function match(url, routes) {
+	  return findMatchedRoutes(url, routes)[0] || false;
+	}
+	
+	function root(url, routes) {
+	  var matched = routes.map(function (route) {
+	    return route.route === '' || route.route === '*' ? url : url.split(new RegExp(route.route + '($|\/)'))[0];
+	  });
+	  var fallbackURL = clean(url);
+	
+	  if (matched.length > 1) {
+	    return matched.reduce(function (result, url) {
+	      if (result.length > url.length) result = url;
+	      return result;
+	    }, matched[0]);
+	  } else if (matched.length === 1) {
+	    return matched[0];
+	  }
+	  return fallbackURL;
+	}
+	
+	function isHashChangeAPIAvailable() {
+	  return !!(typeof window !== 'undefined' && 'onhashchange' in window);
+	}
+	
+	function extractGETParameters(url) {
+	  return url.split(/\?(.*)?$/).slice(1).join('');
+	}
+	
+	function getOnlyURL(url, useHash, hash) {
+	  var onlyURL = url.split(/\?(.*)?$/)[0],
+	      split;
+	
+	  if (typeof hash === 'undefined') {
+	    // To preserve BC
+	    hash = '#';
+	  }
+	
+	  if (isPushStateAvailable() && !useHash) {
+	    onlyURL = onlyURL.split(hash)[0];
+	  } else {
+	    split = onlyURL.split(hash);
+	    onlyURL = split.length > 1 ? onlyURL.split(hash)[1] : split[0];
+	  }
+	
+	  return onlyURL;
+	}
+	
+	function manageHooks(handler, hooks, params) {
+	  if (hooks && (typeof hooks === 'undefined' ? 'undefined' : _typeof(hooks)) === 'object') {
+	    if (hooks.before) {
+	      hooks.before(function () {
+	        var shouldRoute = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+	
+	        if (!shouldRoute) return;
+	        handler();
+	        hooks.after && hooks.after(params);
+	      }, params);
+	    } else if (hooks.after) {
+	      handler();
+	      hooks.after && hooks.after(params);
+	    }
+	    return;
+	  }
+	  handler();
+	};
+	
+	function isHashedRoot(url, useHash, hash) {
+	  if (isPushStateAvailable() && !useHash) {
+	    return false;
+	  }
+	
+	  if (!url.match(hash)) {
+	    return false;
+	  }
+	
+	  var split = url.split(hash);
+	
+	  if (split.length < 2 || split[1] === '') {
+	    return true;
+	  }
+	
+	  return false;
+	};
+	
+	Navigo.prototype = {
+	  helpers: {
+	    match: match,
+	    root: root,
+	    clean: clean
+	  },
+	  navigate: function navigate(path, absolute) {
+	    var to;
+	
+	    path = path || '';
+	    if (this._usePushState) {
+	      to = (!absolute ? this._getRoot() + '/' : '') + path.replace(/^\/+/, '/');
+	      to = to.replace(/([^:])(\/{2,})/g, '$1/');
+	      history[this._paused ? 'replaceState' : 'pushState']({}, '', to);
+	      this.resolve();
+	    } else if (typeof window !== 'undefined') {
+	      path = path.replace(new RegExp('^' + this._hash), '');
+	      window.location.href = window.location.href.replace(/#$/, '').replace(new RegExp(this._hash + '.*$'), '') + this._hash + path;
+	    }
+	    return this;
+	  },
+	  on: function on() {
+	    var _this = this;
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    if (typeof args[0] === 'function') {
+	      this._defaultHandler = { handler: args[0], hooks: args[1] };
+	    } else if (args.length >= 2) {
+	      if (args[0] === '/') {
+	        var func = args[1];
+	
+	        if (_typeof(args[1]) === 'object') {
+	          func = args[1].uses;
+	        }
+	
+	        this._defaultHandler = { handler: func, hooks: args[2] };
+	      } else {
+	        this._add(args[0], args[1], args[2]);
+	      }
+	    } else if (_typeof(args[0]) === 'object') {
+	      var orderedRoutes = Object.keys(args[0]).sort(compareUrlDepth);
+	
+	      orderedRoutes.forEach(function (route) {
+	        _this.on(route, args[0][route]);
+	      });
+	    }
+	    return this;
+	  },
+	  off: function off(handler) {
+	    if (this._defaultHandler !== null && handler === this._defaultHandler.handler) {
+	      this._defaultHandler = null;
+	    } else if (this._notFoundHandler !== null && handler === this._notFoundHandler.handler) {
+	      this._notFoundHandler = null;
+	    }
+	    this._routes = this._routes.reduce(function (result, r) {
+	      if (r.handler !== handler) result.push(r);
+	      return result;
+	    }, []);
+	    return this;
+	  },
+	  notFound: function notFound(handler, hooks) {
+	    this._notFoundHandler = { handler: handler, hooks: hooks };
+	    return this;
+	  },
+	  resolve: function resolve(current) {
+	    var _this2 = this;
+	
+	    var handler, m;
+	    var url = (current || this._cLoc()).replace(this._getRoot(), '');
+	
+	    if (this._useHash) {
+	      url = url.replace(new RegExp('^\/' + this._hash), '/');
+	    }
+	
+	    var GETParameters = extractGETParameters(current || this._cLoc());
+	    var onlyURL = getOnlyURL(url, this._useHash, this._hash);
+	
+	    if (this._paused) return false;
+	
+	    if (this._lastRouteResolved && onlyURL === this._lastRouteResolved.url && GETParameters === this._lastRouteResolved.query) {
+	      if (this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.already) {
+	        this._lastRouteResolved.hooks.already(this._lastRouteResolved.params);
+	      }
+	      return false;
+	    }
+	
+	    m = match(onlyURL, this._routes);
+	
+	    if (m) {
+	      this._callLeave();
+	      this._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: m.route.hooks, params: m.params };
+	      handler = m.route.handler;
+	      manageHooks(function () {
+	        manageHooks(function () {
+	          m.route.route instanceof RegExp ? handler.apply(undefined, _toConsumableArray(m.match.slice(1, m.match.length))) : handler(m.params, GETParameters);
+	        }, m.route.hooks, m.params, _this2._genericHooks);
+	      }, this._genericHooks, m.params);
+	      return m;
+	    } else if (this._defaultHandler && (onlyURL === '' || onlyURL === '/' || onlyURL === this._hash || isHashedRoot(onlyURL, this._useHash, this._hash))) {
+	      manageHooks(function () {
+	        manageHooks(function () {
+	          _this2._callLeave();
+	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._defaultHandler.hooks };
+	          _this2._defaultHandler.handler(GETParameters);
+	        }, _this2._defaultHandler.hooks);
+	      }, this._genericHooks);
+	      return true;
+	    } else if (this._notFoundHandler) {
+	      manageHooks(function () {
+	        manageHooks(function () {
+	          _this2._callLeave();
+	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._notFoundHandler.hooks };
+	          _this2._notFoundHandler.handler(GETParameters);
+	        }, _this2._notFoundHandler.hooks);
+	      }, this._genericHooks);
+	    }
+	    return false;
+	  },
+	  destroy: function destroy() {
+	    this._routes = [];
+	    this._destroyed = true;
+	    clearTimeout(this._listenningInterval);
+	    if (typeof window !== 'undefined') {
+	      window.removeEventListener('popstate', this._onLocationChange);
+	      window.removeEventListener('hashchange', this._onLocationChange);
+	    }
+	  },
+	  updatePageLinks: function updatePageLinks() {
+	    var self = this;
+	
+	    if (typeof document === 'undefined') return;
+	
+	    this._findLinks().forEach(function (link) {
+	      if (!link.hasListenerAttached) {
+	        link.addEventListener('click', function (e) {
+	          var location = self.getLinkPath(link);
+	
+	          if (!self._destroyed) {
+	            e.preventDefault();
+	            self.navigate(location.replace(/\/+$/, '').replace(/^\/+/, '/'));
+	          }
+	        });
+	        link.hasListenerAttached = true;
+	      }
+	    });
+	  },
+	  generate: function generate(name) {
+	    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	
+	    var result = this._routes.reduce(function (result, route) {
+	      var key;
+	
+	      if (route.name === name) {
+	        result = route.route;
+	        for (key in data) {
+	          result = result.toString().replace(':' + key, data[key]);
+	        }
+	      }
+	      return result;
+	    }, '');
+	
+	    return this._useHash ? this._hash + result : result;
+	  },
+	  link: function link(path) {
+	    return this._getRoot() + path;
+	  },
+	  pause: function pause() {
+	    var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+	
+	    this._paused = status;
+	  },
+	  resume: function resume() {
+	    this.pause(false);
+	  },
+	  disableIfAPINotAvailable: function disableIfAPINotAvailable() {
+	    if (!isPushStateAvailable()) {
+	      this.destroy();
+	    }
+	  },
+	  lastRouteResolved: function lastRouteResolved() {
+	    return this._lastRouteResolved;
+	  },
+	  getLinkPath: function getLinkPath(link) {
+	    return link.pathname || link.getAttribute('href');
+	  },
+	  hooks: function hooks(_hooks) {
+	    this._genericHooks = _hooks;
+	  },
+	
+	  _add: function _add(route) {
+	    var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+	    var hooks = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+	
+	    if (typeof route === 'string') {
+	      route = encodeURI(route);
+	    }
+	    if ((typeof handler === 'undefined' ? 'undefined' : _typeof(handler)) === 'object') {
+	      this._routes.push({
+	        route: route,
+	        handler: handler.uses,
+	        name: handler.as,
+	        hooks: hooks || handler.hooks
+	      });
+	    } else {
+	      this._routes.push({ route: route, handler: handler, hooks: hooks });
+	    }
+	    return this._add;
+	  },
+	  _getRoot: function _getRoot() {
+	    if (this.root !== null) return this.root;
+	    this.root = root(this._cLoc().split('?')[0], this._routes);
+	    return this.root;
+	  },
+	  _listen: function _listen() {
+	    var _this3 = this;
+	
+	    if (this._usePushState) {
+	      window.addEventListener('popstate', this._onLocationChange);
+	    } else if (isHashChangeAPIAvailable()) {
+	      window.addEventListener('hashchange', this._onLocationChange);
+	    } else {
+	      var cached = this._cLoc(),
+	          current = void 0,
+	          _check = void 0;
+	
+	      _check = function check() {
+	        current = _this3._cLoc();
+	        if (cached !== current) {
+	          cached = current;
+	          _this3.resolve();
+	        }
+	        _this3._listenningInterval = setTimeout(_check, 200);
+	      };
+	      _check();
+	    }
+	  },
+	  _cLoc: function _cLoc() {
+	    if (typeof window !== 'undefined') {
+	      if (typeof window.__NAVIGO_WINDOW_LOCATION_MOCK__ !== 'undefined') {
+	        return window.__NAVIGO_WINDOW_LOCATION_MOCK__;
+	      }
+	      return clean(window.location.href);
+	    }
+	    return '';
+	  },
+	  _findLinks: function _findLinks() {
+	    return [].slice.call(document.querySelectorAll('[data-navigo]'));
+	  },
+	  _onLocationChange: function _onLocationChange() {
+	    this.resolve();
+	  },
+	  _callLeave: function _callLeave() {
+	    if (this._lastRouteResolved && this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.leave) {
+	      this._lastRouteResolved.hooks.leave();
+	    }
+	  }
+	};
+	
+	Navigo.PARAMETER_REGEXP = /([:*])(\w+)/g;
+	Navigo.WILDCARD_REGEXP = /\*/g;
+	Navigo.REPLACE_VARIABLE_REGEXP = '([^\/]+)';
+	Navigo.REPLACE_WILDCARD = '(?:.*)';
+	Navigo.FOLLOWED_BY_SLASH_REGEXP = '(?:\/$|$)';
+	Navigo.MATCH_REGEXP_FLAGS = '';
+	
+	exports.default = Navigo;
+	module.exports = exports['default'];
+
+/***/ }
+/******/ ])
+});
+;
+//# sourceMappingURL=navigo.js.map
+
+/***/ }),
+/* 175 */
+/***/ (function(module, exports) {
+
+/*! store2 - v2.5.1 - 2017-03-28
+* Copyright (c) 2017 Nathan Bubna; Licensed ,  */
+;(function(window, define) {
+    var _ = {
+        version: "2.5.1",
+        areas: {},
+        apis: {},
+
+        // utilities
+        inherit: function(api, o) {
+            for (var p in api) {
+                if (!o.hasOwnProperty(p)) {
+                    o[p] = api[p];
+                }
+            }
+            return o;
+        },
+        stringify: function(d) {
+            return d === undefined || typeof d === "function" ? d+'' : JSON.stringify(d);
+        },
+        parse: function(s) {
+            // if it doesn't parse, return as is
+            try{ return JSON.parse(s); }catch(e){ return s; }
+        },
+
+        // extension hooks
+        fn: function(name, fn) {
+            _.storeAPI[name] = fn;
+            for (var api in _.apis) {
+                _.apis[api][name] = fn;
+            }
+        },
+        get: function(area, key){ return area.getItem(key); },
+        set: function(area, key, string){ area.setItem(key, string); },
+        remove: function(area, key){ area.removeItem(key); },
+        key: function(area, i){ return area.key(i); },
+        length: function(area){ return area.length; },
+        clear: function(area){ area.clear(); },
+
+        // core functions
+        Store: function(id, area, namespace) {
+            var store = _.inherit(_.storeAPI, function(key, data, overwrite) {
+                if (arguments.length === 0){ return store.getAll(); }
+                if (typeof data === "function"){ return store.transact(key, data, overwrite); }// fn=data, alt=overwrite
+                if (data !== undefined){ return store.set(key, data, overwrite); }
+                if (typeof key === "string" || typeof key === "number"){ return store.get(key); }
+                if (!key){ return store.clear(); }
+                return store.setAll(key, data);// overwrite=data, data=key
+            });
+            store._id = id;
+            try {
+                var testKey = '_safariPrivate_';
+                area.setItem(testKey, 'sucks');
+                store._area = area;
+                area.removeItem(testKey);
+            } catch (e) {}
+            if (!store._area) {
+                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
+            }
+            store._ns = namespace || '';
+            if (!_.areas[id]) {
+                _.areas[id] = store._area;
+            }
+            if (!_.apis[store._ns+store._id]) {
+                _.apis[store._ns+store._id] = store;
+            }
+            return store;
+        },
+        storeAPI: {
+            // admin functions
+            area: function(id, area) {
+                var store = this[id];
+                if (!store || !store.area) {
+                    store = _.Store(id, area, this._ns);//new area-specific api in this namespace
+                    if (!this[id]){ this[id] = store; }
+                }
+                return store;
+            },
+            namespace: function(namespace, noSession) {
+                if (!namespace){
+                    return this._ns ? this._ns.substring(0,this._ns.length-1) : '';
+                }
+                var ns = namespace, store = this[ns];
+                if (!store || !store.namespace) {
+                    store = _.Store(this._id, this._area, this._ns+ns+'.');//new namespaced api
+                    if (!this[ns]){ this[ns] = store; }
+                    if (!noSession){ store.area('session', _.areas.session); }
+                }
+                return store;
+            },
+            isFake: function(){ return this._area.name === 'fake'; },
+            toString: function() {
+                return 'store'+(this._ns?'.'+this.namespace():'')+'['+this._id+']';
+            },
+
+            // storage functions
+            has: function(key) {
+                if (this._area.has) {
+                    return this._area.has(this._in(key));//extension hook
+                }
+                return !!(this._in(key) in this._area);
+            },
+            size: function(){ return this.keys().length; },
+            each: function(fn, and) {
+                for (var i=0, m=_.length(this._area); i<m; i++) {
+                    var key = this._out(_.key(this._area, i));
+                    if (key !== undefined) {
+                        if (fn.call(this, key, and || this.get(key)) === false) {
+                            break;
+                        }
+                    }
+                    if (m > _.length(this._area)) { m--; i--; }// in case of removeItem
+                }
+                return and || this;
+            },
+            keys: function() {
+                return this.each(function(k, list){ list.push(k); }, []);
+            },
+            get: function(key, alt) {
+                var s = _.get(this._area, this._in(key));
+                return s !== null ? _.parse(s) : alt || s;// support alt for easy default mgmt
+            },
+            getAll: function() {
+                return this.each(function(k, all){ all[k] = this.get(k); }, {});
+            },
+            transact: function(key, fn, alt) {
+                var val = this.get(key, alt),
+                    ret = fn(val);
+                this.set(key, ret === undefined ? val : ret);
+                return this;
+            },
+            set: function(key, data, overwrite) {
+                var d = this.get(key);
+                if (d != null && overwrite === false) {
+                    return data;
+                }
+                return _.set(this._area, this._in(key), _.stringify(data), overwrite) || d;
+            },
+            setAll: function(data, overwrite) {
+                var changed, val;
+                for (var key in data) {
+                    val = data[key];
+                    if (this.set(key, val, overwrite) !== val) {
+                        changed = true;
+                    }
+                }
+                return changed;
+            },
+            remove: function(key) {
+                var d = this.get(key);
+                _.remove(this._area, this._in(key));
+                return d;
+            },
+            clear: function() {
+                if (!this._ns) {
+                    _.clear(this._area);
+                } else {
+                    this.each(function(k){ _.remove(this._area, this._in(k)); }, 1);
+                }
+                return this;
+            },
+            clearAll: function() {
+                var area = this._area;
+                for (var id in _.areas) {
+                    if (_.areas.hasOwnProperty(id)) {
+                        this._area = _.areas[id];
+                        this.clear();
+                    }
+                }
+                this._area = area;
+                return this;
+            },
+
+            // internal use functions
+            _in: function(k) {
+                if (typeof k !== "string"){ k = _.stringify(k); }
+                return this._ns ? this._ns + k : k;
+            },
+            _out: function(k) {
+                return this._ns ?
+                    k && k.indexOf(this._ns) === 0 ?
+                        k.substring(this._ns.length) :
+                        undefined : // so each() knows to skip it
+                    k;
+            }
+        },// end _.storeAPI
+        storageAPI: {
+            length: 0,
+            has: function(k){ return this.items.hasOwnProperty(k); },
+            key: function(i) {
+                var c = 0;
+                for (var k in this.items){
+                    if (this.has(k) && i === c++) {
+                        return k;
+                    }
+                }
+            },
+            setItem: function(k, v) {
+                if (!this.has(k)) {
+                    this.length++;
+                }
+                this.items[k] = v;
+            },
+            removeItem: function(k) {
+                if (this.has(k)) {
+                    delete this.items[k];
+                    this.length--;
+                }
+            },
+            getItem: function(k){ return this.has(k) ? this.items[k] : null; },
+            clear: function(){ for (var k in this.list){ this.removeItem(k); } },
+            toString: function(){ return this.length+' items in '+this.name+'Storage'; }
+        }// end _.storageAPI
+    };
+
+    var store =
+        // safely set this up (throws error in IE10/32bit mode for local files)
+        _.Store("local", (function(){try{ return localStorage; }catch(e){}})());
+    store.local = store;// for completeness
+    store._ = _;// for extenders and debuggers...
+    // safely setup store.session (throws exception in FF for file:/// urls)
+    store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
+
+    if (typeof define === 'function' && define.amd !== undefined) {
+        define('store2', [], function () {
+            return store;
+        });
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = store;
+    } else {
+        // expose the primary store fn to the global object and save conflicts
+        if (window.store){ _.conflict = window.store; }
+        window.store = store;
+    }
+
+})(this, this.define);
+
+
+/***/ }),
+/* 176 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 177 */,
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(175);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _graph = __webpack_require__(122);
+
+var _graph2 = _interopRequireDefault(_graph);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var StockPopUp = function () {
+  function StockPopUp(stocksContainer) {
+    _classCallCheck(this, StockPopUp);
+
+    this.$mainContainer = (0, _jquery2.default)('.main-container');
+    this.$stocksContainer = stocksContainer;
+    this.graph;
+
+    this.renderPopUp();
+
+    this.$popupContainer = (0, _jquery2.default)('.popup-modal');
+    this.$popupContentContainer = (0, _jquery2.default)('.popup-stock-container');
+    this.$chartContainer = (0, _jquery2.default)('#popup-chart');
+
+    this.activatePopUp();
+  }
+
+  // RENDER HTML FOR POPUP MODAL
+
+
+  _createClass(StockPopUp, [{
+    key: 'renderPopUp',
+    value: function renderPopUp() {
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="popup-stock-name"></h3>\n          <div class="popup-chart-container">\n            <canvas id="popup-chart" width="800" height="340"></canvas>\n          </div>\n          <button class="button popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+      this.$mainContainer.prepend(popupModal);
+    }
+
+    // DISPLAY POPUP MODAL ON CLICK EVENT
+
+  }, {
+    key: 'activatePopUp',
+    value: function activatePopUp() {
+      var that = this;
+
+      // OPEN POPUP MODAL
+      this.$stocksContainer.on('click', 'button', function (event) {
+        event.preventDefault();
+
+        if (that.graph) {
+          that.graph.destroy();
+        }
+
+        var id = this.id;
+
+        // CHECK IF THERE IS LOCALLY STORED DATA BEFORE MAKING AJAX REQUEST
+        if (_store2.default.get('' + id)) {
+          that.renderGraph(id);
+        } else {
+          that.getPrice(id);
+        }
+
+        that.$popupContainer.fadeIn();
+        // that.$popupContainer.addClass('is-visible');
+      });
+
+      // Disable closing of viewer upon click on image content container
+      this.$popupContentContainer.on('click', function (event) {
+        event.stopPropagation();
+      });
+
+      // CLOSE POPUP MODAL
+      this.$popupContainer.on('click', function () {
+        // event.stopPropagation();
+        // $(this).removeClass('is-visible');
+        (0, _jquery2.default)(this).fadeOut();
+      });
+    }
+
+    // GET COMPANY STOCK DATA
+
+  }, {
+    key: 'getPrice',
+    value: function getPrice(companyId) {
+      var _this = this;
+
+      _jquery2.default.ajax({
+        // https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=tskzGKweRxWgnbX2pafZ
+        url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
+        dataType: 'json',
+        success: function success(data) {
+          // STORE COMPANY DATA
+          _store2.default.set('' + companyId, data);
+
+          // RENDER GRAPH
+          _this.renderGraph(companyId);
+        }
+      });
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      if (this.graph) {
+        this.graph.destroy();
+      }
+    }
+
+    // RENDER GRAPH
+
+  }, {
+    key: 'renderGraph',
+    value: function renderGraph(companyId) {
+      var stockData = _store2.default.get('' + companyId);
+
+      // Get opening prices for company stock
+      var priceData = this.getSpecificCompanyData(stockData, 1);
+
+      // Get dates for the opening prices
+      var dateLabels = this.getSpecificCompanyData(stockData, 0);
+
+      // Create new graph for this company stock
+      this.graph = new _graph2.default(this.$chartContainer, priceData, dateLabels);
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getSpecificCompanyData',
+    value: function getSpecificCompanyData(data, num) {
+      return data.dataset_data.data.slice(0, 30).map(function (day) {
+        return day[num];
+      }).reverse();
+    }
+  }]);
+
+  return StockPopUp;
+}();
+
+exports.default = StockPopUp;
 
 /***/ })
 /******/ ]);

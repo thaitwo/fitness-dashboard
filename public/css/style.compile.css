@@ -139,6 +139,43 @@ table {
   font-weight: 300;
   margin-bottom: 16px; }
 
+.popup-modal {
+  background: rgba(0, 0, 0, 0.6);
+  bottom: 0;
+  display: none;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3; }
+  .popup-modal.is-visible {
+    display: block; }
+
+.popup-stock-container {
+  background: #FFFFFF;
+  border-radius: 2px;
+  height: 400px;
+  margin: 100px auto;
+  width: 800px; }
+
+.button {
+  height: 36px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  padding: 0 16px;
+  transition: all .3s;
+  font-size: 12px;
+  outline: none;
+  margin: 10px 5px; }
+  .button:hover {
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.24);
+    cursor: pointer; }
+  .button.popup-watchlist {
+    background: #1E88E5;
+    float: right; }
+
 /* LAYOUT
 ============================================================== */
 .clearfix:after {
@@ -214,7 +251,7 @@ table {
   position: fixed;
   top: 0;
   width: 200px;
-  z-index: 1000; }
+  z-index: 2; }
 
 .box-container {
   background-color: #FFFFFF;
@@ -270,7 +307,7 @@ table {
   left: 200px;
   right: 0;
   position: fixed;
-  z-index: 100; }
+  z-index: 1; }
 
 .stocks-container {
   padding: 30px; }
@@ -288,36 +325,37 @@ table {
   float: left;
   width: 100%; }
   .stocks-list li {
-    float: left;
-    margin: 8px; }
+    margin-bottom: 1px; }
   .stocks-list button {
     background-color: #FFFFFF;
     border: none;
     border-radius: 2px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
-    height: 80px;
     outline: none;
-    padding: 16px;
+    padding: 8px 16px;
     text-align: left;
     transition: all .3s;
-    width: 260px; }
+    width: 80%; }
     .stocks-list button:hover {
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.24);
       cursor: pointer; }
   .stocks-list .stock-code {
     color: rgba(0, 0, 0, 0.8);
     display: block;
-    font-family: "Montserrat", sans-serif;
+    float: left;
+    font-family: "Roboto", sans-serif;
     font-size: 14px;
-    font-weight: 400;
-    padding-bottom: 2px; }
+    font-weight: 500;
+    line-height: 24px;
+    width: 80px; }
   .stocks-list .stock-name {
     color: rgba(0, 0, 0, 0.4);
     display: block;
-    font-family: "Montserrat", sans-serif;
-    font-size: 11px;
-    font-weight: 300;
-    height: 16px;
+    float: left;
+    font-family: "Roboto", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
     overflow-y: hidden; }
 
 /* SEARCH

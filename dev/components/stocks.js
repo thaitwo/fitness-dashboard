@@ -1,7 +1,8 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import store from 'store2';
-import Graph from './graph.js';
+// import Graph from './graph.js';
+import StockPopUp from './stock-pop-up.js';
 
 class Stocks {
   constructor(container) {
@@ -9,6 +10,7 @@ class Stocks {
     // REGISTER ELEMENTS
     this.$container = container;
     this.graph;
+    // this.popup;
 
     this.render();
     this.$chartId = $('#chart');
@@ -24,7 +26,9 @@ class Stocks {
       this.getStocks(this.count);
     }
 
-    this.activateScroll();
+    new StockPopUp(this.$stockListContainer);
+
+    // this.activateScroll();
     // this.activateCompanySelection();
   }
 
@@ -98,6 +102,11 @@ class Stocks {
     this.$stockListContainer.append(list);
     // this.$stockHeader.html(firstStockName);
     // this.getPrice(firstStockId);
+  }
+
+
+  activatePopUp() {
+    this.popup = new StockPopUp(this.$stockListContainer);
   }
 
 

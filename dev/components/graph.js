@@ -51,12 +51,13 @@ class Graph {
   getOptions() {
     return {
       responsive: false,
+      maintainAspectRatio: false,
       layout: {
         padding: {
           top: 30,
-          right: 20,
+          right: 30,
           bottom: 30,
-          left: 20
+          left: 30
         }
       },
       legend: {
