@@ -1,5 +1,16 @@
 .stocks-container {
-  padding: 30px;
+  background: $white;
+  padding: 30px 60px;
+  padding: 24px;
+  position: absolute;
+  border-radius: 2px;
+  overflow: auto;
+  bottom: 24px;
+  box-sizing: border-box;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  width: 620px;
 
   h3 {
     font-family: $font-primary;
@@ -14,41 +25,44 @@
 }
 
 .stocks-list {
-  border-top: 1px solid rgba($black,.05);
-  float: left;
-  width: 100%;
+  // border-top: 1px solid rgba($black,.05);
+  // float: left;
+  // width: 50%;
 
   li {
-    margin-bottom: 1px;
+    border-bottom: 1px solid rgba($black, .05);
+    // margin-bottom: 1px;
   }
 
   button {
     background-color: $white;
     border: none;
-    border-radius: 2px;
-    box-shadow: 0 2px 4px rgba($black, .12);
-    // height: 80px;
     outline: none;
-    padding: 8px 16px;
+    height: 36px;
+    // padding: 0;
     text-align: left;
     transition: all .3s;
-    width: 80%;
+    width: 100%;
 
     &:hover {
-      box-shadow: 0 4px 8px rgba($black, .24);
+      background: $blue-50;
       cursor: pointer;
+
+      .stock-name {
+        color: rgba($black, .8);
+      }
     }
   }
 
   .stock-code {
-    color: rgba($black, .8);
+    color: $blue-600;
     display: block;
     float: left;
     font-family: $font-secondary;
     font-size: 14px;
     font-weight: 500;
     line-height: 24px;
-    width: 80px;
+    width: 72px;
   }
 
   .stock-name {
@@ -60,6 +74,10 @@
     font-weight: 400;
     line-height: 24px;
     overflow-y: hidden;
+  }
+
+  .icon-add-watchlist {
+    float: right;
   }
 }
 

@@ -2,7 +2,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import store from 'store2';
 // import Graph from './graph.js';
-import StockPopUp from './stock-pop-up.js';
+import StockPopUp from './stock-popup.js';
 
 class Stocks {
   constructor(container) {
@@ -38,7 +38,7 @@ class Stocks {
     let html =
       `
         <div class="stocks-container">
-          <h3>All Stocks</h3>
+          <h3>Stocks</h3>
           <ol id="stocks-list" class="stocks-list"></ol>
         </div>
       `;
@@ -65,7 +65,7 @@ class Stocks {
         console.log(message, error);
       },
       success: (data) => {
-        // console.log('NUM', num, 'DATA', data);
+        // console.log('DATA', data);
 
         store.set(`stocks${num}`, data);
         console.log(`STORE${num}`, store.get(`stocks${num}`));
@@ -83,7 +83,7 @@ class Stocks {
     // const firstStockName = stocks.datasets[0].name.split('(')[0];
     const { datasets } = stocks;
 
-    // console.log(datasets);
+    console.log(datasets);
 
     const list =  datasets.slice(0, 100).map((stock) => {
       const { dataset_code: stockCode, name } = stock;
@@ -94,6 +94,7 @@ class Stocks {
           <button id="${stockCode}">
             <span class="stock-code">${stockCode}</span>
             <span class="stock-name">${stockName}</span>
+            <span class="icon-add-watchlist"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></span>
           </button>
         </li>
       `;

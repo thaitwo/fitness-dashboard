@@ -1,5 +1,5 @@
 .popup-modal {
-  background: rgba($black, .6);
+  background: rgba($black, .8);
   bottom: 0;
   display: none;
   left: 0;
@@ -16,30 +16,85 @@
 .popup-stock-container {
   background: $white;
   border-radius: 2px;
-  height: 400px;
+  height: 340px;
   margin: 100px auto;
-  width: 800px;
+  position: relative;
+  width: 960px;
+
+  table {
+    float: left;
+    margin: 16px 20px 0 24px;
+    width: 206px;
+
+    tr {
+      border-bottom: 1px solid rgba($black, .05);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      line-height: 36px;
+      font-family: $font-secondary;
+      font-size: 14px;
+    }
+
+    td.key {
+      color: rgba($black, .6);
+      font-weight: 300;
+    }
+
+    td.val {
+      color: rgba($black, .8);
+      font-weight: 500;
+      text-align: right;
+    }
+  }
+}
+
+.icon-loading {
+  display: none;
+
+  &.is-visible {
+    color: rgba($black, .1);
+    display: block;
+    // left: 0;
+    margin-top: 80px;
+    // position: absolute;
+    // right: 0;
+    text-align: center;
+  }
+}
+
+.popup-chart-container {
+  float: right;
 }
 
 .button {
-  height: 36px;
+  height: 32px;
   text-transform: uppercase;
   border: none;
   border-radius: 2px;
   color: white;
-  padding: 0 16px;
+  padding: 0 12px;
   transition: all .3s;
   font-size: 12px;
   outline: none;
-  margin: 10px 5px;
 
   &:hover {
-    box-shadow: 0 4px 4px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.24);
+    box-shadow: 0 2px 4px rgba(0,0,0,.24);
     cursor: pointer;
   }
 
   &.popup-watchlist {
-    background: $blue-600;
-    float: right;
+    background: $green-200;
+    bottom: 24px;
+    position: absolute;
+    left: 24px;
+
+    &:hover {
+      background: $green-400;
+    }
   }
 }

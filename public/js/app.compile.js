@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 121);
+/******/ 	return __webpack_require__(__webpack_require__.s = 122);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1899,7 +1899,7 @@ function loadLocale(name) {
             module && module.exports) {
         try {
             oldLocale = globalLocale._abbr;
-            __webpack_require__(129)("./" + name);
+            __webpack_require__(131)("./" + name);
             // because defineLocale currently also sets the global locale, we
             // want to undo that for lazy loaded locales
             getSetGlobalLocale(oldLocale);
@@ -4534,7 +4534,7 @@ return hooks;
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(118)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(119)(module)))
 
 /***/ }),
 /* 1 */
@@ -14801,8 +14801,8 @@ return jQuery;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var convert = __webpack_require__(128);
-var string = __webpack_require__(125);
+var convert = __webpack_require__(130);
+var string = __webpack_require__(127);
 
 var Color = function (obj) {
 	if (obj instanceof Color) {
@@ -26371,6 +26371,248 @@ return zhTw;
 /* 118 */
 /***/ (function(module, exports) {
 
+/*! store2 - v2.5.1 - 2017-03-28
+* Copyright (c) 2017 Nathan Bubna; Licensed ,  */
+;(function(window, define) {
+    var _ = {
+        version: "2.5.1",
+        areas: {},
+        apis: {},
+
+        // utilities
+        inherit: function(api, o) {
+            for (var p in api) {
+                if (!o.hasOwnProperty(p)) {
+                    o[p] = api[p];
+                }
+            }
+            return o;
+        },
+        stringify: function(d) {
+            return d === undefined || typeof d === "function" ? d+'' : JSON.stringify(d);
+        },
+        parse: function(s) {
+            // if it doesn't parse, return as is
+            try{ return JSON.parse(s); }catch(e){ return s; }
+        },
+
+        // extension hooks
+        fn: function(name, fn) {
+            _.storeAPI[name] = fn;
+            for (var api in _.apis) {
+                _.apis[api][name] = fn;
+            }
+        },
+        get: function(area, key){ return area.getItem(key); },
+        set: function(area, key, string){ area.setItem(key, string); },
+        remove: function(area, key){ area.removeItem(key); },
+        key: function(area, i){ return area.key(i); },
+        length: function(area){ return area.length; },
+        clear: function(area){ area.clear(); },
+
+        // core functions
+        Store: function(id, area, namespace) {
+            var store = _.inherit(_.storeAPI, function(key, data, overwrite) {
+                if (arguments.length === 0){ return store.getAll(); }
+                if (typeof data === "function"){ return store.transact(key, data, overwrite); }// fn=data, alt=overwrite
+                if (data !== undefined){ return store.set(key, data, overwrite); }
+                if (typeof key === "string" || typeof key === "number"){ return store.get(key); }
+                if (!key){ return store.clear(); }
+                return store.setAll(key, data);// overwrite=data, data=key
+            });
+            store._id = id;
+            try {
+                var testKey = '_safariPrivate_';
+                area.setItem(testKey, 'sucks');
+                store._area = area;
+                area.removeItem(testKey);
+            } catch (e) {}
+            if (!store._area) {
+                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
+            }
+            store._ns = namespace || '';
+            if (!_.areas[id]) {
+                _.areas[id] = store._area;
+            }
+            if (!_.apis[store._ns+store._id]) {
+                _.apis[store._ns+store._id] = store;
+            }
+            return store;
+        },
+        storeAPI: {
+            // admin functions
+            area: function(id, area) {
+                var store = this[id];
+                if (!store || !store.area) {
+                    store = _.Store(id, area, this._ns);//new area-specific api in this namespace
+                    if (!this[id]){ this[id] = store; }
+                }
+                return store;
+            },
+            namespace: function(namespace, noSession) {
+                if (!namespace){
+                    return this._ns ? this._ns.substring(0,this._ns.length-1) : '';
+                }
+                var ns = namespace, store = this[ns];
+                if (!store || !store.namespace) {
+                    store = _.Store(this._id, this._area, this._ns+ns+'.');//new namespaced api
+                    if (!this[ns]){ this[ns] = store; }
+                    if (!noSession){ store.area('session', _.areas.session); }
+                }
+                return store;
+            },
+            isFake: function(){ return this._area.name === 'fake'; },
+            toString: function() {
+                return 'store'+(this._ns?'.'+this.namespace():'')+'['+this._id+']';
+            },
+
+            // storage functions
+            has: function(key) {
+                if (this._area.has) {
+                    return this._area.has(this._in(key));//extension hook
+                }
+                return !!(this._in(key) in this._area);
+            },
+            size: function(){ return this.keys().length; },
+            each: function(fn, and) {
+                for (var i=0, m=_.length(this._area); i<m; i++) {
+                    var key = this._out(_.key(this._area, i));
+                    if (key !== undefined) {
+                        if (fn.call(this, key, and || this.get(key)) === false) {
+                            break;
+                        }
+                    }
+                    if (m > _.length(this._area)) { m--; i--; }// in case of removeItem
+                }
+                return and || this;
+            },
+            keys: function() {
+                return this.each(function(k, list){ list.push(k); }, []);
+            },
+            get: function(key, alt) {
+                var s = _.get(this._area, this._in(key));
+                return s !== null ? _.parse(s) : alt || s;// support alt for easy default mgmt
+            },
+            getAll: function() {
+                return this.each(function(k, all){ all[k] = this.get(k); }, {});
+            },
+            transact: function(key, fn, alt) {
+                var val = this.get(key, alt),
+                    ret = fn(val);
+                this.set(key, ret === undefined ? val : ret);
+                return this;
+            },
+            set: function(key, data, overwrite) {
+                var d = this.get(key);
+                if (d != null && overwrite === false) {
+                    return data;
+                }
+                return _.set(this._area, this._in(key), _.stringify(data), overwrite) || d;
+            },
+            setAll: function(data, overwrite) {
+                var changed, val;
+                for (var key in data) {
+                    val = data[key];
+                    if (this.set(key, val, overwrite) !== val) {
+                        changed = true;
+                    }
+                }
+                return changed;
+            },
+            remove: function(key) {
+                var d = this.get(key);
+                _.remove(this._area, this._in(key));
+                return d;
+            },
+            clear: function() {
+                if (!this._ns) {
+                    _.clear(this._area);
+                } else {
+                    this.each(function(k){ _.remove(this._area, this._in(k)); }, 1);
+                }
+                return this;
+            },
+            clearAll: function() {
+                var area = this._area;
+                for (var id in _.areas) {
+                    if (_.areas.hasOwnProperty(id)) {
+                        this._area = _.areas[id];
+                        this.clear();
+                    }
+                }
+                this._area = area;
+                return this;
+            },
+
+            // internal use functions
+            _in: function(k) {
+                if (typeof k !== "string"){ k = _.stringify(k); }
+                return this._ns ? this._ns + k : k;
+            },
+            _out: function(k) {
+                return this._ns ?
+                    k && k.indexOf(this._ns) === 0 ?
+                        k.substring(this._ns.length) :
+                        undefined : // so each() knows to skip it
+                    k;
+            }
+        },// end _.storeAPI
+        storageAPI: {
+            length: 0,
+            has: function(k){ return this.items.hasOwnProperty(k); },
+            key: function(i) {
+                var c = 0;
+                for (var k in this.items){
+                    if (this.has(k) && i === c++) {
+                        return k;
+                    }
+                }
+            },
+            setItem: function(k, v) {
+                if (!this.has(k)) {
+                    this.length++;
+                }
+                this.items[k] = v;
+            },
+            removeItem: function(k) {
+                if (this.has(k)) {
+                    delete this.items[k];
+                    this.length--;
+                }
+            },
+            getItem: function(k){ return this.has(k) ? this.items[k] : null; },
+            clear: function(){ for (var k in this.list){ this.removeItem(k); } },
+            toString: function(){ return this.length+' items in '+this.name+'Storage'; }
+        }// end _.storageAPI
+    };
+
+    var store =
+        // safely set this up (throws error in IE10/32bit mode for local files)
+        _.Store("local", (function(){try{ return localStorage; }catch(e){}})());
+    store.local = store;// for completeness
+    store._ = _;// for extenders and debuggers...
+    // safely setup store.session (throws exception in FF for file:/// urls)
+    store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
+
+    if (typeof define === 'function' && define.amd !== undefined) {
+        define('store2', [], function () {
+            return store;
+        });
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = store;
+    } else {
+        // expose the primary store fn to the global object and save conflicts
+        if (window.store){ _.conflict = window.store; }
+        window.store = store;
+    }
+
+})(this, this.define);
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports) {
+
 module.exports = function(module) {
 	if(!module.webpackPolyfill) {
 		module.deprecate = function() {};
@@ -26396,7 +26638,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26412,7 +26654,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(123);
+var _router = __webpack_require__(124);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -26489,21 +26731,21 @@ var Nav = function () {
 exports.default = Nav;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(120);
+__webpack_require__(121);
 
-var _nav = __webpack_require__(119);
+var _nav = __webpack_require__(120);
 
 var _nav2 = _interopRequireDefault(_nav);
 
@@ -26521,7 +26763,7 @@ var App = function App() {
 new App();
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26533,7 +26775,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chart = __webpack_require__(130);
+var _chart = __webpack_require__(132);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -26558,12 +26800,12 @@ var Graph = function () {
       labels: newLabels,
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(250, 128, 114, .2)',
-        borderColor: '#FA8072',
+        backgroundColor: 'rgba(33,150,243, .2)',
+        borderColor: 'rgba(33,150,243, 1)',
         borderWidth: 2,
         data: newData,
         hoverRadius: 12,
-        pointBackgroundColor: 'rgba(250, 128, 114, 1)',
+        pointBackgroundColor: 'rgba(33,150,243, 1)', // rgba(250, 128, 114, 1)
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointHoverBorderColor: '#fff',
@@ -26602,10 +26844,10 @@ var Graph = function () {
         maintainAspectRatio: false,
         layout: {
           padding: {
-            top: 30,
-            right: 30,
-            bottom: 30,
-            left: 30
+            top: 24,
+            right: 24,
+            bottom: 24,
+            left: 24
           }
         },
         legend: {
@@ -26668,7 +26910,7 @@ var Graph = function () {
 exports.default = Graph;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26686,11 +26928,11 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(174);
+var _navigo = __webpack_require__(176);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stocks = __webpack_require__(124);
+var _stocks = __webpack_require__(126);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
@@ -26772,7 +27014,196 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 124 */
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(118);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _graph = __webpack_require__(123);
+
+var _graph2 = _interopRequireDefault(_graph);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var StockPopUp = function () {
+  function StockPopUp(stocksContainer) {
+    _classCallCheck(this, StockPopUp);
+
+    this.$mainContainer = (0, _jquery2.default)('.main-container');
+    this.$stocksContainer = stocksContainer;
+    this.graph;
+
+    this.renderPopUp();
+
+    this.$popupContainer = (0, _jquery2.default)('.popup-modal');
+    this.$popupContentContainer = (0, _jquery2.default)('.popup-stock-container');
+    this.$chartContainer = (0, _jquery2.default)('#popup-chart');
+    this.$stockName = (0, _jquery2.default)('.popup-stock-name');
+    this.$tbody = (0, _jquery2.default)('.popup-modal table tbody');
+    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
+
+    this.activatePopUp();
+  }
+
+  // RENDER HTML FOR POPUP MODAL
+
+
+  _createClass(StockPopUp, [{
+    key: 'renderPopUp',
+    value: function renderPopUp() {
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              <span class="sr-only">Loading...</span>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button class="button popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+      this.$mainContainer.prepend(popupModal);
+    }
+
+    // DISPLAY POPUP MODAL ON CLICK EVENT
+
+  }, {
+    key: 'activatePopUp',
+    value: function activatePopUp() {
+      var that = this;
+
+      // OPEN POPUP MODAL
+      this.$stocksContainer.on('click', 'button', function (event) {
+        event.preventDefault();
+
+        if (that.graph) {
+          that.graph.destroy();
+        }
+
+        var id = this.id;
+        var name = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
+
+        that.$stockName.text(name);
+
+        // CHECK IF THERE IS LOCALLY STORED DATA BEFORE MAKING AJAX REQUEST
+        if (_store2.default.get('' + id)) {
+          that.renderStockInfo(id);
+          that.renderGraph(id);
+        } else {
+          that.getPrice(id);
+        }
+
+        that.$popupContainer.fadeIn(100);
+        // that.$popupContainer.addClass('is-visible');
+      });
+
+      // Disable closing of viewer upon click on image content container
+      this.$popupContentContainer.on('click', function (event) {
+        event.stopPropagation();
+      });
+
+      // CLOSE POPUP MODAL
+      this.$popupContainer.on('click', function () {
+        // event.stopPropagation();
+        // $(this).removeClass('is-visible');
+        (0, _jquery2.default)(this).fadeOut(100);
+      });
+    }
+
+    // GET COMPANY STOCK DATA
+
+  }, {
+    key: 'getPrice',
+    value: function getPrice(companyId) {
+      var _this = this;
+
+      this.$loadingIcon.addClass('is-visible');
+      _jquery2.default.ajax({
+        // https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=tskzGKweRxWgnbX2pafZ
+        url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
+        dataType: 'json',
+        success: function success(data) {
+          // STORE COMPANY DATA
+          _store2.default.set('' + companyId, data);
+
+          _this.renderStockInfo(companyId);
+
+          // RENDER GRAPH
+          _this.renderGraph(companyId);
+        },
+        complete: function complete() {
+          _this.$loadingIcon.removeClass('is-visible');
+        }
+      });
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      if (this.graph) {
+        this.graph.destroy();
+      }
+    }
+  }, {
+    key: 'renderStockInfo',
+    value: function renderStockInfo(companyId) {
+      var stockData = _store2.default.get('' + companyId);
+
+      var closePrice = stockData.dataset_data.data[0][4];
+      var openPrice = stockData.dataset_data.data[0][1];
+      var low = stockData.dataset_data.data[0][3];
+      var high = stockData.dataset_data.data[0][2];
+      var volume = stockData.dataset_data.data[0][5];
+
+      var row = '\n      <tr>\n        <td class="key">Close</td>\n        <td class="val">' + closePrice + '</td>\n      </tr>\n      <tr>\n        <td class="key">Open</td>\n        <td class="val">' + openPrice + '</td>\n      </tr>\n      <tr>\n        <td class="key">Day\'s Range</td>\n        <td class="val">' + low + ' - ' + high + '</td>\n      </tr>\n      <tr>\n        <td class="key">Volume</td>\n        <td class="val">' + volume + '</td>\n      </tr>\n    ';
+
+      this.$tbody.empty();
+      this.$tbody.append(row);
+    }
+
+    // RENDER GRAPH
+
+  }, {
+    key: 'renderGraph',
+    value: function renderGraph(companyId) {
+      var stockData = _store2.default.get('' + companyId);
+
+      // console.log(stockData);
+
+      // Get opening prices for company stock
+      var priceData = this.getSpecificCompanyData(stockData, 1);
+
+      // Get dates for the opening prices
+      var dateLabels = this.getSpecificCompanyData(stockData, 0);
+
+      // Create new graph for this company stock
+      this.graph = new _graph2.default(this.$chartContainer, priceData, dateLabels);
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getSpecificCompanyData',
+    value: function getSpecificCompanyData(data, num) {
+      return data.dataset_data.data.slice(0, 30).map(function (day) {
+        return day[num];
+      }).reverse();
+    }
+  }]);
+
+  return StockPopUp;
+}();
+
+exports.default = StockPopUp;
+
+/***/ }),
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26790,17 +27221,17 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(173);
+var _lodash = __webpack_require__(175);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _store = __webpack_require__(175);
+var _store = __webpack_require__(118);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _stockPopUp = __webpack_require__(181);
+var _stockPopup = __webpack_require__(125);
 
-var _stockPopUp2 = _interopRequireDefault(_stockPopUp);
+var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -26828,7 +27259,7 @@ var Stocks = function () {
       this.getStocks(this.count);
     }
 
-    new _stockPopUp2.default(this.$stockListContainer);
+    new _stockPopup2.default(this.$stockListContainer);
 
     // this.activateScroll();
     // this.activateCompanySelection();
@@ -26840,7 +27271,7 @@ var Stocks = function () {
   _createClass(Stocks, [{
     key: 'render',
     value: function render() {
-      var html = '\n        <div class="stocks-container">\n          <h3>All Stocks</h3>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
+      var html = '\n        <div class="stocks-container">\n          <h3>Stocks</h3>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -26868,7 +27299,7 @@ var Stocks = function () {
           console.log(message, _error);
         },
         success: function success(data) {
-          // console.log('NUM', num, 'DATA', data);
+          // console.log('DATA', data);
 
           _store2.default.set('stocks' + num, data);
           console.log('STORE' + num, _store2.default.get('stocks' + num));
@@ -26888,7 +27319,8 @@ var Stocks = function () {
       // const firstStockName = stocks.datasets[0].name.split('(')[0];
       var datasets = stocks.datasets;
 
-      // console.log(datasets);
+
+      console.log(datasets);
 
       var list = datasets.slice(0, 100).map(function (stock) {
         var stockCode = stock.dataset_code,
@@ -26896,7 +27328,7 @@ var Stocks = function () {
 
         var stockName = name.split('(')[0];
 
-        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="stock-code">' + stockCode + '</span>\n            <span class="stock-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
+        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="stock-code">' + stockCode + '</span>\n            <span class="stock-name">' + stockName + '</span>\n            <span class="icon-add-watchlist"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></span>\n          </button>\n        </li>\n      ';
       });
 
       this.$stockListContainer.append(list);
@@ -26906,7 +27338,7 @@ var Stocks = function () {
   }, {
     key: 'activatePopUp',
     value: function activatePopUp() {
-      this.popup = new _stockPopUp2.default(this.$stockListContainer);
+      this.popup = new _stockPopup2.default(this.$stockListContainer);
     }
 
     // UPDATE GRAPH ON COMPANY SELECTION
@@ -26973,11 +27405,11 @@ var Stocks = function () {
 exports.default = Stocks;
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* MIT license */
-var colorNames = __webpack_require__(126);
+var colorNames = __webpack_require__(128);
 
 module.exports = {
    getRgba: getRgba,
@@ -27200,7 +27632,7 @@ for (var name in colorNames) {
 
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -27355,7 +27787,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports) {
 
 /* MIT license */
@@ -28059,10 +28491,10 @@ for (var key in cssKeywords) {
 
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var conversions = __webpack_require__(127);
+var conversions = __webpack_require__(129);
 
 var convert = function() {
    return new Converter();
@@ -28156,7 +28588,7 @@ Converter.prototype.getValues = function(space) {
 module.exports = convert;
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -28405,68 +28837,68 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 129;
+webpackContext.id = 131;
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * @namespace Chart
  */
-var Chart = __webpack_require__(151)();
+var Chart = __webpack_require__(153)();
 
-__webpack_require__(149)(Chart);
-__webpack_require__(163)(Chart);
-__webpack_require__(145)(Chart);
-__webpack_require__(148)(Chart);
-__webpack_require__(153)(Chart);
-__webpack_require__(144)(Chart);
-__webpack_require__(146)(Chart);
+__webpack_require__(151)(Chart);
+__webpack_require__(165)(Chart);
 __webpack_require__(147)(Chart);
-__webpack_require__(152)(Chart);
-__webpack_require__(155)(Chart);
-__webpack_require__(156)(Chart);
-__webpack_require__(154)(Chart);
 __webpack_require__(150)(Chart);
+__webpack_require__(155)(Chart);
+__webpack_require__(146)(Chart);
+__webpack_require__(148)(Chart);
+__webpack_require__(149)(Chart);
+__webpack_require__(154)(Chart);
 __webpack_require__(157)(Chart);
-
 __webpack_require__(158)(Chart);
+__webpack_require__(156)(Chart);
+__webpack_require__(152)(Chart);
 __webpack_require__(159)(Chart);
+
 __webpack_require__(160)(Chart);
 __webpack_require__(161)(Chart);
+__webpack_require__(162)(Chart);
+__webpack_require__(163)(Chart);
 
-__webpack_require__(169)(Chart);
-__webpack_require__(167)(Chart);
-__webpack_require__(168)(Chart);
-__webpack_require__(170)(Chart);
 __webpack_require__(171)(Chart);
+__webpack_require__(169)(Chart);
+__webpack_require__(170)(Chart);
 __webpack_require__(172)(Chart);
+__webpack_require__(173)(Chart);
+__webpack_require__(174)(Chart);
 
 // Controllers must be loaded after elements
 // See Chart.core.datasetController.dataElementType
-__webpack_require__(138)(Chart);
-__webpack_require__(139)(Chart);
 __webpack_require__(140)(Chart);
 __webpack_require__(141)(Chart);
 __webpack_require__(142)(Chart);
 __webpack_require__(143)(Chart);
+__webpack_require__(144)(Chart);
+__webpack_require__(145)(Chart);
 
-__webpack_require__(131)(Chart);
-__webpack_require__(132)(Chart);
 __webpack_require__(133)(Chart);
 __webpack_require__(134)(Chart);
 __webpack_require__(135)(Chart);
 __webpack_require__(136)(Chart);
 __webpack_require__(137)(Chart);
+__webpack_require__(138)(Chart);
+__webpack_require__(139)(Chart);
 
 // Loading built-it plugins
 var plugins = [];
 
 plugins.push(
-    __webpack_require__(164)(Chart),
-    __webpack_require__(165)(Chart),
-    __webpack_require__(166)(Chart)
+    __webpack_require__(166)(Chart),
+    __webpack_require__(167)(Chart),
+    __webpack_require__(168)(Chart)
 );
 
 Chart.plugins.register(plugins);
@@ -28478,7 +28910,7 @@ if (typeof window !== 'undefined') {
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28496,7 +28928,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28513,7 +28945,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28531,7 +28963,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28549,7 +28981,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28567,7 +28999,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28585,7 +29017,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28639,7 +29071,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29029,7 +29461,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29158,7 +29590,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29468,7 +29900,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29808,7 +30240,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30038,7 +30470,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30212,7 +30644,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30387,7 +30819,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30544,7 +30976,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31402,7 +31834,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31739,7 +32171,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31865,7 +32297,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32856,7 +33288,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33179,7 +33611,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33242,7 +33674,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -33685,7 +34117,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34063,7 +34495,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34827,7 +35259,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 155 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -34878,7 +35310,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 156 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -35093,7 +35525,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 157 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36038,7 +36470,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 158 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36149,7 +36581,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 159 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36243,7 +36675,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 160 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36350,7 +36782,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 161 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36565,7 +36997,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 162 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36855,7 +37287,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 163 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -36863,7 +37295,7 @@ module.exports = function(Chart) {
 
 // By default, select the browser (DOM) platform.
 // @TODO Make possible to select another platform at build time.
-var implementation = __webpack_require__(162);
+var implementation = __webpack_require__(164);
 
 module.exports = function(Chart) {
 	/**
@@ -36931,7 +37363,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 164 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37247,7 +37679,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 165 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -37798,7 +38230,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 166 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38031,7 +38463,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38170,7 +38602,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38367,7 +38799,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38480,7 +38912,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -38733,7 +39165,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39263,7 +39695,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -39712,7 +40144,7 @@ module.exports = function(Chart) {
 
 
 /***/ }),
-/* 173 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -56801,10 +57233,10 @@ module.exports = function(Chart) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(176), __webpack_require__(118)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(177), __webpack_require__(119)(module)))
 
 /***/ }),
-/* 174 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -57319,249 +57751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 175 */
-/***/ (function(module, exports) {
-
-/*! store2 - v2.5.1 - 2017-03-28
-* Copyright (c) 2017 Nathan Bubna; Licensed ,  */
-;(function(window, define) {
-    var _ = {
-        version: "2.5.1",
-        areas: {},
-        apis: {},
-
-        // utilities
-        inherit: function(api, o) {
-            for (var p in api) {
-                if (!o.hasOwnProperty(p)) {
-                    o[p] = api[p];
-                }
-            }
-            return o;
-        },
-        stringify: function(d) {
-            return d === undefined || typeof d === "function" ? d+'' : JSON.stringify(d);
-        },
-        parse: function(s) {
-            // if it doesn't parse, return as is
-            try{ return JSON.parse(s); }catch(e){ return s; }
-        },
-
-        // extension hooks
-        fn: function(name, fn) {
-            _.storeAPI[name] = fn;
-            for (var api in _.apis) {
-                _.apis[api][name] = fn;
-            }
-        },
-        get: function(area, key){ return area.getItem(key); },
-        set: function(area, key, string){ area.setItem(key, string); },
-        remove: function(area, key){ area.removeItem(key); },
-        key: function(area, i){ return area.key(i); },
-        length: function(area){ return area.length; },
-        clear: function(area){ area.clear(); },
-
-        // core functions
-        Store: function(id, area, namespace) {
-            var store = _.inherit(_.storeAPI, function(key, data, overwrite) {
-                if (arguments.length === 0){ return store.getAll(); }
-                if (typeof data === "function"){ return store.transact(key, data, overwrite); }// fn=data, alt=overwrite
-                if (data !== undefined){ return store.set(key, data, overwrite); }
-                if (typeof key === "string" || typeof key === "number"){ return store.get(key); }
-                if (!key){ return store.clear(); }
-                return store.setAll(key, data);// overwrite=data, data=key
-            });
-            store._id = id;
-            try {
-                var testKey = '_safariPrivate_';
-                area.setItem(testKey, 'sucks');
-                store._area = area;
-                area.removeItem(testKey);
-            } catch (e) {}
-            if (!store._area) {
-                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
-            }
-            store._ns = namespace || '';
-            if (!_.areas[id]) {
-                _.areas[id] = store._area;
-            }
-            if (!_.apis[store._ns+store._id]) {
-                _.apis[store._ns+store._id] = store;
-            }
-            return store;
-        },
-        storeAPI: {
-            // admin functions
-            area: function(id, area) {
-                var store = this[id];
-                if (!store || !store.area) {
-                    store = _.Store(id, area, this._ns);//new area-specific api in this namespace
-                    if (!this[id]){ this[id] = store; }
-                }
-                return store;
-            },
-            namespace: function(namespace, noSession) {
-                if (!namespace){
-                    return this._ns ? this._ns.substring(0,this._ns.length-1) : '';
-                }
-                var ns = namespace, store = this[ns];
-                if (!store || !store.namespace) {
-                    store = _.Store(this._id, this._area, this._ns+ns+'.');//new namespaced api
-                    if (!this[ns]){ this[ns] = store; }
-                    if (!noSession){ store.area('session', _.areas.session); }
-                }
-                return store;
-            },
-            isFake: function(){ return this._area.name === 'fake'; },
-            toString: function() {
-                return 'store'+(this._ns?'.'+this.namespace():'')+'['+this._id+']';
-            },
-
-            // storage functions
-            has: function(key) {
-                if (this._area.has) {
-                    return this._area.has(this._in(key));//extension hook
-                }
-                return !!(this._in(key) in this._area);
-            },
-            size: function(){ return this.keys().length; },
-            each: function(fn, and) {
-                for (var i=0, m=_.length(this._area); i<m; i++) {
-                    var key = this._out(_.key(this._area, i));
-                    if (key !== undefined) {
-                        if (fn.call(this, key, and || this.get(key)) === false) {
-                            break;
-                        }
-                    }
-                    if (m > _.length(this._area)) { m--; i--; }// in case of removeItem
-                }
-                return and || this;
-            },
-            keys: function() {
-                return this.each(function(k, list){ list.push(k); }, []);
-            },
-            get: function(key, alt) {
-                var s = _.get(this._area, this._in(key));
-                return s !== null ? _.parse(s) : alt || s;// support alt for easy default mgmt
-            },
-            getAll: function() {
-                return this.each(function(k, all){ all[k] = this.get(k); }, {});
-            },
-            transact: function(key, fn, alt) {
-                var val = this.get(key, alt),
-                    ret = fn(val);
-                this.set(key, ret === undefined ? val : ret);
-                return this;
-            },
-            set: function(key, data, overwrite) {
-                var d = this.get(key);
-                if (d != null && overwrite === false) {
-                    return data;
-                }
-                return _.set(this._area, this._in(key), _.stringify(data), overwrite) || d;
-            },
-            setAll: function(data, overwrite) {
-                var changed, val;
-                for (var key in data) {
-                    val = data[key];
-                    if (this.set(key, val, overwrite) !== val) {
-                        changed = true;
-                    }
-                }
-                return changed;
-            },
-            remove: function(key) {
-                var d = this.get(key);
-                _.remove(this._area, this._in(key));
-                return d;
-            },
-            clear: function() {
-                if (!this._ns) {
-                    _.clear(this._area);
-                } else {
-                    this.each(function(k){ _.remove(this._area, this._in(k)); }, 1);
-                }
-                return this;
-            },
-            clearAll: function() {
-                var area = this._area;
-                for (var id in _.areas) {
-                    if (_.areas.hasOwnProperty(id)) {
-                        this._area = _.areas[id];
-                        this.clear();
-                    }
-                }
-                this._area = area;
-                return this;
-            },
-
-            // internal use functions
-            _in: function(k) {
-                if (typeof k !== "string"){ k = _.stringify(k); }
-                return this._ns ? this._ns + k : k;
-            },
-            _out: function(k) {
-                return this._ns ?
-                    k && k.indexOf(this._ns) === 0 ?
-                        k.substring(this._ns.length) :
-                        undefined : // so each() knows to skip it
-                    k;
-            }
-        },// end _.storeAPI
-        storageAPI: {
-            length: 0,
-            has: function(k){ return this.items.hasOwnProperty(k); },
-            key: function(i) {
-                var c = 0;
-                for (var k in this.items){
-                    if (this.has(k) && i === c++) {
-                        return k;
-                    }
-                }
-            },
-            setItem: function(k, v) {
-                if (!this.has(k)) {
-                    this.length++;
-                }
-                this.items[k] = v;
-            },
-            removeItem: function(k) {
-                if (this.has(k)) {
-                    delete this.items[k];
-                    this.length--;
-                }
-            },
-            getItem: function(k){ return this.has(k) ? this.items[k] : null; },
-            clear: function(){ for (var k in this.list){ this.removeItem(k); } },
-            toString: function(){ return this.length+' items in '+this.name+'Storage'; }
-        }// end _.storageAPI
-    };
-
-    var store =
-        // safely set this up (throws error in IE10/32bit mode for local files)
-        _.Store("local", (function(){try{ return localStorage; }catch(e){}})());
-    store.local = store;// for completeness
-    store._ = _;// for extenders and debuggers...
-    // safely setup store.session (throws exception in FF for file:/// urls)
-    store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
-
-    if (typeof define === 'function' && define.amd !== undefined) {
-        define('store2', [], function () {
-            return store;
-        });
-    } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = store;
-    } else {
-        // expose the primary store fn to the global object and save conflicts
-        if (window.store){ _.conflict = window.store; }
-        window.store = store;
-    }
-
-})(this, this.define);
-
-
-/***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports) {
 
 var g;
@@ -57586,168 +57776,6 @@ try {
 
 module.exports = g;
 
-
-/***/ }),
-/* 177 */,
-/* 178 */,
-/* 179 */,
-/* 180 */,
-/* 181 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(175);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _graph = __webpack_require__(122);
-
-var _graph2 = _interopRequireDefault(_graph);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var StockPopUp = function () {
-  function StockPopUp(stocksContainer) {
-    _classCallCheck(this, StockPopUp);
-
-    this.$mainContainer = (0, _jquery2.default)('.main-container');
-    this.$stocksContainer = stocksContainer;
-    this.graph;
-
-    this.renderPopUp();
-
-    this.$popupContainer = (0, _jquery2.default)('.popup-modal');
-    this.$popupContentContainer = (0, _jquery2.default)('.popup-stock-container');
-    this.$chartContainer = (0, _jquery2.default)('#popup-chart');
-
-    this.activatePopUp();
-  }
-
-  // RENDER HTML FOR POPUP MODAL
-
-
-  _createClass(StockPopUp, [{
-    key: 'renderPopUp',
-    value: function renderPopUp() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="popup-stock-name"></h3>\n          <div class="popup-chart-container">\n            <canvas id="popup-chart" width="800" height="340"></canvas>\n          </div>\n          <button class="button popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
-      this.$mainContainer.prepend(popupModal);
-    }
-
-    // DISPLAY POPUP MODAL ON CLICK EVENT
-
-  }, {
-    key: 'activatePopUp',
-    value: function activatePopUp() {
-      var that = this;
-
-      // OPEN POPUP MODAL
-      this.$stocksContainer.on('click', 'button', function (event) {
-        event.preventDefault();
-
-        if (that.graph) {
-          that.graph.destroy();
-        }
-
-        var id = this.id;
-
-        // CHECK IF THERE IS LOCALLY STORED DATA BEFORE MAKING AJAX REQUEST
-        if (_store2.default.get('' + id)) {
-          that.renderGraph(id);
-        } else {
-          that.getPrice(id);
-        }
-
-        that.$popupContainer.fadeIn();
-        // that.$popupContainer.addClass('is-visible');
-      });
-
-      // Disable closing of viewer upon click on image content container
-      this.$popupContentContainer.on('click', function (event) {
-        event.stopPropagation();
-      });
-
-      // CLOSE POPUP MODAL
-      this.$popupContainer.on('click', function () {
-        // event.stopPropagation();
-        // $(this).removeClass('is-visible');
-        (0, _jquery2.default)(this).fadeOut();
-      });
-    }
-
-    // GET COMPANY STOCK DATA
-
-  }, {
-    key: 'getPrice',
-    value: function getPrice(companyId) {
-      var _this = this;
-
-      _jquery2.default.ajax({
-        // https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=tskzGKweRxWgnbX2pafZ
-        url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
-        dataType: 'json',
-        success: function success(data) {
-          // STORE COMPANY DATA
-          _store2.default.set('' + companyId, data);
-
-          // RENDER GRAPH
-          _this.renderGraph(companyId);
-        }
-      });
-    }
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      if (this.graph) {
-        this.graph.destroy();
-      }
-    }
-
-    // RENDER GRAPH
-
-  }, {
-    key: 'renderGraph',
-    value: function renderGraph(companyId) {
-      var stockData = _store2.default.get('' + companyId);
-
-      // Get opening prices for company stock
-      var priceData = this.getSpecificCompanyData(stockData, 1);
-
-      // Get dates for the opening prices
-      var dateLabels = this.getSpecificCompanyData(stockData, 0);
-
-      // Create new graph for this company stock
-      this.graph = new _graph2.default(this.$chartContainer, priceData, dateLabels);
-    }
-
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getSpecificCompanyData',
-    value: function getSpecificCompanyData(data, num) {
-      return data.dataset_data.data.slice(0, 30).map(function (day) {
-        return day[num];
-      }).reverse();
-    }
-  }]);
-
-  return StockPopUp;
-}();
-
-exports.default = StockPopUp;
 
 /***/ })
 /******/ ]);
