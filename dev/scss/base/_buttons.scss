@@ -1,0 +1,36 @@
+.button {
+  height: 32px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  padding: 0 12px;
+  transition: all .3s;
+  font-size: 12px;
+  outline: none;
+
+  &:hover {
+    box-shadow: 0 2px 4px rgba(0,0,0,.24);
+    cursor: pointer;
+  }
+
+  &.btn-popup-watchlist {
+    background: $green-200;
+    bottom: 24px;
+    position: absolute;
+    left: 24px;
+
+    &.is-disabled {
+      background: $red-100;
+
+      &:hover {
+        background: $red-200;
+        cursor: pointer;
+      }
+    }
+
+    &:hover {
+      background: $green-400;
+    }
+  }
+}

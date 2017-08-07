@@ -4,10 +4,11 @@ import Graph from './graph.js';
 
 
 class StockPopUp {
-  constructor(stocksContainer) {
+  constructor(id, stocksContainer) {
     this.$mainContainer = $('.main-container');
     this.$stocksContainer = stocksContainer;
     this.graph;
+    this.watchlist = [];
 
     this.renderPopUp();
 
@@ -17,8 +18,10 @@ class StockPopUp {
     this.$stockName = $('.popup-stock-name');
     this.$tbody = $('.popup-modal table tbody');
     this.$loadingIcon = $('.icon-loading');
+    this.$watchlistButton = $('.popup-stock-container button');
 
-    this.activatePopUp();
+    this.activatePopUp(id);
+    this.addToWatchlist();
   }
 
   // RENDER HTML FOR POPUP MODAL
@@ -38,7 +41,7 @@ class StockPopUp {
             </div>
             <canvas id="popup-chart" width="700" height="320"></canvas>
           </div>
-          <button class="button popup-watchlist">Add to watchlist</button>
+          <button class="button btn-popup-watchlist">Add to watchlist</button>
         </div>
       </div>
     `;
@@ -47,34 +50,24 @@ class StockPopUp {
 
 
   // DISPLAY POPUP MODAL ON CLICK EVENT
-  activatePopUp() {
-    const that = this;
+  activatePopUp(id) {
 
-    // OPEN POPUP MODAL
-    this.$stocksContainer.on('click', 'button', function(event) {
-      event.preventDefault();
+    // Destroy graph before loading new one
+    if (this.graph) {
+      this.graph.destroy();
+    }
 
-      if (that.graph) {
-        that.graph.destroy();
-      }
+    // Check if there's locally stored data before making Ajax request
+    if (store.get(`${id}`)) {
+      this.renderStockInfo(id);
+      this.renderGraph(id);
+    }
+    else {
+      this.getPrice(id);
+    }
 
-      let id = this.id;
-      let name = $(this).find('span.stock-name')[0].innerText;
-
-      that.$stockName.text(name);
-
-      // CHECK IF THERE IS LOCALLY STORED DATA BEFORE MAKING AJAX REQUEST
-      if (store.get(`${id}`)) {
-        that.renderStockInfo(id);
-        that.renderGraph(id);
-      }
-      else {
-        that.getPrice(id);
-      }
-
-      that.$popupContainer.fadeIn(100);
-      // that.$popupContainer.addClass('is-visible');
-    });
+    // let name = $(this).find('span.stock-name')[0].innerText;
+    // this.$stockName.text(name);
 
     // Disable closing of viewer upon click on image content container
     this.$popupContentContainer.on('click', function(event) {
@@ -83,9 +76,7 @@ class StockPopUp {
 
     // CLOSE POPUP MODAL
     this.$popupContainer.on('click', function() {
-      // event.stopPropagation();
-      // $(this).removeClass('is-visible');
-      $(this).fadeOut(100);
+      $(this).remove();
     });
   }
 
@@ -111,6 +102,7 @@ class StockPopUp {
       }
     });
   }
+
 
   destroy() {
     if (this.graph) {
@@ -149,14 +141,14 @@ class StockPopUp {
 
     this.$tbody.empty();
     this.$tbody.append(row);
+
+    this.$watchlistButton.attr('id', `${companyId}`);
   }
 
 
   // RENDER GRAPH
   renderGraph(companyId) {
     const stockData = store.get(`${companyId}`);
-
-    // console.log(stockData);
 
     // Get opening prices for company stock
     let priceData = this.getSpecificCompanyData(stockData, 1);
@@ -166,6 +158,40 @@ class StockPopUp {
 
     // Create new graph for this company stock
     this.graph = new Graph(this.$chartContainer, priceData, dateLabels);
+  }
+
+
+  addToWatchlist() {
+    const that = this;
+
+    this.$popupContentContainer.on('click', 'button', function(event) {
+      event.preventDefault();
+      const $this = $(this);
+      let id = this.id;
+
+      // add/remove stock from watchlist
+      if (!that.watchlist.includes(id)) {
+        that.watchlist.push(id);
+        console.log('Added to watchlist', that.watchlist);
+      }
+      else {
+        let index = that.watchlist.indexOf(id);
+        if (index !== -1) {
+          that.watchlist.splice(index, 1);
+        }
+        console.log('Remove from watchlist', that.watchlist);
+      }
+
+      // update button state
+      $this.toggleClass('is-disabled');
+
+      if ($this.hasClass('is-disabled')) {
+        $this.html('Remove from watchlist');
+      }
+      else {
+        $this.html('Add to watchlist');
+      }
+    });
   }
 
 

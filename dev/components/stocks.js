@@ -10,7 +10,7 @@ class Stocks {
     // REGISTER ELEMENTS
     this.$container = container;
     this.graph;
-    // this.popup;
+    this.popup;
 
     this.render();
     this.$chartId = $('#chart');
@@ -26,7 +26,15 @@ class Stocks {
       this.getStocks(this.count);
     }
 
-    new StockPopUp(this.$stockListContainer);
+    this.activatePopUp();
+
+    // new StockPopUp(this.$stockListContainer);
+
+    this.$popupStockContainer = $('.popup-stock-container');
+    this.watchlist = [];
+
+    this.addToWatchlist();
+
 
     // this.activateScroll();
     // this.activateCompanySelection();
@@ -57,7 +65,6 @@ class Stocks {
         database_code: 'WIKI',
         per_page: '100',
         sort_by: 'id',
-        // order: 'asc',
         page: `${num}`,
         api_key: 'tskzGKweRxWgnbX2pafZ'
       },
@@ -83,7 +90,7 @@ class Stocks {
     // const firstStockName = stocks.datasets[0].name.split('(')[0];
     const { datasets } = stocks;
 
-    console.log(datasets);
+    // console.log(datasets);
 
     const list =  datasets.slice(0, 100).map((stock) => {
       const { dataset_code: stockCode, name } = stock;
@@ -107,37 +114,45 @@ class Stocks {
 
 
   activatePopUp() {
-    this.popup = new StockPopUp(this.$stockListContainer);
-  }
-
-
-  // UPDATE GRAPH ON COMPANY SELECTION
-  activateCompanySelection() {
     const that = this;
-
-    // Add click handler on the stocks list
-    this.$stockListContainer.on('click', 'button', function(event)  {
+    this.$stockListContainer.on('click', 'button', function(event) {
       event.preventDefault();
 
       let id = this.id;
-      let name = $(this).children('.stock-name').text();
-
-      that.$stockHeader.html(name);
-      that.updateGraph(id);
+      console.log(id);
+      that.popup = new StockPopUp(id);
     });
   }
 
 
+  // UPDATE GRAPH ON COMPANY SELECTION
+  // activateCompanySelection() {
+  //   const that = this;
+
+  //   // Add click handler on the stocks list
+  //   this.$stockListContainer.on('click', 'button', function(event)  {
+  //     event.preventDefault();
+
+  //     let id = this.id;
+  //     let name = $(this).children('.stock-name').text();
+
+  //     that.$stockHeader.html(name);
+  //     that.updateGraph(id);
+  //   });
+  // }
+
+
   // UPDATE GRAPH
-  updateGraph(id) {
-    // Destroy current graph
-    this.graph.destroy();
-    // console.log(id);
+  // updateGraph(id) {
+  //   // Destroy current graph
+  //   this.graph.destroy();
+  //   // console.log(id);
 
-    this.getPrice(id);
-  }
+  //   this.getPrice(id);
+  // }
 
 
+  // LOAD MORE STOCK ON SCROLL
   activateScroll() {
     this.$container.on('scroll', _.debounce(() => {
       if (this.$container.scrollTop() + this.$container.innerHeight() >= this.$stockListContainer.height()) {

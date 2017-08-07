@@ -27043,12 +27043,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var StockPopUp = function () {
-  function StockPopUp(stocksContainer) {
+  function StockPopUp(id, stocksContainer) {
     _classCallCheck(this, StockPopUp);
 
     this.$mainContainer = (0, _jquery2.default)('.main-container');
     this.$stocksContainer = stocksContainer;
     this.graph;
+    this.watchlist = [];
 
     this.renderPopUp();
 
@@ -27058,8 +27059,10 @@ var StockPopUp = function () {
     this.$stockName = (0, _jquery2.default)('.popup-stock-name');
     this.$tbody = (0, _jquery2.default)('.popup-modal table tbody');
     this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
+    this.$watchlistButton = (0, _jquery2.default)('.popup-stock-container button');
 
-    this.activatePopUp();
+    this.activatePopUp(id);
+    this.addToWatchlist();
   }
 
   // RENDER HTML FOR POPUP MODAL
@@ -27068,7 +27071,7 @@ var StockPopUp = function () {
   _createClass(StockPopUp, [{
     key: 'renderPopUp',
     value: function renderPopUp() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              <span class="sr-only">Loading...</span>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button class="button popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              <span class="sr-only">Loading...</span>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button class="button btn-popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -27076,33 +27079,23 @@ var StockPopUp = function () {
 
   }, {
     key: 'activatePopUp',
-    value: function activatePopUp() {
-      var that = this;
+    value: function activatePopUp(id) {
 
-      // OPEN POPUP MODAL
-      this.$stocksContainer.on('click', 'button', function (event) {
-        event.preventDefault();
+      // Destroy graph before loading new one
+      if (this.graph) {
+        this.graph.destroy();
+      }
 
-        if (that.graph) {
-          that.graph.destroy();
-        }
+      // Check if there's locally stored data before making Ajax request
+      if (_store2.default.get('' + id)) {
+        this.renderStockInfo(id);
+        this.renderGraph(id);
+      } else {
+        this.getPrice(id);
+      }
 
-        var id = this.id;
-        var name = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
-
-        that.$stockName.text(name);
-
-        // CHECK IF THERE IS LOCALLY STORED DATA BEFORE MAKING AJAX REQUEST
-        if (_store2.default.get('' + id)) {
-          that.renderStockInfo(id);
-          that.renderGraph(id);
-        } else {
-          that.getPrice(id);
-        }
-
-        that.$popupContainer.fadeIn(100);
-        // that.$popupContainer.addClass('is-visible');
-      });
+      // let name = $(this).find('span.stock-name')[0].innerText;
+      // this.$stockName.text(name);
 
       // Disable closing of viewer upon click on image content container
       this.$popupContentContainer.on('click', function (event) {
@@ -27111,9 +27104,7 @@ var StockPopUp = function () {
 
       // CLOSE POPUP MODAL
       this.$popupContainer.on('click', function () {
-        // event.stopPropagation();
-        // $(this).removeClass('is-visible');
-        (0, _jquery2.default)(this).fadeOut(100);
+        (0, _jquery2.default)(this).remove();
       });
     }
 
@@ -27165,6 +27156,8 @@ var StockPopUp = function () {
 
       this.$tbody.empty();
       this.$tbody.append(row);
+
+      this.$watchlistButton.attr('id', '' + companyId);
     }
 
     // RENDER GRAPH
@@ -27174,8 +27167,6 @@ var StockPopUp = function () {
     value: function renderGraph(companyId) {
       var stockData = _store2.default.get('' + companyId);
 
-      // console.log(stockData);
-
       // Get opening prices for company stock
       var priceData = this.getSpecificCompanyData(stockData, 1);
 
@@ -27184,6 +27175,38 @@ var StockPopUp = function () {
 
       // Create new graph for this company stock
       this.graph = new _graph2.default(this.$chartContainer, priceData, dateLabels);
+    }
+  }, {
+    key: 'addToWatchlist',
+    value: function addToWatchlist() {
+      var that = this;
+
+      this.$popupContentContainer.on('click', 'button', function (event) {
+        event.preventDefault();
+        var $this = (0, _jquery2.default)(this);
+        var id = this.id;
+
+        // add/remove stock from watchlist
+        if (!that.watchlist.includes(id)) {
+          that.watchlist.push(id);
+          console.log('Added to watchlist', that.watchlist);
+        } else {
+          var index = that.watchlist.indexOf(id);
+          if (index !== -1) {
+            that.watchlist.splice(index, 1);
+          }
+          console.log('Remove from watchlist', that.watchlist);
+        }
+
+        // update button state
+        $this.toggleClass('is-disabled');
+
+        if ($this.hasClass('is-disabled')) {
+          $this.html('Remove from watchlist');
+        } else {
+          $this.html('Add to watchlist');
+        }
+      });
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
@@ -27244,7 +27267,7 @@ var Stocks = function () {
     // REGISTER ELEMENTS
     this.$container = container;
     this.graph;
-    // this.popup;
+    this.popup;
 
     this.render();
     this.$chartId = (0, _jquery2.default)('#chart');
@@ -27259,7 +27282,14 @@ var Stocks = function () {
       this.getStocks(this.count);
     }
 
-    new _stockPopup2.default(this.$stockListContainer);
+    this.activatePopUp();
+
+    // new StockPopUp(this.$stockListContainer);
+
+    this.$popupStockContainer = (0, _jquery2.default)('.popup-stock-container');
+    this.watchlist = [];
+
+    this.addToWatchlist();
 
     // this.activateScroll();
     // this.activateCompanySelection();
@@ -27291,7 +27321,6 @@ var Stocks = function () {
           database_code: 'WIKI',
           per_page: '100',
           sort_by: 'id',
-          // order: 'asc',
           page: '' + num,
           api_key: 'tskzGKweRxWgnbX2pafZ'
         },
@@ -27319,8 +27348,7 @@ var Stocks = function () {
       // const firstStockName = stocks.datasets[0].name.split('(')[0];
       var datasets = stocks.datasets;
 
-
-      console.log(datasets);
+      // console.log(datasets);
 
       var list = datasets.slice(0, 100).map(function (stock) {
         var stockCode = stock.dataset_code,
@@ -27338,39 +27366,45 @@ var Stocks = function () {
   }, {
     key: 'activatePopUp',
     value: function activatePopUp() {
-      this.popup = new _stockPopup2.default(this.$stockListContainer);
-    }
-
-    // UPDATE GRAPH ON COMPANY SELECTION
-
-  }, {
-    key: 'activateCompanySelection',
-    value: function activateCompanySelection() {
       var that = this;
-
-      // Add click handler on the stocks list
       this.$stockListContainer.on('click', 'button', function (event) {
         event.preventDefault();
 
         var id = this.id;
-        var name = (0, _jquery2.default)(this).children('.stock-name').text();
-
-        that.$stockHeader.html(name);
-        that.updateGraph(id);
+        console.log(id);
+        that.popup = new _stockPopup2.default(id);
       });
     }
 
+    // UPDATE GRAPH ON COMPANY SELECTION
+    // activateCompanySelection() {
+    //   const that = this;
+
+    //   // Add click handler on the stocks list
+    //   this.$stockListContainer.on('click', 'button', function(event)  {
+    //     event.preventDefault();
+
+    //     let id = this.id;
+    //     let name = $(this).children('.stock-name').text();
+
+    //     that.$stockHeader.html(name);
+    //     that.updateGraph(id);
+    //   });
+    // }
+
+
     // UPDATE GRAPH
+    // updateGraph(id) {
+    //   // Destroy current graph
+    //   this.graph.destroy();
+    //   // console.log(id);
 
-  }, {
-    key: 'updateGraph',
-    value: function updateGraph(id) {
-      // Destroy current graph
-      this.graph.destroy();
-      // console.log(id);
+    //   this.getPrice(id);
+    // }
 
-      this.getPrice(id);
-    }
+
+    // LOAD MORE STOCK ON SCROLL
+
   }, {
     key: 'activateScroll',
     value: function activateScroll() {

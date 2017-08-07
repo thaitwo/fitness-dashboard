@@ -146,10 +146,36 @@ table {
   font-family: "Roboto", sans-serif;
   font-weight: 400; }
 
+.button {
+  height: 32px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  padding: 0 12px;
+  transition: all .3s;
+  font-size: 12px;
+  outline: none; }
+  .button:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
+    cursor: pointer; }
+  .button.btn-popup-watchlist {
+    background: #A5D6A7;
+    bottom: 24px;
+    position: absolute;
+    left: 24px; }
+    .button.btn-popup-watchlist.is-disabled {
+      background: #ffcdd2; }
+      .button.btn-popup-watchlist.is-disabled:hover {
+        background: #ef9a9a;
+        cursor: pointer; }
+    .button.btn-popup-watchlist:hover {
+      background: #66BB6A; }
+
 .popup-modal {
   background: rgba(0, 0, 0, 0.8);
   bottom: 0;
-  display: none;
+  display: block;
   left: 0;
   position: absolute;
   right: 0;
@@ -195,27 +221,6 @@ table {
 
 .popup-chart-container {
   float: right; }
-
-.button {
-  height: 32px;
-  text-transform: uppercase;
-  border: none;
-  border-radius: 2px;
-  color: white;
-  padding: 0 12px;
-  transition: all .3s;
-  font-size: 12px;
-  outline: none; }
-  .button:hover {
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
-    cursor: pointer; }
-  .button.popup-watchlist {
-    background: #A5D6A7;
-    bottom: 24px;
-    position: absolute;
-    left: 24px; }
-    .button.popup-watchlist:hover {
-      background: #66BB6A; }
 
 /* LAYOUT
 ============================================================== */
