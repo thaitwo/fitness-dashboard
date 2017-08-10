@@ -1,24 +1,20 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import store from 'store2';
-// import Graph from './graph.js';
 import StockPopUp from './stock-popup.js';
 
 class Stocks {
   constructor(container) {
-
     // REGISTER ELEMENTS
     this.$container = container;
     this.graph;
     this.popup;
 
     this.render();
-    this.$chartId = $('#chart');
     this.$stockListContainer = $('#stocks-list');
-    this.$stockHeader = $('#stock-name-header');
-
     this.count = 1;
 
+    // check if local storage exist
     if (store.get(`stocks${this.count}`)) {
       this.renderStocks(this.count);
     }
@@ -27,17 +23,7 @@ class Stocks {
     }
 
     this.activatePopUp();
-
-    // new StockPopUp(this.$stockListContainer);
-
-    this.$popupStockContainer = $('.popup-stock-container');
-    this.watchlist = [];
-
-    this.addToWatchlist();
-
-
-    // this.activateScroll();
-    // this.activateCompanySelection();
+    this.activateScroll();
   }
 
 
@@ -72,10 +58,8 @@ class Stocks {
         console.log(message, error);
       },
       success: (data) => {
-        // console.log('DATA', data);
-
+        // store list of stocks
         store.set(`stocks${num}`, data);
-        console.log(`STORE${num}`, store.get(`stocks${num}`));
 
         this.renderStocks(num);
       }
@@ -86,12 +70,9 @@ class Stocks {
   // RENDER LIST OF COMPANIES
   renderStocks(num) {
     const stocks = store.get(`stocks${num}`);
-    // const firstStockId = stocks.datasets[0].dataset_code;
-    // const firstStockName = stocks.datasets[0].name.split('(')[0];
     const { datasets } = stocks;
 
-    // console.log(datasets);
-
+    // render html list for 100 stocks
     const list =  datasets.slice(0, 100).map((stock) => {
       const { dataset_code: stockCode, name } = stock;
       const stockName = name.split('(')[0];
@@ -106,58 +87,30 @@ class Stocks {
         </li>
       `;
     });
-
     this.$stockListContainer.append(list);
-    // this.$stockHeader.html(firstStockName);
-    // this.getPrice(firstStockId);
   }
 
 
+  // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
   activatePopUp() {
     const that = this;
+
     this.$stockListContainer.on('click', 'button', function(event) {
       event.preventDefault();
 
-      let id = this.id;
-      console.log(id);
-      that.popup = new StockPopUp(id);
+      let companyId = this.id;
+      let companyName = $(this).find('span.stock-name')[0].innerText;
+
+      // create new popup
+      that.popup = new StockPopUp(companyId, companyName);
     });
   }
-
-
-  // UPDATE GRAPH ON COMPANY SELECTION
-  // activateCompanySelection() {
-  //   const that = this;
-
-  //   // Add click handler on the stocks list
-  //   this.$stockListContainer.on('click', 'button', function(event)  {
-  //     event.preventDefault();
-
-  //     let id = this.id;
-  //     let name = $(this).children('.stock-name').text();
-
-  //     that.$stockHeader.html(name);
-  //     that.updateGraph(id);
-  //   });
-  // }
-
-
-  // UPDATE GRAPH
-  // updateGraph(id) {
-  //   // Destroy current graph
-  //   this.graph.destroy();
-  //   // console.log(id);
-
-  //   this.getPrice(id);
-  // }
 
 
   // LOAD MORE STOCK ON SCROLL
   activateScroll() {
     this.$container.on('scroll', _.debounce(() => {
       if (this.$container.scrollTop() + this.$container.innerHeight() >= this.$stockListContainer.height()) {
-        // console.log('scrollTop', this.$container.scrollTop(), 'innerHeight', this.$container.innerHeight());
-        // console.log('listHeight', this.$stockListContainer.height());
         this.count++;
         if (store.get(`stocks${this.count}`)) {
           this.renderStocks(this.count);
@@ -167,12 +120,6 @@ class Stocks {
         }
       }
     }, 500));
-  }
-
-
-  // CLEAR DASHBOARD CANVAS
-  destroy() {
-    this.$container.empty();
   }
 }
 

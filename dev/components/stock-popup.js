@@ -4,14 +4,13 @@ import Graph from './graph.js';
 
 
 class StockPopUp {
-  constructor(id, stocksContainer) {
+  constructor(companyId, companyName) {
     this.$mainContainer = $('.main-container');
-    this.$stocksContainer = stocksContainer;
     this.graph;
-    this.watchlist = [];
 
-    this.renderPopUp();
+    this.renderPopUpTemplate();
 
+    // REGISTER POPUP ELEMENTS
     this.$popupContainer = $('.popup-modal');
     this.$popupContentContainer = $('.popup-stock-container');
     this.$chartContainer = $('#popup-chart');
@@ -20,12 +19,13 @@ class StockPopUp {
     this.$loadingIcon = $('.icon-loading');
     this.$watchlistButton = $('.popup-stock-container button');
 
-    this.activatePopUp(id);
+    this.renderPopUpContent(companyId, companyName);
+    this.activateWatchlistButtonState(companyId);
     this.addToWatchlist();
   }
 
   // RENDER HTML FOR POPUP MODAL
-  renderPopUp() {
+  renderPopUpTemplate() {
     const popupModal = `
       <div class="popup-modal">
         <div class="popup-stock-container">
@@ -37,7 +37,6 @@ class StockPopUp {
           <div class="popup-chart-container">
             <div class="icon-loading">
               <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-              <span class="sr-only">Loading...</span>
             </div>
             <canvas id="popup-chart" width="700" height="320"></canvas>
           </div>
@@ -49,32 +48,24 @@ class StockPopUp {
   }
 
 
-  // DISPLAY POPUP MODAL ON CLICK EVENT
-  activatePopUp(id) {
+  // RENDER STOCK CONTENT FOR POPUP
+  renderPopUpContent(companyId, companyName) {
 
-    // Destroy graph before loading new one
-    if (this.graph) {
-      this.graph.destroy();
-    }
-
-    // Check if there's locally stored data before making Ajax request
-    if (store.get(`${id}`)) {
-      this.renderStockInfo(id);
-      this.renderGraph(id);
+    // check if there's locally stored data before making Ajax request
+    if (store.get(`${companyId}`)) {
+      this.renderStockInfo(companyId, companyName);
+      this.renderGraph(companyId);
     }
     else {
-      this.getPrice(id);
+      this.getPrice(companyId, companyName);
     }
 
-    // let name = $(this).find('span.stock-name')[0].innerText;
-    // this.$stockName.text(name);
-
-    // Disable closing of viewer upon click on image content container
+    // disable closing of viewer upon click on popup container
     this.$popupContentContainer.on('click', function(event) {
       event.stopPropagation();
     });
 
-    // CLOSE POPUP MODAL
+    // remove popup modal
     this.$popupContainer.on('click', function() {
       $(this).remove();
     });
@@ -82,19 +73,20 @@ class StockPopUp {
 
 
   // GET COMPANY STOCK DATA
-  getPrice(companyId) {
+  getPrice(companyId, companyName) {
+    // display loading icon
     this.$loadingIcon.addClass('is-visible');
     $.ajax({
-      // https://www.quandl.com/api/v3/datasets/WIKI/FB/data.json?api_key=tskzGKweRxWgnbX2pafZ
       url: `https://www.quandl.com/api/v3/datasets/WIKI/${companyId}/data.json?api_key=tskzGKweRxWgnbX2pafZ`,
       dataType: 'json',
       success: (data) => {
-        // STORE COMPANY DATA
+        // store company data
         store.set(`${companyId}`, data);
 
-        this.renderStockInfo(companyId);
+        // render stock info
+        this.renderStockInfo(companyId, companyName);
 
-        // RENDER GRAPH
+        // render graph
         this.renderGraph(companyId);
       },
       complete: () => {
@@ -104,21 +96,19 @@ class StockPopUp {
   }
 
 
-  destroy() {
-    if (this.graph) {
-      this.graph.destroy();
-    }
-  }
-
-
-  renderStockInfo(companyId) {
+  // RENDER TABLE WITH STOCK INFO
+  renderStockInfo(companyId, companyName) {
     const stockData = store.get(`${companyId}`);
 
+    // get stock info from local storage
     let closePrice = stockData.dataset_data.data[0][4];
     let openPrice = stockData.dataset_data.data[0][1];
     let low = stockData.dataset_data.data[0][3];
     let high = stockData.dataset_data.data[0][2];
     let volume = stockData.dataset_data.data[0][5];
+
+    // render stock name
+    this.$stockName.text(companyName);
 
     let row = `
       <tr>
@@ -138,10 +128,9 @@ class StockPopUp {
         <td class="val">${volume}</td>
       </tr>
     `;
-
-    this.$tbody.empty();
     this.$tbody.append(row);
 
+    // add stock id to watchlist button
     this.$watchlistButton.attr('id', `${companyId}`);
   }
 
@@ -150,48 +139,14 @@ class StockPopUp {
   renderGraph(companyId) {
     const stockData = store.get(`${companyId}`);
 
-    // Get opening prices for company stock
+    // get opening prices for company stock
     let priceData = this.getSpecificCompanyData(stockData, 1);
 
-    // Get dates for the opening prices
+    // get dates for the opening prices
     let dateLabels = this.getSpecificCompanyData(stockData, 0);
 
-    // Create new graph for this company stock
+    // create new graph for this company stock
     this.graph = new Graph(this.$chartContainer, priceData, dateLabels);
-  }
-
-
-  addToWatchlist() {
-    const that = this;
-
-    this.$popupContentContainer.on('click', 'button', function(event) {
-      event.preventDefault();
-      const $this = $(this);
-      let id = this.id;
-
-      // add/remove stock from watchlist
-      if (!that.watchlist.includes(id)) {
-        that.watchlist.push(id);
-        console.log('Added to watchlist', that.watchlist);
-      }
-      else {
-        let index = that.watchlist.indexOf(id);
-        if (index !== -1) {
-          that.watchlist.splice(index, 1);
-        }
-        console.log('Remove from watchlist', that.watchlist);
-      }
-
-      // update button state
-      $this.toggleClass('is-disabled');
-
-      if ($this.hasClass('is-disabled')) {
-        $this.html('Remove from watchlist');
-      }
-      else {
-        $this.html('Add to watchlist');
-      }
-    });
   }
 
 
@@ -200,6 +155,62 @@ class StockPopUp {
     return data.dataset_data.data.slice(0, 30).map((day) => {
       return day[num];
     }).reverse();
+  }
+
+
+  // ADD STOCK TO WATCHLIST
+  addToWatchlist() {
+    // retrieve watchlist array from storage
+    let watchlist = store.get('watchlist') || []; // ['AAPL', 'AMD'] or []
+
+
+    this.$popupContentContainer.on('click', 'button', function(event) {
+      event.preventDefault();
+      const $this = $(this);
+      let id = this.id;
+      const hasStock = watchlist.includes(id);
+
+      // if stock doesn't exist in watchlist, then add to watchlist
+      if (hasStock === false) {
+        // add stock into watchlist array
+        watchlist.push(id);
+        // store updated watchlist array
+        store.set('watchlist', watchlist);
+
+        // update watchlist button to REMOVE
+        $this.addClass('is-remove');
+        $this.text('Remove from watchlist');
+      }
+      // if stock exist, then remove it from watchlist
+      else {
+        // remove stock from watchlist array
+        let index = watchlist.indexOf(id);
+        if (index != -1) {
+          watchlist.splice(index, 1);
+        }
+
+        // store upated watchlist array
+        store.set('watchlist', watchlist);
+        console.log('Removed from watchlist', watchlist);
+
+        // update watchlist button to ADD
+        $this.removeClass('is-remove');
+        $this.text('Add to watchlist');
+      }
+    });
+  }
+
+
+  // UPDATE WATCHLIST BUTTON STATE (ADD OR REMOVE)
+  activateWatchlistButtonState(companyId) {
+    if (store.get('watchlist').includes(companyId)) {
+      this.$watchlistButton.addClass('is-remove');
+      this.$watchlistButton.text('Remove from watchlist');
+    }
+    else {
+      this.$watchlistButton.removeClass('is-remove');
+      this.$watchlistButton.text('Add to wathclist');
+    }
   }
 }
 

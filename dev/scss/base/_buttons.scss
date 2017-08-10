@@ -20,11 +20,11 @@
     position: absolute;
     left: 24px;
 
-    &.is-disabled {
-      background: $red-100;
+    &.is-remove {
+      background: $red-200;
 
       &:hover {
-        background: $red-200;
+        background: $red-300;
         cursor: pointer;
       }
     }

@@ -164,10 +164,10 @@ table {
     bottom: 24px;
     position: absolute;
     left: 24px; }
-    .button.btn-popup-watchlist.is-disabled {
-      background: #ffcdd2; }
-      .button.btn-popup-watchlist.is-disabled:hover {
-        background: #ef9a9a;
+    .button.btn-popup-watchlist.is-remove {
+      background: #ef9a9a; }
+      .button.btn-popup-watchlist.is-remove:hover {
+        background: #e57373;
         cursor: pointer; }
     .button.btn-popup-watchlist:hover {
       background: #66BB6A; }

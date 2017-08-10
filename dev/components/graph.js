@@ -39,12 +39,12 @@ class Graph {
   }
 
 
-  // DESTROY CHART
-  destroy() {
-    if (this.graph) {
-      this.graph.destroy();
-    }
-  }
+  // DESTROY GRAPH
+  // destroy() {
+  //   if (this.graph) {
+  //     this.graph.destroy();
+  //   }
+  // }
 
 
   // RENDER OPTIONS OBJECT
