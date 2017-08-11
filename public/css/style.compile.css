@@ -52,6 +52,18 @@ table {
 **
 */
 /*
+** RED
+**
+*/
+/*
+** BLUE
+**
+*/
+/*
+** GREEN
+**
+*/
+/*
 ** TEAL
 **
 */
@@ -146,6 +158,16 @@ table {
   font-family: "Roboto", sans-serif;
   font-weight: 400; }
 
+.page-title {
+  color: rgba(38, 50, 56, 0.7);
+  float: left;
+  font-family: "Montserrat", sans-serif;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 58px;
+  margin-left: 15px;
+  text-transform: uppercase; }
+
 .button {
   height: 32px;
   text-transform: uppercase;
@@ -164,9 +186,9 @@ table {
     bottom: 24px;
     position: absolute;
     left: 24px; }
-    .button.btn-popup-watchlist.is-remove {
+    .button.btn-popup-watchlist.has-warning {
       background: #ef9a9a; }
-      .button.btn-popup-watchlist.is-remove:hover {
+      .button.btn-popup-watchlist.has-warning:hover {
         background: #e57373;
         cursor: pointer; }
     .button.btn-popup-watchlist:hover {
@@ -334,16 +356,6 @@ table {
     font-weight: 600;
     line-height: 60px;
     text-decoration: none; }
-
-.page-title {
-  color: rgba(38, 50, 56, 0.7);
-  float: left;
-  font-family: "Montserrat", sans-serif;
-  font-size: 24px;
-  font-weight: 300;
-  line-height: 58px;
-  margin-left: 15px;
-  text-transform: uppercase; }
 
 .top-bar {
   background-color: white;

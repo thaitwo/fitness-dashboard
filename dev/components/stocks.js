@@ -11,17 +11,12 @@ class Stocks {
     this.popup;
 
     this.render();
-    this.$stockListContainer = $('#stocks-list');
+    this.$stocksContainer = $('.stocks-container');
+    this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
+    this.$stockListContainer = this.$stocksContainer.find('#stocks-list');
     this.count = 1;
 
-    // check if local storage exist
-    if (store.get(`stocks${this.count}`)) {
-      this.renderStocks(this.count);
-    }
-    else {
-      this.getStocks(this.count);
-    }
-
+    this.getStocks();
     this.activatePopUp();
     this.activateScroll();
   }
@@ -33,6 +28,9 @@ class Stocks {
       `
         <div class="stocks-container">
           <h3>Stocks</h3>
+          <div class="icon-loading">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+          </div>
           <ol id="stocks-list" class="stocks-list"></ol>
         </div>
       `;
@@ -40,8 +38,24 @@ class Stocks {
   }
 
 
+  getStocks() {
+    const stocks = store.get(`stocks${this.count}`) || [];
+
+    // check if local storage exist
+    if (stocks.length) {
+      this.renderStocks(this.count);
+    }
+    else {
+      this.fetchStocks(this.count);
+    }
+  }
+
+
   // GET LIST OF COMPANIES
-  getStocks(num) {
+  fetchStocks(num) {
+    // display loading icon
+    this.$loadingIcon.addClass('is-visible');
+
     $.ajax({
       // Below is what entire URL would look like:
       // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
@@ -58,10 +72,14 @@ class Stocks {
         console.log(message, error);
       },
       success: (data) => {
+        let stocks = data.datasets;
         // store list of stocks
-        store.set(`stocks${num}`, data);
+        store.set(`stocks${num}`, stocks);
 
         this.renderStocks(num);
+      },
+      complete: () => {
+        this.$loadingIcon.removeClass('is-visible');
       }
     });
   }
@@ -70,10 +88,9 @@ class Stocks {
   // RENDER LIST OF COMPANIES
   renderStocks(num) {
     const stocks = store.get(`stocks${num}`);
-    const { datasets } = stocks;
 
     // render html list for 100 stocks
-    const list =  datasets.slice(0, 100).map((stock) => {
+    const list =  stocks.slice(0, 100).map((stock) => {
       const { dataset_code: stockCode, name } = stock;
       const stockName = name.split('(')[0];
 
@@ -109,17 +126,24 @@ class Stocks {
 
   // LOAD MORE STOCK ON SCROLL
   activateScroll() {
-    this.$container.on('scroll', _.debounce(() => {
-      if (this.$container.scrollTop() + this.$container.innerHeight() >= this.$stockListContainer.height()) {
+    this.$stocksContainer.on('scroll', _.debounce(() => {
+      if (this.$stocksContainer.scrollTop() + this.$stocksContainer.innerHeight() >= this.$stockListContainer.height()) {
         this.count++;
         if (store.get(`stocks${this.count}`)) {
           this.renderStocks(this.count);
         }
         else {
-          this.getStocks(this.count);
+          this.fetchStocks(this.count);
         }
       }
     }, 500));
+  }
+
+
+  destroy() {
+    if (this.$stocksContainer) {
+      this.$container.empty();
+    }
   }
 }
 

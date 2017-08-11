@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
-// import Watchlist from './watchlist.js';
 import Stocks from './stocks';
 const DASHBOARD_URL = 'dashboard/';
 
@@ -34,21 +33,16 @@ class Router {
   // LISTEN FOR ROUTE CHANGES
   activateRouter() {
 
-    // Root handler
-    this.router.on(() => {
-      // this.currentPage = new Stocks(this.$canvas);
-    }).resolve();
-
     // Routes handler
     this.router.on({
-      '/watchlist': () => {
-        // this.currentPage = new Stocks(this.$canvas);
-      },
-      '/stocks': () => {
+      'stocks': () => {
         this.currentPage = new Stocks(this.$canvas);
       },
-      '/compare': () => {
+      'compare': () => {
         // Insert functionality
+      },
+      '*': () => {
+        // this.currentPage = new Watchlist();
       }
     })
     .resolve();
@@ -56,7 +50,7 @@ class Router {
     // Global hook => clear page & event handlers before loading new route/page
     this.router.hooks({
       before: (done) => {
-        if(this.currentPage) {
+        if(this.currentPage && this.currentPage.destroy) {
           this.currentPage.destroy();
         }
         done();

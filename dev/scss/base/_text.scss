@@ -13,3 +13,14 @@
   font-family: $font-secondary;
   font-weight: 400;
 }
+
+.page-title {
+  color: rgba($bluegrey-900, .7);
+  float: left;
+  font-family: $font-primary;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 58px;
+  margin-left: 15px;
+  text-transform: uppercase;
+}

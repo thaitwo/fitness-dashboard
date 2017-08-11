@@ -26783,13 +26783,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/*
-**  GRAPH
-**
+/**
+* Graph Component
+* @class
+* @param {String} canvasId - The id of canvas to insert graph
+* @param {Array} newData - Data to populate the graph
+* @param {Array} newLabels - Array of labels for the dates
+* @param {String} graphType (optional | default is line graph) - The type of graph to display
+* @param {Object} options (optional) - Graph options
+* @returns {Object}
 */
 
 var Graph = function () {
-  // @parameters (string, array, array, string, object)
   function Graph(canvasId, newData, newLabels, graphType, options) {
     _classCallCheck(this, Graph);
 
@@ -26824,17 +26829,19 @@ var Graph = function () {
   }
 
   // DESTROY GRAPH
-  // destroy() {
-  //   if (this.graph) {
-  //     this.graph.destroy();
-  //   }
-  // }
-
-
-  // RENDER OPTIONS OBJECT
 
 
   _createClass(Graph, [{
+    key: 'destroy',
+    value: function destroy() {
+      if (this.graph) {
+        this.graph.destroy();
+      }
+    }
+
+    // RENDER OPTIONS OBJECT
+
+  }, {
     key: 'getOptions',
     value: function getOptions() {
       return {
@@ -26919,8 +26926,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-// import Watchlist from './watchlist.js';
-
 
 var _jquery = __webpack_require__(1);
 
@@ -26976,28 +26981,23 @@ var Router = function () {
     value: function activateRouter() {
       var _this = this;
 
-      // Root handler
-      this.router.on(function () {
-        // this.currentPage = new Stocks(this.$canvas);
-      }).resolve();
-
       // Routes handler
       this.router.on({
-        '/watchlist': function watchlist() {
-          // this.currentPage = new Stocks(this.$canvas);
-        },
-        '/stocks': function stocks() {
+        'stocks': function stocks() {
           _this.currentPage = new _stocks2.default(_this.$canvas);
         },
-        '/compare': function compare() {
+        'compare': function compare() {
           // Insert functionality
+        },
+        '*': function _() {
+          // this.currentPage = new Watchlist();
         }
       }).resolve();
 
       // Global hook => clear page & event handlers before loading new route/page
       this.router.hooks({
         before: function before(done) {
-          if (_this.currentPage) {
+          if (_this.currentPage && _this.currentPage.destroy) {
             _this.currentPage.destroy();
           }
           done();
@@ -27044,48 +27044,93 @@ var StockPopUp = function () {
   function StockPopUp(companyId, companyName) {
     _classCallCheck(this, StockPopUp);
 
+    this.companyId = companyId;
+    this.companyName = companyName;
     this.$mainContainer = (0, _jquery2.default)('.main-container');
     this.graph;
 
-    this.renderPopUpTemplate();
+    this.render();
 
     // REGISTER POPUP ELEMENTS
     this.$popupContainer = (0, _jquery2.default)('.popup-modal');
-    this.$popupContentContainer = (0, _jquery2.default)('.popup-stock-container');
-    this.$chartContainer = (0, _jquery2.default)('#popup-chart');
-    this.$stockName = (0, _jquery2.default)('.popup-stock-name');
-    this.$tbody = (0, _jquery2.default)('.popup-modal table tbody');
-    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
-    this.$watchlistButton = (0, _jquery2.default)('.popup-stock-container button');
+    this.$popupContentContainer = this.$popupContainer.find('.popup-stock-container');
+    this.$chartContainer = this.$popupContainer.find('#popup-chart');
+    this.$stockName = this.$popupContainer.find('.popup-stock-name');
+    this.$tbody = this.$popupContainer.find('table tbody');
+    this.$loadingIcon = this.$popupContainer.find('.icon-loading');
+    this.$watchlistButton = this.$popupContainer.find('#btn-watchlist');
 
-    this.renderPopUpContent(companyId, companyName);
-    this.activateWatchlistButtonState(companyId);
-    this.addToWatchlist();
+    this.activateEventListeners();
+    this.getStockData();
   }
 
   // RENDER HTML FOR POPUP MODAL
 
 
   _createClass(StockPopUp, [{
-    key: 'renderPopUpTemplate',
-    value: function renderPopUpTemplate() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button class="button btn-popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+    key: 'render',
+    value: function render() {
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
-    // RENDER STOCK CONTENT FOR POPUP
+    // REMOVE EVENT LISTENERS & DESTROY POPUP HTML
 
   }, {
-    key: 'renderPopUpContent',
-    value: function renderPopUpContent(companyId, companyName) {
+    key: 'destroy',
+    value: function destroy() {
+      this.$popupContainer.off();
+      this.$popupContentContainer.off();
+      this.graph.destroy();
+      this.$popupContainer.remove();
+    }
 
-      // check if there's locally stored data before making Ajax request
-      if (_store2.default.get('' + companyId)) {
-        this.renderStockInfo(companyId, companyName);
-        this.renderGraph(companyId);
-      } else {
-        this.getPrice(companyId, companyName);
-      }
+    // ACTIVATE EVENT LISTENERS
+
+  }, {
+    key: 'activateEventListeners',
+    value: function activateEventListeners() {
+      var that = this;
+
+      // retrieve watchlist array from storage
+      var watchlist = _store2.default.get('watchlist') || []; // ['AAPL', 'AMD'] or []
+      var hasStock = watchlist.includes(this.companyId); // true/false
+
+      // update watchlist button state
+      this.toggleButtonState(hasStock);
+
+      // add/remove stock from watchlist
+      this.$popupContentContainer.on('click', '#btn-watchlist', function (event) {
+        event.preventDefault();
+
+        var $this = (0, _jquery2.default)(this);
+        var hasStock = watchlist.includes(that.companyId);
+
+        // if stock is not in watchlist, then add to watchlist
+        if (hasStock === false) {
+          watchlist.push(that.companyId);
+          _store2.default.set('watchlist', watchlist);
+
+          // update watchlist button to REMOVE
+          $this.addClass('has-warning');
+          $this.text('Remove from watchlist');
+        }
+        // if stock exist, then remove it from watchlist
+        else {
+            // remove stock from watchlist array
+            var index = watchlist.indexOf(that.companyId);
+            if (index != -1) {
+              watchlist.splice(index, 1);
+            }
+
+            // store upated watchlist array
+            _store2.default.set('watchlist', watchlist);
+
+            // update watchlist button to ADD
+            $this.removeClass('has-warning');
+            $this.text('Add to watchlist');
+          }
+      });
 
       // disable closing of viewer upon click on popup container
       this.$popupContentContainer.on('click', function (event) {
@@ -27094,31 +27139,51 @@ var StockPopUp = function () {
 
       // remove popup modal
       this.$popupContainer.on('click', function () {
-        (0, _jquery2.default)(this).remove();
+        that.destroy();
       });
     }
 
-    // GET COMPANY STOCK DATA
+    // RENDER STOCK CONTENT FOR POPUP
 
   }, {
-    key: 'getPrice',
-    value: function getPrice(companyId, companyName) {
+    key: 'getStockData',
+    value: function getStockData() {
+
+      // check if there's locally stored data before making Ajax request
+      if (_store2.default.get('' + this.companyId)) {
+        this.renderStockInfo();
+        this.renderGraph();
+      } else {
+        this.fetchStockData();
+      }
+    }
+
+    // FETCH STOCK DATA
+
+  }, {
+    key: 'fetchStockData',
+    value: function fetchStockData() {
       var _this = this;
 
       // display loading icon
       this.$loadingIcon.addClass('is-visible');
+
+      // request stock data
       _jquery2.default.ajax({
-        url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
+        url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + this.companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
         dataType: 'json',
+        error: function error(xhr, message, _error) {
+          console.log(message, _error);
+        },
         success: function success(data) {
           // store company data
-          _store2.default.set('' + companyId, data);
+          _store2.default.set('' + _this.companyId, data);
 
           // render stock info
-          _this.renderStockInfo(companyId, companyName);
+          _this.renderStockInfo();
 
           // render graph
-          _this.renderGraph(companyId);
+          _this.renderGraph();
         },
         complete: function complete() {
           _this.$loadingIcon.removeClass('is-visible');
@@ -27130,32 +27195,30 @@ var StockPopUp = function () {
 
   }, {
     key: 'renderStockInfo',
-    value: function renderStockInfo(companyId, companyName) {
-      var stockData = _store2.default.get('' + companyId);
+    value: function renderStockInfo() {
+      var stockData = _store2.default.get('' + this.companyId);
+      var details = stockData.dataset_data.data[0];
 
       // get stock info from local storage
-      var closePrice = stockData.dataset_data.data[0][4];
-      var openPrice = stockData.dataset_data.data[0][1];
-      var low = stockData.dataset_data.data[0][3];
-      var high = stockData.dataset_data.data[0][2];
-      var volume = stockData.dataset_data.data[0][5];
+      var closePrice = details[4];
+      var openPrice = details[1];
+      var low = details[3];
+      var high = details[2];
+      var volume = details[5];
 
       // render stock name
-      this.$stockName.text(companyName);
+      this.$stockName.text(this.companyName);
 
       var row = '\n      <tr>\n        <td class="key">Close</td>\n        <td class="val">' + closePrice + '</td>\n      </tr>\n      <tr>\n        <td class="key">Open</td>\n        <td class="val">' + openPrice + '</td>\n      </tr>\n      <tr>\n        <td class="key">Day\'s Range</td>\n        <td class="val">' + low + ' - ' + high + '</td>\n      </tr>\n      <tr>\n        <td class="key">Volume</td>\n        <td class="val">' + volume + '</td>\n      </tr>\n    ';
       this.$tbody.append(row);
-
-      // add stock id to watchlist button
-      this.$watchlistButton.attr('id', '' + companyId);
     }
 
     // RENDER GRAPH
 
   }, {
     key: 'renderGraph',
-    value: function renderGraph(companyId) {
-      var stockData = _store2.default.get('' + companyId);
+    value: function renderGraph() {
+      var stockData = _store2.default.get('' + this.companyId);
 
       // get opening prices for company stock
       var priceData = this.getSpecificCompanyData(stockData, 1);
@@ -27177,61 +27240,16 @@ var StockPopUp = function () {
       }).reverse();
     }
 
-    // ADD STOCK TO WATCHLIST
+    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
 
   }, {
-    key: 'addToWatchlist',
-    value: function addToWatchlist() {
-      // retrieve watchlist array from storage
-      var watchlist = _store2.default.get('watchlist') || []; // ['AAPL', 'AMD'] or []
-
-
-      this.$popupContentContainer.on('click', 'button', function (event) {
-        event.preventDefault();
-        var $this = (0, _jquery2.default)(this);
-        var id = this.id;
-        var hasStock = watchlist.includes(id);
-
-        // if stock doesn't exist in watchlist, then add to watchlist
-        if (hasStock === false) {
-          // add stock into watchlist array
-          watchlist.push(id);
-          // store updated watchlist array
-          _store2.default.set('watchlist', watchlist);
-
-          // update watchlist button to REMOVE
-          $this.addClass('is-remove');
-          $this.text('Remove from watchlist');
-        }
-        // if stock exist, then remove it from watchlist
-        else {
-            // remove stock from watchlist array
-            var index = watchlist.indexOf(id);
-            if (index != -1) {
-              watchlist.splice(index, 1);
-            }
-
-            // store upated watchlist array
-            _store2.default.set('watchlist', watchlist);
-            console.log('Removed from watchlist', watchlist);
-
-            // update watchlist button to ADD
-            $this.removeClass('is-remove');
-            $this.text('Add to watchlist');
-          }
-      });
-    }
-
-    // UPDATE WATCHLIST BUTTON STATE (ADD OR REMOVE)
-
-  }, {
-    key: 'activateWatchlistButtonState',
-    value: function activateWatchlistButtonState(companyId) {
-      if (_store2.default.get('watchlist').includes(companyId)) {
-        this.$watchlistButton.addClass('is-remove');
+    key: 'toggleButtonState',
+    value: function toggleButtonState(boolean) {
+      if (boolean === true) {
+        this.$watchlistButton.addClass('has-warning');
         this.$watchlistButton.text('Remove from watchlist');
       } else {
-        this.$watchlistButton.removeClass('is-remove');
+        this.$watchlistButton.removeClass('has-warning');
         this.$watchlistButton.text('Add to wathclist');
       }
     }
@@ -27285,16 +27303,12 @@ var Stocks = function () {
     this.popup;
 
     this.render();
-    this.$stockListContainer = (0, _jquery2.default)('#stocks-list');
+    this.$stocksContainer = (0, _jquery2.default)('.stocks-container');
+    this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
+    this.$stockListContainer = this.$stocksContainer.find('#stocks-list');
     this.count = 1;
 
-    // check if local storage exist
-    if (_store2.default.get('stocks' + this.count)) {
-      this.renderStocks(this.count);
-    } else {
-      this.getStocks(this.count);
-    }
-
+    this.getStocks();
     this.activatePopUp();
     this.activateScroll();
   }
@@ -27305,16 +27319,31 @@ var Stocks = function () {
   _createClass(Stocks, [{
     key: 'render',
     value: function render() {
-      var html = '\n        <div class="stocks-container">\n          <h3>Stocks</h3>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
+      var html = '\n        <div class="stocks-container">\n          <h3>Stocks</h3>\n          <div class="icon-loading">\n            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n          </div>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
       this.$container.append(html);
+    }
+  }, {
+    key: 'getStocks',
+    value: function getStocks() {
+      var stocks = _store2.default.get('stocks' + this.count) || [];
+
+      // check if local storage exist
+      if (stocks.length) {
+        this.renderStocks(this.count);
+      } else {
+        this.fetchStocks(this.count);
+      }
     }
 
     // GET LIST OF COMPANIES
 
   }, {
-    key: 'getStocks',
-    value: function getStocks(num) {
+    key: 'fetchStocks',
+    value: function fetchStocks(num) {
       var _this = this;
+
+      // display loading icon
+      this.$loadingIcon.addClass('is-visible');
 
       _jquery2.default.ajax({
         // Below is what entire URL would look like:
@@ -27332,10 +27361,14 @@ var Stocks = function () {
           console.log(message, _error);
         },
         success: function success(data) {
+          var stocks = data.datasets;
           // store list of stocks
-          _store2.default.set('stocks' + num, data);
+          _store2.default.set('stocks' + num, stocks);
 
           _this.renderStocks(num);
+        },
+        complete: function complete() {
+          _this.$loadingIcon.removeClass('is-visible');
         }
       });
     }
@@ -27346,11 +27379,9 @@ var Stocks = function () {
     key: 'renderStocks',
     value: function renderStocks(num) {
       var stocks = _store2.default.get('stocks' + num);
-      var datasets = stocks.datasets;
 
       // render html list for 100 stocks
-
-      var list = datasets.slice(0, 100).map(function (stock) {
+      var list = stocks.slice(0, 100).map(function (stock) {
         var stockCode = stock.dataset_code,
             name = stock.name;
 
@@ -27386,16 +27417,23 @@ var Stocks = function () {
     value: function activateScroll() {
       var _this2 = this;
 
-      this.$container.on('scroll', _lodash2.default.debounce(function () {
-        if (_this2.$container.scrollTop() + _this2.$container.innerHeight() >= _this2.$stockListContainer.height()) {
+      this.$stocksContainer.on('scroll', _lodash2.default.debounce(function () {
+        if (_this2.$stocksContainer.scrollTop() + _this2.$stocksContainer.innerHeight() >= _this2.$stockListContainer.height()) {
           _this2.count++;
           if (_store2.default.get('stocks' + _this2.count)) {
             _this2.renderStocks(_this2.count);
           } else {
-            _this2.getStocks(_this2.count);
+            _this2.fetchStocks(_this2.count);
           }
         }
       }, 500));
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      if (this.$stocksContainer) {
+        this.$container.empty();
+      }
     }
   }]);
 

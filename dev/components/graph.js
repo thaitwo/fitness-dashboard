@@ -1,12 +1,17 @@
 import Chart from 'chart.js';
 
-/*
-**  GRAPH
-**
+/**
+* Graph Component
+* @class
+* @param {String} canvasId - The id of canvas to insert graph
+* @param {Array} newData - Data to populate the graph
+* @param {Array} newLabels - Array of labels for the dates
+* @param {String} graphType (optional | default is line graph) - The type of graph to display
+* @param {Object} options (optional) - Graph options
+* @returns {Object}
 */
 
 class Graph {
-  // @parameters (string, array, array, string, object)
   constructor(canvasId, newData, newLabels, graphType, options) {
     this.canvasId = canvasId;
     this.graphType = graphType || 'line';
@@ -40,11 +45,11 @@ class Graph {
 
 
   // DESTROY GRAPH
-  // destroy() {
-  //   if (this.graph) {
-  //     this.graph.destroy();
-  //   }
-  // }
+  destroy() {
+    if (this.graph) {
+      this.graph.destroy();
+    }
+  }
 
 
   // RENDER OPTIONS OBJECT
