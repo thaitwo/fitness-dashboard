@@ -27143,6 +27143,20 @@ var StockPopUp = function () {
       });
     }
 
+    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
+
+  }, {
+    key: 'toggleButtonState',
+    value: function toggleButtonState(boolean) {
+      if (boolean === true) {
+        this.$watchlistButton.addClass('has-warning');
+        this.$watchlistButton.text('Remove from watchlist');
+      } else {
+        this.$watchlistButton.removeClass('has-warning');
+        this.$watchlistButton.text('Add to wathclist');
+      }
+    }
+
     // RENDER STOCK CONTENT FOR POPUP
 
   }, {
@@ -27238,20 +27252,6 @@ var StockPopUp = function () {
       return data.dataset_data.data.slice(0, 30).map(function (day) {
         return day[num];
       }).reverse();
-    }
-
-    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
-
-  }, {
-    key: 'toggleButtonState',
-    value: function toggleButtonState(boolean) {
-      if (boolean === true) {
-        this.$watchlistButton.addClass('has-warning');
-        this.$watchlistButton.text('Remove from watchlist');
-      } else {
-        this.$watchlistButton.removeClass('has-warning');
-        this.$watchlistButton.text('Add to wathclist');
-      }
     }
   }]);
 

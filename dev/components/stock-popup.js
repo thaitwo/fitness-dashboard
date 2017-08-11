@@ -115,6 +115,19 @@ class StockPopUp {
   }
 
 
+  // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
+  toggleButtonState(boolean) {
+    if (boolean === true) {
+      this.$watchlistButton.addClass('has-warning');
+      this.$watchlistButton.text('Remove from watchlist');
+    }
+    else {
+      this.$watchlistButton.removeClass('has-warning');
+      this.$watchlistButton.text('Add to wathclist');
+    }
+  }
+
+
   // RENDER STOCK CONTENT FOR POPUP
   getStockData() {
 
@@ -215,19 +228,6 @@ class StockPopUp {
     return data.dataset_data.data.slice(0, 30).map((day) => {
       return day[num];
     }).reverse();
-  }
-
-
-  // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
-  toggleButtonState(boolean) {
-    if (boolean === true) {
-      this.$watchlistButton.addClass('has-warning');
-      this.$watchlistButton.text('Remove from watchlist');
-    }
-    else {
-      this.$watchlistButton.removeClass('has-warning');
-      this.$watchlistButton.text('Add to wathclist');
-    }
   }
 }
 

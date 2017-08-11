@@ -53,17 +53,6 @@
   }
 }
 
-.icon-loading {
-  display: none;
-
-  &.is-visible {
-    color: rgba($black, .1);
-    display: block;
-    margin-top: 80px;
-    text-align: center;
-  }
-}
-
 .popup-chart-container {
   float: right;
 }

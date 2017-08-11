@@ -1,0 +1,16 @@
+.logo {
+  background-color: #192226;
+  border-bottom: 2px solid rgba($bluegrey-900, .12);
+  height: 56px;
+  margin: 0;
+  padding-left: 33px;
+
+  a {
+    color: $salmon;
+    font-family: $font-primary;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 60px;
+    text-decoration: none;
+  }
+}

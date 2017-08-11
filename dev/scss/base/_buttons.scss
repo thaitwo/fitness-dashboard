@@ -20,17 +20,17 @@
     position: absolute;
     left: 24px;
 
-    &.has-warning {
-      background: $red-200;
-
-      &:hover {
-        background: $red-300;
-        cursor: pointer;
-      }
-    }
-
     &:hover {
       background: $green-400;
+    }
+  }
+
+  &.has-warning {
+    background: $red-200;
+
+    &:hover {
+      background: $red-300;
+      cursor: pointer;
     }
   }
 }
