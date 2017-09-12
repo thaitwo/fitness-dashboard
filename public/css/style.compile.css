@@ -250,6 +250,16 @@ table {
 /* GRID
 ============================================================== */
 /* MODULE */
+.fa-times-circle {
+  color: #ECEFF1;
+  position: absolute;
+  right: 10px;
+  top: 8px;
+  transition: all .3s; }
+  .fa-times-circle:hover {
+    color: #CFD8DC;
+    cursor: pointer; }
+
 .icon-loading {
   display: none; }
   .icon-loading.is-visible {
