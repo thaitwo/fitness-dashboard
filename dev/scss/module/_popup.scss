@@ -1,0 +1,58 @@
+.popup-modal {
+  background: rgba($black, .8);
+  bottom: 0;
+  display: block;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3;
+
+  &.is-visible {
+    display: block;
+  }
+}
+
+.popup-stock-container {
+  background: $white;
+  border-radius: 2px;
+  height: 340px;
+  margin: 100px auto;
+  position: relative;
+  width: 960px;
+
+  table {
+    float: left;
+    margin: 16px 20px 0 24px;
+    width: 206px;
+
+    tr {
+      border-bottom: 1px solid rgba($black, .05);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+
+    td {
+      line-height: 36px;
+      font-family: $font-secondary;
+      font-size: 14px;
+    }
+
+    td.key {
+      color: rgba($black, .6);
+      font-weight: 300;
+    }
+
+    td.val {
+      color: rgba($black, .8);
+      font-weight: 500;
+      text-align: right;
+    }
+  }
+}
+
+.popup-chart-container {
+  float: right;
+}

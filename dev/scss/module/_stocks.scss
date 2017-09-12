@@ -1,0 +1,83 @@
+.stocks-container {
+  background: $white;
+  padding: 30px 60px;
+  padding: 24px;
+  position: absolute;
+  border-radius: 2px;
+  overflow: auto;
+  bottom: 24px;
+  box-sizing: border-box;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  width: 620px;
+
+  h3 {
+    font-family: $font-primary;
+    font-size: 18px;
+    font-weight: 300;
+    margin: 0 0 30px;
+  }
+}
+
+.stocks-tabs {
+  height: 60px;
+}
+
+.stocks-list {
+  // border-top: 1px solid rgba($black,.05);
+  // float: left;
+  // width: 50%;
+
+  li {
+    border-bottom: 1px solid rgba($black, .05);
+    // margin-bottom: 1px;
+  }
+
+  button {
+    background-color: $white;
+    border: none;
+    outline: none;
+    height: 36px;
+    // padding: 0;
+    text-align: left;
+    transition: all .3s;
+    width: 100%;
+
+    &:hover {
+      background: $blue-50;
+      cursor: pointer;
+
+      .stock-name {
+        color: rgba($black, .8);
+      }
+    }
+  }
+
+  .stock-code {
+    color: $blue-600;
+    display: block;
+    float: left;
+    font-family: $font-secondary;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    width: 72px;
+  }
+
+  .stock-name {
+    color: rgba($black, .4);
+    display: block;
+    float: left;
+    font-family: $font-secondary;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    overflow-y: hidden;
+  }
+
+  .icon-add-watchlist {
+    float: right;
+  }
+}
+

@@ -1,12 +1,17 @@
 import Chart from 'chart.js';
 
-/*
-**  GRAPH
-**
+/**
+* Graph Component
+* @class
+* @param {String} canvasId - The id of canvas to insert graph
+* @param {Array} newData - Data to populate the graph
+* @param {Array} newLabels - Array of labels for the dates
+* @param {String} graphType (optional | default is line graph) - The type of graph to display
+* @param {Object} options (optional) - Graph options
+* @returns {Object}
 */
 
 class Graph {
-  // @parameters (string, array, array, string, object)
   constructor(canvasId, newData, newLabels, graphType, options) {
     this.canvasId = canvasId;
     this.graphType = graphType || 'line';
@@ -15,12 +20,12 @@ class Graph {
       labels: newLabels,
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(250, 128, 114, .2)',
-        borderColor: '#FA8072',
+        backgroundColor: 'rgba(33,150,243, .2)',
+        borderColor: 'rgba(33,150,243, 1)',
         borderWidth: 2,
         data: newData,
         hoverRadius: 12,
-        pointBackgroundColor: 'rgba(250, 128, 114, 1)',
+        pointBackgroundColor: 'rgba(33,150,243, 1)', // rgba(250, 128, 114, 1)
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointHoverBorderColor: '#fff',
@@ -39,7 +44,7 @@ class Graph {
   }
 
 
-  // DESTROY CHART
+  // DESTROY GRAPH
   destroy() {
     if (this.graph) {
       this.graph.destroy();
@@ -51,12 +56,13 @@ class Graph {
   getOptions() {
     return {
       responsive: false,
+      maintainAspectRatio: false,
       layout: {
         padding: {
-          top: 30,
-          right: 20,
-          bottom: 30,
-          left: 20
+          top: 24,
+          right: 24,
+          bottom: 24,
+          left: 24
         }
       },
       legend: {

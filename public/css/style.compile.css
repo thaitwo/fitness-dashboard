@@ -1,3 +1,4 @@
+/* BASE */
 /* RESET
 ============================================================== */
 html, body, div, span, applet, object, iframe,
@@ -43,6 +44,103 @@ table {
   border-collapse: collapse;
   border-spacing: 0; }
 
+/*
+** FONTS
+**
+*/
+/*
+** BLACK & WHITE
+**
+*/
+/*
+** RED
+**
+*/
+/*
+** BLUE
+**
+*/
+/*
+** GREEN
+**
+*/
+/*
+** TEAL
+**
+*/
+/*
+** GREY
+**
+*/
+/*
+** BLUEGREY
+**
+*/
+.text-header {
+  color: rgba(0, 0, 0, 0.4);
+  font-family: "Montserrat", sans-serif;
+  font-size: 18px;
+  font-weight: 300;
+  margin-bottom: 16px; }
+
+.text-headline {
+  color: #1E88E5;
+  padding: 24px 24px 0;
+  font-size: 18px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 400; }
+
+.page-title {
+  color: rgba(38, 50, 56, 0.7);
+  float: left;
+  font-family: "Montserrat", sans-serif;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 58px;
+  margin-left: 15px;
+  text-transform: uppercase; }
+
+.button {
+  height: 32px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 2px;
+  color: white;
+  padding: 0 12px;
+  transition: all .3s;
+  font-size: 12px;
+  outline: none; }
+  .button:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
+    cursor: pointer; }
+  .button.btn-popup-watchlist {
+    background: #A5D6A7;
+    bottom: 24px;
+    position: absolute;
+    left: 24px; }
+    .button.btn-popup-watchlist:hover {
+      background: #66BB6A; }
+  .button.has-warning {
+    background: #ef9a9a; }
+    .button.has-warning:hover {
+      background: #e57373;
+      cursor: pointer; }
+
+.logo {
+  background-color: #192226;
+  border-bottom: 2px solid rgba(38, 50, 56, 0.12);
+  height: 56px;
+  margin: 0;
+  padding-left: 33px; }
+  .logo a {
+    color: #FA8072;
+    font-family: "Montserrat", sans-serif;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 60px;
+    text-decoration: none; }
+
+/* LAYOUT */
 .l-flex {
   display: flex; }
   .l-flex.flex-wrap {
@@ -151,8 +249,224 @@ table {
 
 /* GRID
 ============================================================== */
-/* NAVIGATION
-============================================================== */
+/* MODULE */
+.icon-loading {
+  display: none; }
+  .icon-loading.is-visible {
+    color: rgba(0, 0, 0, 0.1);
+    display: block;
+    margin-top: 80px;
+    text-align: center; }
+
+.popup-modal {
+  background: rgba(0, 0, 0, 0.8);
+  bottom: 0;
+  display: block;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 3; }
+  .popup-modal.is-visible {
+    display: block; }
+
+.popup-stock-container {
+  background: #FFFFFF;
+  border-radius: 2px;
+  height: 340px;
+  margin: 100px auto;
+  position: relative;
+  width: 960px; }
+  .popup-stock-container table {
+    float: left;
+    margin: 16px 20px 0 24px;
+    width: 206px; }
+    .popup-stock-container table tr {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+      .popup-stock-container table tr:last-child {
+        border-bottom: none; }
+    .popup-stock-container table td {
+      line-height: 36px;
+      font-family: "Roboto", sans-serif;
+      font-size: 14px; }
+    .popup-stock-container table td.key {
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 300; }
+    .popup-stock-container table td.val {
+      color: rgba(0, 0, 0, 0.8);
+      font-weight: 500;
+      text-align: right; }
+
+.popup-chart-container {
+  float: right; }
+
+.stocks-container {
+  background: #FFFFFF;
+  padding: 30px 60px;
+  padding: 24px;
+  position: absolute;
+  border-radius: 2px;
+  overflow: auto;
+  bottom: 24px;
+  box-sizing: border-box;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  width: 620px; }
+  .stocks-container h3 {
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 300;
+    margin: 0 0 30px; }
+
+.stocks-tabs {
+  height: 60px; }
+
+.stocks-list li {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+
+.stocks-list button {
+  background-color: #FFFFFF;
+  border: none;
+  outline: none;
+  height: 36px;
+  text-align: left;
+  transition: all .3s;
+  width: 100%; }
+  .stocks-list button:hover {
+    background: #E3F2FD;
+    cursor: pointer; }
+    .stocks-list button:hover .stock-name {
+      color: rgba(0, 0, 0, 0.8); }
+
+.stocks-list .stock-code {
+  color: #1E88E5;
+  display: block;
+  float: left;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 24px;
+  width: 72px; }
+
+.stocks-list .stock-name {
+  color: rgba(0, 0, 0, 0.4);
+  display: block;
+  float: left;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 24px;
+  overflow-y: hidden; }
+
+.stocks-list .icon-add-watchlist {
+  float: right; }
+
+.chart-container {
+  background-color: #FFFFFF;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  margin-bottom: 30px; }
+
+.chart-watchlist-container {
+  background-color: #CFD8DC;
+  height: 100%;
+  top: 0;
+  left: 0;
+  position: absolute;
+  width: 260px; }
+
+.dashboard-stocks-container {
+  background-color: #FFFFFF;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  position: absolute;
+  width: 260px; }
+
+.chart-dropdown-container {
+  float: right;
+  margin-top: 18px;
+  position: relative; }
+
+.chart-menu-dropdown {
+  font-family: "Montserrat", sans-serif;
+  position: relative;
+  transition: all .3s; }
+  .chart-menu-dropdown.float-left {
+    float: left; }
+  .chart-menu-dropdown.float-right {
+    float: right; }
+  .chart-menu-dropdown button {
+    background: none;
+    border: none;
+    border-radius: 2px;
+    color: rgba(38, 50, 56, 0.8);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 36px;
+    outline: none;
+    padding: 0 15px;
+    text-transform: uppercase;
+    transition: all .3s; }
+    .chart-menu-dropdown button:hover {
+      background: rgba(236, 239, 241, 0.36);
+      color: #FA8072; }
+    .chart-menu-dropdown button i {
+      padding-left: 8px; }
+  .chart-menu-dropdown ul {
+    background: #FFFFFF;
+    border-radius: 2px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.24);
+    display: none;
+    position: absolute;
+    top: 0;
+    z-index: 1000; }
+    .chart-menu-dropdown ul.is-visible {
+      display: block; }
+    .chart-menu-dropdown ul li {
+      border-bottom: 1px solid #ECEFF1;
+      color: rgba(38, 50, 56, 0.36);
+      display: block;
+      font-size: 12px;
+      font-weight: 300;
+      line-height: 40px;
+      padding: 0 24px;
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: all .3s; }
+      .chart-menu-dropdown ul li:last-child {
+        border: none; }
+      .chart-menu-dropdown ul li:hover {
+        background: rgba(236, 239, 241, 0.24);
+        color: #FA8072;
+        cursor: pointer; }
+      .chart-menu-dropdown ul li i {
+        display: none; }
+      .chart-menu-dropdown ul li.is-active {
+        color: #000000;
+        position: relative; }
+        .chart-menu-dropdown ul li.is-active i {
+          display: block;
+          left: 8px;
+          position: absolute;
+          top: 14px; }
+
+.sidebar {
+  background-color: #263238;
+  bottom: 0;
+  display: block;
+  left: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0;
+  position: fixed;
+  top: 0;
+  width: 200px;
+  z-index: 2; }
+
 .nav-sidebar li a {
   border-left: 4px solid transparent;
   color: rgba(255, 255, 255, 0.3);
@@ -175,117 +489,6 @@ table {
     color: #FFFFFF; }
     .nav-sidebar li a.active i {
       color: #FA8072; }
-
-.sidebar {
-  background-color: #263238;
-  bottom: 0;
-  display: block;
-  left: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 0;
-  position: fixed;
-  top: 0;
-  width: 200px;
-  z-index: 1000; }
-
-.content-container {
-  left: 200px;
-  top: 58px;
-  right: 0;
-  position: absolute; }
-
-.box-container {
-  background-color: #FFFFFF;
-  border-radius: 2px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); }
-
-.dashboard-canvas {
-  background-color: #ECEFF1;
-  left: 0;
-  right: 0;
-  position: absolute; }
-
-.dashboard-content-container {
-  margin-left: 200px;
-  padding: 30px; }
-
-.nopadding {
-  padding: 0 !important;
-  margin: 0 !important; }
-
-.logo {
-  background-color: #192226;
-  border-bottom: 2px solid rgba(38, 50, 56, 0.12);
-  height: 60px;
-  margin: 0;
-  padding-left: 33px; }
-  .logo a {
-    color: #FA8072;
-    font-family: "Montserrat", sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 60px;
-    text-decoration: none; }
-
-.page-title {
-  color: rgba(38, 50, 56, 0.7);
-  float: left;
-  font-family: "Montserrat", sans-serif;
-  font-size: 24px;
-  font-weight: 300;
-  line-height: 58px;
-  margin-left: 15px;
-  text-transform: uppercase; }
-
-.top-bar {
-  background-color: white;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
-  height: 58px;
-  top: 0;
-  left: 200px;
-  right: 0;
-  position: fixed;
-  z-index: 100; }
-
-.stocks-canvas {
-  padding: 30px; }
-  .stocks-canvas h3 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 18px;
-    font-weight: 300;
-    margin: 0 0 30px; }
-
-.stocks-list li {
-  float: left;
-  height: 100px;
-  margin: 0 15px 15px 0;
-  width: 220px; }
-
-.stocks-list button {
-  background-color: #FFFFFF;
-  border: none;
-  border-radius: 3px;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.24);
-  height: 100%;
-  padding: 5px 20px;
-  text-align: left;
-  width: 100%; }
-
-.stocks-list .stock-code {
-  color: rgba(0, 0, 0, 0.8);
-  display: block;
-  font-family: "Montserrat", sans-serif;
-  font-size: 15px;
-  font-weight: 400;
-  padding-bottom: 2px; }
-
-.stocks-list .stock-name {
-  color: rgba(0, 0, 0, 0.4);
-  display: block;
-  font-family: "Montserrat", sans-serif;
-  font-size: 12px;
-  font-weight: 300; }
 
 /* SEARCH
 ============================================================== */
@@ -315,84 +518,31 @@ table {
 ::-webkit-input-placeholder {
   color: rgba(0, 0, 0, 0.2); }
 
-.chart-container {
-  background-color: #FFFFFF;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  margin-bottom: 30px; }
-
-.watchlist-container {
-  height: 100%;
+.top-bar {
+  background-color: white;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
+  height: 58px;
   top: 0;
-  left: 0;
+  left: 200px;
+  right: 0;
+  position: fixed;
+  z-index: 1; }
+
+.dashboard-canvas {
+  background-color: #ECEFF1;
+  bottom: 0;
+  left: 200px;
+  right: 0;
+  overflow: auto;
   position: absolute;
-  width: 200px; }
+  top: 58px; }
 
-.chart-dropdown-container {
-  float: right;
-  margin-top: 18px;
-  position: relative; }
+.dashboard-box-container {
+  background-color: #FFFFFF;
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); }
 
-.menu-dropdown {
-  font-family: "Montserrat", sans-serif;
-  position: relative;
-  transition: all .3s; }
-  .menu-dropdown.float-left {
-    float: left; }
-  .menu-dropdown.float-right {
-    float: right; }
-  .menu-dropdown button {
-    background: none;
-    border: none;
-    border-radius: 2px;
-    color: rgba(38, 50, 56, 0.8);
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 300;
-    line-height: 36px;
-    outline: none;
-    padding: 0 15px;
-    text-transform: uppercase;
-    transition: all .3s; }
-    .menu-dropdown button:hover {
-      background: rgba(236, 239, 241, 0.36);
-      color: #FA8072; }
-    .menu-dropdown button i {
-      padding-left: 8px; }
-  .menu-dropdown ul {
-    background: #FFFFFF;
-    border-radius: 2px;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.24);
-    display: none;
-    position: absolute;
-    top: 0;
-    z-index: 1000; }
-    .menu-dropdown ul.is-visible {
-      display: block; }
-    .menu-dropdown ul li {
-      border-bottom: 1px solid #ECEFF1;
-      color: rgba(38, 50, 56, 0.36);
-      display: block;
-      font-size: 12px;
-      font-weight: 300;
-      line-height: 40px;
-      padding: 0 24px;
-      text-decoration: none;
-      text-transform: uppercase;
-      transition: all .3s; }
-      .menu-dropdown ul li:last-child {
-        border: none; }
-      .menu-dropdown ul li:hover {
-        background: rgba(236, 239, 241, 0.24);
-        color: #FA8072;
-        cursor: pointer; }
-      .menu-dropdown ul li i {
-        display: none; }
-      .menu-dropdown ul li.is-active {
-        color: #000000;
-        position: relative; }
-        .menu-dropdown ul li.is-active i {
-          display: block;
-          left: 8px;
-          position: absolute;
-          top: 14px; }
+/* STATE */
+.no-padding {
+  padding: 0 !important;
+  margin: 0 !important; }

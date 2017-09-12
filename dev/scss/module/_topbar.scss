@@ -1,0 +1,10 @@
+.top-bar {
+  background-color: rgba($white, 1);
+  box-shadow: 0 0 4px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.12);
+  height: 58px;
+  top: 0;
+  left: 200px;
+  right: 0;
+  position: fixed;
+  z-index: 1;
+}
