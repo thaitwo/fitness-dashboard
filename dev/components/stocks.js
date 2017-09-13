@@ -38,6 +38,7 @@ class Stocks {
   }
 
 
+  // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
     const stocks = store.get(`stocks${this.count}`) || [];
 

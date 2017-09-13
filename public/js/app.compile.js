@@ -27057,6 +27057,7 @@ var StockPopUp = function () {
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$stockName = this.$popupContainer.find('.popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
+    this.$exitIcon = this.$popupContainer.find('.fa-times-circle');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#btn-watchlist');
 
@@ -27070,7 +27071,7 @@ var StockPopUp = function () {
   _createClass(StockPopUp, [{
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -27099,7 +27100,7 @@ var StockPopUp = function () {
       // update watchlist button state
       this.toggleButtonState(hasStock);
 
-      // add/remove stock from watchlist
+      // Add/remove stock from watchlist
       this.$popupContentContainer.on('click', '#btn-watchlist', function (event) {
         event.preventDefault();
 
@@ -27132,12 +27133,18 @@ var StockPopUp = function () {
           }
       });
 
-      // disable closing of viewer upon click on popup container
+      // Disable closing of viewer upon click on popup container
       this.$popupContentContainer.on('click', function (event) {
         event.stopPropagation();
       });
 
-      // remove popup modal
+      // Remove popup modal on click of exit icon
+      this.$exitIcon.on('click', function (event) {
+        event.stopPropagation();
+        that.destroy();
+      });
+
+      // Remove popup modal on click outside of modal
       this.$popupContainer.on('click', function () {
         that.destroy();
       });
@@ -27322,6 +27329,9 @@ var Stocks = function () {
       var html = '\n        <div class="stocks-container">\n          <h3>Stocks</h3>\n          <div class="icon-loading">\n            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n          </div>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
       this.$container.append(html);
     }
+
+    // RETRIEVE STOCKS FROM EITHER API OR STORE
+
   }, {
     key: 'getStocks',
     value: function getStocks() {

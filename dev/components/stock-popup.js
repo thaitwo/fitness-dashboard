@@ -18,6 +18,7 @@ class StockPopUp {
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$stockName = this.$popupContainer.find('.popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
+    this.$exitIcon = this.$popupContainer.find('.fa-times-circle');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#btn-watchlist');
 
@@ -32,6 +33,7 @@ class StockPopUp {
       <div class="popup-modal">
         <div class="popup-stock-container">
           <h3 class="text-headline popup-stock-name"></h3>
+          <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
           <table>
             <tbody>
             </tbody>
@@ -70,7 +72,7 @@ class StockPopUp {
     // update watchlist button state
     this.toggleButtonState(hasStock);
 
-    // add/remove stock from watchlist
+    // Add/remove stock from watchlist
     this.$popupContentContainer.on('click', '#btn-watchlist', function(event) {
       event.preventDefault();
 
@@ -103,12 +105,18 @@ class StockPopUp {
       }
     });
 
-    // disable closing of viewer upon click on popup container
+    // Disable closing of viewer upon click on popup container
     this.$popupContentContainer.on('click', function(event) {
       event.stopPropagation();
     });
 
-    // remove popup modal
+    // Remove popup modal on click of exit icon
+    this.$exitIcon.on('click', function(event) {
+      event.stopPropagation();
+      that.destroy();
+    });
+
+    // Remove popup modal on click outside of modal
     this.$popupContainer.on('click', function() {
       that.destroy();
     });
