@@ -1,0 +1,20 @@
+.watchlist-container {
+    background: white;
+    box-shadow: 0 0 8px rgba($black,.24);
+    box-sizing: border-box;
+    height: 100%;
+    padding: 24px;
+    width: 264px;
+}
+
+.watchlist-list {
+
+  li {
+    line-height: 32px;
+
+    span {
+      color: $bluegrey-600;
+      font-weight: 500;
+    }
+  }
+}

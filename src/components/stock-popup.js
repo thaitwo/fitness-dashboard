@@ -67,7 +67,7 @@ class StockPopUp {
 
     // retrieve watchlist array from storage
     let watchlist = store.get('watchlist') || []; // ['AAPL', 'AMD'] or []
-    let hasStock = watchlist.includes(this.companyId); // true/false
+    let hasStock = watchlist.includes(`${this.companyId} | ${this.companyName}`); // true/false
 
     // update watchlist button state
     this.toggleButtonState(hasStock);
@@ -77,11 +77,11 @@ class StockPopUp {
       event.preventDefault();
 
       const $this = $(this);
-      let hasStock = watchlist.includes(that.companyId);
+      let hasStock = watchlist.includes(`${that.companyId} | ${that.companyName}`);
 
       // if stock is not in watchlist, then add to watchlist
       if (hasStock === false) {
-        watchlist.push(that.companyId);
+        watchlist.push(`${that.companyId} | ${that.companyName}`);
         store.set('watchlist', watchlist);
 
         // update watchlist button to REMOVE
@@ -91,7 +91,7 @@ class StockPopUp {
       // if stock exist, then remove it from watchlist
       else {
         // remove stock from watchlist array
-        let index = watchlist.indexOf(that.companyId);
+        let index = watchlist.indexOf(`${that.companyId} | ${that.companyName}`);
         if (index != -1) {
           watchlist.splice(index, 1);
         }

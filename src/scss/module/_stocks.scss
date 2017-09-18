@@ -25,13 +25,9 @@
 }
 
 .stocks-list {
-  // border-top: 1px solid rgba($black,.05);
-  // float: left;
-  // width: 50%;
 
   li {
     border-bottom: 1px solid rgba($black, .05);
-    // margin-bottom: 1px;
   }
 
   button {
@@ -39,7 +35,6 @@
     border: none;
     outline: none;
     height: 36px;
-    // padding: 0;
     text-align: left;
     transition: all .3s;
     width: 100%;
@@ -58,7 +53,7 @@
     color: $blue-600;
     display: block;
     float: left;
-    font-family: $font-secondary;
+    font-family: $font-primary;
     font-size: 14px;
     font-weight: 500;
     line-height: 24px;
@@ -69,7 +64,7 @@
     color: rgba($black, .4);
     display: block;
     float: left;
-    font-family: $font-secondary;
+    font-family: $font-primary;
     font-size: 14px;
     font-weight: 400;
     line-height: 24px;

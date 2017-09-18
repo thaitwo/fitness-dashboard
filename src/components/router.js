@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
 import Stocks from './stocks';
+import Watchlist from './watchlist';
 const DASHBOARD_URL = 'dashboard/';
 
 
@@ -42,7 +43,7 @@ class Router {
         // Insert functionality
       },
       '*': () => {
-        // this.currentPage = new Watchlist();
+        this.currentPage = new Watchlist(this.$canvas);
       }
     })
     .resolve();
