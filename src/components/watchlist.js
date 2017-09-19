@@ -35,12 +35,16 @@ class Watchlist {
 
     // if (hasStocks === true) {
     let list = stocks.map((stock) => {
-      const stockCode = stock;
-      // let stockName =
-      console.log(stock);
+      const stockCode = stock.split('|')[0];
+      let stockName = stock.split('|')[1];
+      console.log(stockCode);
 
       return `
-        <li><span>${stockCode}</span></li>
+        <li>
+          <button>
+            <span class="watchlist-item-code">${stockCode}</span><span class="watchlist-item-name">${stockName}</span>
+          </button>
+        </li>
       `;
     });
 

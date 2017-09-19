@@ -135,7 +135,7 @@ body {
   margin: 0;
   padding-left: 33px; }
   .logo a {
-    color: #4CAF50;
+    color: #66BB6A;
     font-family: "Roboto", sans-serif;
     font-size: 24px;
     font-weight: 600;
@@ -471,14 +471,46 @@ body {
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
   box-sizing: border-box;
   height: 100%;
-  padding: 24px;
+  padding: 24px 12px;
   width: 264px; }
 
 .watchlist-list li {
-  line-height: 32px; }
-  .watchlist-list li span {
+  font-size: 14px;
+  height: 32px; }
+
+.watchlist-list button {
+  background: none;
+  border: none;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  height: 32px;
+  outline: none;
+  padding: 0 12px; }
+  .watchlist-list button:hover {
+    background-color: #E8F5E9;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all .3s; }
+    .watchlist-list button:hover .watchlist-item-code,
+    .watchlist-list button:hover .watchlist-item-name {
+      transition: all .3s; }
+  .watchlist-list button .watchlist-item-code {
     color: #546E7A;
-    font-weight: 500; }
+    float: left;
+    font-weight: 500;
+    line-height: 32px;
+    text-align: left;
+    width: 60px; }
+  .watchlist-list button .watchlist-item-name {
+    color: #90A4AE;
+    float: left;
+    font-weight: 300;
+    line-height: 32px;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 156px; }
 
 .sidebar {
   background-color: #263238;
@@ -511,35 +543,35 @@ body {
     background: none; }
   .nav-sidebar li a.active {
     background-color: none;
-    border-left: 4px solid #4CAF50;
+    border-left: 4px solid #66BB6A;
     color: #FFFFFF; }
     .nav-sidebar li a.active i {
-      color: #4CAF50; }
+      color: #66BB6A; }
 
 /* SEARCH
 ============================================================== */
 .search-form {
-  float: right;
-  height: 58px; }
+  height: 58px;
+  margin-left: 300px; }
 
 .search-box {
-  background-color: #FFFFFF;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: #ECEFF1;
+  border: none;
   border-radius: 3px;
+  box-sizing: border-box;
   color: rgba(0, 0, 0, 0.8);
   font-family: "Roboto", sans-serif;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 400;
-  line-height: 34px;
-  margin: 12px 30px 11px 0;
+  height: 40px;
+  margin: 12px 30px 12px 0;
   outline: none;
-  padding: 0 10px;
+  padding: 0 16px;
   text-align: left;
   transition: all .3s;
-  width: 300px; }
+  width: 480px; }
   .search-box:hover, .search-box:focus {
-    background-color: rgba(0, 0, 0, 0.02);
-    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.12); }
+    background-color: #FFFFFF; }
 
 ::-webkit-input-placeholder {
   color: rgba(0, 0, 0, 0.2); }

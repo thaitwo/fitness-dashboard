@@ -27513,11 +27513,11 @@ var Watchlist = function () {
 
       // if (hasStocks === true) {
       var list = stocks.map(function (stock) {
-        var stockCode = stock;
-        // let stockName =
-        console.log(stock);
+        var stockCode = stock.split('|')[0];
+        var stockName = stock.split('|')[1];
+        console.log(stockCode);
 
-        return '\n        <li><span>' + stockCode + '</span></li>\n      ';
+        return '\n        <li>\n          <button>\n            <span class="watchlist-item-code">' + stockCode + '</span><span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
       });
 
       this.$watchlist.append(list);
