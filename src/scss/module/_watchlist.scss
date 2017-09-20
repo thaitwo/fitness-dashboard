@@ -1,10 +1,25 @@
+.watchlist-canvas {
+  bottom: 0;
+  left: 264px;
+  right: 0;
+  position: absolute;
+  top: 0;
+}
+
 .watchlist-container {
     background: white;
     box-shadow: 0 0 8px rgba($black,.24);
     box-sizing: border-box;
     height: 100%;
     padding: 24px 12px;
+    position: fixed;
     width: 264px;
+}
+
+.watchlist-chart-container {
+  background: $white;
+  border-radius: 3px;
+  margin: 24px;
 }
 
 .watchlist-list {

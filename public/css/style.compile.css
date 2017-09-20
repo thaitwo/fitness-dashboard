@@ -466,13 +466,26 @@ body {
           position: absolute;
           top: 14px; }
 
+.watchlist-canvas {
+  bottom: 0;
+  left: 264px;
+  right: 0;
+  position: absolute;
+  top: 0; }
+
 .watchlist-container {
   background: white;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
   box-sizing: border-box;
   height: 100%;
   padding: 24px 12px;
+  position: fixed;
   width: 264px; }
+
+.watchlist-chart-container {
+  background: #FFFFFF;
+  border-radius: 3px;
+  margin: 24px; }
 
 .watchlist-list li {
   font-size: 14px;

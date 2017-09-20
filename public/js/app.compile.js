@@ -27477,6 +27477,10 @@ var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
+var _graph = __webpack_require__(123);
+
+var _graph2 = _interopRequireDefault(_graph);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27486,49 +27490,110 @@ var Watchlist = function () {
     _classCallCheck(this, Watchlist);
 
     this.$container = container;
+    this.graph;
 
     this.render();
 
     this.$watchlistContainer = (0, _jquery2.default)('.watchlist-container');
     this.$watchlist = this.$watchlistContainer.find('.watchlist-list');
+    this.$watchlistChart = (0, _jquery2.default)('#watchlist-chart');
 
+    this.renderInitialGraph();
     this.getStocks();
+    this.activateWatchlist();
   }
+
+  // RENDER WATCHLIST CONTAINER
+
 
   _createClass(Watchlist, [{
     key: 'render',
     value: function render() {
-      var html = '\n      <div class="watchlist-container">\n        <ol class="watchlist-list"></ol>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-container">\n        <ol class="watchlist-list"></ol>\n      </div>\n      <div class="watchlist-canvas">\n        <div class="watchlist-chart-container">\n          <canvas id="watchlist-chart" width="800" height="320"></canvas>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
   }, {
+    key: 'renderInitialGraph',
+    value: function renderInitialGraph() {
+      var watchlist = _store2.default.get('watchlist') || [];
+      // console.log(watchlist);
+
+      if (watchlist.length > 0) {
+        var initialStock = watchlist[0].split(' | ')[0];
+        var stockData = _store2.default.get(initialStock);
+
+        // get opening prices for company stock
+        var priceData = this.getSpecificCompanyData(stockData, 1);
+
+        // get dates for the opening prices
+        var dateLabels = this.getSpecificCompanyData(stockData, 0);
+
+        // create graph
+        this.graph = new _graph2.default(this.$watchlistChart, priceData, dateLabels);
+      }
+    }
+
+    // POPULATE WATCHLIST CONTAINER WITH STOCKS
+
+  }, {
     key: 'getStocks',
     value: function getStocks() {
       var stocks = _store2.default.get('watchlist') || [];
-      // let hasStocks = stocks.includes(`${this.companyId} ${this.companyName}`);
 
       // console.log(stocks);
       // console.log(hasStocks);
 
-      // if (hasStocks === true) {
       var list = stocks.map(function (stock) {
-        var stockCode = stock.split('|')[0];
-        var stockName = stock.split('|')[1];
-        console.log(stockCode);
+        var stockCode = stock.split(' | ')[0];
+        var stockName = stock.split(' | ')[1];
+        // console.log(stockCode);
 
-        return '\n        <li>\n          <button>\n            <span class="watchlist-item-code">' + stockCode + '</span><span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
+        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="watchlist-item-code">' + stockCode + '</span><span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
       });
 
       this.$watchlist.append(list);
-      // }
     }
+
+    // ACTIVATE EVENT LISTENERS FOR WATCHLIST
+
   }, {
     key: 'activateWatchlist',
-    value: function activateWatchlist() {}
+    value: function activateWatchlist() {
+      var that = this;
+      this.$watchlist.on('click', 'button', function (event) {
+        event.preventDefault();
+        var stockCode = this.id;
+
+        that.renderGraph(stockCode);
+      });
+    }
+
+    // RENDER GRAPH
+
   }, {
-    key: 'fetchData',
-    value: function fetchData() {}
+    key: 'renderGraph',
+    value: function renderGraph(stockCode) {
+      var stockData = _store2.default.get(stockCode);
+
+      // get opening prices for company stock
+      var priceData = this.getSpecificCompanyData(stockData, 1);
+
+      // get dates for the opening prices
+      var dateLabels = this.getSpecificCompanyData(stockData, 0);
+
+      this.graph = new _graph2.default(this.$watchlistChart, priceData, dateLabels);
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getSpecificCompanyData',
+    value: function getSpecificCompanyData(data, num) {
+      return data.dataset_data.data.slice(0, 30).map(function (day) {
+        return day[num];
+      }).reverse();
+    }
   }, {
     key: 'destroy',
     value: function destroy() {
