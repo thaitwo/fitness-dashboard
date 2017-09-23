@@ -13,9 +13,10 @@ class Watchlist {
     this.$watchlistContainer = $('.watchlist-container');
     this.$watchlist = this.$watchlistContainer.find('.watchlist-list');
     this.$watchlistChart = $('#watchlist-chart');
+    this.$stockName = $('.watchlist-stock-name');
 
-    this.renderInitialGraph();
     this.getStocks();
+    this.renderInitialStock();
     this.activateWatchlist();
   }
 
@@ -28,8 +29,9 @@ class Watchlist {
         <ol class="watchlist-list"></ol>
       </div>
       <div class="watchlist-canvas">
+        <h2 class="watchlist-stock-name"></h2>
         <div class="watchlist-chart-container">
-          <canvas id="watchlist-chart" width="800" height="320"></canvas>
+          <canvas id="watchlist-chart" width="900" height="320"></canvas>
         </div>
       </div>
     `;
@@ -38,13 +40,15 @@ class Watchlist {
   }
 
 
-  renderInitialGraph() {
+  renderInitialStock() {
     let watchlist = store.get('watchlist') || [];
-    // console.log(watchlist);
 
     if (watchlist.length > 0) {
-      let initialStock = watchlist[0].split(' | ')[0];
-      let stockData = store.get(initialStock);
+      let initialStockCode = watchlist[0].split(' | ')[0];
+      let initialStockName = watchlist[0].split(' | ')[1];
+      let stockData = store.get(initialStockCode);
+
+      this.renderStockName(initialStockName);
 
       // get opening prices for company stock
       let priceData = this.getSpecificCompanyData(stockData, 1);
@@ -73,7 +77,8 @@ class Watchlist {
       return `
         <li>
           <button id="${stockCode}">
-            <span class="watchlist-item-code">${stockCode}</span><span class="watchlist-item-name">${stockName}</span>
+            <span class="watchlist-item-code">${stockCode}</span>
+            <span class="watchlist-item-name">${stockName}</span>
           </button>
         </li>
       `;
@@ -89,15 +94,23 @@ class Watchlist {
     this.$watchlist.on('click', 'button', function(event) {
       event.preventDefault();
       let stockCode = this.id;
+      let stockName = $(this).find('span.watchlist-item-name').text();
 
+      that.renderStockName(stockName);
+      that.graph.destroy();
       that.renderGraph(stockCode);
     });
   }
 
 
+  renderStockName(name) {
+    this.$stockName.text(name);
+  }
+
+
   // RENDER GRAPH
   renderGraph(stockCode) {
-    const stockData = store.get(stockCode);
+    const stockData = store.get(stockCode) || {};
 
     // get opening prices for company stock
     let priceData = this.getSpecificCompanyData(stockData, 1);
@@ -106,7 +119,6 @@ class Watchlist {
     let dateLabels = this.getSpecificCompanyData(stockData, 0);
 
     this.graph = new Graph(this.$watchlistChart, priceData, dateLabels);
-
   }
 
 

@@ -19,7 +19,13 @@
 .watchlist-chart-container {
   background: $white;
   border-radius: 3px;
+  height: 320px;
   margin: 24px;
+}
+
+.watchlist-stock-name {
+  font-size: 20px;
+  padding: 24px 24px 0;
 }
 
 .watchlist-list {
