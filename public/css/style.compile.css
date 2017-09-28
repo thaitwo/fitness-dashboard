@@ -466,7 +466,7 @@ body {
           position: absolute;
           top: 14px; }
 
-.watchlist-canvas {
+.watchlist-data-container {
   bottom: 0;
   left: 264px;
   right: 0;
@@ -481,6 +481,18 @@ body {
   padding: 24px 12px;
   position: fixed;
   width: 264px; }
+  .watchlist-container a {
+    text-decoration: none; }
+  .watchlist-container .watchlist-add-stocks {
+    background: #66BB6A;
+    border-radius: 2px;
+    color: #FFFFFF;
+    line-height: 40px;
+    padding: 0 12px; }
+    .watchlist-container .watchlist-add-stocks i {
+      float: right;
+      font-size: 24px;
+      line-height: 40px; }
 
 .watchlist-chart-container {
   background: #FFFFFF;

@@ -27492,33 +27492,38 @@ var Watchlist = function () {
     this.$container = container;
     this.graph;
 
-    this.render();
+    this.renderCanvasHTML();
 
-    this.$watchlistContainer = (0, _jquery2.default)('.watchlist-container');
-    this.$watchlist = this.$watchlistContainer.find('.watchlist-list');
-    this.$watchlistChart = (0, _jquery2.default)('#watchlist-chart');
-    this.$stockName = (0, _jquery2.default)('.watchlist-stock-name');
+    this.$watchlistCanvas = (0, _jquery2.default)('.watchlist-canvas');
+    this.$watchlistContainer = this.$watchlistCanvas.find('.watchlist-container');
+    this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
+    this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
+    this.$stockName = this.$watchlistCanvas.find('.watchlist-stock-name');
 
     this.getStocks();
-    this.renderInitialStock();
-    this.activateWatchlist();
+    this.renderFirstStock();
+    this.activateEventListeners();
   }
 
-  // RENDER WATCHLIST CONTAINER
+  // RENDER WATCHLIST CANVAS
 
 
   _createClass(Watchlist, [{
-    key: 'render',
-    value: function render() {
-      var html = '\n      <div class="watchlist-container">\n        <ol class="watchlist-list"></ol>\n      </div>\n      <div class="watchlist-canvas">\n        <h2 class="watchlist-stock-name"></h2>\n        <div class="watchlist-chart-container">\n          <canvas id="watchlist-chart" width="900" height="320"></canvas>\n        </div>\n      </div>\n    ';
+    key: 'renderCanvasHTML',
+    value: function renderCanvasHTML() {
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <h2 class="watchlist-stock-name"></h2>\n          <div class="watchlist-chart-container">\n            <canvas id="watchlist-chart" width="900" height="320"></canvas>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
+
+    // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
+
   }, {
-    key: 'renderInitialStock',
-    value: function renderInitialStock() {
+    key: 'renderFirstStock',
+    value: function renderFirstStock() {
       var watchlist = _store2.default.get('watchlist') || [];
 
+      // If watchlist has at least one item, render item(s)
       if (watchlist.length > 0) {
         var initialStockCode = watchlist[0].split(' | ')[0];
         var initialStockName = watchlist[0].split(' | ')[1];
@@ -27535,6 +27540,10 @@ var Watchlist = function () {
         // create graph
         this.graph = new _graph2.default(this.$watchlistChart, priceData, dateLabels);
       }
+      // If watchlist is empty, render button with link to stocks page
+      else {
+          this.$watchlistContainer.append('<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>');
+        }
     }
 
     // POPULATE WATCHLIST CONTAINER WITH STOCKS
@@ -27544,13 +27553,9 @@ var Watchlist = function () {
     value: function getStocks() {
       var stocks = _store2.default.get('watchlist') || [];
 
-      // console.log(stocks);
-      // console.log(hasStocks);
-
       var list = stocks.map(function (stock) {
         var stockCode = stock.split(' | ')[0];
         var stockName = stock.split(' | ')[1];
-        // console.log(stockCode);
 
         return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="watchlist-item-code">' + stockCode + '</span>\n            <span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
       });
@@ -27561,19 +27566,24 @@ var Watchlist = function () {
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
 
   }, {
-    key: 'activateWatchlist',
-    value: function activateWatchlist() {
+    key: 'activateEventListeners',
+    value: function activateEventListeners() {
       var that = this;
+
+      // Display graph & data for watchlist item
       this.$watchlist.on('click', 'button', function (event) {
         event.preventDefault();
         var stockCode = this.id;
         var stockName = (0, _jquery2.default)(this).find('span.watchlist-item-name').text();
 
+        // render name and graph for watchlist item
         that.renderStockName(stockName);
-        that.graph.destroy();
         that.renderGraph(stockCode);
       });
     }
+
+    // RENDER STOCK NAME
+
   }, {
     key: 'renderStockName',
     value: function renderStockName(name) {
@@ -27593,6 +27603,8 @@ var Watchlist = function () {
       // get dates for the opening prices
       var dateLabels = this.getSpecificCompanyData(stockData, 0);
 
+      // clear graph and create new graph
+      this.graph.destroy();
       this.graph = new _graph2.default(this.$watchlistChart, priceData, dateLabels);
     }
 
@@ -27605,10 +27617,13 @@ var Watchlist = function () {
         return day[num];
       }).reverse();
     }
+
+    //
+
   }, {
     key: 'destroy',
     value: function destroy() {
-      if (this.$watchlistContainer) {
+      if (this.$watchlistCanvas) {
         this.$container.empty();
       }
     }

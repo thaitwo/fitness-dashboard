@@ -1,4 +1,4 @@
-.watchlist-canvas {
+.watchlist-data-container {
   bottom: 0;
   left: 264px;
   right: 0;
@@ -7,13 +7,31 @@
 }
 
 .watchlist-container {
-    background: white;
-    box-shadow: 0 0 8px rgba($black,.24);
-    box-sizing: border-box;
-    height: 100%;
-    padding: 24px 12px;
-    position: fixed;
-    width: 264px;
+  background: white;
+  box-shadow: 0 0 8px rgba($black,.24);
+  box-sizing: border-box;
+  height: 100%;
+  padding: 24px 12px;
+  position: fixed;
+  width: 264px;
+
+  a {
+    text-decoration: none;
+  }
+
+  .watchlist-add-stocks {
+    background: $green-400;
+    border-radius: 2px;
+    color: $white;
+    line-height: 40px;
+    padding: 0 12px;
+
+    i {
+      float: right;
+      font-size: 24px;
+      line-height: 40px;
+    }
+  }
 }
 
 .watchlist-chart-container {
