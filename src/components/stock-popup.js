@@ -9,6 +9,10 @@ class StockPopUp {
     this.companyName = companyName;
     this.$mainContainer = $('.main-container');
     this.graph;
+    // RETRIEVE WATCHLIST FROM ARRAY STORAGE
+    this.watchlist = store.get('watchlist') || [];
+    // CHECK IF WATCHLIST HAS THIS STOCK
+    this.hasStock = this.watchlist.includes(`${this.companyId} | ${this.companyName}`);
 
     this.render();
 
@@ -33,7 +37,7 @@ class StockPopUp {
       <div class="popup-modal">
         <div class="popup-stock-container">
           <h3 class="text-headline popup-stock-name"></h3>
-          <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>
+          <i class="fa fa-times-circle fa-2x not-visible" aria-hidden="true"></i>
           <table>
             <tbody>
             </tbody>
@@ -44,7 +48,7 @@ class StockPopUp {
             </div>
             <canvas id="popup-chart" width="700" height="320"></canvas>
           </div>
-          <button id="btn-watchlist" class="button btn-popup-watchlist">Add to watchlist</button>
+          <button id="btn-watchlist" class="button btn-popup-watchlist not-visible">Add to watchlist</button>
         </div>
       </div>
     `;
@@ -65,24 +69,19 @@ class StockPopUp {
   activateEventListeners() {
     const that = this;
 
-    // retrieve watchlist array from storage
-    let watchlist = store.get('watchlist') || []; // ['AAPL', 'AMD'] or []
-    let hasStock = watchlist.includes(this.companyId); // true/false
-
     // update watchlist button state
-    this.toggleButtonState(hasStock);
+    this.toggleButtonState(this.hasStock);
 
     // Add/remove stock from watchlist
     this.$popupContentContainer.on('click', '#btn-watchlist', function(event) {
       event.preventDefault();
 
       const $this = $(this);
-      let hasStock = watchlist.includes(that.companyId);
 
       // if stock is not in watchlist, then add to watchlist
-      if (hasStock === false) {
-        watchlist.push(that.companyId);
-        store.set('watchlist', watchlist);
+      if (that.hasStock === false) {
+        that.watchlist.push(`${that.companyId} | ${that.companyName}`);
+        store.set('watchlist', that.watchlist);
 
         // update watchlist button to REMOVE
         $this.addClass('has-warning');
@@ -91,13 +90,13 @@ class StockPopUp {
       // if stock exist, then remove it from watchlist
       else {
         // remove stock from watchlist array
-        let index = watchlist.indexOf(that.companyId);
+        let index = that.watchlist.indexOf(`${that.companyId} | ${that.companyName}`);
         if (index != -1) {
-          watchlist.splice(index, 1);
+          that.watchlist.splice(index, 1);
         }
 
         // store upated watchlist array
-        store.set('watchlist', watchlist);
+        store.set('watchlist', that.watchlist);
 
         // update watchlist button to ADD
         $this.removeClass('has-warning');
@@ -171,6 +170,11 @@ class StockPopUp {
 
         // render graph
         this.renderGraph();
+
+        // show watchlist add/remove button
+        this.showButton();
+
+        this.$exitIcon.removeClass('not-visible');
       },
       complete: () => {
         this.$loadingIcon.removeClass('is-visible');
@@ -236,6 +240,12 @@ class StockPopUp {
     return data.dataset_data.data.slice(0, 30).map((day) => {
       return day[num];
     }).reverse();
+  }
+
+
+  // SHOW WATCHLIST ADD/REMOVE BUTTON
+  showButton() {
+    this.$watchlistButton.removeClass('not-visible');
   }
 }
 

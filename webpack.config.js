@@ -7,7 +7,7 @@ const extractSass = new ExtractTextPlugin({
 });
 
 module.exports = {
-  context: path.resolve(__dirname, 'dev'),
+  context: path.resolve(__dirname, 'src'),
   entry: {
     app: './app.js',
   },
