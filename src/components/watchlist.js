@@ -7,6 +7,7 @@ class Watchlist {
   constructor(container) {
     this.$container = container;
     this.graph;
+    this.watchlist = store.get('watchlist') || [];
 
     this.renderCanvasHTML();
 
@@ -43,14 +44,32 @@ class Watchlist {
   }
 
 
+  // POPULATE WATCHLIST CONTAINER WITH STOCKS
+  getStocks() {
+    let list = this.watchlist.map((stock) => {
+      const stockCode = stock.split(' | ')[0];
+      let stockName = stock.split(' | ')[1];
+
+      return `
+        <li>
+          <button id="${stockCode}">
+            <span class="watchlist-item-code">${stockCode}</span>
+            <span class="watchlist-item-name">${stockName}</span>
+          </button>
+        </li>
+      `;
+    });
+
+    this.$watchlist.append(list);
+  }
+
+
   // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
   renderFirstStock() {
-    let watchlist = store.get('watchlist') || [];
-
     // If watchlist has at least one item, render item(s)
-    if (watchlist.length > 0) {
-      let initialStockCode = watchlist[0].split(' | ')[0];
-      let initialStockName = watchlist[0].split(' | ')[1];
+    if (this.watchlist.length > 0) {
+      let initialStockCode = this.watchlist[0].split(' | ')[0];
+      let initialStockName = this.watchlist[0].split(' | ')[1];
       let stockData = store.get(initialStockCode);
 
       this.renderStockName(initialStockName);
@@ -68,28 +87,6 @@ class Watchlist {
     else {
       this.$watchlistContainer.append(`<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>`);
     }
-  }
-
-
-  // POPULATE WATCHLIST CONTAINER WITH STOCKS
-  getStocks() {
-    let stocks = store.get('watchlist') || [];
-
-    let list = stocks.map((stock) => {
-      const stockCode = stock.split(' | ')[0];
-      let stockName = stock.split(' | ')[1];
-
-      return `
-        <li>
-          <button id="${stockCode}">
-            <span class="watchlist-item-code">${stockCode}</span>
-            <span class="watchlist-item-name">${stockName}</span>
-          </button>
-        </li>
-      `;
-    });
-
-    this.$watchlist.append(list);
   }
 
 

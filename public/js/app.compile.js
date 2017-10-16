@@ -27052,6 +27052,10 @@ var StockPopUp = function () {
     this.companyName = companyName;
     this.$mainContainer = (0, _jquery2.default)('.main-container');
     this.graph;
+    // RETRIEVE WATCHLIST FROM ARRAY STORAGE
+    this.watchlist = _store2.default.get('watchlist') || [];
+    // CHECK IF WATCHLIST HAS THIS STOCK
+    this.hasStock = this.watchlist.includes(this.companyId + ' | ' + this.companyName);
 
     this.render();
 
@@ -27075,7 +27079,7 @@ var StockPopUp = function () {
   _createClass(StockPopUp, [{
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <i class="fa fa-times-circle fa-2x" aria-hidden="true"></i>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <i class="fa fa-times-circle fa-2x not-visible" aria-hidden="true"></i>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist not-visible">Add to watchlist</button>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -27097,24 +27101,19 @@ var StockPopUp = function () {
     value: function activateEventListeners() {
       var that = this;
 
-      // retrieve watchlist array from storage
-      var watchlist = _store2.default.get('watchlist') || []; // ['AAPL', 'AMD'] or []
-      var hasStock = watchlist.includes(this.companyId + ' | ' + this.companyName); // true/false
-
       // update watchlist button state
-      this.toggleButtonState(hasStock);
+      this.toggleButtonState(this.hasStock);
 
       // Add/remove stock from watchlist
       this.$popupContentContainer.on('click', '#btn-watchlist', function (event) {
         event.preventDefault();
 
         var $this = (0, _jquery2.default)(this);
-        var hasStock = watchlist.includes(that.companyId + ' | ' + that.companyName);
 
         // if stock is not in watchlist, then add to watchlist
-        if (hasStock === false) {
-          watchlist.push(that.companyId + ' | ' + that.companyName);
-          _store2.default.set('watchlist', watchlist);
+        if (that.hasStock === false) {
+          that.watchlist.push(that.companyId + ' | ' + that.companyName);
+          _store2.default.set('watchlist', that.watchlist);
 
           // update watchlist button to REMOVE
           $this.addClass('has-warning');
@@ -27123,13 +27122,13 @@ var StockPopUp = function () {
         // if stock exist, then remove it from watchlist
         else {
             // remove stock from watchlist array
-            var index = watchlist.indexOf(that.companyId + ' | ' + that.companyName);
+            var index = that.watchlist.indexOf(that.companyId + ' | ' + that.companyName);
             if (index != -1) {
-              watchlist.splice(index, 1);
+              that.watchlist.splice(index, 1);
             }
 
             // store upated watchlist array
-            _store2.default.set('watchlist', watchlist);
+            _store2.default.set('watchlist', that.watchlist);
 
             // update watchlist button to ADD
             $this.removeClass('has-warning');
@@ -27209,6 +27208,11 @@ var StockPopUp = function () {
 
           // render graph
           _this.renderGraph();
+
+          // show watchlist add/remove button
+          _this.showButton();
+
+          _this.$exitIcon.removeClass('not-visible');
         },
         complete: function complete() {
           _this.$loadingIcon.removeClass('is-visible');
@@ -27263,6 +27267,14 @@ var StockPopUp = function () {
       return data.dataset_data.data.slice(0, 30).map(function (day) {
         return day[num];
       }).reverse();
+    }
+
+    // SHOW WATCHLIST ADD/REMOVE BUTTON
+
+  }, {
+    key: 'showButton',
+    value: function showButton() {
+      this.$watchlistButton.removeClass('not-visible');
     }
   }]);
 
@@ -27491,6 +27503,7 @@ var Watchlist = function () {
 
     this.$container = container;
     this.graph;
+    this.watchlist = _store2.default.get('watchlist') || [];
 
     this.renderCanvasHTML();
 
@@ -27516,17 +27529,30 @@ var Watchlist = function () {
       this.$container.append(html);
     }
 
+    // POPULATE WATCHLIST CONTAINER WITH STOCKS
+
+  }, {
+    key: 'getStocks',
+    value: function getStocks() {
+      var list = this.watchlist.map(function (stock) {
+        var stockCode = stock.split(' | ')[0];
+        var stockName = stock.split(' | ')[1];
+
+        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="watchlist-item-code">' + stockCode + '</span>\n            <span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
+      });
+
+      this.$watchlist.append(list);
+    }
+
     // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
 
   }, {
     key: 'renderFirstStock',
     value: function renderFirstStock() {
-      var watchlist = _store2.default.get('watchlist') || [];
-
       // If watchlist has at least one item, render item(s)
-      if (watchlist.length > 0) {
-        var initialStockCode = watchlist[0].split(' | ')[0];
-        var initialStockName = watchlist[0].split(' | ')[1];
+      if (this.watchlist.length > 0) {
+        var initialStockCode = this.watchlist[0].split(' | ')[0];
+        var initialStockName = this.watchlist[0].split(' | ')[1];
         var stockData = _store2.default.get(initialStockCode);
 
         this.renderStockName(initialStockName);
@@ -27544,23 +27570,6 @@ var Watchlist = function () {
       else {
           this.$watchlistContainer.append('<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>');
         }
-    }
-
-    // POPULATE WATCHLIST CONTAINER WITH STOCKS
-
-  }, {
-    key: 'getStocks',
-    value: function getStocks() {
-      var stocks = _store2.default.get('watchlist') || [];
-
-      var list = stocks.map(function (stock) {
-        var stockCode = stock.split(' | ')[0];
-        var stockName = stock.split(' | ')[1];
-
-        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="watchlist-item-code">' + stockCode + '</span>\n            <span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
-      });
-
-      this.$watchlist.append(list);
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST

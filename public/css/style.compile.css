@@ -129,6 +129,9 @@ body {
       background: #e57373;
       cursor: pointer; }
 
+.not-visible {
+  display: none !important; }
+
 .logo {
   background-color: #1C2529;
   height: 64px;
