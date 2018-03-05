@@ -5,10 +5,16 @@ import StockPopUp from './stock-popup.js';
 
 class Stocks {
   constructor(container) {
-    // REGISTER ELEMENTS
+    // Register Elements
     this.$container = container;
     this.graph;
     this.popup;
+    this.$starIcon;
+    this.companyId;
+    this.companyName;
+
+    // Retrieve Watchlist From Array Storage
+    this.watchlist = store.get('watchlist') || [];
 
     this.render();
     this.$stocksContainer = $('.stocks-container');
@@ -17,6 +23,7 @@ class Stocks {
     this.count = 1;
 
     this.getStocks();
+
     this.activatePopUp();
     this.activateScroll();
   }
@@ -35,6 +42,12 @@ class Stocks {
         </div>
       `;
     this.$container.append(html);
+  }
+
+
+  // Check If Watchlist Has Stock
+  existInWatchlist(id, name) {
+    return this.watchlist.includes(`${id} | ${name}`);
   }
 
 
@@ -93,19 +106,41 @@ class Stocks {
     // render html list for 100 stocks
     const list =  stocks.slice(0, 100).map((stock) => {
       const { dataset_code: stockCode, name } = stock;
-      const stockName = name.split('(')[0];
+      const stockName = name.split(' (')[0];
+      let iconClass;
 
-      return `
-        <li>
-          <button id="${stockCode}">
-            <span class="stock-code">${stockCode}</span>
-            <span class="stock-name">${stockName}</span>
-            <span class="icon-add-watchlist"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></span>
-          </button>
-        </li>
-      `;
+      // if stock exist in watchlist array, dispay solid icon with gold color
+      if (this.existInWatchlist(stockCode, stockName) === true) {
+        iconClass = 'fas';
+
+        return `
+          <li>
+            <button id="${stockCode}">
+              <span class="stock-code">${stockCode}</span>
+              <span class="stock-name">${stockName}</span>
+              <span class="icon-add-watchlist is-selected"><i class="${iconClass} fa-star"></i></span>
+            </button>
+          </li>
+        `;
+      }
+      // if stock doesn't exist, display line icon with gray color
+      else {
+        iconClass = 'far';
+
+        return `
+          <li>
+            <button id="${stockCode}">
+              <span class="stock-code">${stockCode}</span>
+              <span class="stock-name">${stockName}</span>
+              <span class="icon-add-watchlist"><i class="${iconClass} fa-star"></i></span>
+            </button>
+          </li>
+        `;
+      }
     });
     this.$stockListContainer.append(list);
+    this.$starIcon = this.$stockListContainer.find('.icon-add-watchlist');
+    this.activateWatchlistIcon();
   }
 
 
@@ -138,6 +173,54 @@ class Stocks {
         }
       }
     }, 500));
+  }
+
+
+  // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
+  activateWatchlistIcon() {
+    const that = this;
+
+    this.$starIcon.on('click', function(event) {
+      let $this = $(this);
+      event.stopPropagation();
+
+      // find hollow star icon and make solid star by replacing value of atribute data-prefix
+      let icon = $this.find('svg');
+      // icon.attr('data-prefix', 'fas');
+
+      // get stock id and stock name from sibling elements
+      let stockId = $this.siblings('.stock-code')[0].innerText;
+      let stockName = $this.siblings('.stock-name')[0].innerText;
+
+
+      let hasStock = that.existInWatchlist(stockId, stockName);
+
+      // if stock is not in watchlist array
+      if (hasStock === false) {
+        that.watchlist.push(`${stockId} | ${stockName}`);
+        // update watchlist array
+        store.set('watchlist', that.watchlist);
+        // set icon to solid icon
+        icon.attr('data-prefix', 'fas');
+        // set icon color to gold
+        $this.addClass('is-selected');
+      }
+      // if stock exist, then remove it from watchlist
+      else {
+        // get index of stock in the watchlist array
+        let index = that.watchlist.indexOf(`${stockId} | ${stockName}`);
+        // if index exist (meaning that stock exists in watchlist), remove the stock
+        if (index != -1) {
+          that.watchlist.splice(index, 1);
+        }
+        // update watchlist array
+        store.set('watchlist', that.watchlist);
+        // set icon to line icon
+        icon.attr('data-prefix', 'far');
+        // set icon color to gray
+        $this.removeClass('is-selected');
+      }
+    });
   }
 
 

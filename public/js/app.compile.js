@@ -27044,6 +27044,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// update watchlist button logic to show only after data had been loaded
+// fixed bug that hid exit icon after initial popup display
+// issue: referenced icon element before registering it
+
 var StockPopUp = function () {
   function StockPopUp(companyId, companyName) {
     _classCallCheck(this, StockPopUp);
@@ -27065,12 +27069,12 @@ var StockPopUp = function () {
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$stockName = this.$popupContainer.find('.popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
-    this.$exitIcon = this.$popupContainer.find('.fa-times-circle');
+    this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#btn-watchlist');
 
-    this.activateEventListeners();
     this.getStockData();
+    this.activateEventListeners();
   }
 
   // RENDER HTML FOR POPUP MODAL
@@ -27079,7 +27083,7 @@ var StockPopUp = function () {
   _createClass(StockPopUp, [{
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <i class="fa fa-times-circle fa-2x not-visible" aria-hidden="true"></i>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist not-visible">Add to watchlist</button>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <h3 class="text-headline popup-stock-name"></h3>\n          <div class="exit-icon"><i class="fas fa-times-circle fa-2x"></i></div>\n          <table>\n            <tbody>\n            </tbody>\n          </table>\n          <div class="popup-chart-container">\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <canvas id="popup-chart" width="700" height="320"></canvas>\n          </div>\n          <button id="btn-watchlist" class="button btn-popup-watchlist is-hidden">Add to watchlist</button>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -27158,12 +27162,21 @@ var StockPopUp = function () {
   }, {
     key: 'toggleButtonState',
     value: function toggleButtonState(boolean) {
+      // if stock exist in watchlist, display 'remove from watchlist' button
       if (boolean === true) {
         this.$watchlistButton.addClass('has-warning');
         this.$watchlistButton.text('Remove from watchlist');
-      } else {
-        this.$watchlistButton.removeClass('has-warning');
-        this.$watchlistButton.text('Add to wathclist');
+      }
+      // if stock doesn't exist in watchlist, display 'add to watchlist' button
+      else {
+          this.$watchlistButton.removeClass('has-warning');
+          this.$watchlistButton.text('Add to wathclist');
+        }
+
+      // if stock exist in local storage, show 'watchlist add/remove' button
+      // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
+      if (_store2.default.has(this.companyId)) {
+        this.$watchlistButton.removeClass('is-hidden');
       }
     }
 
@@ -27177,6 +27190,7 @@ var StockPopUp = function () {
       if (_store2.default.get('' + this.companyId)) {
         this.renderStockInfo();
         this.renderGraph();
+        this.$exitIcon.removeClass('is-hidden');
       } else {
         this.fetchStockData();
       }
@@ -27208,14 +27222,17 @@ var StockPopUp = function () {
 
           // render graph
           _this.renderGraph();
-
-          // show watchlist add/remove button
-          _this.showButton();
-
-          _this.$exitIcon.removeClass('not-visible');
         },
         complete: function complete() {
+          // remove loading icon
           _this.$loadingIcon.removeClass('is-visible');
+
+          // show watchlist add/remove button
+          _this.showButton(_this.$watchlistButton);
+
+          // display exit icon
+          _this.showButton(_this.$exitIcon);
+          // this.$exitIcon.removeClass('is-hidden');
         }
       });
     }
@@ -27273,8 +27290,8 @@ var StockPopUp = function () {
 
   }, {
     key: 'showButton',
-    value: function showButton() {
-      this.$watchlistButton.removeClass('not-visible');
+    value: function showButton(buttonElement) {
+      buttonElement.removeClass('is-hidden');
     }
   }]);
 
@@ -27320,10 +27337,16 @@ var Stocks = function () {
   function Stocks(container) {
     _classCallCheck(this, Stocks);
 
-    // REGISTER ELEMENTS
+    // Register Elements
     this.$container = container;
     this.graph;
     this.popup;
+    this.$starIcon;
+    this.companyId;
+    this.companyName;
+
+    // Retrieve Watchlist From Array Storage
+    this.watchlist = _store2.default.get('watchlist') || [];
 
     this.render();
     this.$stocksContainer = (0, _jquery2.default)('.stocks-container');
@@ -27332,6 +27355,7 @@ var Stocks = function () {
     this.count = 1;
 
     this.getStocks();
+
     this.activatePopUp();
     this.activateScroll();
   }
@@ -27344,6 +27368,14 @@ var Stocks = function () {
     value: function render() {
       var html = '\n        <div class="stocks-container">\n          <h3>Stocks</h3>\n          <div class="icon-loading">\n            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n          </div>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
       this.$container.append(html);
+    }
+
+    // Check If Watchlist Has Stock
+
+  }, {
+    key: 'existInWatchlist',
+    value: function existInWatchlist(id, name) {
+      return this.watchlist.includes(id + ' | ' + name);
     }
 
     // RETRIEVE STOCKS FROM EITHER API OR STORE
@@ -27404,6 +27436,8 @@ var Stocks = function () {
   }, {
     key: 'renderStocks',
     value: function renderStocks(num) {
+      var _this2 = this;
+
       var stocks = _store2.default.get('stocks' + num);
 
       // render html list for 100 stocks
@@ -27411,11 +27445,25 @@ var Stocks = function () {
         var stockCode = stock.dataset_code,
             name = stock.name;
 
-        var stockName = name.split('(')[0];
+        var stockName = name.split(' (')[0];
+        var iconClass = void 0;
 
-        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="stock-code">' + stockCode + '</span>\n            <span class="stock-name">' + stockName + '</span>\n            <span class="icon-add-watchlist"><i class="fa fa-plus-square fa-2x" aria-hidden="true"></i></span>\n          </button>\n        </li>\n      ';
+        // if stock exist in watchlist array, dispay solid icon with gold color
+        if (_this2.existInWatchlist(stockCode, stockName) === true) {
+          iconClass = 'fas';
+
+          return '\n          <li>\n            <button id="' + stockCode + '">\n              <span class="stock-code">' + stockCode + '</span>\n              <span class="stock-name">' + stockName + '</span>\n              <span class="icon-add-watchlist is-selected"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
+        }
+        // if stock doesn't exist, display line icon with gray color
+        else {
+            iconClass = 'far';
+
+            return '\n          <li>\n            <button id="' + stockCode + '">\n              <span class="stock-code">' + stockCode + '</span>\n              <span class="stock-name">' + stockName + '</span>\n              <span class="icon-add-watchlist"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
+          }
       });
       this.$stockListContainer.append(list);
+      this.$starIcon = this.$stockListContainer.find('.icon-add-watchlist');
+      this.activateWatchlistIcon();
     }
 
     // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
@@ -27441,18 +27489,67 @@ var Stocks = function () {
   }, {
     key: 'activateScroll',
     value: function activateScroll() {
-      var _this2 = this;
+      var _this3 = this;
 
       this.$stocksContainer.on('scroll', _lodash2.default.debounce(function () {
-        if (_this2.$stocksContainer.scrollTop() + _this2.$stocksContainer.innerHeight() >= _this2.$stockListContainer.height()) {
-          _this2.count++;
-          if (_store2.default.get('stocks' + _this2.count)) {
-            _this2.renderStocks(_this2.count);
+        if (_this3.$stocksContainer.scrollTop() + _this3.$stocksContainer.innerHeight() >= _this3.$stockListContainer.height()) {
+          _this3.count++;
+          if (_store2.default.get('stocks' + _this3.count)) {
+            _this3.renderStocks(_this3.count);
           } else {
-            _this2.fetchStocks(_this2.count);
+            _this3.fetchStocks(_this3.count);
           }
         }
       }, 500));
+    }
+
+    // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
+
+  }, {
+    key: 'activateWatchlistIcon',
+    value: function activateWatchlistIcon() {
+      var that = this;
+
+      this.$starIcon.on('click', function (event) {
+        var $this = (0, _jquery2.default)(this);
+        event.stopPropagation();
+
+        // find hollow star icon and make solid star by replacing value of atribute data-prefix
+        var icon = $this.find('svg');
+        // icon.attr('data-prefix', 'fas');
+
+        // get stock id and stock name from sibling elements
+        var stockId = $this.siblings('.stock-code')[0].innerText;
+        var stockName = $this.siblings('.stock-name')[0].innerText;
+
+        var hasStock = that.existInWatchlist(stockId, stockName);
+
+        // if stock is not in watchlist array
+        if (hasStock === false) {
+          that.watchlist.push(stockId + ' | ' + stockName);
+          // update watchlist array
+          _store2.default.set('watchlist', that.watchlist);
+          // set icon to solid icon
+          icon.attr('data-prefix', 'fas');
+          // set icon color to gold
+          $this.addClass('is-selected');
+        }
+        // if stock exist, then remove it from watchlist
+        else {
+            // get index of stock in the watchlist array
+            var index = that.watchlist.indexOf(stockId + ' | ' + stockName);
+            // if index exist (meaning that stock exists in watchlist), remove the stock
+            if (index != -1) {
+              that.watchlist.splice(index, 1);
+            }
+            // update watchlist array
+            _store2.default.set('watchlist', that.watchlist);
+            // set icon to line icon
+            icon.attr('data-prefix', 'far');
+            // set icon color to gray
+            $this.removeClass('is-selected');
+          }
+      });
     }
   }, {
     key: 'destroy',
