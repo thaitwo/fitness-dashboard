@@ -25,7 +25,7 @@ class Stocks {
     this.getStocks();
 
     this.activatePopUp();
-    this.activateScroll();
+    // this.activateScroll();
   }
 
 
@@ -34,7 +34,7 @@ class Stocks {
     let html =
       `
         <div class="stocks-container">
-          <h3>Stocks</h3>
+          <h3>Technology Stocks</h3>
           <div class="icon-loading">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
           </div>
@@ -73,20 +73,23 @@ class Stocks {
     $.ajax({
       // Below is what entire URL would look like:
       // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
-      url: 'https://www.quandl.com/api/v3/datasets.json',
+      // url: 'https://www.quandl.com/api/v3/datasets.json',
+      url: 'https://cloud.iexapis.com/v1/stock/market/collection/sector',
       dataType: 'json',
       data: {
-        database_code: 'WIKI',
-        per_page: '100',
-        sort_by: 'id',
-        page: `${num}`,
-        api_key: 'tskzGKweRxWgnbX2pafZ'
+        // database_code: 'WIKI',
+        // per_page: '100',
+        // sort_by: 'id',
+        // page: `${num}`,
+        // api_key: 'tskzGKweRxWgnbX2pafZ',
+        collectionName: 'Technology',
+        token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
       },
       error: (xhr, message, error) => {
         console.log(message, error);
       },
       success: (data) => {
-        let stocks = data.datasets;
+        let stocks = data;
         // store list of stocks
         store.set(`stocks${num}`, stocks);
 
@@ -102,21 +105,22 @@ class Stocks {
   // RENDER LIST OF COMPANIES
   renderStocks(num) {
     const stocks = store.get(`stocks${num}`);
+    console.log('stocks', stocks);
 
     // render html list for 100 stocks
-    const list =  stocks.slice(0, 100).map((stock) => {
-      const { dataset_code: stockCode, name } = stock;
-      const stockName = name.split(' (')[0];
+    const list =  stocks.slice(0, 375).map((stock) => {
+      const { symbol, companyName } = stock;
+      const stockName = companyName;
       let iconClass;
 
       // if stock exist in watchlist array, dispay solid icon with gold color
-      if (this.existInWatchlist(stockCode, stockName) === true) {
+      if (this.existInWatchlist(symbol, stockName) === true) {
         iconClass = 'fas';
 
         return `
           <li>
-            <button id="${stockCode}">
-              <span class="stock-code">${stockCode}</span>
+            <button id="${symbol}">
+              <span class="stock-code">${symbol}</span>
               <span class="stock-name">${stockName}</span>
               <span class="icon-add-watchlist is-selected"><i class="${iconClass} fa-star"></i></span>
             </button>
@@ -129,8 +133,8 @@ class Stocks {
 
         return `
           <li>
-            <button id="${stockCode}">
-              <span class="stock-code">${stockCode}</span>
+            <button id="${symbol}">
+              <span class="stock-code">${symbol}</span>
               <span class="stock-name">${stockName}</span>
               <span class="icon-add-watchlist"><i class="${iconClass} fa-star"></i></span>
             </button>
