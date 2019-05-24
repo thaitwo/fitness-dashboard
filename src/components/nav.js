@@ -49,8 +49,10 @@ class Nav {
 
   // UPDATE SELECTED LINK
   updateActiveClass(activeButtonId) {
-    let buttons = this.$navContainer.find('.active');
-    let activeButton = this.$navContainer.find(activeButtonId);
+    const buttons = this.$navContainer.find('.active');
+    const activeButton = this.$navContainer.find(`a#${activeButtonId}`);
+
+    console.log('button', activeButton);
 
     buttons.removeClass('active');
     activeButton.addClass('active');

@@ -46,8 +46,8 @@ class Stocks {
 
 
   // Check If Watchlist Has Stock
-  existInWatchlist(id, name) {
-    return this.watchlist.includes(`${id} | ${name}`);
+  existInWatchlist(id) {
+    return this.watchlist.some(stock => stock.symbol === id);
   }
 
 
@@ -105,23 +105,23 @@ class Stocks {
   // RENDER LIST OF COMPANIES
   renderStocks(num) {
     const stocks = store.get(`stocks${num}`);
-    console.log('stocks', stocks);
+    // console.log('stocks', stocks);
 
     // render html list for 100 stocks
     const list =  stocks.slice(0, 375).map((stock) => {
       const { symbol, companyName } = stock;
-      const stockName = companyName;
+      const name = companyName;
       let iconClass;
 
       // if stock exist in watchlist array, dispay solid icon with gold color
-      if (this.existInWatchlist(symbol, stockName) === true) {
+      if (this.existInWatchlist(symbol, name) === true) {
         iconClass = 'fas';
 
         return `
           <li>
             <button id="${symbol}">
               <span class="stock-code">${symbol}</span>
-              <span class="stock-name">${stockName}</span>
+              <span class="stock-name">${name}</span>
               <span class="icon-add-watchlist is-selected"><i class="${iconClass} fa-star"></i></span>
             </button>
           </li>
@@ -135,7 +135,7 @@ class Stocks {
           <li>
             <button id="${symbol}">
               <span class="stock-code">${symbol}</span>
-              <span class="stock-name">${stockName}</span>
+              <span class="stock-name">${name}</span>
               <span class="icon-add-watchlist"><i class="${iconClass} fa-star"></i></span>
             </button>
           </li>
@@ -193,15 +193,17 @@ class Stocks {
       // icon.attr('data-prefix', 'fas');
 
       // get stock id and stock name from sibling elements
-      let stockId = $this.siblings('.stock-code')[0].innerText;
+      let stockSymbol = $this.siblings('.stock-code')[0].innerText;
       let stockName = $this.siblings('.stock-name')[0].innerText;
 
 
-      let hasStock = that.existInWatchlist(stockId, stockName);
-
+      let hasStock = that.existInWatchlist(stockSymbol);
       // if stock is not in watchlist array
       if (hasStock === false) {
-        that.watchlist.push(`${stockId} | ${stockName}`);
+        that.watchlist.push({
+          symbol: stockSymbol,
+          name: stockName
+        });
         // update watchlist array
         store.set('watchlist', that.watchlist);
         // set icon to solid icon
@@ -212,7 +214,7 @@ class Stocks {
       // if stock exist, then remove it from watchlist
       else {
         // get index of stock in the watchlist array
-        let index = that.watchlist.indexOf(`${stockId} | ${stockName}`);
+        let index = that.watchlist.findIndex(stock => stock.symbol === stockSymbol);
         // if index exist (meaning that stock exists in watchlist), remove the stock
         if (index != -1) {
           that.watchlist.splice(index, 1);

@@ -47,14 +47,14 @@ class Watchlist {
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
   getStocks() {
     let list = this.watchlist.map((stock) => {
-      const stockCode = stock.split(' | ')[0];
-      let stockName = stock.split(' | ')[1];
+      const symbol = stock.symbol;
+      let name = stock.name;
 
       return `
         <li>
-          <button id="${stockCode}">
-            <span class="watchlist-item-code">${stockCode}</span>
-            <span class="watchlist-item-name">${stockName}</span>
+          <button id="${symbol}">
+            <span class="watchlist-item-code">${symbol}</span>
+            <span class="watchlist-item-name">${name}</span>
           </button>
         </li>
       `;
@@ -76,10 +76,9 @@ class Watchlist {
         console.log(message, error);
       },
       success: (data) => {
-        console.log(data);
         // store list of stocks
         store.set(symbol, data);
-        this.renderDataFirstStock(symbol);
+        // this.renderDataFirstStock(symbol);
       },
       complete: () => {
       },
@@ -91,11 +90,26 @@ class Watchlist {
   requestDataForFirstStock() {
     // If watchlist has at least one item, render item(s)
     if (this.watchlist.length > 0) {
-      const symbol = this.watchlist[0].split(' | ')[0];
-      const name = this.watchlist[0].split(' | ')[1];
+      const symbol = this.watchlist[0].symbol;
+      const name = this.watchlist[0].name;
+
+      this.renderStockName(name);
 
       // Make Ajax call to get data for company
       this.fetchStockData(symbol);
+      
+      if (store.get(symbol) !== null) {
+        console.log('store', store.get(symbol));
+        const data = store.get(symbol);
+
+        // get closing prices for stock
+        const prices = this.getSpecificCompanyData(data, 'close');
+        // get dates for closing prices
+        const dates = this.getSpecificCompanyData(data, 'date');
+
+        // create new graph
+        this.graph = new Graph(this.$watchlistChart, prices, dates);
+      }
     }
     // If watchlist is empty, render button with link to stocks page
     else {
@@ -105,21 +119,24 @@ class Watchlist {
 
 
   // RENDER GRAPH/DATA FOR STOCK
-  renderDataFirstStock(symbol) {
-    // Retrieve company data from storage
-    let stockData = store.get(symbol);
-    console.log('stockData', stockData);
+  renderData(symbol) {
+    // Make Ajax call to get data for company
+    this.fetchStockData(symbol);
 
-    this.renderStockName(name);
+    if (store.get(symbol !== null)) {
+      // Retrieve company data from storage
+      const data = store.get(symbol);
 
-    // get opening prices for company stock
-    let priceData = this.getSpecificCompanyData(stockData, 'close');
+      // get opening prices for company stock
+      const prices = this.getSpecificCompanyData(data, 'close');
 
-    // get dates for the opening prices
-    let dateLabels = this.getSpecificCompanyData(stockData, 'date');
-
-    // create graph
-    this.graph = new Graph(this.$watchlistChart, priceData, dateLabels);
+      // get dates for the opening prices
+      const dates = this.getSpecificCompanyData(data, 'date');
+      console.log(prices, dates);
+      // create graph
+      this.graph.destroy();
+      this.graph = new Graph(this.$watchlistChart, prices, dates);
+    }
   }
 
 
@@ -130,14 +147,15 @@ class Watchlist {
     // Display graph & data for watchlist item
     this.$watchlist.on('click', 'button', function(event) {
       event.preventDefault();
-      let stockCode = this.id;
-      let stockName = $(this).find('span.watchlist-item-name').text();
-      // console.log('stockCode', stockCode);
-      // console.log('stockName', stockName);
+      const symbol = this.id;
+      console.log('id', symbol);
+      let name = $(this).find('span.watchlist-item-name').text();
+      // console.log('symbol', symbol);
+      // console.log('name', name);
 
       // render name and graph for watchlist item
-      that.renderStockName(stockName);
-      that.renderGraph(stockCode);
+      that.renderStockName(name);
+      that.renderData(symbol);
     });
   }
 
@@ -167,7 +185,7 @@ class Watchlist {
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
   getSpecificCompanyData(data, hey) {
-    console.log('data', data);
+    // console.log('data', data);
     return data.map((day) => {
       return day[hey];
     }).reverse();

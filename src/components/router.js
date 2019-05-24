@@ -42,8 +42,10 @@ class Router {
       'compare': () => {
         // Insert functionality
       },
-      '*': () => {
+      'watchlist': () => {
         this.currentPage = new Watchlist(this.$canvas);
+      },
+      '*': () => {
       }
     })
     .resolve();

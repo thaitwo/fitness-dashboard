@@ -15623,7 +15623,7 @@ var Graph = function () {
     key: 'getOptions',
     value: function getOptions() {
       return {
-        responsive: false,
+        responsive: true,
         maintainAspectRatio: false,
         layout: {
           padding: {
@@ -15648,6 +15648,10 @@ var Graph = function () {
               display: true,
               tickMarkLength: 10
             },
+            scaleLabel: {
+              display: true,
+              labelString: 'Date'
+            },
             ticks: {
               fontColor: '#B0BEC5',
               fontFamily: 'Montserrat, sans-serif',
@@ -15661,6 +15665,10 @@ var Graph = function () {
               drawBorder: false,
               zeroLineColor: 'rgba(0,0,0,0.04)',
               tickMarkLength: 0
+            },
+            scaleLabel: {
+              display: true,
+              labelString: 'Price'
             },
             ticks: {
               beginAtZero: false,
@@ -27999,7 +28007,9 @@ var Nav = function () {
     key: 'updateActiveClass',
     value: function updateActiveClass(activeButtonId) {
       var buttons = this.$navContainer.find('.active');
-      var activeButton = this.$navContainer.find(activeButtonId);
+      var activeButton = this.$navContainer.find('a#' + activeButtonId);
+
+      console.log('button', activeButton);
 
       buttons.removeClass('active');
       activeButton.addClass('active');
@@ -28122,9 +28132,10 @@ var Router = function () {
         'compare': function compare() {
           // Insert functionality
         },
-        '*': function _() {
+        'watchlist': function watchlist() {
           _this.currentPage = new _watchlist2.default(_this.$canvas);
-        }
+        },
+        '*': function _() {}
       }).resolve();
 
       // Global hook => clear page & event handlers before loading new route/page
@@ -28503,8 +28514,10 @@ var Stocks = function () {
 
   }, {
     key: 'existInWatchlist',
-    value: function existInWatchlist(id, name) {
-      return this.watchlist.includes(id + ' | ' + name);
+    value: function existInWatchlist(id) {
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === id;
+      });
     }
 
     // RETRIEVE STOCKS FROM EITHER API OR STORE
@@ -28571,27 +28584,27 @@ var Stocks = function () {
       var _this2 = this;
 
       var stocks = _store2.default.get('stocks' + num);
-      console.log('stocks', stocks);
+      // console.log('stocks', stocks);
 
       // render html list for 100 stocks
       var list = stocks.slice(0, 375).map(function (stock) {
         var symbol = stock.symbol,
             companyName = stock.companyName;
 
-        var stockName = companyName;
+        var name = companyName;
         var iconClass = void 0;
 
         // if stock exist in watchlist array, dispay solid icon with gold color
-        if (_this2.existInWatchlist(symbol, stockName) === true) {
+        if (_this2.existInWatchlist(symbol, name) === true) {
           iconClass = 'fas';
 
-          return '\n          <li>\n            <button id="' + symbol + '">\n              <span class="stock-code">' + symbol + '</span>\n              <span class="stock-name">' + stockName + '</span>\n              <span class="icon-add-watchlist is-selected"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
+          return '\n          <li>\n            <button id="' + symbol + '">\n              <span class="stock-code">' + symbol + '</span>\n              <span class="stock-name">' + name + '</span>\n              <span class="icon-add-watchlist is-selected"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
         }
         // if stock doesn't exist, display line icon with gray color
         else {
             iconClass = 'far';
 
-            return '\n          <li>\n            <button id="' + symbol + '">\n              <span class="stock-code">' + symbol + '</span>\n              <span class="stock-name">' + stockName + '</span>\n              <span class="icon-add-watchlist"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
+            return '\n          <li>\n            <button id="' + symbol + '">\n              <span class="stock-code">' + symbol + '</span>\n              <span class="stock-name">' + name + '</span>\n              <span class="icon-add-watchlist"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
           }
       });
       this.$stockListContainer.append(list);
@@ -28652,14 +28665,16 @@ var Stocks = function () {
         // icon.attr('data-prefix', 'fas');
 
         // get stock id and stock name from sibling elements
-        var stockId = $this.siblings('.stock-code')[0].innerText;
+        var stockSymbol = $this.siblings('.stock-code')[0].innerText;
         var stockName = $this.siblings('.stock-name')[0].innerText;
 
-        var hasStock = that.existInWatchlist(stockId, stockName);
-
+        var hasStock = that.existInWatchlist(stockSymbol);
         // if stock is not in watchlist array
         if (hasStock === false) {
-          that.watchlist.push(stockId + ' | ' + stockName);
+          that.watchlist.push({
+            symbol: stockSymbol,
+            name: stockName
+          });
           // update watchlist array
           _store2.default.set('watchlist', that.watchlist);
           // set icon to solid icon
@@ -28670,7 +28685,9 @@ var Stocks = function () {
         // if stock exist, then remove it from watchlist
         else {
             // get index of stock in the watchlist array
-            var index = that.watchlist.indexOf(stockId + ' | ' + stockName);
+            var index = that.watchlist.findIndex(function (stock) {
+              return stock.symbol === stockSymbol;
+            });
             // if index exist (meaning that stock exists in watchlist), remove the stock
             if (index != -1) {
               that.watchlist.splice(index, 1);
@@ -28765,10 +28782,10 @@ var Watchlist = function () {
     key: 'getStocks',
     value: function getStocks() {
       var list = this.watchlist.map(function (stock) {
-        var stockCode = stock.split(' | ')[0];
-        var stockName = stock.split(' | ')[1];
+        var symbol = stock.symbol;
+        var name = stock.name;
 
-        return '\n        <li>\n          <button id="' + stockCode + '">\n            <span class="watchlist-item-code">' + stockCode + '</span>\n            <span class="watchlist-item-name">' + stockName + '</span>\n          </button>\n        </li>\n      ';
+        return '\n        <li>\n          <button id="' + symbol + '">\n            <span class="watchlist-item-code">' + symbol + '</span>\n            <span class="watchlist-item-name">' + name + '</span>\n          </button>\n        </li>\n      ';
       });
 
       this.$watchlist.append(list);
@@ -28779,8 +28796,6 @@ var Watchlist = function () {
   }, {
     key: 'fetchStockData',
     value: function fetchStockData(symbol) {
-      var _this = this;
-
       _jquery2.default.ajax({
         url: 'https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/1m',
         dataType: 'json',
@@ -28791,10 +28806,9 @@ var Watchlist = function () {
           console.log(message, _error);
         },
         success: function success(data) {
-          console.log(data);
           // store list of stocks
           _store2.default.set(symbol, data);
-          _this.renderDataFirstStock(symbol);
+          // this.renderDataFirstStock(symbol);
         },
         complete: function complete() {}
       });
@@ -28807,11 +28821,26 @@ var Watchlist = function () {
     value: function requestDataForFirstStock() {
       // If watchlist has at least one item, render item(s)
       if (this.watchlist.length > 0) {
-        var symbol = this.watchlist[0].split(' | ')[0];
-        var _name = this.watchlist[0].split(' | ')[1];
+        var symbol = this.watchlist[0].symbol;
+        var name = this.watchlist[0].name;
+
+        this.renderStockName(name);
 
         // Make Ajax call to get data for company
         this.fetchStockData(symbol);
+
+        if (_store2.default.get(symbol) !== null) {
+          console.log('store', _store2.default.get(symbol));
+          var data = _store2.default.get(symbol);
+
+          // get closing prices for stock
+          var prices = this.getSpecificCompanyData(data, 'close');
+          // get dates for closing prices
+          var dates = this.getSpecificCompanyData(data, 'date');
+
+          // create new graph
+          this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
+        }
       }
       // If watchlist is empty, render button with link to stocks page
       else {
@@ -28822,22 +28851,25 @@ var Watchlist = function () {
     // RENDER GRAPH/DATA FOR STOCK
 
   }, {
-    key: 'renderDataFirstStock',
-    value: function renderDataFirstStock(symbol) {
-      // Retrieve company data from storage
-      var stockData = _store2.default.get(symbol);
-      console.log('stockData', stockData);
+    key: 'renderData',
+    value: function renderData(symbol) {
+      // Make Ajax call to get data for company
+      this.fetchStockData(symbol);
 
-      this.renderStockName(name);
+      if (_store2.default.get(symbol !== null)) {
+        // Retrieve company data from storage
+        var data = _store2.default.get(symbol);
 
-      // get opening prices for company stock
-      var priceData = this.getSpecificCompanyData(stockData, 'close');
+        // get opening prices for company stock
+        var prices = this.getSpecificCompanyData(data, 'close');
 
-      // get dates for the opening prices
-      var dateLabels = this.getSpecificCompanyData(stockData, 'date');
-
-      // create graph
-      this.graph = new _graph2.default(this.$watchlistChart, priceData, dateLabels);
+        // get dates for the opening prices
+        var dates = this.getSpecificCompanyData(data, 'date');
+        console.log(prices, dates);
+        // create graph
+        this.graph.destroy();
+        this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
+      }
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
@@ -28850,14 +28882,15 @@ var Watchlist = function () {
       // Display graph & data for watchlist item
       this.$watchlist.on('click', 'button', function (event) {
         event.preventDefault();
-        var stockCode = this.id;
-        var stockName = (0, _jquery2.default)(this).find('span.watchlist-item-name').text();
-        // console.log('stockCode', stockCode);
-        // console.log('stockName', stockName);
+        var symbol = this.id;
+        console.log('id', symbol);
+        var name = (0, _jquery2.default)(this).find('span.watchlist-item-name').text();
+        // console.log('symbol', symbol);
+        // console.log('name', name);
 
         // render name and graph for watchlist item
-        that.renderStockName(stockName);
-        that.renderGraph(stockCode);
+        that.renderStockName(name);
+        that.renderData(symbol);
       });
     }
 
@@ -28893,7 +28926,7 @@ var Watchlist = function () {
   }, {
     key: 'getSpecificCompanyData',
     value: function getSpecificCompanyData(data, hey) {
-      console.log('data', data);
+      // console.log('data', data);
       return data.map(function (day) {
         return day[hey];
       }).reverse();
