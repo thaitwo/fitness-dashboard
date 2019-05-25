@@ -52,8 +52,6 @@ class Nav {
     const buttons = this.$navContainer.find('.active');
     const activeButton = this.$navContainer.find(`a#${activeButtonId}`);
 
-    console.log('button', activeButton);
-
     buttons.removeClass('active');
     activeButton.addClass('active');
   }

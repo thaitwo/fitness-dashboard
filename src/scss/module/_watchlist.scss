@@ -1,18 +1,30 @@
+#watchlist-chart {
+  background-color: $colorDark-dark;
+  border-radius: 10px;
+}
+
+.watchlist-canvas {
+  background-color: $colorDark-light;
+}
+
 .watchlist-data-container {
+  background-color: $colorDark-light;
   bottom: 0;
-  left: 264px;
+  left: 19rem;
   right: 0;
   position: absolute;
   top: 0;
 }
 
 .watchlist-container {
-  background: white;
+  background: $colorDark-dark;
+  border-radius: 10px;
   box-shadow: 0 0 8px rgba($black,.24);
   box-sizing: border-box;
   height: 100%;
   padding: 24px 12px;
   position: fixed;
+  margin: 2rem;
   width: 264px;
 
   a {

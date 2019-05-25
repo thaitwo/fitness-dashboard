@@ -134,7 +134,7 @@ body {
       cursor: pointer; }
 
 .logo {
-  background-color: #1C2529;
+  background-color: #151C40;
   height: 64px;
   margin: 0;
   padding-left: 33px; }
@@ -479,20 +479,30 @@ body {
           position: absolute;
           top: 14px; }
 
+#watchlist-chart {
+  background-color: #151C40;
+  border-radius: 10px; }
+
+.watchlist-canvas {
+  background-color: #2B3152; }
+
 .watchlist-data-container {
+  background-color: #2B3152;
   bottom: 0;
-  left: 264px;
+  left: 19rem;
   right: 0;
   position: absolute;
   top: 0; }
 
 .watchlist-container {
-  background: white;
+  background: #151C40;
+  border-radius: 10px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
   box-sizing: border-box;
   height: 100%;
   padding: 24px 12px;
   position: fixed;
+  margin: 2rem;
   width: 264px; }
   .watchlist-container a {
     text-decoration: none; }
@@ -556,7 +566,7 @@ body {
     width: 156px; }
 
 .sidebar {
-  background-color: #263238;
+  background-color: #151C40;
   bottom: 0;
   display: block;
   left: 0;
@@ -623,7 +633,7 @@ body {
   color: rgba(0, 0, 0, 0.2); }
 
 .top-bar {
-  background-color: #263238;
+  background-color: #151C40;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
   height: 64px;
   top: 0;
@@ -633,7 +643,7 @@ body {
   z-index: 1; }
 
 .dashboard-canvas {
-  background-color: #ECEFF1;
+  background-color: #2B3152;
   bottom: 0;
   left: 200px;
   right: 0;
