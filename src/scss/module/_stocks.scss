@@ -33,8 +33,10 @@
   button {
     background-color: $white;
     border: none;
-    outline: none;
+    display: block;
     height: 36px;
+    outline: none;
+    padding: 0 8px;
     text-align: left;
     transition: all .3s;
     width: 100%;
@@ -72,7 +74,18 @@
   }
 
   .icon-add-watchlist {
+    color: $bluegrey-100;
     float: right;
+    z-index: 4;
+
+    &.is-selected {
+      color: $amber-400;
+    }
+
+    svg {
+      height: 24px;
+      width: auto;
+    }
   }
 }
 

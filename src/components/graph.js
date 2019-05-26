@@ -55,7 +55,7 @@ class Graph {
   // RENDER OPTIONS OBJECT
   getOptions() {
     return {
-      responsive: false,
+      responsive: true,
       maintainAspectRatio: false,
       layout: {
         padding: {
@@ -80,6 +80,10 @@ class Graph {
             display : true,
             tickMarkLength: 10
           },
+          scaleLabel: {
+            display: true,
+            labelString: 'Date'
+          },
           ticks: {
             fontColor: '#B0BEC5',
             fontFamily: 'Montserrat, sans-serif',
@@ -93,6 +97,10 @@ class Graph {
             drawBorder: false,
             zeroLineColor: 'rgba(0,0,0,0.04)',
             tickMarkLength: 0
+          },
+          scaleLabel: {
+            display: true,
+            labelString: 'Price'
           },
           ticks: {
             beginAtZero: false,

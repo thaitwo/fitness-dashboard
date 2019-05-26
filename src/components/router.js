@@ -42,8 +42,10 @@ class Router {
       'compare': () => {
         // Insert functionality
       },
-      '*': () => {
+      'watchlist': () => {
         this.currentPage = new Watchlist(this.$canvas);
+      },
+      '*': () => {
       }
     })
     .resolve();
@@ -51,7 +53,7 @@ class Router {
     // Global hook => clear page & event handlers before loading new route/page
     this.router.hooks({
       before: (done) => {
-        if(this.currentPage && this.currentPage.destroy) {
+        if (this.currentPage && this.currentPage.destroy) {
           this.currentPage.destroy();
         }
         done();

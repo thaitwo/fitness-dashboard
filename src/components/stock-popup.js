@@ -2,6 +2,9 @@ import $ from 'jquery';
 import store from 'store2';
 import Graph from './graph.js';
 
+// update watchlist button logic to show only after data had been loaded
+// fixed bug that hid exit icon after initial popup display
+  // issue: referenced icon element before registering it
 
 class StockPopUp {
   constructor(companyId, companyName) {
@@ -22,12 +25,13 @@ class StockPopUp {
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$stockName = this.$popupContainer.find('.popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
-    this.$exitIcon = this.$popupContainer.find('.fa-times-circle');
+    this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#btn-watchlist');
 
-    this.activateEventListeners();
+
     this.getStockData();
+    this.activateEventListeners();
   }
 
 
@@ -37,7 +41,7 @@ class StockPopUp {
       <div class="popup-modal">
         <div class="popup-stock-container">
           <h3 class="text-headline popup-stock-name"></h3>
-          <i class="fa fa-times-circle fa-2x not-visible" aria-hidden="true"></i>
+          <div class="exit-icon"><i class="fas fa-times-circle fa-2x"></i></div>
           <table>
             <tbody>
             </tbody>
@@ -48,7 +52,7 @@ class StockPopUp {
             </div>
             <canvas id="popup-chart" width="700" height="320"></canvas>
           </div>
-          <button id="btn-watchlist" class="button btn-popup-watchlist not-visible">Add to watchlist</button>
+          <button id="btn-watchlist" class="button btn-popup-watchlist is-hidden">Add to watchlist</button>
         </div>
       </div>
     `;
@@ -124,13 +128,21 @@ class StockPopUp {
 
   // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
   toggleButtonState(boolean) {
+    // if stock exist in watchlist, display 'remove from watchlist' button
     if (boolean === true) {
       this.$watchlistButton.addClass('has-warning');
       this.$watchlistButton.text('Remove from watchlist');
     }
+    // if stock doesn't exist in watchlist, display 'add to watchlist' button
     else {
       this.$watchlistButton.removeClass('has-warning');
       this.$watchlistButton.text('Add to wathclist');
+    }
+
+    // if stock exist in local storage, show 'watchlist add/remove' button
+    // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
+    if (store.has(this.companyId)) {
+      this.$watchlistButton.removeClass('is-hidden');
     }
   }
 
@@ -142,6 +154,7 @@ class StockPopUp {
     if (store.get(`${this.companyId}`)) {
       this.renderStockInfo();
       this.renderGraph();
+      this.$exitIcon.removeClass('is-hidden');
     }
     else {
       this.fetchStockData();
@@ -170,14 +183,17 @@ class StockPopUp {
 
         // render graph
         this.renderGraph();
-
-        // show watchlist add/remove button
-        this.showButton();
-
-        this.$exitIcon.removeClass('not-visible');
       },
       complete: () => {
+        // remove loading icon
         this.$loadingIcon.removeClass('is-visible');
+
+        // show watchlist add/remove button
+        this.showButton(this.$watchlistButton);
+
+        // display exit icon
+        this.showButton(this.$exitIcon);
+        // this.$exitIcon.removeClass('is-hidden');
       }
     });
   }
@@ -244,8 +260,8 @@ class StockPopUp {
 
 
   // SHOW WATCHLIST ADD/REMOVE BUTTON
-  showButton() {
-    this.$watchlistButton.removeClass('not-visible');
+  showButton(buttonElement) {
+    buttonElement.removeClass('is-hidden');
   }
 }
 
