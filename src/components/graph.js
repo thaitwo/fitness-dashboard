@@ -20,16 +20,17 @@ class Graph {
       labels: newLabels,
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(33,150,243, .2)',
-        borderColor: 'rgba(33,150,243, 1)',
+        backgroundColor: 'rgba(249,168,37, .2)',
+        borderColor: 'rgba(249,168,37, 1)',
         borderWidth: 2,
         data: newData,
         hoverRadius: 12,
-        pointBackgroundColor: 'rgba(33,150,243, 1)', // rgba(250, 128, 114, 1)
+        pointBackgroundColor: 'rgba(249,168,37, 1)', // rgba(250, 128, 114, 1)
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointHoverBorderColor: '#fff',
-        pointHoverBackgroundColor: '#000',
+        pointHoverBorderWidth: 2,
+        pointHoverBackgroundColor: '#151C40',
         pointHoverRadius: 5,
         pointRadius: 5,
         radius: 4,
@@ -59,10 +60,8 @@ class Graph {
       maintainAspectRatio: false,
       layout: {
         padding: {
-          top: 24,
-          right: 24,
-          bottom: 24,
-          left: 24
+          top: 48,
+          bottom: 32,
         }
       },
       legend: {
@@ -76,13 +75,9 @@ class Graph {
       scales: {
         xAxes: [{
           gridLines : {
-            color: 'rgba(0,0,0,0.03)',
+            color: 'rgba(255,255,255,0.03)',
             display : true,
             tickMarkLength: 10
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Date'
           },
           ticks: {
             fontColor: '#B0BEC5',
@@ -92,15 +87,12 @@ class Graph {
           }
         }],
         yAxes: [{
+          position: 'right',
           gridLines: {
-            color: 'rgba(0,0,0,0.03)',
+            color: 'rgba(255,255,255,0.03)',
             drawBorder: false,
             zeroLineColor: 'rgba(0,0,0,0.04)',
             tickMarkLength: 0
-          },
-          scaleLabel: {
-            display: true,
-            labelString: 'Price'
           },
           ticks: {
             beginAtZero: false,

@@ -81,11 +81,11 @@ table {
 **
 */
 body {
-  font-family: "Roboto", sans-serif; }
+  font-family: "Mukta", sans-serif; }
 
 .text-header {
   color: rgba(0, 0, 0, 0.4);
-  font-family: "Roboto", sans-serif;
+  font-family: "Mukta", sans-serif;
   font-size: 18px;
   font-weight: 300;
   margin-bottom: 16px; }
@@ -94,13 +94,13 @@ body {
   color: #1E88E5;
   padding: 24px 24px 0;
   font-size: 18px;
-  font-family: "Roboto", sans-serif;
+  font-family: "Mukta", sans-serif;
   font-weight: 400; }
 
 .page-title {
   color: #FFFFFF;
   float: left;
-  font-family: "Roboto", sans-serif;
+  font-family: "Mukta", sans-serif;
   font-size: 24px;
   font-weight: 400;
   line-height: 64px;
@@ -139,8 +139,8 @@ body {
   margin: 0;
   padding-left: 33px; }
   .logo a {
-    color: #66BB6A;
-    font-family: "Roboto", sans-serif;
+    color: #F9A825;
+    font-family: "Mukta", sans-serif;
     font-size: 24px;
     font-weight: 600;
     line-height: 64px;
@@ -330,7 +330,7 @@ body {
   right: 24px;
   width: 620px; }
   .stocks-container h3 {
-    font-family: "Roboto", sans-serif;
+    font-family: "Mukta", sans-serif;
     font-size: 18px;
     font-weight: 300;
     margin: 0 0 30px; }
@@ -361,7 +361,7 @@ body {
   color: #1E88E5;
   display: block;
   float: left;
-  font-family: "Roboto", sans-serif;
+  font-family: "Mukta", sans-serif;
   font-size: 14px;
   font-weight: 500;
   line-height: 24px;
@@ -371,7 +371,7 @@ body {
   color: rgba(0, 0, 0, 0.4);
   display: block;
   float: left;
-  font-family: "Roboto", sans-serif;
+  font-family: "Mukta", sans-serif;
   font-size: 14px;
   font-weight: 400;
   line-height: 24px;
@@ -416,7 +416,7 @@ body {
   position: relative; }
 
 .chart-menu-dropdown {
-  font-family: "Roboto", sans-serif;
+  font-family: "Mukta", sans-serif;
   position: relative;
   transition: all .3s; }
   .chart-menu-dropdown.float-left {
@@ -479,31 +479,43 @@ body {
           position: absolute;
           top: 14px; }
 
-#watchlist-chart {
-  background-color: #151C40;
-  border-radius: 10px; }
-
 .watchlist-canvas {
-  background-color: #2B3152; }
+  background-color: #2B3152;
+  padding: 24px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row; }
+
+.watchlist-title {
+  color: #FFFFFF;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 2rem; }
 
 .watchlist-data-container {
   background-color: #2B3152;
+  position: relative;
+  width: 100%; }
+
+.watchlist-data-inner-container {
   bottom: 0;
-  left: 19rem;
   right: 0;
+  left: 0;
   position: absolute;
   top: 0; }
 
 .watchlist-container {
   background: #151C40;
   border-radius: 10px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
   box-sizing: border-box;
   height: 100%;
-  padding: 24px 12px;
-  position: fixed;
-  margin: 2rem;
-  width: 264px; }
+  padding: 24px;
+  margin-right: 24px;
+  min-width: 264px; }
   .watchlist-container a {
     text-decoration: none; }
   .watchlist-container .watchlist-add-stocks {
@@ -518,52 +530,60 @@ body {
       line-height: 40px; }
 
 .watchlist-chart-container {
-  background: #FFFFFF;
-  border-radius: 3px;
-  height: 320px;
-  margin: 24px; }
+  background: #151C40;
+  border-radius: 10px;
+  height: 380px;
+  margin-bottom: 24px;
+  padding: 1.5rem; }
 
-.watchlist-stock-name {
-  font-size: 20px;
-  padding: 24px 24px 0; }
+#watchlist-stock-name {
+  color: #F9A825;
+  font-size: 1.2rem;
+  margin-bottom: .3rem; }
+
+#watchlist-stock-symbol {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: .9rem; }
 
 .watchlist-list li {
-  font-size: 14px;
-  height: 32px; }
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all .1s; }
+  .watchlist-list li.active .watchlist-item-symbol,
+  .watchlist-list li.active .watchlist-item-name {
+    color: #F9A825; }
+  .watchlist-list li:hover .watchlist-item-symbol,
+  .watchlist-list li:hover .watchlist-item-name {
+    color: rgba(249, 168, 37, 0.8); }
 
 .watchlist-list button {
   background: none;
   border: none;
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  height: 32px;
+  font-family: "Mukta", sans-serif;
   outline: none;
-  padding: 0 12px; }
+  padding: .8rem 0;
+  width: 100%; }
   .watchlist-list button:hover {
-    background-color: #E8F5E9;
     border-radius: 2px;
     cursor: pointer;
     transition: all .3s; }
     .watchlist-list button:hover .watchlist-item-code,
     .watchlist-list button:hover .watchlist-item-name {
       transition: all .3s; }
-  .watchlist-list button .watchlist-item-code {
-    color: #546E7A;
-    float: left;
+  .watchlist-list button .watchlist-item-symbol {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: .95rem;
     font-weight: 500;
-    line-height: 32px;
-    text-align: left;
-    width: 60px; }
+    line-height: 1rem;
+    text-align: left; }
   .watchlist-list button .watchlist-item-name {
-    color: #90A4AE;
-    float: left;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: .85rem;
     font-weight: 300;
-    line-height: 32px;
+    line-height: 1rem;
     overflow: hidden;
     text-align: left;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 156px; }
+    white-space: nowrap; }
 
 .sidebar {
   background-color: #151C40;
@@ -575,34 +595,36 @@ body {
   padding: 0;
   position: fixed;
   top: 0;
-  width: 200px;
+  width: 6.5rem;
   z-index: 2; }
 
 .nav-sidebar li a {
   border-left: 4px solid transparent;
   color: rgba(255, 255, 255, 0.3);
   display: block;
-  font-family: "Roboto", sans-serif;
-  font-size: 16px;
+  font-family: "Mukta", sans-serif;
   font-weight: 400;
-  line-height: 60px;
   outline: none;
-  padding-left: 30px;
+  padding: 1rem 0;
+  text-align: center;
   text-decoration: none;
   transition: all .3s; }
   .nav-sidebar li a svg {
     height: auto;
-    width: 40px;
-    margin-right: 16px; }
+    width: 1.8rem !important;
+    margin-bottom: .8rem; }
+  .nav-sidebar li a p {
+    font-size: .8rem; }
   .nav-sidebar li a:hover {
     color: #FFFFFF;
     background: none; }
   .nav-sidebar li a.active {
     background-color: none;
-    border-left: 4px solid #66BB6A;
+    border-right: 4px solid #F9A825;
     color: #FFFFFF; }
-    .nav-sidebar li a.active i {
-      color: #66BB6A; }
+    .nav-sidebar li a.active svg,
+    .nav-sidebar li a.active p {
+      color: #F9A825; }
 
 /* SEARCH
 ============================================================== */
@@ -637,7 +659,7 @@ body {
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
   height: 64px;
   top: 0;
-  left: 200px;
+  left: 6.5rem;
   right: 0;
   position: fixed;
   z-index: 1; }
@@ -645,7 +667,7 @@ body {
 .dashboard-canvas {
   background-color: #2B3152;
   bottom: 0;
-  left: 200px;
+  left: 6.5rem;
   right: 0;
   overflow: auto;
   position: absolute;

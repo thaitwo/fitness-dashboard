@@ -1,17 +1,32 @@
-#watchlist-chart {
-  background-color: $colorDark-dark;
-  border-radius: 10px;
-}
-
 .watchlist-canvas {
   background-color: $colorDark-light;
+  padding: 24px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+}
+
+.watchlist-title {
+  color: $white;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 2rem;
 }
 
 .watchlist-data-container {
   background-color: $colorDark-light;
+  position: relative;
+  width: 100%;
+}
+
+.watchlist-data-inner-container {
   bottom: 0;
-  left: 19rem;
   right: 0;
+  left: 0;
   position: absolute;
   top: 0;
 }
@@ -19,13 +34,13 @@
 .watchlist-container {
   background: $colorDark-dark;
   border-radius: 10px;
-  box-shadow: 0 0 8px rgba($black,.24);
+  // box-shadow: 0 0 8px rgba($black,.24);
   box-sizing: border-box;
   height: 100%;
-  padding: 24px 12px;
-  position: fixed;
-  margin: 2rem;
-  width: 264px;
+  padding: 24px;
+  // position: fixed;
+  margin-right: 24px;
+  min-width: 264px;
 
   a {
     text-decoration: none;
@@ -47,35 +62,56 @@
 }
 
 .watchlist-chart-container {
-  background: $white;
-  border-radius: 3px;
-  height: 320px;
-  margin: 24px;
+  background: $colorDark-dark;
+  border-radius: 10px;
+  height: 380px;
+  margin-bottom: 24px;
+  padding: 1.5rem;
 }
 
-.watchlist-stock-name {
-  font-size: 20px;
-  padding: 24px 24px 0;
+#watchlist-stock-name {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
+  margin-bottom: .3rem;
+}
+
+#watchlist-stock-symbol {
+  color: rgba($white,.8);
+  font-size: .9rem;
 }
 
 .watchlist-list {
 
   li {
-    font-size: 14px;
-    height: 32px;
+    border-bottom: 1px solid rgba($white,.06);
+    transition: all .1s;
+
+    &.active {
+
+      .watchlist-item-symbol,
+      .watchlist-item-name {
+        color: $colorDark-accent;
+      }
+    }
+
+    &:hover {
+
+      .watchlist-item-symbol,
+      .watchlist-item-name {
+        color: rgba($colorDark-accent,.8);
+      }
+    }
   }
 
   button {
     background: none;
     border: none;
     font-family: $font-primary;
-    font-size: 14px;
-    height: 32px;
     outline: none;
-    padding: 0 12px;
+    padding: .8rem 0;
+    width: 100%;
 
     &:hover {
-      background-color: $green-50;
       border-radius: 2px;
       cursor: pointer;
       transition: all .3s;
@@ -87,25 +123,23 @@
       }
     }
 
-    .watchlist-item-code {
-      color: $bluegrey-600;
-      float: left;
+    .watchlist-item-symbol {
+      color: rgba($white,.8);
+      font-size: .95rem;
       font-weight: 500;
-      line-height: 32px;
+      line-height: 1rem;
       text-align: left;
-      width: 60px;
     }
 
     .watchlist-item-name {
-      color: $bluegrey-300;
-      float: left;
+      color: rgba($white,.6);
+      font-size: .85rem;
       font-weight: 300;
-      line-height: 32px;
+      line-height: 1rem;
       overflow: hidden;
       text-align: left;
       text-overflow: ellipsis;
       white-space:nowrap;
-      width: 156px;
     }
   }
 }

@@ -3,6 +3,7 @@
 <head>
   <link href="https://fonts.googleapis.com/css?family=Montserrat:200,300,400,500,600" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Mukta:300,400,500,600,700,800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="public/css/style.compile.css">
   <!-- <script src="https://use.fontawesome.com/c05b0eed4c.js"></script> -->
   <link rel="shortcut icon" href="/favicon.png">
@@ -13,14 +14,27 @@
     <div class="sidebar">
       <h1 class="logo"><a href="./">SM</a></h1>
       <ul id="nav-sidebar" class="nav-sidebar">
-        <li><a href="#dashboard" id="dashboard" class="active">Dashboard</a></li>
-        <li><a href="#watchlist" id="watchlist"><i class="fas fa-list-ul"></i>Watchlist</a></li>
-        <li><a href="#stocks" id="stocks"><i class="fas fa-chart-line"></i>Stocks</a></li>
-        <li><a href="#compare" id="compare"><i class="fas fa-balance-scale"></i>Compare</a></li>
+        <li>
+          <a href="#dashboard" id="dashboard" class="active">
+            <i class="fas fa-home"></i>
+            <p>Dashboard</p>
+          </a>
+        </li>
+        <li>
+          <a href="#watchlist" id="watchlist">
+              <i class="fas fa-list-alt"></i>
+            <p>Watchlist</p>
+          </a>
+        </li>
+        <li>
+          <a href="#stocks" id="stocks">
+            <i class="fas fa-chart-line"></i>
+            <p>Stocks</p>
+          </a>
+        </li>
       </ul>
     </div>
     <div class="top-bar">
-      <h2 id="page-title" class="page-title">Watchlist</h2>
       <form class="search-form">
         <input type="text" class="search-box" placeholder="Search">
       </form>

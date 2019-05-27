@@ -15583,16 +15583,17 @@ var Graph = function () {
       labels: newLabels,
       display: true,
       datasets: [{
-        backgroundColor: 'rgba(33,150,243, .2)',
-        borderColor: 'rgba(33,150,243, 1)',
+        backgroundColor: 'rgba(249,168,37, .2)',
+        borderColor: 'rgba(249,168,37, 1)',
         borderWidth: 2,
         data: newData,
         hoverRadius: 12,
-        pointBackgroundColor: 'rgba(33,150,243, 1)', // rgba(250, 128, 114, 1)
+        pointBackgroundColor: 'rgba(249,168,37, 1)', // rgba(250, 128, 114, 1)
         pointBorderColor: '#fff',
         pointBorderWidth: 2,
         pointHoverBorderColor: '#fff',
-        pointHoverBackgroundColor: '#000',
+        pointHoverBorderWidth: 2,
+        pointHoverBackgroundColor: '#151C40',
         pointHoverRadius: 5,
         pointRadius: 5,
         radius: 4,
@@ -15627,10 +15628,8 @@ var Graph = function () {
         maintainAspectRatio: false,
         layout: {
           padding: {
-            top: 24,
-            right: 24,
-            bottom: 24,
-            left: 24
+            top: 48,
+            bottom: 32
           }
         },
         legend: {
@@ -15644,13 +15643,9 @@ var Graph = function () {
         scales: {
           xAxes: [{
             gridLines: {
-              color: 'rgba(0,0,0,0.03)',
+              color: 'rgba(255,255,255,0.03)',
               display: true,
               tickMarkLength: 10
-            },
-            scaleLabel: {
-              display: true,
-              labelString: 'Date'
             },
             ticks: {
               fontColor: '#B0BEC5',
@@ -15660,15 +15655,12 @@ var Graph = function () {
             }
           }],
           yAxes: [{
+            position: 'right',
             gridLines: {
-              color: 'rgba(0,0,0,0.03)',
+              color: 'rgba(255,255,255,0.03)',
               drawBorder: false,
               zeroLineColor: 'rgba(0,0,0,0.04)',
               tickMarkLength: 0
-            },
-            scaleLabel: {
-              display: true,
-              labelString: 'Price'
             },
             ticks: {
               beginAtZero: false,
@@ -27954,13 +27946,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Nav = function () {
   // @parameter (string, boolean, string)
   // If routeBoolean is true URL will be updated. If false URL will remain unchanged.
-  function Nav(navContainerId, routeBoolean, textContainerId) {
+  function Nav(navContainerId, routeBoolean) {
     _classCallCheck(this, Nav);
 
     this.navContainerId = navContainerId;
     this.routeOrNot = routeBoolean || false;
 
-    this.$textContainer = (0, _jquery2.default)('#' + textContainerId);
     this.$navContainer = (0, _jquery2.default)('#' + this.navContainerId);
 
     // ACTIVATE ROUTER
@@ -27986,19 +27977,10 @@ var Nav = function () {
         // If marked true AND has text container, then change page URL and update header text
         if (that.routeOrNot == true && that.$textContainer) {
           that.router.changePage(id);
-          that.udpateHeaderText(id);
         } else {
           that.udpateHeaderText(id);
         }
       });
-    }
-
-    // UPDATE TEXT IN SPECIFIED CONTAINER
-
-  }, {
-    key: 'udpateHeaderText',
-    value: function udpateHeaderText(titleText) {
-      this.$textContainer.html(titleText);
     }
 
     // UPDATE SELECTED LINK
@@ -28046,7 +28028,7 @@ var App = function App() {
   _classCallCheck(this, App);
 
   // ACTIVATE SIDEBAR NAVIGATION
-  new _nav2.default('nav-sidebar', true, 'page-title');
+  new _nav2.default('nav-sidebar', true);
 };
 
 new App();
@@ -28756,7 +28738,8 @@ var Watchlist = function () {
     this.$watchlistContainer = this.$watchlistCanvas.find('.watchlist-container');
     this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
     this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
-    this.$stockName = this.$watchlistCanvas.find('.watchlist-stock-name');
+    this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
+    this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -28769,7 +28752,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <h2 class="watchlist-stock-name"></h2>\n          <div class="watchlist-chart-container">\n            <canvas id="watchlist-chart" width="900" height="320"></canvas>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <h2 id="watchlist-stock-name"></h2>\n              <h3 id="watchlist-stock-symbol"></h3>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -28779,11 +28762,16 @@ var Watchlist = function () {
   }, {
     key: 'getStocks',
     value: function getStocks() {
-      var list = this.watchlist.map(function (stock) {
+      var list = this.watchlist.map(function (stock, index) {
         var symbol = stock.symbol;
         var name = stock.name;
+        var isActive = '';
 
-        return '\n        <li>\n          <button id="' + symbol + '">\n            <span class="watchlist-item-code">' + symbol + '</span>\n            <span class="watchlist-item-name">' + name + '</span>\n          </button>\n        </li>\n      ';
+        if (index === 0) {
+          isActive = 'active';
+        }
+
+        return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <p class="watchlist-item-symbol">' + symbol + '</p>\n            <p class="watchlist-item-name">' + name + '</p>\n          </button>\n        </li>\n      ';
       });
 
       this.$watchlist.append(list);
@@ -28821,7 +28809,7 @@ var Watchlist = function () {
         var symbol = this.watchlist[0].symbol;
         var name = this.watchlist[0].name;
 
-        this.renderStockName(name);
+        this.renderStockName(name, symbol);
 
         // make Ajax call to get data for company
         this.fetchStockData(symbol);
@@ -28880,11 +28868,18 @@ var Watchlist = function () {
       // Display graph & data for watchlist item
       this.$watchlist.on('click', 'button', function (event) {
         event.preventDefault();
+
+        var clickedEl = (0, _jquery2.default)(this).parent();
+        var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
         var symbol = this.id;
-        var name = (0, _jquery2.default)(this).find('span.watchlist-item-name').text();
+        var name = (0, _jquery2.default)(this).find('.watchlist-item-name').text();
+
+        // Add active class to clicked watchlist item
+        watchlistItems.removeClass('active');
+        clickedEl.addClass('active');
 
         // render name and graph for watchlist item
-        that.renderStockName(name);
+        that.renderStockName(name, symbol);
         that.renderData(symbol);
       });
     }
@@ -28893,8 +28888,9 @@ var Watchlist = function () {
 
   }, {
     key: 'renderStockName',
-    value: function renderStockName(name) {
+    value: function renderStockName(name, symbol) {
       this.$stockName.text(name);
+      this.$stockSymbol.text(symbol);
     }
 
     // RENDER GRAPH
@@ -28922,7 +28918,7 @@ var Watchlist = function () {
     value: function getSpecificCompanyData(data, hey) {
       return data.map(function (day) {
         return day[hey];
-      }).reverse();
+      });
     }
 
     //

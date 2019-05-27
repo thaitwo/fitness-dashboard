@@ -15,7 +15,8 @@ class Watchlist {
     this.$watchlistContainer = this.$watchlistCanvas.find('.watchlist-container');
     this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
     this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
-    this.$stockName = this.$watchlistCanvas.find('.watchlist-stock-name');
+    this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
+    this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol')
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -29,12 +30,16 @@ class Watchlist {
     `
       <div class="watchlist-canvas">
         <div class="watchlist-container">
+          <h2 class="watchlist-title">Watchlist</h2>
           <ol class="watchlist-list"></ol>
         </div>
         <div class="watchlist-data-container">
-          <h2 class="watchlist-stock-name"></h2>
-          <div class="watchlist-chart-container">
-            <canvas id="watchlist-chart" width="900" height="320"></canvas>
+          <div class="watchlist-data-inner-container">
+            <div class="watchlist-chart-container">
+              <h2 id="watchlist-stock-name"></h2>
+              <h3 id="watchlist-stock-symbol"></h3>
+              <canvas id="watchlist-chart" width="900" height="320"></canvas>
+            </div>
           </div>
         </div>
       </div>
@@ -46,15 +51,20 @@ class Watchlist {
 
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
   getStocks() {
-    let list = this.watchlist.map((stock) => {
+    let list = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
-      let name = stock.name;
+      const name = stock.name;
+      let isActive = '';
+
+      if (index === 0) {
+        isActive = 'active';
+      }
 
       return `
-        <li>
+        <li class="${isActive}">
           <button id="${symbol}">
-            <span class="watchlist-item-code">${symbol}</span>
-            <span class="watchlist-item-name">${name}</span>
+            <p class="watchlist-item-symbol">${symbol}</p>
+            <p class="watchlist-item-name">${name}</p>
           </button>
         </li>
       `;
@@ -92,7 +102,7 @@ class Watchlist {
       const symbol = this.watchlist[0].symbol;
       const name = this.watchlist[0].name;
 
-      this.renderStockName(name);
+      this.renderStockName(name, symbol);
 
       // make Ajax call to get data for company
       this.fetchStockData(symbol);
@@ -147,19 +157,27 @@ class Watchlist {
     // Display graph & data for watchlist item
     this.$watchlist.on('click', 'button', function(event) {
       event.preventDefault();
+
+      const clickedEl = $(this).parent();
+      const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
       const symbol = this.id;
-      let name = $(this).find('span.watchlist-item-name').text();
+      const name = $(this).find('.watchlist-item-name').text();
+
+      // Add active class to clicked watchlist item
+      watchlistItems.removeClass('active');
+      clickedEl.addClass('active');
 
       // render name and graph for watchlist item
-      that.renderStockName(name);
+      that.renderStockName(name, symbol);
       that.renderData(symbol);
     });
   }
 
 
   // RENDER STOCK NAME
-  renderStockName(name) {
+  renderStockName(name, symbol) {
     this.$stockName.text(name);
+    this.$stockSymbol.text(symbol);
   }
 
 
@@ -183,7 +201,7 @@ class Watchlist {
   getSpecificCompanyData(data, hey) {
     return data.map((day) => {
       return day[hey];
-    }).reverse();
+    });
   }
 
 
