@@ -496,6 +496,46 @@ body {
   font-weight: 500;
   margin-bottom: 2rem; }
 
+.watchlist-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; }
+
+.watchlist-dropdown-container {
+  position: relative; }
+  .watchlist-dropdown-container::before {
+    content: '\F078';
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.2);
+    padding-top: 2px;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
+    pointer-events: none;
+    z-index: 1; }
+
+#watchlist-dropdown {
+  background-color: #2B3152;
+  border: none;
+  box-sizing: border-box;
+  display: block;
+  color: #F9A825;
+  font-size: .9rem;
+  font-weight: 700;
+  height: 32px;
+  line-height: 32px;
+  outline: none;
+  padding: 0 12px;
+  width: 80px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none; }
+  #watchlist-dropdown:hover {
+    cursor: pointer; }
+
 .watchlist-data-container {
   background-color: #2B3152;
   position: relative;
@@ -609,7 +649,8 @@ body {
   text-align: center;
   text-decoration: none;
   transition: all .3s; }
-  .nav-sidebar li a svg {
+  .nav-sidebar li a i {
+    font-size: 1.5rem;
     height: auto;
     width: 1.8rem !important;
     margin-bottom: .8rem; }
@@ -622,7 +663,7 @@ body {
     background-color: none;
     border-right: 4px solid #F9A825;
     color: #FFFFFF; }
-    .nav-sidebar li a.active svg,
+    .nav-sidebar li a.active i,
     .nav-sidebar li a.active p {
       color: #F9A825; }
 

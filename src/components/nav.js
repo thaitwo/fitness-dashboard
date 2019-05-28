@@ -29,7 +29,7 @@ class Nav {
       that.updateActiveClass(id);
 
       // If marked true AND has text container, then change page URL and update header text
-      if (that.routeOrNot == true && that.$textContainer) {
+      if (that.routeOrNot == true) {
         that.router.changePage(id);
       }
       else {

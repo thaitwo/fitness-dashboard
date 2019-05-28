@@ -15588,16 +15588,16 @@ var Graph = function () {
         borderWidth: 2,
         data: newData,
         hoverRadius: 12,
-        pointBackgroundColor: 'rgba(249,168,37, 1)', // rgba(250, 128, 114, 1)
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
+        pointBackgroundColor: 'rgba(249,168,37, 0)', // rgba(250, 128, 114, 1)
+        pointBorderColor: 'rgba(0,0,0,0)',
+        pointBorderWidth: 0,
         pointHoverBorderColor: '#fff',
         pointHoverBorderWidth: 2,
-        pointHoverBackgroundColor: '#151C40',
+        pointHoverBackgroundColor: 'rgb(249,168,37)',
         pointHoverRadius: 5,
-        pointRadius: 5,
+        // pointRadius: 5,
         radius: 4,
-        lineTension: .4
+        lineTension: 0
       }]
     };
 
@@ -15649,9 +15649,10 @@ var Graph = function () {
             },
             ticks: {
               fontColor: '#B0BEC5',
-              fontFamily: 'Montserrat, sans-serif',
+              fontFamily: 'Mukta, sans-serif',
               fontStyle: 'normal',
-              autoSkip: false
+              autoSkip: true,
+              maxTicksLimit: 22
             }
           }],
           yAxes: [{
@@ -15665,7 +15666,7 @@ var Graph = function () {
             ticks: {
               beginAtZero: false,
               fontColor: '#B0BEC5',
-              fontFamily: 'Montserrat, sans-serif',
+              fontFamily: 'Mukta, sans-serif',
               fontStyle: 'normal',
               padding: 15
             }
@@ -27975,7 +27976,7 @@ var Nav = function () {
         that.updateActiveClass(id);
 
         // If marked true AND has text container, then change page URL and update header text
-        if (that.routeOrNot == true && that.$textContainer) {
+        if (that.routeOrNot == true) {
           that.router.changePage(id);
         } else {
           that.udpateHeaderText(id);
@@ -28730,6 +28731,8 @@ var Watchlist = function () {
 
     this.$container = container;
     this.graph;
+    this.symbol;
+    this.interval = '1m';
     this.watchlist = _store2.default.get('watchlist') || [];
 
     this.renderCanvasHTML();
@@ -28740,10 +28743,12 @@ var Watchlist = function () {
     this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
+    this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
 
     this.getStocks();
     this.renderDataForFirstStock();
     this.activateEventListeners();
+    this.udpateGraphIntervals();
   }
 
   // RENDER WATCHLIST CANVAS
@@ -28752,7 +28757,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <h2 id="watchlist-stock-name"></h2>\n              <h3 id="watchlist-stock-symbol"></h3>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <h2 id="watchlist-stock-name"></h2>\n                  <h3 id="watchlist-stock-symbol"></h3>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -28777,13 +28782,28 @@ var Watchlist = function () {
       this.$watchlist.append(list);
     }
 
+    // UPDATE GRAPH WITH NEW INTERVAL
+
+  }, {
+    key: 'udpateGraphIntervals',
+    value: function udpateGraphIntervals() {
+      var that = this;
+      this.$watchlistDropdown.on('change', function (event) {
+        var selectedInterval = this.value;
+        that.interval = selectedInterval; // set this.interval
+        that.fetchStockData(that.symbol);
+      });
+    }
+
     // GET DATA FOR COMPANY
 
   }, {
     key: 'fetchStockData',
     value: function fetchStockData(symbol) {
+      var _this = this;
+
       _jquery2.default.ajax({
-        url: 'https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/1m',
+        url: 'https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval,
         dataType: 'json',
         data: {
           token: 'pk_a12f90684f2a44f180bcaeb4eff4086d'
@@ -28793,10 +28813,33 @@ var Watchlist = function () {
         },
         success: function success(data) {
           // store stock data
-          _store2.default.set(symbol, data);
+          _store2.default.set('' + symbol + _this.interval, data);
         },
-        complete: function complete() {}
+        complete: function complete() {
+          _this.renderGraph();
+        }
       });
+    }
+
+    // RENDER GRAPH
+
+  }, {
+    key: 'renderGraph',
+    value: function renderGraph() {
+      // check if historical prices for the company exists in localStorage
+      if (_store2.default.get('' + this.symbol + this.interval) !== null) {
+        var data = _store2.default.get('' + this.symbol + this.interval);
+        // get closing prices for stock
+        var prices = this.getSpecificCompanyData(data, 'close');
+        // get dates for closing prices
+        var dates = this.getSpecificCompanyData(data, 'date');
+
+        // delete graph if any exists and create new graph
+        if (this.graph) {
+          this.graph.destroy();
+        }
+        this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
+      }
     }
 
     // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
@@ -28808,54 +28851,17 @@ var Watchlist = function () {
       if (this.watchlist.length > 0) {
         var symbol = this.watchlist[0].symbol;
         var name = this.watchlist[0].name;
+        this.symbol = symbol;
 
-        this.renderStockName(name, symbol);
+        this.renderStockName(name);
 
         // make Ajax call to get data for company
-        this.fetchStockData(symbol);
-
-        // check if stock data exist in localStorage
-        // note: localStorage returns null if item does not exist
-        if (_store2.default.get(symbol) !== null) {
-          var data = _store2.default.get(symbol);
-
-          // get closing prices for stock
-          var prices = this.getSpecificCompanyData(data, 'close');
-          // get dates for closing prices
-          var dates = this.getSpecificCompanyData(data, 'date');
-
-          // create new graph
-          this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
-        }
+        this.fetchStockData(this.symbol);
       }
       // If watchlist is empty, render button with link to stocks page
       else {
           this.$watchlistContainer.append('<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>');
         }
-    }
-
-    // RENDER GRAPH/DATA FOR STOCK
-
-  }, {
-    key: 'renderData',
-    value: function renderData(symbol) {
-      // Make Ajax call to get data for company
-      this.fetchStockData(symbol);
-
-      if (_store2.default.get(symbol) !== null) {
-        // Retrieve company data from storage
-        var data = _store2.default.get(symbol);
-
-        // get opening prices for company stock
-        var prices = this.getSpecificCompanyData(data, 'close');
-
-        // get dates for the opening prices
-        var dates = this.getSpecificCompanyData(data, 'date');
-
-        // create new graph
-        this.graph.destroy();
-        this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
-      }
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
@@ -28872,6 +28878,7 @@ var Watchlist = function () {
         var clickedEl = (0, _jquery2.default)(this).parent();
         var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
         var symbol = this.id;
+        that.symbol = symbol;
         var name = (0, _jquery2.default)(this).find('.watchlist-item-name').text();
 
         // Add active class to clicked watchlist item
@@ -28879,8 +28886,8 @@ var Watchlist = function () {
         clickedEl.addClass('active');
 
         // render name and graph for watchlist item
-        that.renderStockName(name, symbol);
-        that.renderData(symbol);
+        that.renderStockName(name);
+        that.fetchStockData(that.symbol);
       });
     }
 
@@ -28888,27 +28895,9 @@ var Watchlist = function () {
 
   }, {
     key: 'renderStockName',
-    value: function renderStockName(name, symbol) {
+    value: function renderStockName(name) {
       this.$stockName.text(name);
-      this.$stockSymbol.text(symbol);
-    }
-
-    // RENDER GRAPH
-
-  }, {
-    key: 'renderGraph',
-    value: function renderGraph(stockCode) {
-      var data = _store2.default.get(stockCode) || {};
-
-      // get closing prices for company stock
-      var prices = this.getSpecificCompanyData(data, 'close');
-
-      // get dates for the closing prices
-      var dates = this.getSpecificCompanyData(data, 'date');
-
-      // clear graph and create new graph
-      this.graph.destroy();
-      this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
+      this.$stockSymbol.text(this.symbol);
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)

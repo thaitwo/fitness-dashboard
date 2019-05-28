@@ -24,7 +24,8 @@
   text-decoration: none;
   transition: all .3s;
 
-  svg {
+  i {
+    font-size: 1.5rem;
     height: auto;
     width: 1.8rem !important;
     margin-bottom: .8rem;
@@ -44,7 +45,7 @@
     border-right: 4px solid $colorDark-accent;
     color: $white;
 
-    svg,
+    i,
     p {
       color: $colorDark-accent;
     }

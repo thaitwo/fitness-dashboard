@@ -25,16 +25,16 @@ class Graph {
         borderWidth: 2,
         data: newData,
         hoverRadius: 12,
-        pointBackgroundColor: 'rgba(249,168,37, 1)', // rgba(250, 128, 114, 1)
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
+        pointBackgroundColor: 'rgba(249,168,37, 0)', // rgba(250, 128, 114, 1)
+        pointBorderColor: 'rgba(0,0,0,0)',
+        pointBorderWidth: 0,
         pointHoverBorderColor: '#fff',
         pointHoverBorderWidth: 2,
-        pointHoverBackgroundColor: '#151C40',
+        pointHoverBackgroundColor: 'rgb(249,168,37)',
         pointHoverRadius: 5,
-        pointRadius: 5,
+        // pointRadius: 5,
         radius: 4,
-        lineTension: .4
+        lineTension: 0
       }]
     };
 
@@ -81,9 +81,10 @@ class Graph {
           },
           ticks: {
             fontColor: '#B0BEC5',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: 'Mukta, sans-serif',
             fontStyle: 'normal',
-            autoSkip: false
+            autoSkip: true,
+            maxTicksLimit: 22
           }
         }],
         yAxes: [{
@@ -97,7 +98,7 @@ class Graph {
           ticks: {
             beginAtZero: false,
             fontColor: '#B0BEC5',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: 'Mukta, sans-serif',
             fontStyle: 'normal',
             padding: 15
           }
