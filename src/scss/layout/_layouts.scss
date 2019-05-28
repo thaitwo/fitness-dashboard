@@ -30,6 +30,15 @@ $padding: 8px;
 }
 
 
-/* GRID
+/* CONTAINERS
 ============================================================== */
 
+.box {
+  background-color: $colorDark-dark;
+  border-radius: 10px;
+  padding: 1.5rem;
+
+  &.marginRight {
+    margin-right: 1.5rem;
+  }
+}

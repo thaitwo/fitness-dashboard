@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import store from 'store2';
+import axios from 'axios';
 import Graph from './graph.js';
 
 
@@ -20,6 +21,7 @@ class Watchlist {
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol')
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
+    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -59,6 +61,14 @@ class Watchlist {
                 </div>
               </div>
               <canvas id="watchlist-chart" width="900" height="320"></canvas>
+            </div>
+            <div id="watchlist-summary-container">
+              <div id="watchlist-key-stats-container" class="box marginRight">
+                <h2 class="text-header">Key Statistics</h2>
+              </div>
+              <div class="box">
+                <h2 class="text-header">Latest News</h2>
+              </div>
             </div>
           </div>
         </div>
@@ -100,38 +110,72 @@ class Watchlist {
     this.$watchlistDropdown.on('change', function(event) {
       const selectedInterval = this.value;
       that.interval = selectedInterval; // set this.interval
-      that.fetchStockData(that.symbol);
+
+      // P = Prices
+      // S = Stats
+      // N = News
+      that.fetchStockData(that.symbol, 'P');
     })
   }
 
 
   // GET DATA FOR COMPANY
-  fetchStockData(symbol) {
-    $.ajax({
-      url: `https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}`,
-      dataType: 'json',
-      data: {
-        token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
-      },
-      error: (xhr, message, error) => {
-        console.log(message, error);
-      },
-      success: (data) => {
-        // store stock data
-        store.set(`${symbol}${this.interval}`, data);
-      },
-      complete: () => {
+  fetchStockData(symbol, requestType) {
+    if (requestType === 'PS') {
+      axios.all([
+        axios({
+          method: 'get',
+          url: `https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}`,
+          params: {
+            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
+          },
+          responseType: 'json'
+        }),
+        axios({
+          method: 'get',
+          url: `https://cloud.iexapis.com/v1/stock/${symbol}/stats`,
+          params: {
+            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
+          },
+          responseType: 'json'
+        })
+      ])
+      .then(axios.spread((prices, stats) => {
+        console.log('stats', stats.data);
+        store.set(`${symbol}-${this.interval}`, prices.data);
+        store.set(`${symbol}-stats`, stats.data);
+      }))
+      .catch(error => console.log(error))
+      .finally(() => {
         this.renderGraph();
-      },
-    });
+        this.renderKeyStats();
+      })
+    }
+    else if (requestType === 'P') {
+      axios({
+        method: 'get',
+        url: `https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}`,
+        params: {
+          token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
+        },
+        responseType: 'json'
+      })
+      .then((prices) => {
+        store.set(`${symbol}-${this.interval}`, prices.data);
+      })
+      .catch(error => console.log(error))
+      .finally(() => {
+        this.renderGraph();
+      })
+    }
   }
 
 
   // RENDER GRAPH
   renderGraph() {
     // check if historical prices for the company exists in localStorage
-    if (store.get(`${this.symbol}${this.interval}`) !== null) {
-      const data = store.get(`${this.symbol}${this.interval}`);
+    if (store.get(`${this.symbol}-${this.interval}`) !== null) {
+      const data = store.get(`${this.symbol}-${this.interval}`);
       // get closing prices for stock
       const prices = this.getSpecificCompanyData(data, 'close');
       // get dates for closing prices
@@ -143,7 +187,51 @@ class Watchlist {
       }
       this.graph = new Graph(this.$watchlistChart, prices, dates);
     }
-    
+  }
+
+
+  // RENDER KEY STATISTICS
+  renderKeyStats() {
+    if (store.get(`${this.symbol}-stats`) !== null) {
+      const stats = store.get(`${this.symbol}-stats`);
+      const marketCap = stats.marketcap;
+      const peRatio = stats.peRatio;
+      const wk52High = stats.week52high;
+      const wk52Low = stats.week52low;
+      const eps = stats.ttmEPS;
+      const avg30Vol = stats.avg30Volume;
+
+      const keyStatsHTML = `
+        <table id="key-stats-table">
+          <tr>
+            <td>Market Cap</td>
+            <td>${marketCap}</td>
+          </tr>
+          <tr>
+            <td>P/E Ratio</td>
+            <td>${peRatio}</td>
+          </tr>
+          <tr>
+            <td>52 Wk High</td>
+            <td>${wk52High}</td>
+          </tr>
+          <tr>
+            <td>52 Wk Low</td>
+            <td>${wk52Low}</td>
+          </tr>
+          <tr>
+            <td>EPS (TTM)</td>
+            <td>${eps}</td>
+          </tr>
+          <tr>
+            <td>Avg. Volume (30D)</td>
+            <td>${avg30Vol}</td>
+          </tr>
+        </table>
+      `;
+
+      this.$keyStatsContainer.append(keyStatsHTML);
+    }
   }
 
 
@@ -158,7 +246,7 @@ class Watchlist {
       this.renderStockName(name);
       
       // make Ajax call to get data for company
-      this.fetchStockData(this.symbol);
+      this.fetchStockData(this.symbol, 'PS');
     }
     // If watchlist is empty, render button with link to stocks page
     else {
@@ -187,7 +275,7 @@ class Watchlist {
 
       // render name and graph for watchlist item
       that.renderStockName(name);
-      that.fetchStockData(that.symbol);
+      that.fetchStockData(that.symbol, 'PS');
     });
   }
 

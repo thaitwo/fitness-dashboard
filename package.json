@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/thaitwo/charts#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "chart.js": "^2.8.0",
     "jquery": "^3.4.1",
     "lodash": "^4.17.11",
