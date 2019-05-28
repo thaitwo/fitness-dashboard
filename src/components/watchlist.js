@@ -64,7 +64,7 @@ class Watchlist {
             </div>
             <div id="watchlist-summary-container">
               <div id="watchlist-key-stats-container" class="box marginRight">
-                <h2 class="text-header">Key Statistics</h2>
+                
               </div>
               <div class="box">
                 <h2 class="text-header">Latest News</h2>
@@ -190,18 +190,38 @@ class Watchlist {
   }
 
 
+  // FORMATE LARGE NUMBERS
+  formatLargeNumber(num) {
+    return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+         // Six Zeroes for Millions 
+         : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+         // Three Zeroes for Thousands
+         : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K"
+         : Math.abs(Number(num)).toFixed(2);
+  }
+
+
+  // Insert commas into numbers
+  formatNumberWithCommas(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+
   // RENDER KEY STATISTICS
   renderKeyStats() {
     if (store.get(`${this.symbol}-stats`) !== null) {
       const stats = store.get(`${this.symbol}-stats`);
-      const marketCap = stats.marketcap;
+      let marketCap = stats.marketcap;
+      marketCap = this.formatLargeNumber(marketCap);
       const peRatio = stats.peRatio;
       const wk52High = stats.week52high;
       const wk52Low = stats.week52low;
       const eps = stats.ttmEPS;
-      const avg30Vol = stats.avg30Volume;
+      let avg30Vol = stats.avg30Volume;
+      avg30Vol = this.formatNumberWithCommas(Math.round(avg30Vol));
 
       const keyStatsHTML = `
+        <h2 class="text-header">Key Statistics</h2>
         <table id="key-stats-table">
           <tr>
             <td>Market Cap</td>
@@ -230,6 +250,7 @@ class Watchlist {
         </table>
       `;
 
+      this.$keyStatsContainer.empty();
       this.$keyStatsContainer.append(keyStatsHTML);
     }
   }
