@@ -22,6 +22,7 @@ class Watchlist {
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol')
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
+    this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -66,8 +67,8 @@ class Watchlist {
               <div id="watchlist-key-stats-container" class="box marginRight">
                 
               </div>
-              <div class="box">
-                <h2 class="text-header">Latest News</h2>
+              <div id="watchlist-news-container" class="box">
+                
               </div>
             </div>
           </div>
@@ -119,55 +120,96 @@ class Watchlist {
   }
 
 
-  // GET DATA FOR COMPANY
-  fetchStockData(symbol, requestType) {
-    if (requestType === 'PS') {
-      axios.all([
-        axios({
-          method: 'get',
-          url: `https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}`,
-          params: {
-            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
-          },
-          responseType: 'json'
-        }),
-        axios({
-          method: 'get',
-          url: `https://cloud.iexapis.com/v1/stock/${symbol}/stats`,
-          params: {
-            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
-          },
-          responseType: 'json'
-        })
-      ])
-      .then(axios.spread((prices, stats) => {
-        console.log('stats', stats.data);
+  // FORMAT AJAX REQUEST BASED ON NEEDED DATA
+  formatAjaxRequest(symbol, requestType) {
+    // request data for prices
+    if (requestType === 'P') {
+      return[
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+      ];
+
+    }
+    // request data for prices, stats, and news
+    else if (requestType === 'PSN') {
+      return [
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/news/last/3?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      ]
+    }
+  }
+
+
+  // FORMAT RESPONSE ACTION BASED ON NEEDED DATA
+  formatAjaxResponseAction(symbol, requestType) {
+    if (requestType === 'P') {
+      return (prices) => {
+        store.set(`${symbol}-${this.interval}`, prices.data);
+      }
+    }
+    else if (requestType === 'PSN') {
+      return (prices, stats, news) => {
+        console.log(news);
         store.set(`${symbol}-${this.interval}`, prices.data);
         store.set(`${symbol}-stats`, stats.data);
-      }))
-      .catch(error => console.log(error))
-      .finally(() => {
+        store.set(`${symbol}-news`, news.data);
+      }
+    }
+  }
+
+
+  // GET DATA FOR COMPANY
+  fetchStockData(symbol, requestType) {
+    const requests = this.formatAjaxRequest(symbol, requestType);
+    const responseAction = this.formatAjaxResponseAction(symbol, requestType);
+
+    axios.all(requests)
+    .then(axios.spread(responseAction))
+    .catch(error => console.log(error))
+    .finally(() => {
+      if (requestType === 'P') {
+        this.renderGraph();
+      }
+      else if (requestType === 'PSN') {
         this.renderGraph();
         this.renderKeyStats();
+        this.renderNews();
+      }
+    })
+  }
+
+
+  // RENDER NEWS
+  renderNews() {
+    if (store.get(`${this.symbol}-news`) !== null) {
+      const data = store.get(`${this.symbol}-news`);
+      
+      const newsArticles = data.map((item) => {
+        let headline = item.headline;
+        headline = this.trimString(headline, 120);
+        let summary = item.summary;
+        summary = this.trimString(summary, 160);
+        const url = item.url;
+
+        return `
+          <article class="watchlist-news-article">
+            <a href="${url}">
+              <h2>${headline}</h2>
+              <p>${summary}</p>
+            </a<
+          </article>
+        `
       })
+
+      this.$newsContainer.empty();
+      this.$newsContainer.append(`<h2 class="text-header">Latest News</h2>`);
+      this.$newsContainer.append(newsArticles);
     }
-    else if (requestType === 'P') {
-      axios({
-        method: 'get',
-        url: `https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}`,
-        params: {
-          token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
-        },
-        responseType: 'json'
-      })
-      .then((prices) => {
-        store.set(`${symbol}-${this.interval}`, prices.data);
-      })
-      .catch(error => console.log(error))
-      .finally(() => {
-        this.renderGraph();
-      })
-    }
+  }
+
+
+  trimString(string, length) {
+    return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
   }
 
 
@@ -187,23 +229,6 @@ class Watchlist {
       }
       this.graph = new Graph(this.$watchlistChart, prices, dates);
     }
-  }
-
-
-  // FORMATE LARGE NUMBERS
-  formatLargeNumber(num) {
-    return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-         // Six Zeroes for Millions 
-         : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-         // Three Zeroes for Thousands
-         : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K"
-         : Math.abs(Number(num)).toFixed(2);
-  }
-
-
-  // Insert commas into numbers
-  formatNumberWithCommas(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
 
@@ -256,6 +281,23 @@ class Watchlist {
   }
 
 
+  // FORMATE LARGE NUMBERS
+  formatLargeNumber(num) {
+    return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+         // Six Zeroes for Millions 
+         : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+         // Three Zeroes for Thousands
+         : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K"
+         : Math.abs(Number(num)).toFixed(2);
+  }
+
+
+  // Insert commas into numbers
+  formatNumberWithCommas(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+
   // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
   renderDataForFirstStock() {
     // if watchlist has at least one item, render item(s)
@@ -267,7 +309,7 @@ class Watchlist {
       this.renderStockName(name);
       
       // make Ajax call to get data for company
-      this.fetchStockData(this.symbol, 'PS');
+      this.fetchStockData(this.symbol, 'PSN');
     }
     // If watchlist is empty, render button with link to stocks page
     else {
@@ -296,7 +338,7 @@ class Watchlist {
 
       // render name and graph for watchlist item
       that.renderStockName(name);
-      that.fetchStockData(that.symbol, 'PS');
+      that.fetchStockData(that.symbol, 'PSN');
     });
   }
 

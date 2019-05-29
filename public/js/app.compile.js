@@ -30483,6 +30483,7 @@ var Watchlist = function () {
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
+    this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -30496,7 +30497,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <h2 id="watchlist-stock-name"></h2>\n                  <h3 id="watchlist-stock-symbol"></h3>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight">\n                \n              </div>\n              <div class="box">\n                <h2 class="text-header">Latest News</h2>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <h2 id="watchlist-stock-name"></h2>\n                  <h3 id="watchlist-stock-symbol"></h3>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight">\n                \n              </div>\n              <div id="watchlist-news-container" class="box">\n                \n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -30538,54 +30539,94 @@ var Watchlist = function () {
       });
     }
 
+    // FORMAT AJAX REQUEST BASED ON NEEDED DATA
+
+  }, {
+    key: 'formatAjaxRequest',
+    value: function formatAjaxRequest(symbol, requestType) {
+      // request data for prices
+      if (requestType === 'P') {
+        return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+      }
+      // request data for prices, stats, and news
+      else if (requestType === 'PSN') {
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/3?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+        }
+    }
+
+    // FORMAT RESPONSE ACTION BASED ON NEEDED DATA
+
+  }, {
+    key: 'formatAjaxResponseAction',
+    value: function formatAjaxResponseAction(symbol, requestType) {
+      var _this = this;
+
+      if (requestType === 'P') {
+        return function (prices) {
+          _store2.default.set(symbol + '-' + _this.interval, prices.data);
+        };
+      } else if (requestType === 'PSN') {
+        return function (prices, stats, news) {
+          console.log(news);
+          _store2.default.set(symbol + '-' + _this.interval, prices.data);
+          _store2.default.set(symbol + '-stats', stats.data);
+          _store2.default.set(symbol + '-news', news.data);
+        };
+      }
+    }
+
     // GET DATA FOR COMPANY
 
   }, {
     key: 'fetchStockData',
     value: function fetchStockData(symbol, requestType) {
-      var _this = this;
+      var _this2 = this;
 
-      if (requestType === 'PS') {
-        _axios2.default.all([(0, _axios2.default)({
-          method: 'get',
-          url: 'https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval,
-          params: {
-            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d'
-          },
-          responseType: 'json'
-        }), (0, _axios2.default)({
-          method: 'get',
-          url: 'https://cloud.iexapis.com/v1/stock/' + symbol + '/stats',
-          params: {
-            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d'
-          },
-          responseType: 'json'
-        })]).then(_axios2.default.spread(function (prices, stats) {
-          console.log('stats', stats.data);
-          _store2.default.set(symbol + '-' + _this.interval, prices.data);
-          _store2.default.set(symbol + '-stats', stats.data);
-        })).catch(function (error) {
-          return console.log(error);
-        }).finally(function () {
-          _this.renderGraph();
-          _this.renderKeyStats();
+      var requests = this.formatAjaxRequest(symbol, requestType);
+      var responseAction = this.formatAjaxResponseAction(symbol, requestType);
+
+      _axios2.default.all(requests).then(_axios2.default.spread(responseAction)).catch(function (error) {
+        return console.log(error);
+      }).finally(function () {
+        if (requestType === 'P') {
+          _this2.renderGraph();
+        } else if (requestType === 'PSN') {
+          _this2.renderGraph();
+          _this2.renderKeyStats();
+          _this2.renderNews();
+        }
+      });
+    }
+
+    // RENDER NEWS
+
+  }, {
+    key: 'renderNews',
+    value: function renderNews() {
+      var _this3 = this;
+
+      if (_store2.default.get(this.symbol + '-news') !== null) {
+        var data = _store2.default.get(this.symbol + '-news');
+
+        var newsArticles = data.map(function (item) {
+          var headline = item.headline;
+          headline = _this3.trimString(headline, 120);
+          var summary = item.summary;
+          summary = _this3.trimString(summary, 160);
+          var url = item.url;
+
+          return '\n          <article class="watchlist-news-article">\n            <a href="' + url + '">\n              <h2>' + headline + '</h2>\n              <p>' + summary + '</p>\n            </a<\n          </article>\n        ';
         });
-      } else if (requestType === 'P') {
-        (0, _axios2.default)({
-          method: 'get',
-          url: 'https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval,
-          params: {
-            token: 'pk_a12f90684f2a44f180bcaeb4eff4086d'
-          },
-          responseType: 'json'
-        }).then(function (prices) {
-          _store2.default.set(symbol + '-' + _this.interval, prices.data);
-        }).catch(function (error) {
-          return console.log(error);
-        }).finally(function () {
-          _this.renderGraph();
-        });
+
+        this.$newsContainer.empty();
+        this.$newsContainer.append('<h2 class="text-header">Latest News</h2>');
+        this.$newsContainer.append(newsArticles);
       }
+    }
+  }, {
+    key: 'trimString',
+    value: function trimString(string, length) {
+      return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
     }
 
     // RENDER GRAPH
@@ -30607,26 +30648,6 @@ var Watchlist = function () {
         }
         this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
       }
-    }
-
-    // FORMATE LARGE NUMBERS
-
-  }, {
-    key: 'formatLargeNumber',
-    value: function formatLargeNumber(num) {
-      return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-      // Six Zeroes for Millions 
-      : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-      // Three Zeroes for Thousands
-      : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-    }
-
-    // Insert commas into numbers
-
-  }, {
-    key: 'formatNumberWithCommas',
-    value: function formatNumberWithCommas(num) {
-      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     // RENDER KEY STATISTICS
@@ -30652,6 +30673,26 @@ var Watchlist = function () {
       }
     }
 
+    // FORMATE LARGE NUMBERS
+
+  }, {
+    key: 'formatLargeNumber',
+    value: function formatLargeNumber(num) {
+      return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+      // Six Zeroes for Millions 
+      : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+      // Three Zeroes for Thousands
+      : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+    }
+
+    // Insert commas into numbers
+
+  }, {
+    key: 'formatNumberWithCommas',
+    value: function formatNumberWithCommas(num) {
+      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
 
   }, {
@@ -30666,7 +30707,7 @@ var Watchlist = function () {
         this.renderStockName(name);
 
         // make Ajax call to get data for company
-        this.fetchStockData(this.symbol, 'PS');
+        this.fetchStockData(this.symbol, 'PSN');
       }
       // If watchlist is empty, render button with link to stocks page
       else {
@@ -30697,7 +30738,7 @@ var Watchlist = function () {
 
         // render name and graph for watchlist item
         that.renderStockName(name);
-        that.fetchStockData(that.symbol, 'PS');
+        that.fetchStockData(that.symbol, 'PSN');
       });
     }
 
