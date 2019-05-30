@@ -30461,6 +30461,8 @@ var _graph2 = _interopRequireDefault(_graph);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Watchlist = function () {
@@ -30532,10 +30534,7 @@ var Watchlist = function () {
         var selectedInterval = this.value;
         that.interval = selectedInterval; // set this.interval
 
-        // P = Prices
-        // S = Stats
-        // N = News
-        that.fetchStockData(that.symbol, 'P');
+        that.fetchStockData(that.symbol, 'prices');
       });
     }
 
@@ -30544,35 +30543,63 @@ var Watchlist = function () {
   }, {
     key: 'formatAjaxRequest',
     value: function formatAjaxRequest(symbol, requestType) {
-      // request data for prices
-      if (requestType === 'P') {
+      // request data only for historical prices to update graph
+      if (requestType === 'prices') {
         return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
       }
-      // request data for prices, stats, and news
-      else if (requestType === 'PSN') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/3?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+      // request all data for this stock
+      else if (requestType === 'allData') {
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/5?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         }
     }
 
-    // FORMAT RESPONSE ACTION BASED ON NEEDED DATA
+    // FORMAT HOW TO STORE DATA BASED ON NEEDED DATA
 
   }, {
     key: 'formatAjaxResponseAction',
     value: function formatAjaxResponseAction(symbol, requestType) {
       var _this = this;
 
-      if (requestType === 'P') {
-        return function (prices) {
-          _store2.default.set(symbol + '-' + _this.interval, prices.data);
-        };
-      } else if (requestType === 'PSN') {
-        return function (prices, stats, news) {
-          console.log(news);
-          _store2.default.set(symbol + '-' + _this.interval, prices.data);
-          _store2.default.set(symbol + '-stats', stats.data);
-          _store2.default.set(symbol + '-news', news.data);
+      // store historical prices
+      if (requestType === 'prices') {
+        return function (historicalPrices) {
+          var storedData = _store2.default.get(symbol);
+
+          // if data for selected interval does not exist in localStorage
+          if (!(_this.interval in storedData.historicalPrices)) {
+            storedData.historicalPrices[_this.interval] = historicalPrices.data;
+            _store2.default.set(symbol, storedData);
+          }
         };
       }
+      // store all data for the stock
+      else if (requestType === 'allData') {
+          return function (currentPrice, historicalPrices, stats, news, quote) {
+            // if stored data exists
+            if (_store2.default.get(symbol) !== null) {
+              var storedData = _store2.default.get(symbol);
+
+              // if data for selected interval does not exist in localStorage
+              // then add data for selected interval into localStorage
+              if (!(_this.interval in storedData.historicalPrices)) {
+                storedData.historicalPrices[_this.interval] = historicalPrices.data;
+                _store2.default.set(symbol, storedData);
+              }
+            }
+            // otherwise create data object and store in localStorage
+            else {
+                var dataToStore = {
+                  currentPrice: currentPrice.data,
+                  historicalPrices: _defineProperty({}, _this.interval, historicalPrices.data),
+                  keyStats: stats.data,
+                  news: news.data,
+                  quote: quote
+                };
+
+                _store2.default.set(symbol, dataToStore);
+              }
+          };
+        }
     }
 
     // GET DATA FOR COMPANY
@@ -30588,12 +30615,47 @@ var Watchlist = function () {
       _axios2.default.all(requests).then(_axios2.default.spread(responseAction)).catch(function (error) {
         return console.log(error);
       }).finally(function () {
-        if (requestType === 'P') {
+        if (requestType === 'prices') {
           _this2.renderGraph();
-        } else if (requestType === 'PSN') {
+        } else if (requestType === 'allData') {
           _this2.renderGraph();
           _this2.renderKeyStats();
           _this2.renderNews();
+        }
+      });
+    }
+
+    // ACTIVATE EVENT LISTENERS FOR WATCHLIST
+
+  }, {
+    key: 'activateEventListeners',
+    value: function activateEventListeners() {
+      var that = this;
+
+      // Display graph & data for watchlist item
+      this.$watchlist.on('click', 'button', function (event) {
+        event.preventDefault();
+
+        var clickedEl = (0, _jquery2.default)(this).parent();
+        var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
+        var symbol = this.id;
+        that.symbol = symbol;
+        var name = (0, _jquery2.default)(this).find('.watchlist-item-name').text();
+
+        // Add active class to clicked watchlist item
+        watchlistItems.removeClass('active');
+        clickedEl.addClass('active');
+
+        // render name and graph for watchlist item
+        that.renderStockName(name);
+
+        // if stored data exists
+        if (_store2.default.get(that.symbol) !== null) {
+          that.renderGraph();
+          that.renderKeyStats();
+          that.renderNews();
+        } else {
+          that.fetchStockData(that.symbol, 'allData');
         }
       });
     }
@@ -30605,10 +30667,10 @@ var Watchlist = function () {
     value: function renderNews() {
       var _this3 = this;
 
-      if (_store2.default.get(this.symbol + '-news') !== null) {
-        var data = _store2.default.get(this.symbol + '-news');
+      if (_store2.default.get(this.symbol).news !== null) {
+        var news = _store2.default.get(this.symbol).news;
 
-        var newsArticles = data.map(function (item) {
+        var newsArticles = news.map(function (item) {
           var headline = item.headline;
           headline = _this3.trimString(headline, 120);
           var summary = item.summary;
@@ -30623,24 +30685,20 @@ var Watchlist = function () {
         this.$newsContainer.append(newsArticles);
       }
     }
-  }, {
-    key: 'trimString',
-    value: function trimString(string, length) {
-      return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-    }
 
     // RENDER GRAPH
 
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
-      // check if historical prices for the company exists in localStorage
-      if (_store2.default.get(this.symbol + '-' + this.interval) !== null) {
-        var data = _store2.default.get(this.symbol + '-' + this.interval);
+      var storedData = _store2.default.get(this.symbol);
+      // if historical prices for selected interval does exist in localStorage
+      if (this.interval in storedData.historicalPrices) {
+        var _storedData = _store2.default.get(this.symbol).historicalPrices[this.interval];
         // get closing prices for stock
-        var prices = this.getSpecificCompanyData(data, 'close');
+        var prices = this.getHistoricalData(_storedData, 'close');
         // get dates for closing prices
-        var dates = this.getSpecificCompanyData(data, 'date');
+        var dates = this.getHistoricalData(_storedData, 'date');
 
         // delete graph if any exists and create new graph
         if (this.graph) {
@@ -30648,6 +30706,10 @@ var Watchlist = function () {
         }
         this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
       }
+      // if it doesn't exist, make data request
+      else {
+          this.fetchStockData(this.symbol, 'prices');
+        }
     }
 
     // RENDER KEY STATISTICS
@@ -30655,8 +30717,8 @@ var Watchlist = function () {
   }, {
     key: 'renderKeyStats',
     value: function renderKeyStats() {
-      if (_store2.default.get(this.symbol + '-stats') !== null) {
-        var stats = _store2.default.get(this.symbol + '-stats');
+      if (_store2.default.get(this.symbol).keyStats !== null) {
+        var stats = _store2.default.get(this.symbol).keyStats;
         var marketCap = stats.marketcap;
         marketCap = this.formatLargeNumber(marketCap);
         var peRatio = stats.peRatio;
@@ -30707,39 +30769,12 @@ var Watchlist = function () {
         this.renderStockName(name);
 
         // make Ajax call to get data for company
-        this.fetchStockData(this.symbol, 'PSN');
+        this.fetchStockData(this.symbol, 'allData');
       }
       // If watchlist is empty, render button with link to stocks page
       else {
           this.$watchlistContainer.append('<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>');
         }
-    }
-
-    // ACTIVATE EVENT LISTENERS FOR WATCHLIST
-
-  }, {
-    key: 'activateEventListeners',
-    value: function activateEventListeners() {
-      var that = this;
-
-      // Display graph & data for watchlist item
-      this.$watchlist.on('click', 'button', function (event) {
-        event.preventDefault();
-
-        var clickedEl = (0, _jquery2.default)(this).parent();
-        var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
-        var symbol = this.id;
-        that.symbol = symbol;
-        var name = (0, _jquery2.default)(this).find('.watchlist-item-name').text();
-
-        // Add active class to clicked watchlist item
-        watchlistItems.removeClass('active');
-        clickedEl.addClass('active');
-
-        // render name and graph for watchlist item
-        that.renderStockName(name);
-        that.fetchStockData(that.symbol, 'PSN');
-      });
     }
 
     // RENDER STOCK NAME
@@ -30754,21 +30789,20 @@ var Watchlist = function () {
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
-    key: 'getSpecificCompanyData',
-    value: function getSpecificCompanyData(data, hey) {
+    key: 'getHistoricalData',
+    value: function getHistoricalData(data, key) {
+      // console.log(data);
       return data.map(function (day) {
-        return day[hey];
+        return day[key];
       });
     }
 
-    //
+    // TRIM STRINGS TO SPECIFIED LENGTH
 
   }, {
-    key: 'destroy',
-    value: function destroy() {
-      if (this.$watchlistCanvas) {
-        this.$container.empty();
-      }
+    key: 'trimString',
+    value: function trimString(string, length) {
+      return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
     }
   }]);
 

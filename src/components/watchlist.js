@@ -112,47 +112,75 @@ class Watchlist {
       const selectedInterval = this.value;
       that.interval = selectedInterval; // set this.interval
 
-      // P = Prices
-      // S = Stats
-      // N = News
-      that.fetchStockData(that.symbol, 'P');
+      that.fetchStockData(that.symbol, 'prices');
     })
   }
 
 
   // FORMAT AJAX REQUEST BASED ON NEEDED DATA
   formatAjaxRequest(symbol, requestType) {
-    // request data for prices
-    if (requestType === 'P') {
+    // request data only for historical prices to update graph
+    if (requestType === 'prices') {
       return[
         axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
       ];
 
     }
-    // request data for prices, stats, and news
-    else if (requestType === 'PSN') {
+    // request all data for this stock
+    else if (requestType === 'allData') {
       return [
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/news/last/3?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/news/last/5?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+        axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
       ]
     }
   }
 
 
-  // FORMAT RESPONSE ACTION BASED ON NEEDED DATA
+  // FORMAT HOW TO STORE DATA BASED ON NEEDED DATA
   formatAjaxResponseAction(symbol, requestType) {
-    if (requestType === 'P') {
-      return (prices) => {
-        store.set(`${symbol}-${this.interval}`, prices.data);
+    // store historical prices
+    if (requestType === 'prices') {
+      return (historicalPrices) => {
+        const storedData = store.get(symbol);
+
+        // if data for selected interval does not exist in localStorage
+        if (!(this.interval in storedData.historicalPrices)) {
+          storedData.historicalPrices[this.interval] = historicalPrices.data;
+          store.set(symbol, storedData);
+        }
       }
     }
-    else if (requestType === 'PSN') {
-      return (prices, stats, news) => {
-        console.log(news);
-        store.set(`${symbol}-${this.interval}`, prices.data);
-        store.set(`${symbol}-stats`, stats.data);
-        store.set(`${symbol}-news`, news.data);
+    // store all data for the stock
+    else if (requestType === 'allData') {
+      return (currentPrice, historicalPrices, stats, news, quote) => {
+        // if stored data exists
+        if (store.get(symbol) !== null) {
+          const storedData = store.get(symbol);
+
+          // if data for selected interval does not exist in localStorage
+          // then add data for selected interval into localStorage
+          if (!(this.interval in storedData.historicalPrices)) {
+            storedData.historicalPrices[this.interval] = historicalPrices.data;
+            store.set(symbol, storedData);
+          }
+        }
+        // otherwise create data object and store in localStorage
+        else {
+          const dataToStore = {
+            currentPrice: currentPrice.data,
+            historicalPrices: {
+              [this.interval]: historicalPrices.data,
+            },
+            keyStats: stats.data,
+            news: news.data,
+            quote: quote
+          }
+  
+          store.set(symbol, dataToStore);
+        }
       }
     }
   }
@@ -167,10 +195,10 @@ class Watchlist {
     .then(axios.spread(responseAction))
     .catch(error => console.log(error))
     .finally(() => {
-      if (requestType === 'P') {
+      if (requestType === 'prices') {
         this.renderGraph();
       }
-      else if (requestType === 'PSN') {
+      else if (requestType === 'allData') {
         this.renderGraph();
         this.renderKeyStats();
         this.renderNews();
@@ -179,12 +207,45 @@ class Watchlist {
   }
 
 
+  // ACTIVATE EVENT LISTENERS FOR WATCHLIST
+  activateEventListeners() {
+    const that = this;
+
+    // Display graph & data for watchlist item
+    this.$watchlist.on('click', 'button', function(event) {
+      event.preventDefault();
+
+      const clickedEl = $(this).parent();
+      const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
+      const symbol = this.id;
+      that.symbol = symbol;
+      const name = $(this).find('.watchlist-item-name').text();
+
+      // Add active class to clicked watchlist item
+      watchlistItems.removeClass('active');
+      clickedEl.addClass('active');
+
+      // render name and graph for watchlist item
+      that.renderStockName(name);
+
+      // if stored data exists
+      if (store.get(that.symbol) !== null) {
+        that.renderGraph();
+        that.renderKeyStats();
+        that.renderNews();
+      } else {
+        that.fetchStockData(that.symbol, 'allData');
+      }
+    });
+  }
+
+
   // RENDER NEWS
   renderNews() {
-    if (store.get(`${this.symbol}-news`) !== null) {
-      const data = store.get(`${this.symbol}-news`);
+    if (store.get(this.symbol).news !== null) {
+      const news = store.get(this.symbol).news;
       
-      const newsArticles = data.map((item) => {
+      const newsArticles = news.map((item) => {
         let headline = item.headline;
         headline = this.trimString(headline, 120);
         let summary = item.summary;
@@ -199,7 +260,7 @@ class Watchlist {
             </a<
           </article>
         `
-      })
+      });
 
       this.$newsContainer.empty();
       this.$newsContainer.append(`<h2 class="text-header">Latest News</h2>`);
@@ -208,20 +269,16 @@ class Watchlist {
   }
 
 
-  trimString(string, length) {
-    return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-  }
-
-
   // RENDER GRAPH
   renderGraph() {
-    // check if historical prices for the company exists in localStorage
-    if (store.get(`${this.symbol}-${this.interval}`) !== null) {
-      const data = store.get(`${this.symbol}-${this.interval}`);
+    const storedData = store.get(this.symbol);
+    // if historical prices for selected interval does exist in localStorage
+    if (this.interval in storedData.historicalPrices) {
+      const storedData = store.get(this.symbol).historicalPrices[this.interval];
       // get closing prices for stock
-      const prices = this.getSpecificCompanyData(data, 'close');
+      const prices = this.getHistoricalData(storedData, 'close');
       // get dates for closing prices
-      const dates = this.getSpecificCompanyData(data, 'date');
+      const dates = this.getHistoricalData(storedData, 'date');
       
       // delete graph if any exists and create new graph
       if (this.graph) {
@@ -229,13 +286,17 @@ class Watchlist {
       }
       this.graph = new Graph(this.$watchlistChart, prices, dates);
     }
+    // if it doesn't exist, make data request
+    else {
+      this.fetchStockData(this.symbol, 'prices');
+    }
   }
 
 
   // RENDER KEY STATISTICS
   renderKeyStats() {
-    if (store.get(`${this.symbol}-stats`) !== null) {
-      const stats = store.get(`${this.symbol}-stats`);
+    if (store.get(this.symbol).keyStats !== null) {
+      const stats = store.get(this.symbol).keyStats;
       let marketCap = stats.marketcap;
       marketCap = this.formatLargeNumber(marketCap);
       const peRatio = stats.peRatio;
@@ -309,37 +370,12 @@ class Watchlist {
       this.renderStockName(name);
       
       // make Ajax call to get data for company
-      this.fetchStockData(this.symbol, 'PSN');
+      this.fetchStockData(this.symbol, 'allData');
     }
     // If watchlist is empty, render button with link to stocks page
     else {
       this.$watchlistContainer.append(`<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>`);
     }
-  }
-
-
-  // ACTIVATE EVENT LISTENERS FOR WATCHLIST
-  activateEventListeners() {
-    const that = this;
-
-    // Display graph & data for watchlist item
-    this.$watchlist.on('click', 'button', function(event) {
-      event.preventDefault();
-
-      const clickedEl = $(this).parent();
-      const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
-      const symbol = this.id;
-      that.symbol = symbol;
-      const name = $(this).find('.watchlist-item-name').text();
-
-      // Add active class to clicked watchlist item
-      watchlistItems.removeClass('active');
-      clickedEl.addClass('active');
-
-      // render name and graph for watchlist item
-      that.renderStockName(name);
-      that.fetchStockData(that.symbol, 'PSN');
-    });
   }
 
 
@@ -351,18 +387,16 @@ class Watchlist {
 
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getSpecificCompanyData(data, hey) {
+  getHistoricalData(data, key) {
+    // console.log(data);
     return data.map((day) => {
-      return day[hey];
+      return day[key];
     });
   }
 
-
-  //
-  destroy() {
-    if (this.$watchlistCanvas) {
-      this.$container.empty();
-    }
+  // TRIM STRINGS TO SPECIFIED LENGTH
+  trimString(string, length) {
+    return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
   }
 }
 
