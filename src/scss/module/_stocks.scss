@@ -1,9 +1,9 @@
 .stocks-container {
-  background: $white;
+  background: $colorDark-dark;
+  border-radius: 10px;
   padding: 30px 60px;
   padding: 24px;
   position: absolute;
-  border-radius: 2px;
   overflow: auto;
   bottom: 24px;
   box-sizing: border-box;
@@ -13,6 +13,7 @@
   width: 620px;
 
   h3 {
+    color: $white;
     font-family: $font-primary;
     font-size: 18px;
     font-weight: 300;
@@ -31,7 +32,7 @@
   }
 
   button {
-    background-color: $white;
+    background: $colorDark-dark;
     border: none;
     display: block;
     height: 36px;
@@ -52,7 +53,7 @@
   }
 
   .stock-code {
-    color: $blue-600;
+    color: $colorDark-accent;
     display: block;
     float: left;
     font-family: $font-primary;
@@ -63,7 +64,7 @@
   }
 
   .stock-name {
-    color: rgba($black, .4);
+    color: rgba($white, .8);
     display: block;
     float: left;
     font-family: $font-primary;

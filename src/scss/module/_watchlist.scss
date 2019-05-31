@@ -46,8 +46,8 @@
   background-color: $colorDark-light;
   border: none;
   box-sizing: border-box;
-  display: block;
   color: $colorDark-accent;
+  display: block;
   font-size: .9rem;
   font-weight: 700;
   height: 32px;
@@ -79,6 +79,37 @@
 
   > div {
     flex: 1;
+  }
+}
+
+#watchlist-news-container {
+  max-height: 400px;
+  overflow: auto;
+}
+
+.watchlist-chart-stock-container {
+  display: flex;
+}
+
+.watchlist-chart-name-container {
+  border-right: 1px solid rgba($white,.1);
+  padding-right: 2rem;
+}
+
+#watchlist-current-price {
+  color: $colorDark-accent;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding-left: 2rem;
+
+  h2 {
+    margin-bottom: .1rem;
+  }
+
+  h3 {
+    color: rgba($white,.8);
+    font-size: .8rem;
+    font-weight: 300;
   }
 }
 

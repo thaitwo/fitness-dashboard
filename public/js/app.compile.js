@@ -30471,7 +30471,7 @@ var Watchlist = function () {
 
     this.$container = container;
     this.graph;
-    this.symbol;
+    this.symbol = _store2.default.get('watchlist')[0].symbol || '';
     this.interval = '1m';
     this.watchlist = _store2.default.get('watchlist') || [];
 
@@ -30486,6 +30486,7 @@ var Watchlist = function () {
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
+    this.$currentPrice = this.$watchlistCanvas.find('#watchlist-current-price');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -30499,7 +30500,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <h2 id="watchlist-stock-name"></h2>\n                  <h3 id="watchlist-stock-symbol"></h3>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight">\n                \n              </div>\n              <div id="watchlist-news-container" class="box">\n                \n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <div class="watchlist-chart-name-container">\n                    <h2 id="watchlist-stock-name"></h2>\n                    <h3 id="watchlist-stock-symbol"></h3>\n                  </div>\n                  <div id="watchlist-current-price"></div>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -30534,7 +30535,7 @@ var Watchlist = function () {
         var selectedInterval = this.value;
         that.interval = selectedInterval; // set this.interval
 
-        that.fetchStockData(that.symbol, 'prices');
+        that.fetchStockData('prices');
       });
     }
 
@@ -30542,14 +30543,16 @@ var Watchlist = function () {
 
   }, {
     key: 'formatAjaxRequest',
-    value: function formatAjaxRequest(symbol, requestType) {
+    value: function formatAjaxRequest(requestType) {
       // request data only for historical prices to update graph
       if (requestType === 'prices') {
-        return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+        return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
       }
       // request all data for this stock
       else if (requestType === 'allData') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/5?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+        } else if (requestType === 'currentPrice') {
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         }
     }
 
@@ -30557,18 +30560,18 @@ var Watchlist = function () {
 
   }, {
     key: 'formatAjaxResponseAction',
-    value: function formatAjaxResponseAction(symbol, requestType) {
+    value: function formatAjaxResponseAction(requestType) {
       var _this = this;
 
       // store historical prices
       if (requestType === 'prices') {
         return function (historicalPrices) {
-          var storedData = _store2.default.get(symbol);
+          var storedData = _store2.default.get(_this.symbol);
 
           // if data for selected interval does not exist in localStorage
           if (!(_this.interval in storedData.historicalPrices)) {
             storedData.historicalPrices[_this.interval] = historicalPrices.data;
-            _store2.default.set(symbol, storedData);
+            _store2.default.set(_this.symbol, storedData);
           }
         };
       }
@@ -30576,41 +30579,42 @@ var Watchlist = function () {
       else if (requestType === 'allData') {
           return function (currentPrice, historicalPrices, stats, news, quote) {
             // if stored data exists
-            if (_store2.default.get(symbol) !== null) {
-              var storedData = _store2.default.get(symbol);
+            if (_store2.default.get(_this.symbol) !== null) {
+              var storedData = _store2.default.get(_this.symbol);
 
               // if data for selected interval does not exist in localStorage
               // then add data for selected interval into localStorage
               if (!(_this.interval in storedData.historicalPrices)) {
                 storedData.historicalPrices[_this.interval] = historicalPrices.data;
-                _store2.default.set(symbol, storedData);
+                _store2.default.set(_this.symbol, storedData);
               }
             }
             // otherwise create data object and store in localStorage
             else {
                 var dataToStore = {
-                  currentPrice: currentPrice.data,
                   historicalPrices: _defineProperty({}, _this.interval, historicalPrices.data),
                   keyStats: stats.data,
                   news: news.data,
-                  quote: quote
+                  quote: quote,
+                  time: Date.now()
                 };
 
-                _store2.default.set(symbol, dataToStore);
+                _store2.default.set(_this.symbol, dataToStore);
+                _this.renderStockHeader(currentPrice.data);
               }
           };
-        }
+        } else if (requestType === 'currentPrice') {}
     }
 
     // GET DATA FOR COMPANY
 
   }, {
     key: 'fetchStockData',
-    value: function fetchStockData(symbol, requestType) {
+    value: function fetchStockData(requestType) {
       var _this2 = this;
 
-      var requests = this.formatAjaxRequest(symbol, requestType);
-      var responseAction = this.formatAjaxResponseAction(symbol, requestType);
+      var requests = this.formatAjaxRequest(requestType);
+      var responseAction = this.formatAjaxResponseAction(requestType);
 
       _axios2.default.all(requests).then(_axios2.default.spread(responseAction)).catch(function (error) {
         return console.log(error);
@@ -30618,11 +30622,23 @@ var Watchlist = function () {
         if (requestType === 'prices') {
           _this2.renderGraph();
         } else if (requestType === 'allData') {
+          // this.renderStockHeader();
           _this2.renderGraph();
           _this2.renderKeyStats();
           _this2.renderNews();
         }
       });
+    }
+  }, {
+    key: 'renderStockHeader',
+    value: function renderStockHeader(currentPrice) {
+      // let marketCap = store.get(this.symbol).keyStats.marketcap;
+      // marketCap = this.formatLargeNumber(marketCap);
+
+      var html = '\n      <h2>' + currentPrice + '</2>\n      <h3>Current Price</h3>\n    ';
+
+      this.$currentPrice.empty();
+      this.$currentPrice.append(html);
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
@@ -30635,6 +30651,10 @@ var Watchlist = function () {
       // Display graph & data for watchlist item
       this.$watchlist.on('click', 'button', function (event) {
         event.preventDefault();
+        var oneDay = 60 * 60 * 24 * 1000;
+        var newTime = Date.now();
+        var oldTime = _store2.default.get(that.symbol).time;
+        var isMoreThanOneDay = newTime - oldTime > oneDay;
 
         var clickedEl = (0, _jquery2.default)(this).parent();
         var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
@@ -30651,11 +30671,12 @@ var Watchlist = function () {
 
         // if stored data exists
         if (_store2.default.get(that.symbol) !== null) {
+          that.renderStockHeader();
           that.renderGraph();
           that.renderKeyStats();
           that.renderNews();
         } else {
-          that.fetchStockData(that.symbol, 'allData');
+          that.fetchStockData('allData');
         }
       });
     }
@@ -30708,7 +30729,7 @@ var Watchlist = function () {
       }
       // if it doesn't exist, make data request
       else {
-          this.fetchStockData(this.symbol, 'prices');
+          this.fetchStockData('prices');
         }
     }
 
@@ -30762,14 +30783,12 @@ var Watchlist = function () {
     value: function renderDataForFirstStock() {
       // if watchlist has at least one item, render item(s)
       if (this.watchlist.length > 0) {
-        var symbol = this.watchlist[0].symbol;
         var name = this.watchlist[0].name;
-        this.symbol = symbol;
 
         this.renderStockName(name);
 
         // make Ajax call to get data for company
-        this.fetchStockData(this.symbol, 'allData');
+        this.fetchStockData('allData');
       }
       // If watchlist is empty, render button with link to stocks page
       else {
@@ -30803,6 +30822,16 @@ var Watchlist = function () {
     key: 'trimString',
     value: function trimString(string, length) {
       return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+    }
+
+    // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      if (this.$watchlistCanvas) {
+        this.$container.empty();
+      }
     }
   }]);
 

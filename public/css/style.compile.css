@@ -324,11 +324,11 @@ body {
   float: right; }
 
 .stocks-container {
-  background: #FFFFFF;
+  background: #151C40;
+  border-radius: 10px;
   padding: 30px 60px;
   padding: 24px;
   position: absolute;
-  border-radius: 2px;
   overflow: auto;
   bottom: 24px;
   box-sizing: border-box;
@@ -337,6 +337,7 @@ body {
   right: 24px;
   width: 620px; }
   .stocks-container h3 {
+    color: #FFFFFF;
     font-family: "Mukta", sans-serif;
     font-size: 18px;
     font-weight: 300;
@@ -349,7 +350,7 @@ body {
   border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
 
 .stocks-list button {
-  background-color: #FFFFFF;
+  background: #151C40;
   border: none;
   display: block;
   height: 36px;
@@ -365,7 +366,7 @@ body {
       color: rgba(0, 0, 0, 0.8); }
 
 .stocks-list .stock-code {
-  color: #1E88E5;
+  color: #F9A825;
   display: block;
   float: left;
   font-family: "Mukta", sans-serif;
@@ -375,7 +376,7 @@ body {
   width: 72px; }
 
 .stocks-list .stock-name {
-  color: rgba(0, 0, 0, 0.4);
+  color: rgba(255, 255, 255, 0.8);
   display: block;
   float: left;
   font-family: "Mukta", sans-serif;
@@ -528,8 +529,8 @@ body {
   background-color: #2B3152;
   border: none;
   box-sizing: border-box;
-  display: block;
   color: #F9A825;
+  display: block;
   font-size: .9rem;
   font-weight: 700;
   height: 32px;
@@ -555,6 +556,29 @@ body {
   justify-content: space-between; }
   #watchlist-summary-container > div {
     flex: 1; }
+
+#watchlist-news-container {
+  max-height: 400px;
+  overflow: auto; }
+
+.watchlist-chart-stock-container {
+  display: flex; }
+
+.watchlist-chart-name-container {
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  padding-right: 2rem; }
+
+#watchlist-current-price {
+  color: #F9A825;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding-left: 2rem; }
+  #watchlist-current-price h2 {
+    margin-bottom: .1rem; }
+  #watchlist-current-price h3 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: .8rem;
+    font-weight: 300; }
 
 .watchlist-news-article {
   margin-bottom: 1.3rem; }
