@@ -167,16 +167,20 @@ class Watchlist {
 
           // if data for selected interval does not exist in localStorage
           // then add data for selected interval into localStorage
+          // case: the current selected interval is 6M for stock1
+          // when we click on stock2, we need to check if data for 6M
+          // exists in localStorage
           if (!(this.interval in storedData.historicalPrices)) {
             storedData.historicalPrices[this.interval] = historicalPrices.data;
             store.set(this.symbol, storedData);
           }
+          this.renderStockHeader(currentPrice.data);
         }
         // otherwise create data object and store in localStorage
         else {
           const dataToStore = {
             historicalPrices: {
-              [this.interval]: historicalPrices.data,
+              [this.interval]: historicalPrices.data, // this.interval will be set to the selected interval
             },
             keyStats: stats.data,
             news: news.data,
@@ -189,7 +193,9 @@ class Watchlist {
         }
       }
     } else if (requestType === 'currentPrice') {
-
+      return (currentPrice) => {
+        this.renderStockHeader(currentPrice.data);
+      }
     }
   }
 
@@ -208,6 +214,7 @@ class Watchlist {
       }
       else if (requestType === 'allData') {
         // this.renderStockHeader();
+        // functions below don't receive data arguments bc they will retrieve data from localStorage
         this.renderGraph();
         this.renderKeyStats();
         this.renderNews();
@@ -225,8 +232,8 @@ class Watchlist {
       <h3>Current Price</h3>
     `;
 
-    this.$currentPrice.empty();
-    this.$currentPrice.append(html);
+    // this.$currentPrice.empty();
+    this.$currentPrice.html(html);
   }
 
 
@@ -255,13 +262,16 @@ class Watchlist {
       // render name and graph for watchlist item
       that.renderStockName(name);
 
-      // if stored data exists
-      if (store.get(that.symbol) !== null) {
-        that.renderStockHeader();
+      // if stored data exists and is less than 1 day old
+      if (store.get(that.symbol) !== null && !isMoreThanOneDay) {
+        that.fetchStockData('currentPrice');
         that.renderGraph();
         that.renderKeyStats();
         that.renderNews();
-      } else {
+      }
+      // clear stored data for stock and fetch new data
+      else {
+        store.remove(that.symbol);
         that.fetchStockData('allData');
       }
     });

@@ -30584,10 +30584,14 @@ var Watchlist = function () {
 
               // if data for selected interval does not exist in localStorage
               // then add data for selected interval into localStorage
+              // case: the current selected interval is 6M for stock1
+              // when we click on stock2, we need to check if data for 6M
+              // exists in localStorage
               if (!(_this.interval in storedData.historicalPrices)) {
                 storedData.historicalPrices[_this.interval] = historicalPrices.data;
                 _store2.default.set(_this.symbol, storedData);
               }
+              _this.renderStockHeader(currentPrice.data);
             }
             // otherwise create data object and store in localStorage
             else {
@@ -30603,7 +30607,11 @@ var Watchlist = function () {
                 _this.renderStockHeader(currentPrice.data);
               }
           };
-        } else if (requestType === 'currentPrice') {}
+        } else if (requestType === 'currentPrice') {
+          return function (currentPrice) {
+            _this.renderStockHeader(currentPrice.data);
+          };
+        }
     }
 
     // GET DATA FOR COMPANY
@@ -30623,6 +30631,7 @@ var Watchlist = function () {
           _this2.renderGraph();
         } else if (requestType === 'allData') {
           // this.renderStockHeader();
+          // functions below don't receive data arguments bc they will retrieve data from localStorage
           _this2.renderGraph();
           _this2.renderKeyStats();
           _this2.renderNews();
@@ -30637,8 +30646,8 @@ var Watchlist = function () {
 
       var html = '\n      <h2>' + currentPrice + '</2>\n      <h3>Current Price</h3>\n    ';
 
-      this.$currentPrice.empty();
-      this.$currentPrice.append(html);
+      // this.$currentPrice.empty();
+      this.$currentPrice.html(html);
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
@@ -30669,15 +30678,18 @@ var Watchlist = function () {
         // render name and graph for watchlist item
         that.renderStockName(name);
 
-        // if stored data exists
-        if (_store2.default.get(that.symbol) !== null) {
-          that.renderStockHeader();
+        // if stored data exists and is less than 1 day old
+        if (_store2.default.get(that.symbol) !== null && !isMoreThanOneDay) {
+          that.fetchStockData('currentPrice');
           that.renderGraph();
           that.renderKeyStats();
           that.renderNews();
-        } else {
-          that.fetchStockData('allData');
         }
+        // clear stored data for stock and fetch new data
+        else {
+            _store2.default.remove(that.symbol);
+            that.fetchStockData('allData');
+          }
       });
     }
 
