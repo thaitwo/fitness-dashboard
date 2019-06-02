@@ -244,18 +244,14 @@ class Watchlist {
     // Display graph & data for watchlist item
     this.$watchlist.on('click', 'button', function(event) {
       event.preventDefault();
-      const oneDay = 60 * 60 *24 * 1000;
-      const newTime = Date.now();
-      const oldTime = store.get(that.symbol).time;
-      const isMoreThanOneDay = (newTime - oldTime) > oneDay;
-
+      const isMoreThanOneDay = that.updateLocalStorageAge();
       const clickedEl = $(this).parent();
       const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
       const symbol = this.id;
       that.symbol = symbol;
       const name = $(this).find('.watchlist-item-name').text();
 
-      // Add active class to clicked watchlist item
+      // add active class to clicked watchlist item
       watchlistItems.removeClass('active');
       clickedEl.addClass('active');
 
@@ -275,6 +271,16 @@ class Watchlist {
         that.fetchStockData('allData');
       }
     });
+  }
+
+
+  // Calculate whether local storage for stock is more than 24 hours old
+  updateLocalStorageAge() {
+    const oneDay = 60 * 60 *24 * 1000;
+    const newTime = Date.now();
+    const oldTime = store.get(this.symbol).time;
+
+    return (newTime - oldTime) > oneDay;
   }
 
 
@@ -402,11 +408,19 @@ class Watchlist {
     // if watchlist has at least one item, render item(s)
     if (this.watchlist.length > 0) {
       const name = this.watchlist[0].name;
+      const isMoreThanOneDay = this.updateLocalStorageAge();
 
       this.renderStockName(name);
-      
-      // make Ajax call to get data for company
-      this.fetchStockData('allData');
+
+      // update localStorage with new data if data is older than 24 hours
+      if (isMoreThanOneDay) {
+        store.remove(this.symbol);
+        this.fetchStockData('allData');
+      } else {
+        // make Ajax call to get data for company
+        this.fetchStockData('allData');
+      }
+    
     }
     // If watchlist is empty, render button with link to stocks page
     else {

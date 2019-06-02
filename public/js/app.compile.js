@@ -30660,18 +30660,14 @@ var Watchlist = function () {
       // Display graph & data for watchlist item
       this.$watchlist.on('click', 'button', function (event) {
         event.preventDefault();
-        var oneDay = 60 * 60 * 24 * 1000;
-        var newTime = Date.now();
-        var oldTime = _store2.default.get(that.symbol).time;
-        var isMoreThanOneDay = newTime - oldTime > oneDay;
-
+        var isMoreThanOneDay = that.updateLocalStorageAge();
         var clickedEl = (0, _jquery2.default)(this).parent();
         var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
         var symbol = this.id;
         that.symbol = symbol;
         var name = (0, _jquery2.default)(this).find('.watchlist-item-name').text();
 
-        // Add active class to clicked watchlist item
+        // add active class to clicked watchlist item
         watchlistItems.removeClass('active');
         clickedEl.addClass('active');
 
@@ -30691,6 +30687,18 @@ var Watchlist = function () {
             that.fetchStockData('allData');
           }
       });
+    }
+
+    // Calculate whether local storage for stock is more than 24 hours old
+
+  }, {
+    key: 'updateLocalStorageAge',
+    value: function updateLocalStorageAge() {
+      var oneDay = 60 * 60 * 24 * 1000;
+      var newTime = Date.now();
+      var oldTime = _store2.default.get(this.symbol).time;
+
+      return newTime - oldTime > oneDay;
     }
 
     // RENDER NEWS
@@ -30796,11 +30804,18 @@ var Watchlist = function () {
       // if watchlist has at least one item, render item(s)
       if (this.watchlist.length > 0) {
         var name = this.watchlist[0].name;
+        var isMoreThanOneDay = this.updateLocalStorageAge();
 
         this.renderStockName(name);
 
-        // make Ajax call to get data for company
-        this.fetchStockData('allData');
+        // update localStorage with new data if data is older than 24 hours
+        if (isMoreThanOneDay) {
+          _store2.default.remove(this.symbol);
+          this.fetchStockData('allData');
+        } else {
+          // make Ajax call to get data for company
+          this.fetchStockData('allData');
+        }
       }
       // If watchlist is empty, render button with link to stocks page
       else {
