@@ -274,13 +274,17 @@ class Watchlist {
   }
 
 
-  // Calculate whether local storage for stock is more than 24 hours old
+  // Calculate whether local storage for stock is more than 12 hours old
   updateLocalStorageAge() {
-    const oneDay = 60 * 60 *24 * 1000;
+    const oneDay = 60 * 60 * 12 * 1000;
     const newTime = Date.now();
-    const oldTime = store.get(this.symbol).time;
-
-    return (newTime - oldTime) > oneDay;
+    let oldTime;
+    if (store.get(this.symbol !== null)) {
+      oldTime = store.get(this.symbol).time;
+      return (newTime - oldTime) > oneDay;
+    } else {
+      return false;
+    }
   }
 
 
@@ -298,7 +302,7 @@ class Watchlist {
 
         return `
           <article class="watchlist-news-article">
-            <a href="${url}">
+            <a href="${url}" target="_blank">
               <h2>${headline}</h2>
               <p>${summary}</p>
             </a<
@@ -412,7 +416,7 @@ class Watchlist {
 
       this.renderStockName(name);
 
-      // update localStorage with new data if data is older than 24 hours
+      // update localStorage with new data if data is older than 12 hours
       if (isMoreThanOneDay) {
         store.remove(this.symbol);
         this.fetchStockData('allData');

@@ -29891,6 +29891,10 @@ var _store = __webpack_require__(4);
 
 var _store2 = _interopRequireDefault(_store);
 
+var _axios = __webpack_require__(142);
+
+var _axios2 = _interopRequireDefault(_axios);
+
 var _graph = __webpack_require__(10);
 
 var _graph2 = _interopRequireDefault(_graph);
@@ -29907,14 +29911,14 @@ var StockPopUp = function () {
   function StockPopUp(companyId, companyName) {
     _classCallCheck(this, StockPopUp);
 
-    this.companyId = companyId;
+    this.symbol = companyId;
     this.companyName = companyName;
     this.$mainContainer = (0, _jquery2.default)('.main-container');
     this.graph;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = _store2.default.get('watchlist') || [];
     // CHECK IF WATCHLIST HAS THIS STOCK
-    this.hasStock = this.watchlist.includes(this.companyId + ' | ' + this.companyName);
+    this.hasStock = this.watchlist.includes(this.symbol + ' | ' + this.companyName);
 
     this.render();
 
@@ -30030,7 +30034,7 @@ var StockPopUp = function () {
 
       // if stock exist in local storage, show 'watchlist add/remove' button
       // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
-      if (_store2.default.has(this.companyId)) {
+      if (_store2.default.has(this.symbol)) {
         this.$watchlistButton.removeClass('is-hidden');
       }
     }
@@ -30042,7 +30046,7 @@ var StockPopUp = function () {
     value: function getStockData() {
 
       // check if there's locally stored data before making Ajax request
-      if (_store2.default.get('' + this.companyId)) {
+      if (_store2.default.get('' + this.symbol)) {
         this.renderStockInfo();
         this.renderGraph();
         this.$exitIcon.removeClass('is-hidden');
@@ -30062,33 +30066,30 @@ var StockPopUp = function () {
       this.$loadingIcon.addClass('is-visible');
 
       // request stock data
-      _jquery2.default.ajax({
-        url: 'https://www.quandl.com/api/v3/datasets/WIKI/' + this.companyId + '/data.json?api_key=tskzGKweRxWgnbX2pafZ',
-        dataType: 'json',
-        error: function error(xhr, message, _error) {
-          console.log(message, _error);
-        },
-        success: function success(data) {
-          // store company data
-          _store2.default.set('' + _this.companyId, data);
+      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (historicalPrices, quote) {
+        // store company data
+        var dataToStore = {
+          historicalPrices: historicalPrices.data,
+          quote: quote.data
+        };
+        _store2.default.set('POP-' + _this.symbol, dataToStore);
+      })).catch(function (error) {
+        console.log(error);
+      }).finally(function () {
+        // render stock info
+        _this.renderStockInfo();
 
-          // render stock info
-          _this.renderStockInfo();
+        // render graph
+        _this.renderGraph();
 
-          // render graph
-          _this.renderGraph();
-        },
-        complete: function complete() {
-          // remove loading icon
-          _this.$loadingIcon.removeClass('is-visible');
+        // remove loading icon
+        _this.$loadingIcon.removeClass('is-visible');
 
-          // show watchlist add/remove button
-          _this.showButton(_this.$watchlistButton);
+        // show watchlist add/remove button
+        _this.showButton(_this.$watchlistButton);
 
-          // display exit icon
-          _this.showButton(_this.$exitIcon);
-          // this.$exitIcon.removeClass('is-hidden');
-        }
+        // display exit icon
+        _this.showButton(_this.$exitIcon);
       });
     }
 
@@ -30097,15 +30098,16 @@ var StockPopUp = function () {
   }, {
     key: 'renderStockInfo',
     value: function renderStockInfo() {
-      var stockData = _store2.default.get('' + this.companyId);
-      var details = stockData.dataset_data.data[0];
+      var stockData = _store2.default.get('POP-' + this.symbol);
+      console.log(stockData);
+      // let details = stockData.dataset_data.data[0];
 
       // get stock info from local storage
-      var closePrice = details[4];
-      var openPrice = details[1];
-      var low = details[3];
-      var high = details[2];
-      var volume = details[5];
+      var closePrice = stockData.quote.close;
+      var openPrice = stockData.quote.open;
+      var low = stockData.quote.low;
+      var high = stockData.quote.high;
+      var volume = stockData.quote.latestVolume;
 
       // render stock name
       this.$stockName.text(this.companyName);
@@ -30119,13 +30121,13 @@ var StockPopUp = function () {
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
-      var stockData = _store2.default.get('' + this.companyId);
+      var stockData = _store2.default.get('POP-' + this.symbol).historicalPrices;
 
       // get opening prices for company stock
-      var priceData = this.getSpecificCompanyData(stockData, 1);
+      var priceData = this.getHistoricalData(stockData, 'close');
 
       // get dates for the opening prices
-      var dateLabels = this.getSpecificCompanyData(stockData, 0);
+      var dateLabels = this.getHistoricalData(stockData, 'date');
 
       // create new graph for this company stock
       this.graph = new _graph2.default(this.$chartContainer, priceData, dateLabels);
@@ -30134,11 +30136,12 @@ var StockPopUp = function () {
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
-    key: 'getSpecificCompanyData',
-    value: function getSpecificCompanyData(data, num) {
-      return data.dataset_data.data.slice(0, 30).map(function (day) {
-        return day[num];
-      }).reverse();
+    key: 'getHistoricalData',
+    value: function getHistoricalData(data, key) {
+      // console.log(data);
+      return data.map(function (day) {
+        return day[key];
+      });
     }
 
     // SHOW WATCHLIST ADD/REMOVE BUTTON
@@ -30179,6 +30182,10 @@ var _lodash2 = _interopRequireDefault(_lodash);
 var _store = __webpack_require__(4);
 
 var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(142);
+
+var _axios2 = _interopRequireDefault(_axios);
 
 var _stockPopup = __webpack_require__(162);
 
@@ -30260,34 +30267,39 @@ var Stocks = function () {
       // display loading icon
       this.$loadingIcon.addClass('is-visible');
 
-      _jquery2.default.ajax({
+      (0, _axios2.default)({
         // Below is what entire URL would look like:
         // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
         // url: 'https://www.quandl.com/api/v3/datasets.json',
+        method: 'get',
         url: 'https://cloud.iexapis.com/v1/stock/market/collection/sector',
-        dataType: 'json',
-        data: {
-          // database_code: 'WIKI',
-          // per_page: '100',
-          // sort_by: 'id',
-          // page: `${num}`,
-          // api_key: 'tskzGKweRxWgnbX2pafZ',
+        responseType: 'json',
+        params: {
           collectionName: 'Technology',
           token: 'pk_a12f90684f2a44f180bcaeb4eff4086d'
-        },
-        error: function error(xhr, message, _error) {
-          console.log(message, _error);
-        },
-        success: function success(data) {
-          var stocks = data;
-          // store list of stocks
-          _store2.default.set('stocks' + num, stocks);
 
-          _this.renderStocks(num);
-        },
-        complete: function complete() {
-          _this.$loadingIcon.removeClass('is-visible');
-        }
+          // error: (xhr, message, error) => {
+          //   console.log(message, error);
+          // },
+          // success: (data) => {
+          //   let stocks = data;
+          //   // store list of stocks
+          //   store.set(`stocks${num}`, stocks);
+
+          //   this.renderStocks(num);
+          // },
+          // complete: () => {
+          //   this.$loadingIcon.removeClass('is-visible');
+          // }
+        } }).then(function (response) {
+        var stocks = response.data;
+        // store list of stocks
+        _store2.default.set('stocks' + num, stocks);
+        _this.renderStocks(num);
+      }).catch(function (error) {
+        console.log(error);
+      }).finally(function () {
+        _this.$loadingIcon.removeClass('is-visible');
       });
     }
 
@@ -30689,16 +30701,20 @@ var Watchlist = function () {
       });
     }
 
-    // Calculate whether local storage for stock is more than 24 hours old
+    // Calculate whether local storage for stock is more than 12 hours old
 
   }, {
     key: 'updateLocalStorageAge',
     value: function updateLocalStorageAge() {
-      var oneDay = 60 * 60 * 24 * 1000;
+      var oneDay = 60 * 60 * 12 * 1000;
       var newTime = Date.now();
-      var oldTime = _store2.default.get(this.symbol).time;
-
-      return newTime - oldTime > oneDay;
+      var oldTime = void 0;
+      if (_store2.default.get(this.symbol !== null)) {
+        oldTime = _store2.default.get(this.symbol).time;
+        return newTime - oldTime > oneDay;
+      } else {
+        return false;
+      }
     }
 
     // RENDER NEWS
@@ -30718,7 +30734,7 @@ var Watchlist = function () {
           summary = _this3.trimString(summary, 160);
           var url = item.url;
 
-          return '\n          <article class="watchlist-news-article">\n            <a href="' + url + '">\n              <h2>' + headline + '</h2>\n              <p>' + summary + '</p>\n            </a<\n          </article>\n        ';
+          return '\n          <article class="watchlist-news-article">\n            <a href="' + url + '" target="_blank">\n              <h2>' + headline + '</h2>\n              <p>' + summary + '</p>\n            </a<\n          </article>\n        ';
         });
 
         this.$newsContainer.empty();
@@ -30808,7 +30824,7 @@ var Watchlist = function () {
 
         this.renderStockName(name);
 
-        // update localStorage with new data if data is older than 24 hours
+        // update localStorage with new data if data is older than 12 hours
         if (isMoreThanOneDay) {
           _store2.default.remove(this.symbol);
           this.fetchStockData('allData');

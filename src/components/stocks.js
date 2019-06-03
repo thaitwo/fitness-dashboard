@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import _ from 'lodash';
 import store from 'store2';
+import axios from 'axios';
 import StockPopUp from './stock-popup.js';
 
 class Stocks {
@@ -70,34 +71,43 @@ class Stocks {
     // display loading icon
     this.$loadingIcon.addClass('is-visible');
 
-    $.ajax({
+    axios({
       // Below is what entire URL would look like:
       // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
       // url: 'https://www.quandl.com/api/v3/datasets.json',
+      method: 'get',
       url: 'https://cloud.iexapis.com/v1/stock/market/collection/sector',
-      dataType: 'json',
-      data: {
-        // database_code: 'WIKI',
-        // per_page: '100',
-        // sort_by: 'id',
-        // page: `${num}`,
-        // api_key: 'tskzGKweRxWgnbX2pafZ',
+      responseType: 'json',
+      params: {
         collectionName: 'Technology',
         token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
-      },
-      error: (xhr, message, error) => {
-        console.log(message, error);
-      },
-      success: (data) => {
-        let stocks = data;
-        // store list of stocks
-        store.set(`stocks${num}`, stocks);
-
-        this.renderStocks(num);
-      },
-      complete: () => {
-        this.$loadingIcon.removeClass('is-visible');
       }
+      
+      // error: (xhr, message, error) => {
+      //   console.log(message, error);
+      // },
+      // success: (data) => {
+      //   let stocks = data;
+      //   // store list of stocks
+      //   store.set(`stocks${num}`, stocks);
+
+      //   this.renderStocks(num);
+      // },
+      // complete: () => {
+      //   this.$loadingIcon.removeClass('is-visible');
+      // }
+    })
+    .then((response) => {
+      const stocks = response.data;
+      // store list of stocks
+      store.set(`stocks${num}`, stocks);
+      this.renderStocks(num);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      this.$loadingIcon.removeClass('is-visible');
     });
   }
 

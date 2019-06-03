@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import store from 'store2';
+import axios from 'axios';
 import Graph from './graph.js';
 
 // update watchlist button logic to show only after data had been loaded
@@ -8,14 +9,14 @@ import Graph from './graph.js';
 
 class StockPopUp {
   constructor(companyId, companyName) {
-    this.companyId = companyId;
+    this.symbol = companyId;
     this.companyName = companyName;
     this.$mainContainer = $('.main-container');
     this.graph;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = store.get('watchlist') || [];
     // CHECK IF WATCHLIST HAS THIS STOCK
-    this.hasStock = this.watchlist.includes(`${this.companyId} | ${this.companyName}`);
+    this.hasStock = this.watchlist.includes(`${this.symbol} | ${this.companyName}`);
 
     this.render();
 
@@ -141,7 +142,7 @@ class StockPopUp {
 
     // if stock exist in local storage, show 'watchlist add/remove' button
     // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
-    if (store.has(this.companyId)) {
+    if (store.has(this.symbol)) {
       this.$watchlistButton.removeClass('is-hidden');
     }
   }
@@ -151,7 +152,7 @@ class StockPopUp {
   getStockData() {
 
     // check if there's locally stored data before making Ajax request
-    if (store.get(`${this.companyId}`)) {
+    if (store.get(`${this.symbol}`)) {
       this.renderStockInfo();
       this.renderGraph();
       this.$exitIcon.removeClass('is-hidden');
@@ -168,48 +169,52 @@ class StockPopUp {
     this.$loadingIcon.addClass('is-visible');
 
     // request stock data
-    $.ajax({
-      url: `https://www.quandl.com/api/v3/datasets/WIKI/${this.companyId}/data.json?api_key=tskzGKweRxWgnbX2pafZ`,
-      dataType: 'json',
-      error: (xhr, message, error) => {
-        console.log(message, error);
-      },
-      success: (data) => {
-        // store company data
-        store.set(`${this.companyId}`, data);
-
-        // render stock info
-        this.renderStockInfo();
-
-        // render graph
-        this.renderGraph();
-      },
-      complete: () => {
-        // remove loading icon
-        this.$loadingIcon.removeClass('is-visible');
-
-        // show watchlist add/remove button
-        this.showButton(this.$watchlistButton);
-
-        // display exit icon
-        this.showButton(this.$exitIcon);
-        // this.$exitIcon.removeClass('is-hidden');
+    axios.all([
+      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    ])
+    .then(axios.spread((historicalPrices, quote) => {
+      // store company data
+      const dataToStore = {
+        historicalPrices: historicalPrices.data,
+        quote: quote.data
       }
+      store.set(`POP-${this.symbol}`, dataToStore);
+    }))
+    .catch((error) => {
+      console.log(error);
+    })
+    .finally(() => {
+      // render stock info
+      this.renderStockInfo();
+
+      // render graph
+      this.renderGraph();
+
+      // remove loading icon
+      this.$loadingIcon.removeClass('is-visible');
+
+      // show watchlist add/remove button
+      this.showButton(this.$watchlistButton);
+
+      // display exit icon
+      this.showButton(this.$exitIcon);
     });
   }
 
 
   // RENDER TABLE WITH STOCK INFO
   renderStockInfo() {
-    const stockData = store.get(`${this.companyId}`);
-    let details = stockData.dataset_data.data[0];
+    const stockData = store.get(`POP-${this.symbol}`);
+    console.log(stockData);
+    // let details = stockData.dataset_data.data[0];
 
     // get stock info from local storage
-    let closePrice = details[4];
-    let openPrice = details[1];
-    let low = details[3];
-    let high = details[2];
-    let volume = details[5];
+    const closePrice = stockData.quote.close;
+    const openPrice = stockData.quote.open;
+    const low = stockData.quote.low;
+    const high = stockData.quote.high
+    const volume = stockData.quote.latestVolume;
 
     // render stock name
     this.$stockName.text(this.companyName);
@@ -238,13 +243,13 @@ class StockPopUp {
 
   // RENDER GRAPH
   renderGraph() {
-    const stockData = store.get(`${this.companyId}`);
+    const stockData = store.get(`POP-${this.symbol}`).historicalPrices;
 
     // get opening prices for company stock
-    let priceData = this.getSpecificCompanyData(stockData, 1);
+    let priceData = this.getHistoricalData(stockData, 'close');
 
     // get dates for the opening prices
-    let dateLabels = this.getSpecificCompanyData(stockData, 0);
+    let dateLabels = this.getHistoricalData(stockData, 'date');
 
     // create new graph for this company stock
     this.graph = new Graph(this.$chartContainer, priceData, dateLabels);
@@ -252,10 +257,11 @@ class StockPopUp {
 
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getSpecificCompanyData(data, num) {
-    return data.dataset_data.data.slice(0, 30).map((day) => {
-      return day[num];
-    }).reverse();
+  getHistoricalData(data, key) {
+    // console.log(data);
+    return data.map((day) => {
+      return day[key];
+    });
   }
 
 

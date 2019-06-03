@@ -28,26 +28,27 @@
 .stocks-list {
 
   li {
-    border-bottom: 1px solid rgba($black, .05);
+    border-bottom: 1px solid rgba($white, .06);
   }
 
   button {
     background: $colorDark-dark;
     border: none;
+    // border-bottom: 1px solid rgba($white, .06);
+    box-sizing: border-box;
     display: block;
     height: 36px;
     outline: none;
-    padding: 0 8px;
+    padding: 0;
     text-align: left;
     transition: all .3s;
     width: 100%;
 
     &:hover {
-      background: $blue-50;
       cursor: pointer;
 
       .stock-name {
-        color: rgba($black, .8);
+        color: $colorDark-accent;
       }
     }
   }
@@ -60,7 +61,7 @@
     font-size: 14px;
     font-weight: 500;
     line-height: 24px;
-    width: 72px;
+    width: 56px;
   }
 
   .stock-name {
@@ -77,6 +78,7 @@
   .icon-add-watchlist {
     color: $bluegrey-100;
     float: right;
+    font-size: 1.2rem;
     z-index: 4;
 
     &.is-selected {

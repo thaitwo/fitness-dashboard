@@ -296,7 +296,7 @@ body {
 .popup-stock-container {
   background: #FFFFFF;
   border-radius: 2px;
-  height: 340px;
+  height: 500px;
   margin: 100px auto;
   position: relative;
   width: 960px; }
@@ -347,23 +347,23 @@ body {
   height: 60px; }
 
 .stocks-list li {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05); }
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
 
 .stocks-list button {
   background: #151C40;
   border: none;
+  box-sizing: border-box;
   display: block;
   height: 36px;
   outline: none;
-  padding: 0 8px;
+  padding: 0;
   text-align: left;
   transition: all .3s;
   width: 100%; }
   .stocks-list button:hover {
-    background: #E3F2FD;
     cursor: pointer; }
     .stocks-list button:hover .stock-name {
-      color: rgba(0, 0, 0, 0.8); }
+      color: #F9A825; }
 
 .stocks-list .stock-code {
   color: #F9A825;
@@ -373,7 +373,7 @@ body {
   font-size: 14px;
   font-weight: 500;
   line-height: 24px;
-  width: 72px; }
+  width: 56px; }
 
 .stocks-list .stock-name {
   color: rgba(255, 255, 255, 0.8);
@@ -388,6 +388,7 @@ body {
 .stocks-list .icon-add-watchlist {
   color: #CFD8DC;
   float: right;
+  font-size: 1.2rem;
   z-index: 4; }
   .stocks-list .icon-add-watchlist.is-selected {
     color: #FFCA28; }
