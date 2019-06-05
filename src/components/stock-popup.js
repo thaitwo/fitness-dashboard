@@ -24,7 +24,9 @@ class StockPopUp {
     this.$popupContainer = $('.popup-modal');
     this.$popupContentContainer = this.$popupContainer.find('.popup-stock-container');
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
-    this.$stockName = this.$popupContainer.find('.popup-stock-name');
+    this.$latestPriceContainer = this.$popupContainer.find('#popup-latest-price');
+    this.$changePercentContainer = this.$popupContainer.find('#popup-change-percent');
+    this.$stockName = this.$popupContainer.find('#popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
@@ -41,19 +43,29 @@ class StockPopUp {
     const popupModal = `
       <div class="popup-modal">
         <div class="popup-stock-container">
-          <h3 class="text-headline popup-stock-name"></h3>
-          <div class="exit-icon"><i class="fas fa-times-circle fa-2x"></i></div>
-          <table>
-            <tbody>
-            </tbody>
-          </table>
-          <div class="popup-chart-container">
-            <div class="icon-loading">
-              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-            </div>
-            <canvas id="popup-chart" width="700" height="320"></canvas>
+          <div id="popup-header">
+            <h2 id="popup-stock-name"></h3>
           </div>
-          <button id="btn-watchlist" class="button btn-popup-watchlist is-hidden">Add to watchlist</button>
+          <div id="popup-data-container">
+            <div id="popup-summary-container">
+              <div id="popup-price-container">
+                <h2 id="popup-latest-price"></h2>
+                <h3 id="popup-change-percent"></h3>
+              </div>
+              <table id="popup-summary-table">
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="popup-chart-container">
+              <div class="icon-loading">
+                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+              </div>
+              <canvas id="popup-chart" width="660" height="400"></canvas>
+              <button id="btn-watchlist" class="button btn-popup-watchlist is-hidden">Add to watchlist</button>
+            </div>
+          </div>
+          <div class="exit-icon"><i class="fas fa-times"></i></div>
         </div>
       </div>
     `;
@@ -152,13 +164,14 @@ class StockPopUp {
   getStockData() {
 
     // check if there's locally stored data before making Ajax request
-    if (store.get(`${this.symbol}`)) {
+    if (store.get(`POP-${this.symbol}`)) {
       this.renderStockInfo();
       this.renderGraph();
       this.$exitIcon.removeClass('is-hidden');
     }
     else {
       this.fetchStockData();
+      this.$exitIcon.removeClass('is-hidden');
     }
   }
 
@@ -210,14 +223,23 @@ class StockPopUp {
     // let details = stockData.dataset_data.data[0];
 
     // get stock info from local storage
+    const latestPrice = stockData.quote.latestPrice;
+    let changePercent = (stockData.quote.changePercent * 100).toFixed(2);
     const closePrice = stockData.quote.close;
     const openPrice = stockData.quote.open;
     const low = stockData.quote.low;
     const high = stockData.quote.high
+    const wk52High = stockData.quote.week52High;
+    const wk52Low = stockData.quote.week52Low;
     const volume = stockData.quote.latestVolume;
+    const peRatio = stockData.quote.peRatio;
+    const marketCap = stockData.quote.marketCap;
 
     // render stock name
-    this.$stockName.text(this.companyName);
+    this.$stockName.text(`${this.companyName} (${this.symbol})`);
+    this.$latestPriceContainer.text(latestPrice);
+    this.$changePercentContainer.text(`${changePercent}%`);
+
 
     let row = `
       <tr>
@@ -229,8 +251,24 @@ class StockPopUp {
         <td class="val">${openPrice}</td>
       </tr>
       <tr>
-        <td class="key">Day's Range</td>
-        <td class="val">${low} - ${high}</td>
+        <td class="key">High</td>
+        <td class="val">${high}</td>
+      </tr>
+      <tr>
+        <td class="key">Low</td>
+        <td class="val">${low}</td>
+      </tr>
+      <tr>
+        <td class="key">Market Cap</td>
+        <td class="val">${marketCap}</td>
+      </tr>
+      <tr>
+        <td class="key">P/E Ratio</td>
+        <td class="val">${peRatio}</td>
+      </tr>
+      <tr>
+        <td class="key">52 Wk Range</td>
+        <td class="val">${wk52Low} - ${wk52High}</td>
       </tr>
       <tr>
         <td class="key">Volume</td>
@@ -260,7 +298,11 @@ class StockPopUp {
   getHistoricalData(data, key) {
     // console.log(data);
     return data.map((day) => {
-      return day[key];
+      if (key === 'date') {
+        return day[key].split('-')[2];
+      } else {
+        return day[key];
+      }
     });
   }
 

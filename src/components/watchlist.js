@@ -244,7 +244,7 @@ class Watchlist {
     // Display graph & data for watchlist item
     this.$watchlist.on('click', 'button', function(event) {
       event.preventDefault();
-      const isMoreThanOneDay = that.updateLocalStorageAge();
+      const dataUpdateRequired = that.calcLocalStorageAge();
       const clickedEl = $(this).parent();
       const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
       const symbol = this.id;
@@ -259,7 +259,7 @@ class Watchlist {
       that.renderStockName(name);
 
       // if stored data exists and is less than 1 day old
-      if (store.get(that.symbol) !== null && !isMoreThanOneDay) {
+      if (store.get(that.symbol) !== null && dataUpdateRequired) {
         that.fetchStockData('currentPrice');
         that.renderGraph();
         that.renderKeyStats();
@@ -274,16 +274,18 @@ class Watchlist {
   }
 
 
-  // Calculate whether local storage for stock is more than 12 hours old
-  updateLocalStorageAge() {
-    const oneDay = 60 * 60 * 12 * 1000;
+  // Calculate whether local storage for stock is more than 1 hour old
+  calcLocalStorageAge() {
+    const oneHour = 60 * 60 * 1 * 1000;
     const newTime = Date.now();
     let oldTime;
-    if (store.get(this.symbol !== null)) {
+
+    // if stored data exists, calculate if data needs to be updated
+    if (store.get(this.symbol) !== null) {
       oldTime = store.get(this.symbol).time;
-      return (newTime - oldTime) > oneDay;
+      return (newTime - oldTime) > oneHour;
     } else {
-      return false;
+      return true;
     }
   }
 
@@ -412,7 +414,7 @@ class Watchlist {
     // if watchlist has at least one item, render item(s)
     if (this.watchlist.length > 0) {
       const name = this.watchlist[0].name;
-      const isMoreThanOneDay = this.updateLocalStorageAge();
+      const isMoreThanOneDay = this.calcLocalStorageAge();
 
       this.renderStockName(name);
 

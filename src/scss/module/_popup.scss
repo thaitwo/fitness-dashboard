@@ -13,21 +13,81 @@
   }
 }
 
+#popup-price-container {
+  display: flex;
+  align-items: flex-end;
+}
+
+#popup-data-container {
+  display: flex;
+  justify-content: space-between;
+}
+
+#popup-summary-container {
+  flex: 1;
+  padding-top: 24px;
+  padding-right: 48px;
+}
+
+#popup-latest-price {
+  color: $white;
+  font-size: 2rem;
+  font-weight: 600;
+  padding-right: 16px;
+}
+
+#popup-change-percent {
+  color: greenyellow;
+  line-height: 24px;
+}
+
+#popup-stock-name {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
 .popup-stock-container {
-  background: $white;
-  border-radius: 2px;
-  height: 500px;
+  background: $colorDark-dark;
+  border: 6px solid $colorDark-light;
+  border-radius: 10px;
+  height: 440px;
   margin: 100px auto;
+  padding: 24px;
   position: relative;
   width: 960px;
 
-  table {
+  .exit-icon {
+    background-color: transparent;
+    border-radius: 5px;
+    padding: 4px 8px;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    transition: all .1s;
+
+    &:hover {
+      background-color: $white;
+      cursor: pointer;
+
+      .fa-times {
+        color: $colorDark-dark;
+      }
+    }
+  }
+
+  .fa-times {
+    color: $colorDark-light;
+    font-size: 1.2rem;
+  }
+
+  #popup-summary-table {
     float: left;
-    margin: 16px 20px 0 24px;
-    width: 206px;
+    margin-top: 16px;
+    width: 100%;
 
     tr {
-      border-bottom: 1px solid rgba($black, .05);
+      border-bottom: 1px solid rgba($white, .06);
 
       &:last-child {
         border-bottom: none;
@@ -35,18 +95,18 @@
     }
 
     td {
-      line-height: 36px;
+      line-height: 32px;
       font-family: $font-secondary;
-      font-size: 14px;
+      font-size: .8rem;
     }
 
     td.key {
-      color: rgba($black, .6);
+      color: rgba($white,.6);
       font-weight: 300;
     }
 
     td.val {
-      color: rgba($black, .8);
+      color: $white;
       font-weight: 500;
       text-align: right;
     }
@@ -55,4 +115,8 @@
 
 .popup-chart-container {
   float: right;
+}
+
+#popup-chart {
+  height: 400px !important;
 }
