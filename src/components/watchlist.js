@@ -34,8 +34,7 @@ class Watchlist {
 
   // RENDER WATCHLIST CANVAS
   renderCanvasHTML() {
-    let html =
-    `
+    let html = `
       <div class="watchlist-canvas">
         <div class="watchlist-container">
           <h2 class="watchlist-title">Watchlist</h2>

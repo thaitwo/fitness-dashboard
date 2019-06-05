@@ -16,7 +16,7 @@ class StockPopUp {
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = store.get('watchlist') || [];
     // CHECK IF WATCHLIST HAS THIS STOCK
-    this.hasStock = this.watchlist.includes(`${this.symbol} | ${this.companyName}`);
+    this.hasStock = this.watchlist.some(stock => stock.symbol === this.symbol);
 
     this.render();
 
@@ -30,7 +30,7 @@ class StockPopUp {
     this.$tbody = this.$popupContainer.find('table tbody');
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
-    this.$watchlistButton = this.$popupContainer.find('#btn-watchlist');
+    this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
 
     this.getStockData();
@@ -44,7 +44,11 @@ class StockPopUp {
       <div class="popup-modal">
         <div class="popup-stock-container">
           <div id="popup-header">
-            <h2 id="popup-stock-name"></h3>
+            <h2 id="popup-stock-name"></h2>
+            <button id="popup-button-watchlist" class="button button-popup-watchlist">
+              <i class="far fa-eye"></i>
+              <span>Watch</span>
+            </button>
           </div>
           <div id="popup-data-container">
             <div id="popup-summary-container">
@@ -62,7 +66,6 @@ class StockPopUp {
                 <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
               </div>
               <canvas id="popup-chart" width="660" height="400"></canvas>
-              <button id="btn-watchlist" class="button btn-popup-watchlist is-hidden">Add to watchlist</button>
             </div>
           </div>
           <div class="exit-icon"><i class="fas fa-times"></i></div>
@@ -90,24 +93,32 @@ class StockPopUp {
     this.toggleButtonState(this.hasStock);
 
     // Add/remove stock from watchlist
-    this.$popupContentContainer.on('click', '#btn-watchlist', function(event) {
+    this.$popupContentContainer.on('click', '#popup-button-watchlist', function(event) {
       event.preventDefault();
 
       const $this = $(this);
+      const $starIconContainer = $(`#stocks-list button#${that.symbol} .icon-add-watchlist`);
+      const $starIcon = $(`#stocks-list button#${that.symbol} i`);
 
       // if stock is not in watchlist, then add to watchlist
       if (that.hasStock === false) {
-        that.watchlist.push(`${that.companyId} | ${that.companyName}`);
+        that.watchlist.push({
+          symbol: that.symbol,
+          name: that.companyName
+        });
         store.set('watchlist', that.watchlist);
 
         // update watchlist button to REMOVE
-        $this.addClass('has-warning');
-        $this.text('Remove from watchlist');
+        $this.addClass('isWatched');
+        $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
+
+        $starIcon.toggleClass('far fas');
+        $starIconContainer.toggleClass('is-selected');
       }
       // if stock exist, then remove it from watchlist
       else {
         // remove stock from watchlist array
-        let index = that.watchlist.indexOf(`${that.companyId} | ${that.companyName}`);
+        let index = that.watchlist.findIndex(stock => stock.symbol === that.symbol);
         if (index != -1) {
           that.watchlist.splice(index, 1);
         }
@@ -116,8 +127,10 @@ class StockPopUp {
         store.set('watchlist', that.watchlist);
 
         // update watchlist button to ADD
-        $this.removeClass('has-warning');
-        $this.text('Add to watchlist');
+        $this.removeClass('isWatched');
+        $this.html('<i class="far fa-eye"></i>Watch');
+        $starIconContainer.toggleClass('is-selected');
+        $starIcon.toggleClass('far fas');
       }
     });
 
@@ -143,20 +156,20 @@ class StockPopUp {
   toggleButtonState(boolean) {
     // if stock exist in watchlist, display 'remove from watchlist' button
     if (boolean === true) {
-      this.$watchlistButton.addClass('has-warning');
-      this.$watchlistButton.text('Remove from watchlist');
+      this.$watchlistButton.addClass('isWatched');
+      this.$watchlistButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
     }
     // if stock doesn't exist in watchlist, display 'add to watchlist' button
     else {
-      this.$watchlistButton.removeClass('has-warning');
-      this.$watchlistButton.text('Add to wathclist');
+      this.$watchlistButton.removeClass('isWatched');
+      this.$watchlistButton.html('<i class="far fa-eye"></i>Watch');
     }
 
     // if stock exist in local storage, show 'watchlist add/remove' button
     // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
-    if (store.has(this.symbol)) {
-      this.$watchlistButton.removeClass('is-hidden');
-    }
+    // if (store.has(this.symbol)) {
+    //   this.$watchlistButton.removeClass('is-hidden');
+    // }
   }
 
 
@@ -219,8 +232,6 @@ class StockPopUp {
   // RENDER TABLE WITH STOCK INFO
   renderStockInfo() {
     const stockData = store.get(`POP-${this.symbol}`);
-    console.log(stockData);
-    // let details = stockData.dataset_data.data[0];
 
     // get stock info from local storage
     const latestPrice = stockData.quote.latestPrice;
@@ -234,11 +245,12 @@ class StockPopUp {
     const volume = stockData.quote.latestVolume;
     const peRatio = stockData.quote.peRatio;
     const marketCap = stockData.quote.marketCap;
+    const plusOrMinus = (changePercent > 0) ? '+' : '-';
 
     // render stock name
     this.$stockName.text(`${this.companyName} (${this.symbol})`);
     this.$latestPriceContainer.text(latestPrice);
-    this.$changePercentContainer.text(`${changePercent}%`);
+    this.$changePercentContainer.text(`${plusOrMinus}${changePercent}%`);
 
 
     let row = `

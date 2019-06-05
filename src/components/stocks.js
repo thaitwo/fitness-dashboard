@@ -10,7 +10,6 @@ class Stocks {
     this.$container = container;
     this.graph;
     this.popup;
-    this.$starIcon;
     this.companyId;
     this.companyName;
 
@@ -72,9 +71,6 @@ class Stocks {
     this.$loadingIcon.addClass('is-visible');
 
     axios({
-      // Below is what entire URL would look like:
-      // https://www.quandl.com/api/v3/datasets.json?database_code=WIKI&per_page=100&sort_by=id&page=1&api_key=tskzGKweRxWgnbX2pafZ
-      // url: 'https://www.quandl.com/api/v3/datasets.json',
       method: 'get',
       url: 'https://cloud.iexapis.com/v1/stock/market/collection/sector',
       responseType: 'json',
@@ -82,20 +78,6 @@ class Stocks {
         collectionName: 'Technology',
         token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
       }
-      
-      // error: (xhr, message, error) => {
-      //   console.log(message, error);
-      // },
-      // success: (data) => {
-      //   let stocks = data;
-      //   // store list of stocks
-      //   store.set(`stocks${num}`, stocks);
-
-      //   this.renderStocks(num);
-      // },
-      // complete: () => {
-      //   this.$loadingIcon.removeClass('is-visible');
-      // }
     })
     .then((response) => {
       const stocks = response.data;
@@ -153,7 +135,6 @@ class Stocks {
       }
     });
     this.$stockListContainer.append(list);
-    this.$starIcon = this.$stockListContainer.find('.icon-add-watchlist');
     this.activateWatchlistIcon();
   }
 
@@ -194,20 +175,22 @@ class Stocks {
   activateWatchlistIcon() {
     const that = this;
 
-    this.$starIcon.on('click', function(event) {
-      let $this = $(this);
+    this.$stockListContainer.on('click', '.icon-add-watchlist', function(event) {
+      const $this = $(this);
       event.stopPropagation();
+      console.log(this);
 
       // find hollow star icon and make solid star by replacing value of atribute data-prefix
-      let icon = $this.find('svg');
+      const icon = $this.find('i');
       // icon.attr('data-prefix', 'fas');
+      console.log(icon);
 
       // get stock id and stock name from sibling elements
-      let stockSymbol = $this.siblings('.stock-code')[0].innerText;
-      let stockName = $this.siblings('.stock-name')[0].innerText;
+      const stockSymbol = $this.siblings('.stock-code')[0].innerText;
+      const stockName = $this.siblings('.stock-name')[0].innerText;
 
 
-      let hasStock = that.existInWatchlist(stockSymbol);
+      const hasStock = that.existInWatchlist(stockSymbol);
       // if stock is not in watchlist array
       if (hasStock === false) {
         that.watchlist.push({
@@ -217,7 +200,8 @@ class Stocks {
         // update watchlist array
         store.set('watchlist', that.watchlist);
         // set icon to solid icon
-        icon.attr('data-prefix', 'fas');
+        icon.removeClass('far');
+        icon.addClass('fas');
         // set icon color to gold
         $this.addClass('is-selected');
       }
@@ -232,7 +216,8 @@ class Stocks {
         // update watchlist array
         store.set('watchlist', that.watchlist);
         // set icon to line icon
-        icon.attr('data-prefix', 'far');
+        icon.removeClass('fas');
+        icon.addClass('far');
         // set icon color to gray
         $this.removeClass('is-selected');
       }

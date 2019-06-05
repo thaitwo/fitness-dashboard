@@ -60,7 +60,7 @@ class Graph {
       maintainAspectRatio: false,
       layout: {
         padding: {
-          top: 24,
+          top: 40,
           bottom: 32,
         }
       },

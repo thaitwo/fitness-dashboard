@@ -13,6 +13,11 @@
   }
 }
 
+#popup-header {
+  display: flex;
+  justify-content: flex-start;
+}
+
 #popup-price-container {
   display: flex;
   align-items: flex-end;
@@ -26,7 +31,7 @@
 #popup-summary-container {
   flex: 1;
   padding-top: 24px;
-  padding-right: 48px;
+  padding-right: 40px;
 }
 
 #popup-latest-price {
@@ -38,6 +43,7 @@
 
 #popup-change-percent {
   color: greenyellow;
+  font-size: 1.1rem;
   line-height: 24px;
 }
 
@@ -51,7 +57,7 @@
   background: $colorDark-dark;
   border: 6px solid $colorDark-light;
   border-radius: 10px;
-  height: 440px;
+  height: 400px;
   margin: 100px auto;
   padding: 24px;
   position: relative;
@@ -59,8 +65,8 @@
 
   .exit-icon {
     background-color: transparent;
-    border-radius: 5px;
-    padding: 4px 8px;
+    border-radius: 4px;
+    padding: 4px 8px 3px;
     position: absolute;
     right: 10px;
     top: 10px;

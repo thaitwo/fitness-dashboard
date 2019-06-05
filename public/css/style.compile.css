@@ -112,19 +112,35 @@ body {
   border-radius: 2px;
   color: white;
   padding: 0 12px;
-  transition: all .3s;
+  transition: all .1s;
   font-size: 12px;
   outline: none; }
   .button:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
     cursor: pointer; }
-  .button.btn-popup-watchlist {
-    background: #A5D6A7;
-    bottom: 24px;
-    position: absolute;
-    left: 24px; }
-    .button.btn-popup-watchlist:hover {
-      background: #66BB6A; }
+  .button.button-popup-watchlist {
+    background-color: transparent;
+    border: 1px solid white;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: white;
+    font-size: .75rem;
+    font-weight: 600;
+    height: 28px;
+    line-height: 28px;
+    margin-top: -5px;
+    margin-left: 40px;
+    padding: 0 10px;
+    text-transform: capitalize; }
+    .button.button-popup-watchlist i {
+      padding-right: 6px; }
+    .button.button-popup-watchlist:hover {
+      background-color: #FFFFFF;
+      color: #151C40;
+      cursor: pointer; }
+  .button.isWatched {
+    background-color: #FFFFFF;
+    color: #151C40; }
   .button.has-warning {
     background: #ef9a9a; }
     .button.has-warning:hover {
@@ -282,6 +298,10 @@ body {
   .popup-modal.is-visible {
     display: block; }
 
+#popup-header {
+  display: flex;
+  justify-content: flex-start; }
+
 #popup-price-container {
   display: flex;
   align-items: flex-end; }
@@ -293,7 +313,7 @@ body {
 #popup-summary-container {
   flex: 1;
   padding-top: 24px;
-  padding-right: 48px; }
+  padding-right: 40px; }
 
 #popup-latest-price {
   color: #FFFFFF;
@@ -303,6 +323,7 @@ body {
 
 #popup-change-percent {
   color: greenyellow;
+  font-size: 1.1rem;
   line-height: 24px; }
 
 #popup-stock-name {
@@ -314,15 +335,15 @@ body {
   background: #151C40;
   border: 6px solid #2B3152;
   border-radius: 10px;
-  height: 440px;
+  height: 400px;
   margin: 100px auto;
   padding: 24px;
   position: relative;
   width: 960px; }
   .popup-stock-container .exit-icon {
     background-color: transparent;
-    border-radius: 5px;
-    padding: 4px 8px;
+    border-radius: 4px;
+    padding: 4px 8px 3px;
     position: absolute;
     right: 10px;
     top: 10px;
