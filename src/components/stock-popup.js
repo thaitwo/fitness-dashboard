@@ -7,16 +7,14 @@ import Graph from './graph.js';
 // fixed bug that hid exit icon after initial popup display
   // issue: referenced icon element before registering it
 
-class StockPopUp {
-  constructor(companyId, companyName) {
-    this.symbol = companyId;
+class StockPopup {
+  constructor(companySymbol, companyName) {
+    this.symbol = companySymbol;
     this.companyName = companyName;
     this.$mainContainer = $('.main-container');
     this.graph;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = store.get('watchlist') || [];
-    // CHECK IF WATCHLIST HAS THIS STOCK
-    this.hasStock = this.watchlist.some(stock => stock.symbol === this.symbol);
 
     this.render();
 
@@ -35,6 +33,12 @@ class StockPopUp {
 
     this.getStockData();
     this.activateEventListeners();
+  }
+
+
+  // CHECK IF WATCHLIST HAS THIS STOCK
+  isInWatchlist(symbol) {
+    return this.watchlist.some(stock => stock.symbol === symbol);
   }
 
 
@@ -88,9 +92,9 @@ class StockPopUp {
   // ACTIVATE EVENT LISTENERS
   activateEventListeners() {
     const that = this;
-
+    const isInWatchlist = this.isInWatchlist(this.symbol);
     // update watchlist button state
-    this.toggleButtonState(this.hasStock);
+    this.toggleButtonState(isInWatchlist);
 
     // Add/remove stock from watchlist
     this.$popupContentContainer.on('click', '#popup-button-watchlist', function(event) {
@@ -101,7 +105,7 @@ class StockPopUp {
       const $starIcon = $(`#stocks-list button#${that.symbol} i`);
 
       // if stock is not in watchlist, then add to watchlist
-      if (that.hasStock === false) {
+      if (!that.isInWatchlist(that.symbol)) {
         that.watchlist.push({
           symbol: that.symbol,
           name: that.companyName
@@ -112,7 +116,7 @@ class StockPopUp {
         $this.addClass('isWatched');
         $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
 
-        $starIcon.toggleClass('far fas');
+        $starIcon.removeClass('far').addClass('fas');
         $starIconContainer.toggleClass('is-selected');
       }
       // if stock exist, then remove it from watchlist
@@ -130,7 +134,7 @@ class StockPopUp {
         $this.removeClass('isWatched');
         $this.html('<i class="far fa-eye"></i>Watch');
         $starIconContainer.toggleClass('is-selected');
-        $starIcon.toggleClass('far fas');
+        $starIcon.removeClass('fas').addClass('far');
       }
     });
 
@@ -147,6 +151,7 @@ class StockPopUp {
 
     // Remove popup modal on click outside of modal
     this.$popupContainer.on('click', function() {
+      console.log(that.watchlist);
       that.destroy();
     });
   }
@@ -193,7 +198,6 @@ class StockPopUp {
   fetchStockData() {
     // display loading icon
     this.$loadingIcon.addClass('is-visible');
-
     // request stock data
     axios.all([
       axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
@@ -211,18 +215,11 @@ class StockPopUp {
       console.log(error);
     })
     .finally(() => {
-      // render stock info
       this.renderStockInfo();
-
-      // render graph
       this.renderGraph();
-
-      // remove loading icon
       this.$loadingIcon.removeClass('is-visible');
-
       // show watchlist add/remove button
       this.showButton(this.$watchlistButton);
-
       // display exit icon
       this.showButton(this.$exitIcon);
     });
@@ -245,7 +242,7 @@ class StockPopUp {
     const volume = stockData.quote.latestVolume;
     const peRatio = stockData.quote.peRatio;
     const marketCap = stockData.quote.marketCap;
-    const plusOrMinus = (changePercent > 0) ? '+' : '-';
+    const plusOrMinus = (changePercent > 0) ? '+' : '';
 
     // render stock name
     this.$stockName.text(`${this.companyName} (${this.symbol})`);
@@ -325,4 +322,4 @@ class StockPopUp {
   }
 }
 
-export default StockPopUp;
+export default StockPopup;

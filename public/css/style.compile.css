@@ -336,7 +336,7 @@ body {
   border: 6px solid #2B3152;
   border-radius: 10px;
   height: 400px;
-  margin: 100px auto;
+  margin: 80px auto;
   padding: 24px;
   position: relative;
   width: 960px; }
@@ -609,7 +609,7 @@ body {
   position: absolute;
   top: 24px;
   right: 24px;
-  left: 312px; }
+  left: 327px; }
 
 #watchlist-summary-container {
   display: flex;

@@ -2,20 +2,14 @@ import $ from 'jquery';
 import _ from 'lodash';
 import store from 'store2';
 import axios from 'axios';
-import StockPopUp from './stock-popup.js';
+import StockPopup from './stock-popup.js';
 
 class Stocks {
   constructor(container) {
-    // Register Elements
     this.$container = container;
     this.graph;
     this.popup;
-    this.companyId;
-    this.companyName;
-
-    // Retrieve Watchlist From Array Storage
     this.watchlist = store.get('watchlist') || [];
-
     this.render();
     this.$stocksContainer = $('.stocks-container');
     this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
@@ -24,7 +18,7 @@ class Stocks {
 
     this.getStocks();
 
-    this.activatePopUp();
+    this.displayPopup();
     // this.activateScroll();
   }
 
@@ -45,9 +39,9 @@ class Stocks {
   }
 
 
-  // Check If Watchlist Has Stock
-  existInWatchlist(id) {
-    return this.watchlist.some(stock => stock.symbol === id);
+  // Check If Watchlist Has Stock. RETURNS BOOLEAN
+  isInWatchlist(symbol) {
+    return this.watchlist.some(stock => stock.symbol === symbol);
   }
 
 
@@ -106,7 +100,7 @@ class Stocks {
       let iconClass;
 
       // if stock exist in watchlist array, dispay solid icon with gold color
-      if (this.existInWatchlist(symbol, name) === true) {
+      if (this.isInWatchlist(symbol)) {
         iconClass = 'fas';
 
         return `
@@ -140,7 +134,7 @@ class Stocks {
 
 
   // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
-  activatePopUp() {
+  displayPopup() {
     const that = this;
 
     this.$stockListContainer.on('click', 'button', function(event) {
@@ -150,7 +144,7 @@ class Stocks {
       let companyName = $(this).find('span.stock-name')[0].innerText;
 
       // create new popup
-      that.popup = new StockPopUp(companyId, companyName);
+      that.popup = new StockPopup(companyId, companyName);
     });
   }
 
@@ -178,21 +172,21 @@ class Stocks {
     this.$stockListContainer.on('click', '.icon-add-watchlist', function(event) {
       const $this = $(this);
       event.stopPropagation();
-      console.log(this);
 
       // find hollow star icon and make solid star by replacing value of atribute data-prefix
-      const icon = $this.find('i');
-      // icon.attr('data-prefix', 'fas');
-      console.log(icon);
+      const $icon = $this.find('i');
 
       // get stock id and stock name from sibling elements
       const stockSymbol = $this.siblings('.stock-code')[0].innerText;
       const stockName = $this.siblings('.stock-name')[0].innerText;
+      // retrieve watchlist:
+      // not doing this causes a bug where after you click watch/unwatch and close popup,
+      // the star icon will not work on the first click attempt for the stock 
+      that.watchlist = store.get('watchlist') || [];
 
-
-      const hasStock = that.existInWatchlist(stockSymbol);
+      const isInWatchlist = that.isInWatchlist(stockSymbol);
       // if stock is not in watchlist array
-      if (hasStock === false) {
+      if (!isInWatchlist) {
         that.watchlist.push({
           symbol: stockSymbol,
           name: stockName
@@ -200,8 +194,8 @@ class Stocks {
         // update watchlist array
         store.set('watchlist', that.watchlist);
         // set icon to solid icon
-        icon.removeClass('far');
-        icon.addClass('fas');
+        $icon.removeClass('far');
+        $icon.addClass('fas');
         // set icon color to gold
         $this.addClass('is-selected');
       }
@@ -216,8 +210,8 @@ class Stocks {
         // update watchlist array
         store.set('watchlist', that.watchlist);
         // set icon to line icon
-        icon.removeClass('fas');
-        icon.addClass('far');
+        $icon.removeClass('fas');
+        $icon.addClass('far');
         // set icon color to gray
         $this.removeClass('is-selected');
       }
