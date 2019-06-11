@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
+import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
 
 
@@ -211,7 +212,6 @@ class Watchlist {
         this.renderGraph();
       }
       else if (requestType === 'allData') {
-        // this.renderStockHeader();
         // functions below don't receive data arguments bc they will retrieve data from localStorage
         this.renderGraph();
         this.renderKeyStats();
@@ -222,9 +222,6 @@ class Watchlist {
 
 
   renderStockHeader(latestPrice) {
-    // let marketCap = store.get(this.symbol).keyStats.marketcap;
-    // marketCap = this.formatLargeNumber(marketCap);
-
     const html = `
       <h2>${latestPrice}</2>
       <h3>Current Price</h3>
@@ -295,9 +292,9 @@ class Watchlist {
       
       const newsArticles = news.map((item) => {
         let headline = item.headline;
-        headline = this.trimString(headline, 120);
+        headline = trimString(headline, 120);
         let summary = item.summary;
-        summary = this.trimString(summary, 160);
+        summary = trimString(summary, 160);
         const url = item.url;
 
         return `
@@ -349,13 +346,13 @@ class Watchlist {
 
       const close = quote.close;
       const open = quote.open;
-      const marketCap = this.formatLargeNumber(stats.marketcap);
+      const marketCap = formatLargeNumber(quote.marketCap);
       const peRatio = stats.peRatio;
-      const wk52High = stats.week52high;
-      const wk52Low = stats.week52low;
+      const wk52High = quote.week52High;
+      const wk52Low = quote.week52Low;
       const eps = stats.ttmEPS;
-      const volume = this.formatNumberWithCommas(Math.round(quote.latestVolume));
-      const avg30Vol = this.formatNumberWithCommas(Math.round(stats.avg30Volume));
+      const volume = formatNumberWithCommas(Math.round(quote.latestVolume));
+      const avg30Vol = formatNumberWithCommas(Math.round(stats.avg30Volume));
 
       const keyStatsHTML = `
         <h2 class="text-header">Key Statistics</h2>
@@ -405,23 +402,6 @@ class Watchlist {
   }
 
 
-  // FORMATE LARGE NUMBERS
-  formatLargeNumber(num) {
-    return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-         // Six Zeroes for Millions 
-         : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-         // Three Zeroes for Thousands
-         : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K"
-         : Math.abs(Number(num)).toFixed(2);
-  }
-
-
-  // Insert commas into numbers
-  formatNumberWithCommas(num) {
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-  }
-
-
   // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
   renderDataForFirstStock() {
     // if watchlist has at least one item, render item(s)
@@ -461,11 +441,6 @@ class Watchlist {
     return data.map((day) => {
       return day[key];
     });
-  }
-
-  // TRIM STRINGS TO SPECIFIED LENGTH
-  trimString(string, length) {
-    return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
   }
 
 

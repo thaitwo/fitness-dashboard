@@ -1,6 +1,7 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
+import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
 
 // update watchlist button logic to show only after data had been loaded
@@ -238,9 +239,9 @@ class StockPopup {
     const high = stockData.quote.high
     const wk52High = stockData.quote.week52High;
     const wk52Low = stockData.quote.week52Low;
-    const volume = stockData.quote.latestVolume;
+    const volume = formatNumberWithCommas(Math.round(stockData.quote.latestVolume));
     const peRatio = stockData.quote.peRatio;
-    const marketCap = stockData.quote.marketCap;
+    const marketCap = formatLargeNumber(stockData.quote.marketCap);
     const plusOrMinus = (changePercent > 0) ? '+' : '';
 
     // render stock name

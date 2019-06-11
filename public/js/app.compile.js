@@ -29895,6 +29895,8 @@ var _axios = __webpack_require__(3);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _helpers = __webpack_require__(175);
+
 var _graph = __webpack_require__(11);
 
 var _graph2 = _interopRequireDefault(_graph);
@@ -30124,9 +30126,9 @@ var StockPopup = function () {
       var high = stockData.quote.high;
       var wk52High = stockData.quote.week52High;
       var wk52Low = stockData.quote.week52Low;
-      var volume = stockData.quote.latestVolume;
+      var volume = (0, _helpers.formatNumberWithCommas)(Math.round(stockData.quote.latestVolume));
       var peRatio = stockData.quote.peRatio;
-      var marketCap = stockData.quote.marketCap;
+      var marketCap = (0, _helpers.formatLargeNumber)(stockData.quote.marketCap);
       var plusOrMinus = changePercent > 0 ? '+' : '';
 
       // render stock name
@@ -30474,6 +30476,8 @@ var _axios = __webpack_require__(3);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _helpers = __webpack_require__(175);
+
 var _graph = __webpack_require__(11);
 
 var _graph2 = _interopRequireDefault(_graph);
@@ -30649,7 +30653,6 @@ var Watchlist = function () {
         if (requestType === 'prices') {
           _this2.renderGraph();
         } else if (requestType === 'allData') {
-          // this.renderStockHeader();
           // functions below don't receive data arguments bc they will retrieve data from localStorage
           _this2.renderGraph();
           _this2.renderKeyStats();
@@ -30660,9 +30663,6 @@ var Watchlist = function () {
   }, {
     key: 'renderStockHeader',
     value: function renderStockHeader(latestPrice) {
-      // let marketCap = store.get(this.symbol).keyStats.marketcap;
-      // marketCap = this.formatLargeNumber(marketCap);
-
       var html = '\n      <h2>' + latestPrice + '</2>\n      <h3>Current Price</h3>\n    ';
 
       // this.$latestPrice.empty();
@@ -30731,16 +30731,14 @@ var Watchlist = function () {
   }, {
     key: 'renderNews',
     value: function renderNews() {
-      var _this3 = this;
-
       if (_store2.default.get(this.symbol).news !== null) {
         var news = _store2.default.get(this.symbol).news;
 
         var newsArticles = news.map(function (item) {
           var headline = item.headline;
-          headline = _this3.trimString(headline, 120);
+          headline = (0, _helpers.trimString)(headline, 120);
           var summary = item.summary;
-          summary = _this3.trimString(summary, 160);
+          summary = (0, _helpers.trimString)(summary, 160);
           var url = item.url;
 
           return '\n          <article class="watchlist-news-article">\n            <a href="' + url + '" target="_blank">\n              <h2>' + headline + '</h2>\n              <p>' + summary + '</p>\n            </a<\n          </article>\n        ';
@@ -30789,39 +30787,19 @@ var Watchlist = function () {
 
         var close = quote.close;
         var open = quote.open;
-        var marketCap = this.formatLargeNumber(stats.marketcap);
+        var marketCap = (0, _helpers.formatLargeNumber)(quote.marketCap);
         var peRatio = stats.peRatio;
-        var wk52High = stats.week52high;
-        var wk52Low = stats.week52low;
+        var wk52High = quote.week52High;
+        var wk52Low = quote.week52Low;
         var eps = stats.ttmEPS;
-        var volume = this.formatNumberWithCommas(Math.round(quote.latestVolume));
-        var avg30Vol = this.formatNumberWithCommas(Math.round(stats.avg30Volume));
+        var volume = (0, _helpers.formatNumberWithCommas)(Math.round(quote.latestVolume));
+        var avg30Vol = (0, _helpers.formatNumberWithCommas)(Math.round(stats.avg30Volume));
 
         var keyStatsHTML = '\n        <h2 class="text-header">Key Statistics</h2>\n        <table id="key-stats-table">\n          <tr>\n            <td>Close</td>\n            <td>' + close + '</td>\n          </tr>\n          <tr>\n            <td>Open</td>\n            <td>' + open + '</td>\n          </tr>\n          <tr>\n            <td>Market Cap</td>\n            <td>' + marketCap + '</td>\n          </tr>\n          <tr>\n            <td>P/E Ratio</td>\n            <td>' + peRatio + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk High</td>\n            <td>' + wk52High + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk Low</td>\n            <td>' + wk52Low + '</td>\n          </tr>\n          <tr>\n            <td>EPS (TTM)</td>\n            <td>' + eps + '</td>\n          </tr>\n          <tr>\n            <td>Volume</td>\n            <td>' + volume + '</td>\n          </tr>\n          <tr>\n            <td>Avg. Volume (30D)</td>\n            <td>' + avg30Vol + '</td>\n          </tr>\n        </table>\n      ';
 
         this.$keyStatsContainer.empty();
         this.$keyStatsContainer.append(keyStatsHTML);
       }
-    }
-
-    // FORMATE LARGE NUMBERS
-
-  }, {
-    key: 'formatLargeNumber',
-    value: function formatLargeNumber(num) {
-      return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-      // Six Zeroes for Millions 
-      : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-      // Three Zeroes for Thousands
-      : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-    }
-
-    // Insert commas into numbers
-
-  }, {
-    key: 'formatNumberWithCommas',
-    value: function formatNumberWithCommas(num) {
-      return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
@@ -30869,14 +30847,6 @@ var Watchlist = function () {
       return data.map(function (day) {
         return day[key];
       });
-    }
-
-    // TRIM STRINGS TO SPECIFIED LENGTH
-
-  }, {
-    key: 'trimString',
-    value: function trimString(string, length) {
-      return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
     }
 
     // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
@@ -63561,6 +63531,42 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 171 */,
+/* 172 */,
+/* 173 */,
+/* 174 */,
+/* 175 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatLargeNumber = formatLargeNumber;
+exports.formatNumberWithCommas = formatNumberWithCommas;
+exports.trimString = trimString;
+// FORMATE LARGE NUMBERS
+function formatLargeNumber(num) {
+  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+}
+
+// Insert commas into numbers
+function formatNumberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// TRIM STRINGS TO SPECIFIED LENGTH
+function trimString(string, length) {
+  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
 
 /***/ })
 /******/ ]);
