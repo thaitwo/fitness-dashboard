@@ -30034,7 +30034,6 @@ var StockPopup = function () {
 
       // Remove popup modal on click outside of modal
       this.$popupContainer.on('click', function () {
-        console.log(that.watchlist);
         that.destroy();
       });
     }
@@ -30390,7 +30389,7 @@ var Stocks = function () {
         var $this = (0, _jquery2.default)(this);
         event.stopPropagation();
 
-        // find hollow star icon and make solid star by replacing value of atribute data-prefix
+        // find hollow star icon
         var $icon = $this.find('i');
 
         // get stock id and stock name from sibling elements
@@ -30506,7 +30505,7 @@ var Watchlist = function () {
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
-    this.$currentPrice = this.$watchlistCanvas.find('#watchlist-current-price');
+    this.$latestPrice = this.$watchlistCanvas.find('#watchlist-latest-price');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -30520,7 +30519,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <div class="watchlist-chart-name-container">\n                    <h2 id="watchlist-stock-name"></h2>\n                    <h3 id="watchlist-stock-symbol"></h3>\n                  </div>\n                  <div id="watchlist-current-price"></div>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <div class="watchlist-chart-name-container">\n                    <h2 id="watchlist-stock-name"></h2>\n                    <h3 id="watchlist-stock-symbol"></h3>\n                  </div>\n                  <div id="watchlist-latest-price"></div>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -30570,8 +30569,8 @@ var Watchlist = function () {
       }
       // request all data for this stock
       else if (requestType === 'allData') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
-        } else if (requestType === 'currentPrice') {
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+        } else if (requestType === 'latestPrice') {
           return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         }
     }
@@ -30597,7 +30596,7 @@ var Watchlist = function () {
       }
       // store all data for the stock
       else if (requestType === 'allData') {
-          return function (currentPrice, historicalPrices, stats, news, quote) {
+          return function (historicalPrices, stats, news, quote) {
             // if stored data exists
             if (_store2.default.get(_this.symbol) !== null) {
               var storedData = _store2.default.get(_this.symbol);
@@ -30611,7 +30610,7 @@ var Watchlist = function () {
                 storedData.historicalPrices[_this.interval] = historicalPrices.data;
                 _store2.default.set(_this.symbol, storedData);
               }
-              _this.renderStockHeader(currentPrice.data);
+              _this.renderStockHeader(quote.data.latestPrice);
             }
             // otherwise create data object and store in localStorage
             else {
@@ -30619,17 +30618,17 @@ var Watchlist = function () {
                   historicalPrices: _defineProperty({}, _this.interval, historicalPrices.data),
                   keyStats: stats.data,
                   news: news.data,
-                  quote: quote,
+                  quote: quote.data,
                   time: Date.now()
                 };
 
                 _store2.default.set(_this.symbol, dataToStore);
-                _this.renderStockHeader(currentPrice.data);
+                _this.renderStockHeader(quote.data.latestPrice);
               }
           };
-        } else if (requestType === 'currentPrice') {
-          return function (currentPrice) {
-            _this.renderStockHeader(currentPrice.data);
+        } else if (requestType === 'latestPrice') {
+          return function (quote) {
+            _this.renderStockHeader(quote.data.latestPrice);
           };
         }
     }
@@ -30660,14 +30659,14 @@ var Watchlist = function () {
     }
   }, {
     key: 'renderStockHeader',
-    value: function renderStockHeader(currentPrice) {
+    value: function renderStockHeader(latestPrice) {
       // let marketCap = store.get(this.symbol).keyStats.marketcap;
       // marketCap = this.formatLargeNumber(marketCap);
 
-      var html = '\n      <h2>' + currentPrice + '</2>\n      <h3>Current Price</h3>\n    ';
+      var html = '\n      <h2>' + latestPrice + '</2>\n      <h3>Current Price</h3>\n    ';
 
-      // this.$currentPrice.empty();
-      this.$currentPrice.html(html);
+      // this.$latestPrice.empty();
+      this.$latestPrice.html(html);
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
@@ -30696,7 +30695,7 @@ var Watchlist = function () {
 
         // if stored data exists and is less than 1 day old
         if (_store2.default.get(that.symbol) !== null && dataUpdateRequired) {
-          that.fetchStockData('currentPrice');
+          that.fetchStockData('latestPrice');
           that.renderGraph();
           that.renderKeyStats();
           that.renderNews();
@@ -30784,18 +30783,21 @@ var Watchlist = function () {
   }, {
     key: 'renderKeyStats',
     value: function renderKeyStats() {
-      if (_store2.default.get(this.symbol).keyStats !== null) {
+      if (_store2.default.get(this.symbol).keyStats !== null && _store2.default.get(this.symbol).quote !== null) {
         var stats = _store2.default.get(this.symbol).keyStats;
-        var marketCap = stats.marketcap;
-        marketCap = this.formatLargeNumber(marketCap);
+        var quote = _store2.default.get(this.symbol).quote;
+
+        var close = quote.close;
+        var open = quote.open;
+        var marketCap = this.formatLargeNumber(stats.marketcap);
         var peRatio = stats.peRatio;
         var wk52High = stats.week52high;
         var wk52Low = stats.week52low;
         var eps = stats.ttmEPS;
-        var avg30Vol = stats.avg30Volume;
-        avg30Vol = this.formatNumberWithCommas(Math.round(avg30Vol));
+        var volume = this.formatNumberWithCommas(Math.round(quote.latestVolume));
+        var avg30Vol = this.formatNumberWithCommas(Math.round(stats.avg30Volume));
 
-        var keyStatsHTML = '\n        <h2 class="text-header">Key Statistics</h2>\n        <table id="key-stats-table">\n          <tr>\n            <td>Market Cap</td>\n            <td>' + marketCap + '</td>\n          </tr>\n          <tr>\n            <td>P/E Ratio</td>\n            <td>' + peRatio + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk High</td>\n            <td>' + wk52High + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk Low</td>\n            <td>' + wk52Low + '</td>\n          </tr>\n          <tr>\n            <td>EPS (TTM)</td>\n            <td>' + eps + '</td>\n          </tr>\n          <tr>\n            <td>Avg. Volume (30D)</td>\n            <td>' + avg30Vol + '</td>\n          </tr>\n        </table>\n      ';
+        var keyStatsHTML = '\n        <h2 class="text-header">Key Statistics</h2>\n        <table id="key-stats-table">\n          <tr>\n            <td>Close</td>\n            <td>' + close + '</td>\n          </tr>\n          <tr>\n            <td>Open</td>\n            <td>' + open + '</td>\n          </tr>\n          <tr>\n            <td>Market Cap</td>\n            <td>' + marketCap + '</td>\n          </tr>\n          <tr>\n            <td>P/E Ratio</td>\n            <td>' + peRatio + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk High</td>\n            <td>' + wk52High + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk Low</td>\n            <td>' + wk52Low + '</td>\n          </tr>\n          <tr>\n            <td>EPS (TTM)</td>\n            <td>' + eps + '</td>\n          </tr>\n          <tr>\n            <td>Volume</td>\n            <td>' + volume + '</td>\n          </tr>\n          <tr>\n            <td>Avg. Volume (30D)</td>\n            <td>' + avg30Vol + '</td>\n          </tr>\n        </table>\n      ';
 
         this.$keyStatsContainer.empty();
         this.$keyStatsContainer.append(keyStatsHTML);

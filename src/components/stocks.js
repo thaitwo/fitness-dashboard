@@ -173,7 +173,7 @@ class Stocks {
       const $this = $(this);
       event.stopPropagation();
 
-      // find hollow star icon and make solid star by replacing value of atribute data-prefix
+      // find hollow star icon
       const $icon = $this.find('i');
 
       // get stock id and stock name from sibling elements

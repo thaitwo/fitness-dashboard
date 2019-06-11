@@ -23,7 +23,7 @@ class Watchlist {
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
-    this.$currentPrice = this.$watchlistCanvas.find('#watchlist-current-price');
+    this.$latestPrice = this.$watchlistCanvas.find('#watchlist-latest-price');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -49,7 +49,7 @@ class Watchlist {
                     <h2 id="watchlist-stock-name"></h2>
                     <h3 id="watchlist-stock-symbol"></h3>
                   </div>
-                  <div id="watchlist-current-price"></div>
+                  <div id="watchlist-latest-price"></div>
                 </div>
                 <div class="watchlist-dropdown-container">
                   <select id="watchlist-dropdown">
@@ -128,14 +128,13 @@ class Watchlist {
     // request all data for this stock
     else if (requestType === 'allData') {
       return [
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
       ]
     }
-    else if (requestType === 'currentPrice') {
+    else if (requestType === 'latestPrice') {
       return [
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
       ]
@@ -159,7 +158,7 @@ class Watchlist {
     }
     // store all data for the stock
     else if (requestType === 'allData') {
-      return (currentPrice, historicalPrices, stats, news, quote) => {
+      return (historicalPrices, stats, news, quote) => {
         // if stored data exists
         if (store.get(this.symbol) !== null) {
           const storedData = store.get(this.symbol);
@@ -173,7 +172,7 @@ class Watchlist {
             storedData.historicalPrices[this.interval] = historicalPrices.data;
             store.set(this.symbol, storedData);
           }
-          this.renderStockHeader(currentPrice.data);
+          this.renderStockHeader(quote.data.latestPrice);
         }
         // otherwise create data object and store in localStorage
         else {
@@ -183,17 +182,17 @@ class Watchlist {
             },
             keyStats: stats.data,
             news: news.data,
-            quote: quote,
+            quote: quote.data,
             time: Date.now()
           }
   
           store.set(this.symbol, dataToStore);
-          this.renderStockHeader(currentPrice.data);
+          this.renderStockHeader(quote.data.latestPrice);
         }
       }
-    } else if (requestType === 'currentPrice') {
-      return (currentPrice) => {
-        this.renderStockHeader(currentPrice.data);
+    } else if (requestType === 'latestPrice') {
+      return (quote) => {
+        this.renderStockHeader(quote.data.latestPrice);
       }
     }
   }
@@ -222,17 +221,17 @@ class Watchlist {
   }
 
 
-  renderStockHeader(currentPrice) {
+  renderStockHeader(latestPrice) {
     // let marketCap = store.get(this.symbol).keyStats.marketcap;
     // marketCap = this.formatLargeNumber(marketCap);
 
     const html = `
-      <h2>${currentPrice}</2>
+      <h2>${latestPrice}</2>
       <h3>Current Price</h3>
     `;
 
-    // this.$currentPrice.empty();
-    this.$currentPrice.html(html);
+    // this.$latestPrice.empty();
+    this.$latestPrice.html(html);
   }
 
 
@@ -259,7 +258,7 @@ class Watchlist {
 
       // if stored data exists and is less than 1 day old
       if (store.get(that.symbol) !== null && dataUpdateRequired) {
-        that.fetchStockData('currentPrice');
+        that.fetchStockData('latestPrice');
         that.renderGraph();
         that.renderKeyStats();
         that.renderNews();
@@ -344,20 +343,31 @@ class Watchlist {
 
   // RENDER KEY STATISTICS
   renderKeyStats() {
-    if (store.get(this.symbol).keyStats !== null) {
+    if (store.get(this.symbol).keyStats !== null && store.get(this.symbol).quote !== null) {
       const stats = store.get(this.symbol).keyStats;
-      let marketCap = stats.marketcap;
-      marketCap = this.formatLargeNumber(marketCap);
+      const quote = store.get(this.symbol).quote;
+
+      const close = quote.close;
+      const open = quote.open;
+      const marketCap = this.formatLargeNumber(stats.marketcap);
       const peRatio = stats.peRatio;
       const wk52High = stats.week52high;
       const wk52Low = stats.week52low;
       const eps = stats.ttmEPS;
-      let avg30Vol = stats.avg30Volume;
-      avg30Vol = this.formatNumberWithCommas(Math.round(avg30Vol));
+      const volume = this.formatNumberWithCommas(Math.round(quote.latestVolume));
+      const avg30Vol = this.formatNumberWithCommas(Math.round(stats.avg30Volume));
 
       const keyStatsHTML = `
         <h2 class="text-header">Key Statistics</h2>
         <table id="key-stats-table">
+          <tr>
+            <td>Close</td>
+            <td>${close}</td>
+          </tr>
+          <tr>
+            <td>Open</td>
+            <td>${open}</td>
+          </tr>
           <tr>
             <td>Market Cap</td>
             <td>${marketCap}</td>
@@ -377,6 +387,10 @@ class Watchlist {
           <tr>
             <td>EPS (TTM)</td>
             <td>${eps}</td>
+          </tr>
+          <tr>
+            <td>Volume</td>
+            <td>${volume}</td>
           </tr>
           <tr>
             <td>Avg. Volume (30D)</td>

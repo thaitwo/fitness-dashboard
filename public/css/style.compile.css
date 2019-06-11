@@ -628,14 +628,14 @@ body {
   border-right: 1px solid rgba(255, 255, 255, 0.1);
   padding-right: 2rem; }
 
-#watchlist-current-price {
+#watchlist-latest-price {
   color: #F9A825;
   font-size: 1.5rem;
   font-weight: 600;
   padding-left: 2rem; }
-  #watchlist-current-price h2 {
+  #watchlist-latest-price h2 {
     margin-bottom: .1rem; }
-  #watchlist-current-price h3 {
+  #watchlist-latest-price h3 {
     color: rgba(255, 255, 255, 0.8);
     font-size: .8rem;
     font-weight: 300; }

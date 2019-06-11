@@ -151,7 +151,6 @@ class StockPopup {
 
     // Remove popup modal on click outside of modal
     this.$popupContainer.on('click', function() {
-      console.log(that.watchlist);
       that.destroy();
     });
   }
