@@ -130,7 +130,6 @@ class Watchlist {
     else if (requestType === 'allData') {
       return [
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/stats?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
       ]
@@ -159,7 +158,7 @@ class Watchlist {
     }
     // store all data for the stock
     else if (requestType === 'allData') {
-      return (historicalPrices, stats, news, quote) => {
+      return (historicalPrices, news, quote) => {
         // if stored data exists
         if (store.get(this.symbol) !== null) {
           const storedData = store.get(this.symbol);
@@ -181,7 +180,6 @@ class Watchlist {
             historicalPrices: {
               [this.interval]: historicalPrices.data, // this.interval will be set to the selected interval
             },
-            keyStats: stats.data,
             news: news.data,
             quote: quote.data,
             time: Date.now()
@@ -340,19 +338,19 @@ class Watchlist {
 
   // RENDER KEY STATISTICS
   renderKeyStats() {
-    if (store.get(this.symbol).keyStats !== null && store.get(this.symbol).quote !== null) {
+    if (store.get(this.symbol).quote !== null) {
       const stats = store.get(this.symbol).keyStats;
       const quote = store.get(this.symbol).quote;
 
       const close = quote.close;
       const open = quote.open;
+      const high = quote.high;
+      const low = quote.low;
       const marketCap = formatLargeNumber(quote.marketCap);
-      const peRatio = stats.peRatio;
+      const peRatio = quote.peRatio;
       const wk52High = quote.week52High;
       const wk52Low = quote.week52Low;
-      const eps = stats.ttmEPS;
       const volume = formatNumberWithCommas(Math.round(quote.latestVolume));
-      const avg30Vol = formatNumberWithCommas(Math.round(stats.avg30Volume));
 
       const keyStatsHTML = `
         <h2 class="text-header">Key Statistics</h2>
@@ -364,6 +362,14 @@ class Watchlist {
           <tr>
             <td>Open</td>
             <td>${open}</td>
+          </tr>
+          <tr>
+            <td>High</td>
+            <td>${high}</td>
+          </tr>
+          <tr>
+            <td>Low</td>
+            <td>${low}</td>
           </tr>
           <tr>
             <td>Market Cap</td>
@@ -382,16 +388,8 @@ class Watchlist {
             <td>${wk52Low}</td>
           </tr>
           <tr>
-            <td>EPS (TTM)</td>
-            <td>${eps}</td>
-          </tr>
-          <tr>
             <td>Volume</td>
             <td>${volume}</td>
-          </tr>
-          <tr>
-            <td>Avg. Volume (30D)</td>
-            <td>${avg30Vol}</td>
           </tr>
         </table>
       `;

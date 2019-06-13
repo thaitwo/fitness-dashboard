@@ -182,7 +182,7 @@ class StockPopup {
   getStockData() {
 
     // check if there's locally stored data before making Ajax request
-    if (store.get(`POP-${this.symbol}`)) {
+    if (store.get(`${this.symbol}`)) {
       this.renderStockInfo();
       this.renderGraph();
       this.$exitIcon.removeClass('is-hidden');
@@ -201,15 +201,19 @@ class StockPopup {
     // request stock data
     axios.all([
       axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     ])
-    .then(axios.spread((historicalPrices, quote) => {
+    .then(axios.spread((historicalPrices, quote, news) => {
       // store company data
       const dataToStore = {
-        historicalPrices: historicalPrices.data,
+        historicalPrices: {
+          '1m': historicalPrices.data, // this.interval will be set to the selected interval
+        },
+        news: news.data,
         quote: quote.data
       }
-      store.set(`POP-${this.symbol}`, dataToStore);
+      store.set(`${this.symbol}`, dataToStore);
     }))
     .catch((error) => {
       console.log(error);
@@ -228,7 +232,7 @@ class StockPopup {
 
   // RENDER TABLE WITH STOCK INFO
   renderStockInfo() {
-    const stockData = store.get(`POP-${this.symbol}`);
+    const stockData = store.get(`${this.symbol}`);
 
     // get stock info from local storage
     const latestPrice = stockData.quote.latestPrice;
@@ -290,7 +294,7 @@ class StockPopup {
 
   // RENDER GRAPH
   renderGraph() {
-    const stockData = store.get(`POP-${this.symbol}`).historicalPrices;
+    const stockData = store.get(`${this.symbol}`).historicalPrices['1m'];
 
     // get opening prices for company stock
     let priceData = this.getHistoricalData(stockData, 'close');
