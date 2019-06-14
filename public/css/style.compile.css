@@ -298,9 +298,38 @@ body {
   .popup-modal.is-visible {
     display: block; }
 
+#popup-top-container {
+  display: flex;
+  justify-content: space-between; }
+
 #popup-header {
   display: flex;
   justify-content: flex-start; }
+
+#popup-intervals {
+  border: 2px solid #2B3152;
+  border-radius: 4px;
+  display: flex;
+  font-size: .85rem;
+  justify-content: flex-start;
+  margin-right: 32px; }
+  #popup-intervals li {
+    border-right: 2px solid #2B3152;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    line-height: 28px;
+    min-width: 60px;
+    padding: 0 12px;
+    text-align: center; }
+    #popup-intervals li:last-child {
+      border: none; }
+    #popup-intervals li:hover {
+      background-color: #2B3152;
+      cursor: pointer; }
+  #popup-intervals .selected {
+    background-color: #2B3152;
+    color: #F9A825;
+    font-weight: 800; }
 
 #popup-price-container {
   display: flex;

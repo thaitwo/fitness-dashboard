@@ -3,6 +3,7 @@ import store from 'store2';
 import axios from 'axios';
 import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
+import Intervals from './intervals.js';
 
 // update watchlist button logic to show only after data had been loaded
 // fixed bug that hid exit icon after initial popup display
@@ -18,9 +19,10 @@ class StockPopup {
     this.watchlist = store.get('watchlist') || [];
 
     this.render();
-
+  
     // REGISTER POPUP ELEMENTS
     this.$popupContainer = $('.popup-modal');
+    this.$intervalsContainer = this.$popupContainer.find('#popup-intervals-container');
     this.$popupContentContainer = this.$popupContainer.find('.popup-stock-container');
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$latestPriceContainer = this.$popupContainer.find('#popup-latest-price');
@@ -31,6 +33,7 @@ class StockPopup {
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
+    this.intervals = new Intervals(this.$intervalsContainer);
 
     this.getStockData();
     this.activateEventListeners();
@@ -43,17 +46,26 @@ class StockPopup {
   }
 
 
+  updateGraphOnIntervalSelection() {
+    const selectedInterval = this.intervals.returnSelectedInterval();
+    console.log(selectedInterval);
+  }
+
+
   // RENDER HTML FOR POPUP MODAL
   render() {
     const popupModal = `
       <div class="popup-modal">
         <div class="popup-stock-container">
-          <div id="popup-header">
-            <h2 id="popup-stock-name"></h2>
-            <button id="popup-button-watchlist" class="button button-popup-watchlist">
-              <i class="far fa-eye"></i>
-              <span>Watch</span>
-            </button>
+          <div id="popup-top-container">
+            <div id="popup-header">
+              <h2 id="popup-stock-name"></h2>
+              <button id="popup-button-watchlist" class="button button-popup-watchlist">
+                <i class="far fa-eye"></i>
+                <span>Watch</span>
+              </button>
+            </div>
+            <div id="popup-intervals-container"></div>
           </div>
           <div id="popup-data-container">
             <div id="popup-summary-container">
@@ -191,6 +203,8 @@ class StockPopup {
       this.fetchStockData();
       this.$exitIcon.removeClass('is-hidden');
     }
+
+    this.updateGraphOnIntervalSelection();
   }
 
 

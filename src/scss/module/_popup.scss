@@ -13,9 +13,48 @@
   }
 }
 
+#popup-top-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 #popup-header {
   display: flex;
   justify-content: flex-start;
+}
+
+#popup-intervals {
+  border: 2px solid $colorDark-light;
+  border-radius: 4px;
+  display: flex;
+  font-size: .85rem;
+  justify-content: flex-start;
+  margin-right: 32px;
+
+  li {
+    border-right: 2px solid $colorDark-light;
+    box-sizing: border-box;
+    color: $white;
+    line-height: 28px;
+    min-width: 60px;
+    padding: 0 12px;
+    text-align: center;
+
+    &:last-child {
+      border: none;
+    }
+
+    &:hover {
+      background-color: $colorDark-light;
+      cursor: pointer;
+    }
+  }
+
+  .selected {
+    background-color: $colorDark-light;
+    color: $colorDark-accent;
+    font-weight: 800;
+  }
 }
 
 #popup-price-container {

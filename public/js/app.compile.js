@@ -29933,6 +29933,10 @@ var _graph = __webpack_require__(11);
 
 var _graph2 = _interopRequireDefault(_graph);
 
+var _intervals = __webpack_require__(176);
+
+var _intervals2 = _interopRequireDefault(_intervals);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29956,6 +29960,7 @@ var StockPopup = function () {
 
     // REGISTER POPUP ELEMENTS
     this.$popupContainer = (0, _jquery2.default)('.popup-modal');
+    this.$intervalsContainer = this.$popupContainer.find('#popup-intervals-container');
     this.$popupContentContainer = this.$popupContainer.find('.popup-stock-container');
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$latestPriceContainer = this.$popupContainer.find('#popup-latest-price');
@@ -29965,6 +29970,8 @@ var StockPopup = function () {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
+
+    this.intervals = new _intervals2.default(this.$intervalsContainer);
 
     this.getStockData();
     this.activateEventListeners();
@@ -29980,13 +29987,19 @@ var StockPopup = function () {
         return stock.symbol === symbol;
       });
     }
+  }, {
+    key: 'updateGraphOnIntervalSelection',
+    value: function updateGraphOnIntervalSelection() {
+      var selectedInterval = this.intervals.returnSelectedInterval();
+      console.log(selectedInterval);
+    }
 
     // RENDER HTML FOR POPUP MODAL
 
   }, {
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-header">\n            <h2 id="popup-stock-name"></h2>\n            <button id="popup-button-watchlist" class="button button-popup-watchlist">\n              <i class="far fa-eye"></i>\n              <span>Watch</span>\n            </button>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n              <button id="popup-button-watchlist" class="button button-popup-watchlist">\n                <i class="far fa-eye"></i>\n                <span>Watch</span>\n              </button>\n            </div>\n            <div id="popup-intervals-container"></div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -30110,6 +30123,8 @@ var StockPopup = function () {
         this.fetchStockData();
         this.$exitIcon.removeClass('is-hidden');
       }
+
+      this.updateGraphOnIntervalSelection();
     }
 
     // FETCH STOCK DATA
@@ -63565,6 +63580,93 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 172 */,
+/* 173 */,
+/* 174 */,
+/* 175 */,
+/* 176 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(5);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(3);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Intervals = function () {
+  function Intervals(intervalsContainer) {
+    _classCallCheck(this, Intervals);
+
+    this.intervalsContainer = intervalsContainer;
+
+    this.renderIntervals();
+
+    this.intervalsList = (0, _jquery2.default)('#popup-intervals');
+    this.intervalsItems = this.intervalsList.find('li');
+  }
+
+  // INSERT INTERVALS LIST IN POPUP
+
+
+  _createClass(Intervals, [{
+    key: 'renderIntervals',
+    value: function renderIntervals() {
+      var html = '\n      <ul id="popup-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
+
+      this.intervalsContainer.html(html);
+    }
+  }, {
+    key: 'returnSelectedInterval',
+    value: function returnSelectedInterval() {
+      var that = this;
+
+      this.intervalsList.on('click', 'li', function (event) {
+        event.stopPropagation();
+        var $this = (0, _jquery2.default)(this);
+        var selectedIntervalValue = $this.text().toLowerCase();
+        that.updateIntervals(this);
+
+        return selectedIntervalValue;
+      });
+    }
+
+    // UPDATE STYLEING FOR SELECTED INTERVAL
+
+  }, {
+    key: 'updateIntervals',
+    value: function updateIntervals(selectedInterval) {
+      var $selectedInterval = (0, _jquery2.default)(selectedInterval);
+
+      this.intervalsItems.removeClass('selected');
+      $selectedInterval.addClass('selected');
+    }
+  }]);
+
+  return Intervals;
+}();
+
+exports.default = Intervals;
 
 /***/ })
 /******/ ]);
