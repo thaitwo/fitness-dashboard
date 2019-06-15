@@ -33,7 +33,7 @@ class StockPopup {
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
-    this.intervals = new Intervals(this.$intervalsContainer);
+    this.intervals = new Intervals(this.$intervalsContainer, this.symbol);
 
     this.getStockData();
     this.activateEventListeners();
@@ -43,12 +43,6 @@ class StockPopup {
   // CHECK IF WATCHLIST HAS THIS STOCK
   isInWatchlist(symbol) {
     return this.watchlist.some(stock => stock.symbol === symbol);
-  }
-
-
-  updateGraphOnIntervalSelection() {
-    const selectedInterval = this.intervals.returnSelectedInterval();
-    console.log(selectedInterval);
   }
 
 
@@ -203,8 +197,6 @@ class StockPopup {
       this.fetchStockData();
       this.$exitIcon.removeClass('is-hidden');
     }
-
-    this.updateGraphOnIntervalSelection();
   }
 
 

@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(169)("./" + name);
+                __webpack_require__(170)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4683,7 +4683,7 @@
 
 
 var bind = __webpack_require__(10);
-var isBuffer = __webpack_require__(167);
+var isBuffer = __webpack_require__(168);
 
 /*global toString:true*/
 
@@ -15598,110 +15598,6 @@ module.exports = __webpack_require__(144);
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(process) {
-
-var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(158);
-
-var DEFAULT_CONTENT_TYPE = {
-  'Content-Type': 'application/x-www-form-urlencoded'
-};
-
-function setContentTypeIfUnset(headers, value) {
-  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
-    headers['Content-Type'] = value;
-  }
-}
-
-function getDefaultAdapter() {
-  var adapter;
-  if (typeof XMLHttpRequest !== 'undefined') {
-    // For browsers use XHR adapter
-    adapter = __webpack_require__(6);
-  } else if (typeof process !== 'undefined') {
-    // For node use HTTP adapter
-    adapter = __webpack_require__(6);
-  }
-  return adapter;
-}
-
-var defaults = {
-  adapter: getDefaultAdapter(),
-
-  transformRequest: [function transformRequest(data, headers) {
-    normalizeHeaderName(headers, 'Content-Type');
-    if (utils.isFormData(data) ||
-      utils.isArrayBuffer(data) ||
-      utils.isBuffer(data) ||
-      utils.isStream(data) ||
-      utils.isFile(data) ||
-      utils.isBlob(data)
-    ) {
-      return data;
-    }
-    if (utils.isArrayBufferView(data)) {
-      return data.buffer;
-    }
-    if (utils.isURLSearchParams(data)) {
-      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
-      return data.toString();
-    }
-    if (utils.isObject(data)) {
-      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
-      return JSON.stringify(data);
-    }
-    return data;
-  }],
-
-  transformResponse: [function transformResponse(data) {
-    /*eslint no-param-reassign:0*/
-    if (typeof data === 'string') {
-      try {
-        data = JSON.parse(data);
-      } catch (e) { /* Ignore */ }
-    }
-    return data;
-  }],
-
-  /**
-   * A timeout in milliseconds to abort a request. If set to 0 (default) a
-   * timeout is not created.
-   */
-  timeout: 0,
-
-  xsrfCookieName: 'XSRF-TOKEN',
-  xsrfHeaderName: 'X-XSRF-TOKEN',
-
-  maxContentLength: -1,
-
-  validateStatus: function validateStatus(status) {
-    return status >= 200 && status < 300;
-  }
-};
-
-defaults.headers = {
-  common: {
-    'Accept': 'application/json, text/plain, */*'
-  }
-};
-
-utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
-  defaults.headers[method] = {};
-});
-
-utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
-  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
-});
-
-module.exports = defaults;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(140)))
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports) {
 
 /*! store2 - v2.7.1 - 2018-11-15
@@ -15959,6 +15855,110 @@ module.exports = defaults;
 
 })(this, this && this.define);
 
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(process) {
+
+var utils = __webpack_require__(1);
+var normalizeHeaderName = __webpack_require__(158);
+
+var DEFAULT_CONTENT_TYPE = {
+  'Content-Type': 'application/x-www-form-urlencoded'
+};
+
+function setContentTypeIfUnset(headers, value) {
+  if (!utils.isUndefined(headers) && utils.isUndefined(headers['Content-Type'])) {
+    headers['Content-Type'] = value;
+  }
+}
+
+function getDefaultAdapter() {
+  var adapter;
+  if (typeof XMLHttpRequest !== 'undefined') {
+    // For browsers use XHR adapter
+    adapter = __webpack_require__(6);
+  } else if (typeof process !== 'undefined') {
+    // For node use HTTP adapter
+    adapter = __webpack_require__(6);
+  }
+  return adapter;
+}
+
+var defaults = {
+  adapter: getDefaultAdapter(),
+
+  transformRequest: [function transformRequest(data, headers) {
+    normalizeHeaderName(headers, 'Content-Type');
+    if (utils.isFormData(data) ||
+      utils.isArrayBuffer(data) ||
+      utils.isBuffer(data) ||
+      utils.isStream(data) ||
+      utils.isFile(data) ||
+      utils.isBlob(data)
+    ) {
+      return data;
+    }
+    if (utils.isArrayBufferView(data)) {
+      return data.buffer;
+    }
+    if (utils.isURLSearchParams(data)) {
+      setContentTypeIfUnset(headers, 'application/x-www-form-urlencoded;charset=utf-8');
+      return data.toString();
+    }
+    if (utils.isObject(data)) {
+      setContentTypeIfUnset(headers, 'application/json;charset=utf-8');
+      return JSON.stringify(data);
+    }
+    return data;
+  }],
+
+  transformResponse: [function transformResponse(data) {
+    /*eslint no-param-reassign:0*/
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) { /* Ignore */ }
+    }
+    return data;
+  }],
+
+  /**
+   * A timeout in milliseconds to abort a request. If set to 0 (default) a
+   * timeout is not created.
+   */
+  timeout: 0,
+
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
+
+  maxContentLength: -1,
+
+  validateStatus: function validateStatus(status) {
+    return status >= 200 && status < 300;
+  }
+};
+
+defaults.headers = {
+  common: {
+    'Accept': 'application/json, text/plain, */*'
+  }
+};
+
+utils.forEach(['delete', 'get', 'head'], function forEachMethodNoData(method) {
+  defaults.headers[method] = {};
+});
+
+utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
+  defaults.headers[method] = utils.merge(DEFAULT_CONTENT_TYPE);
+});
+
+module.exports = defaults;
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(140)))
 
 /***/ }),
 /* 6 */
@@ -16242,7 +16242,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chart = __webpack_require__(166);
+var _chart = __webpack_require__(167);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -28847,7 +28847,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(162);
+var _router = __webpack_require__(163);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -28929,7 +28929,7 @@ exports.default = Nav;
 var utils = __webpack_require__(1);
 var bind = __webpack_require__(10);
 var Axios = __webpack_require__(146);
-var defaults = __webpack_require__(4);
+var defaults = __webpack_require__(5);
 
 /**
  * Create an instance of Axios
@@ -29049,7 +29049,7 @@ module.exports = CancelToken;
 "use strict";
 
 
-var defaults = __webpack_require__(4);
+var defaults = __webpack_require__(5);
 var utils = __webpack_require__(1);
 var InterceptorManager = __webpack_require__(147);
 var dispatchRequest = __webpack_require__(148);
@@ -29197,7 +29197,7 @@ module.exports = InterceptorManager;
 var utils = __webpack_require__(1);
 var transformData = __webpack_require__(151);
 var isCancel = __webpack_require__(8);
-var defaults = __webpack_require__(4);
+var defaults = __webpack_require__(5);
 var isAbsoluteURL = __webpack_require__(156);
 var combineURLs = __webpack_require__(154);
 
@@ -29817,15 +29817,165 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(170);
+var _store = __webpack_require__(4);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(3);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _graph = __webpack_require__(11);
+
+var _graph2 = _interopRequireDefault(_graph);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Intervals = function () {
+  function Intervals(intervalsContainer, symbol) {
+    _classCallCheck(this, Intervals);
+
+    this.intervalsContainer = intervalsContainer;
+    this.symbol = symbol;
+    this.$popupChartContainer = (0, _jquery2.default)('#popup-chart');
+    this.graph;
+    this.selectedInterval;
+    this.renderIntervals();
+
+    this.intervalsList = (0, _jquery2.default)('#popup-intervals');
+    this.intervalsItems = this.intervalsList.find('li');
+    this.updateIntervalData();
+  }
+
+  // INSERT INTERVALS LIST IN POPUP
+
+
+  _createClass(Intervals, [{
+    key: 'renderIntervals',
+    value: function renderIntervals() {
+      var html = '\n      <ul id="popup-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
+
+      this.intervalsContainer.html(html);
+    }
+
+    // CLICK HANDLER TO UPDATE GRAPH
+
+  }, {
+    key: 'updateIntervalData',
+    value: function updateIntervalData() {
+      var that = this;
+
+      this.intervalsList.on('click', 'li', function (event) {
+        var $this = (0, _jquery2.default)(this);
+        var selectedInterval = $this.text().toLowerCase();
+        that.selectedInterval = selectedInterval;
+
+        that.updateIntervals(this);
+        that.renderGraph();
+      });
+    }
+
+    // FETCH NEW DATA FOR SELECTED INTERVAL
+
+  }, {
+    key: 'fetchGraphData',
+    value: function fetchGraphData() {
+      var _this = this;
+
+      _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.selectedInterval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
+        var storedData = _store2.default.get(_this.symbol);
+        storedData.historicalPrices[_this.selectedInterval] = response.data;
+        _store2.default.set(_this.symbol, storedData);
+      }).catch(function (error) {
+        console.log(error);
+      }).finally(function () {
+        _this.renderGraph();
+      });
+    }
+
+    // RENDER GRAPH
+
+  }, {
+    key: 'renderGraph',
+    value: function renderGraph() {
+      var storedData = _store2.default.get(this.symbol);
+
+      // if historical prices for selected interval does exist in localStorage
+      if (this.selectedInterval in storedData.historicalPrices) {
+        var _storedData = _store2.default.get(this.symbol).historicalPrices[this.selectedInterval];
+        // get closing prices for stock
+        var prices = this.getHistoricalData(_storedData, 'close');
+        // get dates for closing prices
+        var dates = this.getHistoricalData(_storedData, 'date');
+
+        // delete graph if any exists and create new graph
+        if (this.graph) {
+          this.graph.destroy();
+        }
+        this.graph = new _graph2.default(this.$popupChartContainer, prices, dates);
+      }
+      // if it doesn't exist, make data request
+      else {
+          this.fetchGraphData();
+        }
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getHistoricalData',
+    value: function getHistoricalData(data, key) {
+      // console.log(data);
+      return data.map(function (day) {
+        return day[key];
+      });
+    }
+
+    // UPDATE STYLEING FOR SELECTED INTERVAL
+
+  }, {
+    key: 'updateIntervals',
+    value: function updateIntervals(selectedInterval) {
+      var $selectedInterval = (0, _jquery2.default)(selectedInterval);
+
+      this.intervalsItems.removeClass('selected');
+      $selectedInterval.addClass('selected');
+    }
+  }]);
+
+  return Intervals;
+}();
+
+exports.default = Intervals;
+
+/***/ }),
+/* 163 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _navigo = __webpack_require__(171);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stocks = __webpack_require__(164);
+var _stocks = __webpack_require__(165);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
-var _watchlist = __webpack_require__(165);
+var _watchlist = __webpack_require__(166);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -29903,7 +30053,7 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29919,7 +30069,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(5);
+var _store = __webpack_require__(4);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -29933,7 +30083,7 @@ var _graph = __webpack_require__(11);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _intervals = __webpack_require__(176);
+var _intervals = __webpack_require__(162);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
@@ -29971,7 +30121,7 @@ var StockPopup = function () {
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
-    this.intervals = new _intervals2.default(this.$intervalsContainer);
+    this.intervals = new _intervals2.default(this.$intervalsContainer, this.symbol);
 
     this.getStockData();
     this.activateEventListeners();
@@ -29986,12 +30136,6 @@ var StockPopup = function () {
       return this.watchlist.some(function (stock) {
         return stock.symbol === symbol;
       });
-    }
-  }, {
-    key: 'updateGraphOnIntervalSelection',
-    value: function updateGraphOnIntervalSelection() {
-      var selectedInterval = this.intervals.returnSelectedInterval();
-      console.log(selectedInterval);
     }
 
     // RENDER HTML FOR POPUP MODAL
@@ -30123,8 +30267,6 @@ var StockPopup = function () {
         this.fetchStockData();
         this.$exitIcon.removeClass('is-hidden');
       }
-
-      this.updateGraphOnIntervalSelection();
     }
 
     // FETCH STOCK DATA
@@ -30237,7 +30379,7 @@ var StockPopup = function () {
 exports.default = StockPopup;
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30253,11 +30395,11 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(168);
+var _lodash = __webpack_require__(169);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _store = __webpack_require__(5);
+var _store = __webpack_require__(4);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -30265,7 +30407,7 @@ var _axios = __webpack_require__(3);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _stockPopup = __webpack_require__(163);
+var _stockPopup = __webpack_require__(164);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
@@ -30502,7 +30644,7 @@ var Stocks = function () {
 exports.default = Stocks;
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30518,7 +30660,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(5);
+var _store = __webpack_require__(4);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -30915,7 +31057,7 @@ var Watchlist = function () {
 exports.default = Watchlist;
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -45601,7 +45743,7 @@ return src;
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports) {
 
 /*!
@@ -45628,7 +45770,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -62740,10 +62882,10 @@ function isSlowBuffer (obj) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(171), __webpack_require__(141)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(172), __webpack_require__(141)(module)))
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -63016,10 +63158,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 169;
+webpackContext.id = 170;
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -63555,7 +63697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports) {
 
 var g;
@@ -63580,93 +63722,6 @@ try {
 
 module.exports = g;
 
-
-/***/ }),
-/* 172 */,
-/* 173 */,
-/* 174 */,
-/* 175 */,
-/* 176 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(5);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _axios = __webpack_require__(3);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Intervals = function () {
-  function Intervals(intervalsContainer) {
-    _classCallCheck(this, Intervals);
-
-    this.intervalsContainer = intervalsContainer;
-
-    this.renderIntervals();
-
-    this.intervalsList = (0, _jquery2.default)('#popup-intervals');
-    this.intervalsItems = this.intervalsList.find('li');
-  }
-
-  // INSERT INTERVALS LIST IN POPUP
-
-
-  _createClass(Intervals, [{
-    key: 'renderIntervals',
-    value: function renderIntervals() {
-      var html = '\n      <ul id="popup-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
-
-      this.intervalsContainer.html(html);
-    }
-  }, {
-    key: 'returnSelectedInterval',
-    value: function returnSelectedInterval() {
-      var that = this;
-
-      this.intervalsList.on('click', 'li', function (event) {
-        event.stopPropagation();
-        var $this = (0, _jquery2.default)(this);
-        var selectedIntervalValue = $this.text().toLowerCase();
-        that.updateIntervals(this);
-
-        return selectedIntervalValue;
-      });
-    }
-
-    // UPDATE STYLEING FOR SELECTED INTERVAL
-
-  }, {
-    key: 'updateIntervals',
-    value: function updateIntervals(selectedInterval) {
-      var $selectedInterval = (0, _jquery2.default)(selectedInterval);
-
-      this.intervalsItems.removeClass('selected');
-      $selectedInterval.addClass('selected');
-    }
-  }]);
-
-  return Intervals;
-}();
-
-exports.default = Intervals;
 
 /***/ })
 /******/ ]);
