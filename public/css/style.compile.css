@@ -306,14 +306,14 @@ body {
   display: flex;
   justify-content: flex-start; }
 
-#popup-intervals {
+#time-intervals {
   border: 2px solid #2B3152;
   border-radius: 4px;
   display: flex;
   font-size: .85rem;
   justify-content: flex-start;
   margin-right: 32px; }
-  #popup-intervals li {
+  #time-intervals li {
     border-right: 2px solid #2B3152;
     box-sizing: border-box;
     color: #FFFFFF;
@@ -321,12 +321,12 @@ body {
     min-width: 60px;
     padding: 0 12px;
     text-align: center; }
-    #popup-intervals li:last-child {
+    #time-intervals li:last-child {
       border: none; }
-    #popup-intervals li:hover {
+    #time-intervals li:hover {
       background-color: #2B3152;
       cursor: pointer; }
-  #popup-intervals .selected {
+  #time-intervals .selected {
     background-color: #2B3152;
     color: #F9A825;
     font-weight: 800; }
@@ -598,21 +598,10 @@ body {
   justify-content: space-between;
   align-items: flex-start; }
 
-.watchlist-dropdown-container {
+#watchlist-intervals-container {
   position: relative; }
-  .watchlist-dropdown-container::before {
-    content: '\F078';
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.2);
-    padding-top: 2px;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    position: absolute;
-    pointer-events: none;
-    z-index: 1; }
+  #watchlist-intervals-container #time-intervals {
+    margin-right: 0; }
 
 #watchlist-dropdown {
   background-color: #2B3152;

@@ -4682,7 +4682,7 @@
 "use strict";
 
 
-var bind = __webpack_require__(10);
+var bind = __webpack_require__(11);
 var isBuffer = __webpack_require__(168);
 
 /*global toString:true*/
@@ -15880,10 +15880,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(6);
+    adapter = __webpack_require__(7);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(6);
+    adapter = __webpack_require__(7);
   }
   return adapter;
 }
@@ -15965,6 +15965,159 @@ module.exports = defaults;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _chart = __webpack_require__(167);
+
+var _chart2 = _interopRequireDefault(_chart);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+* Graph Component
+* @class
+* @param {String} canvasId - The id of canvas to insert graph
+* @param {Array} newData - Data to populate the graph
+* @param {Array} newLabels - Array of labels for the dates
+* @param {String} graphType (optional | default is line graph) - The type of graph to display
+* @param {Object} options (optional) - Graph options
+* @returns {Object}
+*/
+
+var Graph = function () {
+  function Graph(canvasId, newData, newLabels, graphType, options) {
+    _classCallCheck(this, Graph);
+
+    this.canvasId = canvasId;
+    this.graphType = graphType || 'line';
+
+    this.data = {
+      labels: newLabels,
+      display: true,
+      datasets: [{
+        backgroundColor: 'rgba(249,168,37, .2)',
+        borderColor: 'rgba(249,168,37, 1)',
+        borderWidth: 2,
+        data: newData,
+        hoverRadius: 12,
+        pointBackgroundColor: 'rgba(249,168,37, 0)', // rgba(250, 128, 114, 1)
+        pointBorderColor: 'rgba(0,0,0,0)',
+        pointBorderWidth: 0,
+        pointHoverBorderColor: '#fff',
+        pointHoverBorderWidth: 2,
+        pointHoverBackgroundColor: 'rgb(249,168,37)',
+        pointHoverRadius: 5,
+        // pointRadius: 5,
+        radius: 4,
+        lineTension: 0
+      }]
+    };
+
+    this.options = options || this.getOptions();
+    this.graph;
+
+    this.renderGraph();
+  }
+
+  // DESTROY GRAPH
+
+
+  _createClass(Graph, [{
+    key: 'destroy',
+    value: function destroy() {
+      if (this.graph) {
+        this.graph.destroy();
+      }
+    }
+
+    // RENDER OPTIONS OBJECT
+
+  }, {
+    key: 'getOptions',
+    value: function getOptions() {
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 40,
+            bottom: 32
+          }
+        },
+        legend: {
+          display: false,
+          labels: {
+            // This more specific font property overrides the global property
+            fontColor: 'black',
+            fontFamily: 'Montserrat, sans-serif'
+          }
+        },
+        scales: {
+          xAxes: [{
+            gridLines: {
+              color: 'rgba(255,255,255,0.03)',
+              display: true,
+              tickMarkLength: 10
+            },
+            ticks: {
+              fontColor: '#B0BEC5',
+              fontFamily: 'Mukta, sans-serif',
+              fontStyle: 'normal',
+              autoSkip: true,
+              maxTicksLimit: 22
+            }
+          }],
+          yAxes: [{
+            position: 'right',
+            gridLines: {
+              color: 'rgba(255,255,255,0.03)',
+              drawBorder: false,
+              zeroLineColor: 'rgba(0,0,0,0.04)',
+              tickMarkLength: 0
+            },
+            ticks: {
+              beginAtZero: false,
+              fontColor: '#B0BEC5',
+              fontFamily: 'Mukta, sans-serif',
+              fontStyle: 'normal',
+              padding: 15
+            }
+          }]
+        }
+      };
+    }
+
+    // RENDER NEW CHART
+
+  }, {
+    key: 'renderGraph',
+    value: function renderGraph() {
+      this.graph = new _chart2.default(this.canvasId, {
+        type: this.graphType,
+        data: this.data,
+        options: this.options
+      });
+    }
+  }]);
+
+  return Graph;
+}();
+
+exports.default = Graph;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
@@ -15972,7 +16125,7 @@ var settle = __webpack_require__(150);
 var buildURL = __webpack_require__(153);
 var parseHeaders = __webpack_require__(159);
 var isURLSameOrigin = __webpack_require__(157);
-var createError = __webpack_require__(9);
+var createError = __webpack_require__(10);
 var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(152);
 
 module.exports = function xhrAdapter(config) {
@@ -16149,7 +16302,7 @@ module.exports = function xhrAdapter(config) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(140)))
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16175,7 +16328,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16187,7 +16340,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16212,7 +16365,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16228,159 +16381,6 @@ module.exports = function bind(fn, thisArg) {
   };
 };
 
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _chart = __webpack_require__(167);
-
-var _chart2 = _interopRequireDefault(_chart);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
-* Graph Component
-* @class
-* @param {String} canvasId - The id of canvas to insert graph
-* @param {Array} newData - Data to populate the graph
-* @param {Array} newLabels - Array of labels for the dates
-* @param {String} graphType (optional | default is line graph) - The type of graph to display
-* @param {Object} options (optional) - Graph options
-* @returns {Object}
-*/
-
-var Graph = function () {
-  function Graph(canvasId, newData, newLabels, graphType, options) {
-    _classCallCheck(this, Graph);
-
-    this.canvasId = canvasId;
-    this.graphType = graphType || 'line';
-
-    this.data = {
-      labels: newLabels,
-      display: true,
-      datasets: [{
-        backgroundColor: 'rgba(249,168,37, .2)',
-        borderColor: 'rgba(249,168,37, 1)',
-        borderWidth: 2,
-        data: newData,
-        hoverRadius: 12,
-        pointBackgroundColor: 'rgba(249,168,37, 0)', // rgba(250, 128, 114, 1)
-        pointBorderColor: 'rgba(0,0,0,0)',
-        pointBorderWidth: 0,
-        pointHoverBorderColor: '#fff',
-        pointHoverBorderWidth: 2,
-        pointHoverBackgroundColor: 'rgb(249,168,37)',
-        pointHoverRadius: 5,
-        // pointRadius: 5,
-        radius: 4,
-        lineTension: 0
-      }]
-    };
-
-    this.options = options || this.getOptions();
-    this.graph;
-
-    this.renderGraph();
-  }
-
-  // DESTROY GRAPH
-
-
-  _createClass(Graph, [{
-    key: 'destroy',
-    value: function destroy() {
-      if (this.graph) {
-        this.graph.destroy();
-      }
-    }
-
-    // RENDER OPTIONS OBJECT
-
-  }, {
-    key: 'getOptions',
-    value: function getOptions() {
-      return {
-        responsive: true,
-        maintainAspectRatio: false,
-        layout: {
-          padding: {
-            top: 40,
-            bottom: 32
-          }
-        },
-        legend: {
-          display: false,
-          labels: {
-            // This more specific font property overrides the global property
-            fontColor: 'black',
-            fontFamily: 'Montserrat, sans-serif'
-          }
-        },
-        scales: {
-          xAxes: [{
-            gridLines: {
-              color: 'rgba(255,255,255,0.03)',
-              display: true,
-              tickMarkLength: 10
-            },
-            ticks: {
-              fontColor: '#B0BEC5',
-              fontFamily: 'Mukta, sans-serif',
-              fontStyle: 'normal',
-              autoSkip: true,
-              maxTicksLimit: 22
-            }
-          }],
-          yAxes: [{
-            position: 'right',
-            gridLines: {
-              color: 'rgba(255,255,255,0.03)',
-              drawBorder: false,
-              zeroLineColor: 'rgba(0,0,0,0.04)',
-              tickMarkLength: 0
-            },
-            ticks: {
-              beginAtZero: false,
-              fontColor: '#B0BEC5',
-              fontFamily: 'Mukta, sans-serif',
-              fontStyle: 'normal',
-              padding: 15
-            }
-          }]
-        }
-      };
-    }
-
-    // RENDER NEW CHART
-
-  }, {
-    key: 'renderGraph',
-    value: function renderGraph() {
-      this.graph = new _chart2.default(this.canvasId, {
-        type: this.graphType,
-        data: this.data,
-        options: this.options
-      });
-    }
-  }]);
-
-  return Graph;
-}();
-
-exports.default = Graph;
 
 /***/ }),
 /* 12 */
@@ -28927,7 +28927,7 @@ exports.default = Nav;
 
 
 var utils = __webpack_require__(1);
-var bind = __webpack_require__(10);
+var bind = __webpack_require__(11);
 var Axios = __webpack_require__(146);
 var defaults = __webpack_require__(5);
 
@@ -28962,9 +28962,9 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(7);
+axios.Cancel = __webpack_require__(8);
 axios.CancelToken = __webpack_require__(145);
-axios.isCancel = __webpack_require__(8);
+axios.isCancel = __webpack_require__(9);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -28985,7 +28985,7 @@ module.exports.default = axios;
 "use strict";
 
 
-var Cancel = __webpack_require__(7);
+var Cancel = __webpack_require__(8);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -29196,7 +29196,7 @@ module.exports = InterceptorManager;
 
 var utils = __webpack_require__(1);
 var transformData = __webpack_require__(151);
-var isCancel = __webpack_require__(8);
+var isCancel = __webpack_require__(9);
 var defaults = __webpack_require__(5);
 var isAbsoluteURL = __webpack_require__(156);
 var combineURLs = __webpack_require__(154);
@@ -29315,7 +29315,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var createError = __webpack_require__(9);
+var createError = __webpack_require__(10);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -29825,7 +29825,7 @@ var _axios = __webpack_require__(3);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(11);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -29834,17 +29834,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Intervals = function () {
-  function Intervals(intervalsContainer, symbol) {
+  function Intervals(intervalsContainer, symbol, chartContainer) {
     _classCallCheck(this, Intervals);
 
     this.intervalsContainer = intervalsContainer;
     this.symbol = symbol;
-    this.$popupChartContainer = (0, _jquery2.default)('#popup-chart');
+    this.$chartContainer = (0, _jquery2.default)(chartContainer);
     this.graph;
     this.selectedInterval;
     this.renderIntervals();
 
-    this.intervalsList = (0, _jquery2.default)('#popup-intervals');
+    this.intervalsList = (0, _jquery2.default)('#time-intervals');
     this.intervalsItems = this.intervalsList.find('li');
     this.updateIntervalData();
   }
@@ -29855,7 +29855,7 @@ var Intervals = function () {
   _createClass(Intervals, [{
     key: 'renderIntervals',
     value: function renderIntervals() {
-      var html = '\n      <ul id="popup-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
+      var html = '\n      <ul id="time-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
 
       this.intervalsContainer.html(html);
     }
@@ -29914,7 +29914,7 @@ var Intervals = function () {
         if (this.graph) {
           this.graph.destroy();
         }
-        this.graph = new _graph2.default(this.$popupChartContainer, prices, dates);
+        this.graph = new _graph2.default(this.$chartContainer, prices, dates);
       }
       // if it doesn't exist, make data request
       else {
@@ -30079,7 +30079,7 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _helpers = __webpack_require__(12);
 
-var _graph = __webpack_require__(11);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -30121,7 +30121,7 @@ var StockPopup = function () {
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
-    this.intervals = new _intervals2.default(this.$intervalsContainer, this.symbol);
+    this.intervals = new _intervals2.default(this.$intervalsContainer, this.symbol, '#popup-chart');
 
     this.getStockData();
     this.activateEventListeners();
@@ -30286,7 +30286,8 @@ var StockPopup = function () {
             '1m': historicalPrices.data // this.interval will be set to the selected interval
           },
           news: news.data,
-          quote: quote.data
+          quote: quote.data,
+          time: Date.now()
         };
         _store2.default.set('' + _this.symbol, dataToStore);
       })).catch(function (error) {
@@ -30670,9 +30671,13 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _helpers = __webpack_require__(12);
 
-var _graph = __webpack_require__(11);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
+
+var _intervals = __webpack_require__(162);
+
+var _intervals2 = _interopRequireDefault(_intervals);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30702,6 +30707,9 @@ var Watchlist = function () {
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPrice = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
+
+    this.intervalsBar = new _intervals2.default(this.$intervalsContainer, this.symbol, '#watchlist-chart');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -30715,7 +30723,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <div class="watchlist-chart-name-container">\n                    <h2 id="watchlist-stock-name"></h2>\n                    <h3 id="watchlist-stock-symbol"></h3>\n                  </div>\n                  <div id="watchlist-latest-price"></div>\n                </div>\n                <div class="watchlist-dropdown-container">\n                  <select id="watchlist-dropdown">\n                    <option value="1m">1M</option>\n                    <option value="3m">3M</option>\n                    <option value="6m">6M</option>\n                    <option value="ytd">YTD</option>\n                    <option value="1y">1Y</option>\n                    <option value="2y">2Y</option>\n                    <option value="5y">5Y</option>\n                    <option value="max">MAX</option>\n                  </select>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <div class="watchlist-chart-name-container">\n                    <h2 id="watchlist-stock-name"></h2>\n                    <h3 id="watchlist-stock-symbol"></h3>\n                  </div>\n                  <div id="watchlist-latest-price"></div>\n                </div>\n                <div id="watchlist-intervals-container"></div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }

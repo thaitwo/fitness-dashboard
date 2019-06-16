@@ -3,6 +3,7 @@ import store from 'store2';
 import axios from 'axios';
 import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
+import Intervals from './intervals.js';
 
 
 class Watchlist {
@@ -25,6 +26,9 @@ class Watchlist {
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPrice = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
+
+    this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#watchlist-chart');
 
     this.getStocks();
     this.renderDataForFirstStock();
@@ -52,18 +56,7 @@ class Watchlist {
                   </div>
                   <div id="watchlist-latest-price"></div>
                 </div>
-                <div class="watchlist-dropdown-container">
-                  <select id="watchlist-dropdown">
-                    <option value="1m">1M</option>
-                    <option value="3m">3M</option>
-                    <option value="6m">6M</option>
-                    <option value="ytd">YTD</option>
-                    <option value="1y">1Y</option>
-                    <option value="2y">2Y</option>
-                    <option value="5y">5Y</option>
-                    <option value="max">MAX</option>
-                  </select>
-                </div>
+                <div id="watchlist-intervals-container"></div>
               </div>
               <canvas id="watchlist-chart" width="900" height="320"></canvas>
             </div>

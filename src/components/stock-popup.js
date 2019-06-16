@@ -33,7 +33,7 @@ class StockPopup {
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
-    this.intervals = new Intervals(this.$intervalsContainer, this.symbol);
+    this.intervals = new Intervals(this.$intervalsContainer, this.symbol, '#popup-chart');
 
     this.getStockData();
     this.activateEventListeners();
@@ -217,7 +217,8 @@ class StockPopup {
           '1m': historicalPrices.data, // this.interval will be set to the selected interval
         },
         news: news.data,
-        quote: quote.data
+        quote: quote.data,
+        time: Date.now()
       }
       store.set(`${this.symbol}`, dataToStore);
     }))

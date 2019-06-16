@@ -4,15 +4,15 @@ import axios from 'axios';
 import Graph from './graph.js';
 
 class Intervals {
-  constructor(intervalsContainer, symbol) {
+  constructor(intervalsContainer, symbol, chartContainer) {
     this.intervalsContainer = intervalsContainer;
     this.symbol = symbol;
-    this.$popupChartContainer = $('#popup-chart');
+    this.$chartContainer = $(chartContainer);
     this.graph;
     this.selectedInterval;
     this.renderIntervals();
 
-    this.intervalsList = $('#popup-intervals');
+    this.intervalsList = $('#time-intervals');
     this.intervalsItems = this.intervalsList.find('li');
     this.updateIntervalData();
   }
@@ -21,7 +21,7 @@ class Intervals {
   // INSERT INTERVALS LIST IN POPUP
   renderIntervals() {
     const html = `
-      <ul id="popup-intervals">
+      <ul id="time-intervals">
         <li class="selected">1M</li>
         <li>3M</li>
         <li>6M</li>
@@ -85,7 +85,7 @@ class Intervals {
       if (this.graph) {
         this.graph.destroy();
       }
-      this.graph = new Graph(this.$popupChartContainer, prices, dates);
+      this.graph = new Graph(this.$chartContainer, prices, dates);
     }
     // if it doesn't exist, make data request
     else {
