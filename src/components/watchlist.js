@@ -428,9 +428,13 @@ class Watchlist {
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
   getHistoricalData(data, key) {
-    // console.log(data);
     return data.map((day) => {
-      return day[key];
+      if (key === 'date') {
+        const date = day[key].split('-');
+        return `${date[1].replace(/^0+/, '')}-${date[2]}-${date[0]}`;
+      } else {
+        return day[key];
+      }
     });
   }
 

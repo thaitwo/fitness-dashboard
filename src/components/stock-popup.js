@@ -243,7 +243,7 @@ class StockPopup {
 
     // get stock info from local storage
     const latestPrice = stockData.quote.latestPrice;
-    let changePercent = (stockData.quote.changePercent * 100).toFixed(2);
+    const changePercent = (stockData.quote.changePercent * 100).toFixed(2);
     const closePrice = stockData.quote.close;
     const openPrice = stockData.quote.open;
     const low = stockData.quote.low;
@@ -259,6 +259,11 @@ class StockPopup {
     this.$stockName.text(`${this.companyName} (${this.symbol})`);
     this.$latestPriceContainer.text(latestPrice);
     this.$changePercentContainer.text(`${plusOrMinus}${changePercent}%`);
+    if (changePercent >= 0) {
+      this.$changePercentContainer.addClass('percent-change-positive');
+    } else {
+      this.$changePercentContainer.addClass('percent-change-negative');
+    }
 
 
     let row = `
@@ -319,7 +324,8 @@ class StockPopup {
     // console.log(data);
     return data.map((day) => {
       if (key === 'date') {
-        return day[key].split('-')[2];
+        const date = day[key].split('-');
+        return `${date[1].replace(/^0+/, '')}-${date[2]}-${date[0]}`;
       } else {
         return day[key];
       }

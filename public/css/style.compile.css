@@ -351,9 +351,14 @@ body {
   padding-right: 16px; }
 
 #popup-change-percent {
-  color: greenyellow;
   font-size: 1.1rem;
   line-height: 24px; }
+
+.percent-change-positive {
+  color: #4CAF50; }
+
+.percent-change-negative {
+  color: #e53935; }
 
 #popup-stock-name {
   color: #F9A825;
@@ -371,17 +376,15 @@ body {
   width: 960px; }
   .popup-stock-container .exit-icon {
     background-color: transparent;
-    border-radius: 4px;
     padding: 4px 8px 3px;
     position: absolute;
-    right: 10px;
-    top: 10px;
+    right: 0;
+    top: 0;
     transition: all .1s; }
     .popup-stock-container .exit-icon:hover {
-      background-color: #FFFFFF;
       cursor: pointer; }
       .popup-stock-container .exit-icon:hover .fa-times {
-        color: #151C40; }
+        color: #FFFFFF; }
   .popup-stock-container .fa-times {
     color: #2B3152;
     font-size: 1.2rem; }
