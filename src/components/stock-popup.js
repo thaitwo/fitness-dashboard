@@ -253,7 +253,7 @@ class StockPopup {
     const volume = formatNumberWithCommas(Math.round(stockData.quote.latestVolume));
     const peRatio = stockData.quote.peRatio;
     const marketCap = formatLargeNumber(stockData.quote.marketCap);
-    const plusOrMinus = (changePercent > 0) ? '+' : '';
+    const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
 
     // render stock name
     this.$stockName.text(`${this.companyName} (${this.symbol})`);

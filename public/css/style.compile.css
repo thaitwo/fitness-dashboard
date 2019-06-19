@@ -161,6 +161,21 @@ body {
     text-decoration: none; }
 
 /* LAYOUT */
+.flex-sp-btwn {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; }
+
+.flex-hori-start {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end; }
+
+.flex-vert {
+  display: flex;
+  flex-direction: column; }
+
 .l-flex {
   display: flex; }
   .l-flex.flex-wrap {
@@ -318,8 +333,7 @@ body {
     box-sizing: border-box;
     color: #FFFFFF;
     line-height: 28px;
-    min-width: 60px;
-    padding: 0 12px;
+    min-width: 48px;
     text-align: center; }
     #time-intervals li:last-child {
       border: none; }
@@ -590,16 +604,14 @@ body {
   display: flex;
   flex-direction: row; }
 
+#watchlist-chart {
+  max-height: 350px; }
+
 .watchlist-title {
   color: #FFFFFF;
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 2rem; }
-
-.watchlist-chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start; }
 
 #watchlist-intervals-container {
   position: relative; }
@@ -645,21 +657,37 @@ body {
 .watchlist-chart-stock-container {
   display: flex; }
 
+#watchlist-chart-header-top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: .5rem; }
+
 .watchlist-chart-name-container {
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding-right: 2rem; }
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start; }
+
+#watchlist-stock-name {
+  color: #F9A825;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding-right: .4rem; }
+
+#watchlist-stock-symbol {
+  color: #F9A825;
+  font-size: 1.2rem; }
 
 #watchlist-latest-price {
-  color: #F9A825;
-  font-size: 1.5rem;
-  font-weight: 600;
-  padding-left: 2rem; }
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-weight: 600; }
   #watchlist-latest-price h2 {
-    margin-bottom: .1rem; }
-  #watchlist-latest-price h3 {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: .8rem;
-    font-weight: 300; }
+    margin-right: 1rem; }
+
+#watchlist-change-percent h3 {
+  font-size: 1.2rem;
+  line-height: 25px; }
 
 .watchlist-news-article {
   margin-bottom: 1.3rem; }
@@ -737,15 +765,6 @@ body {
   margin-bottom: 24px;
   min-width: 600px;
   padding: 1.5rem; }
-
-#watchlist-stock-name {
-  color: #F9A825;
-  font-size: 1.2rem;
-  margin-bottom: .3rem; }
-
-#watchlist-stock-symbol {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: .9rem; }
 
 .watchlist-list li {
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);

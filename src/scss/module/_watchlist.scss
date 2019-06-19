@@ -11,7 +11,7 @@
 }
 
 #watchlist-chart {
-  // padding-top: 48px;
+  max-height: 350px;
 }
 
 .watchlist-title {
@@ -22,9 +22,8 @@
 }
 
 .watchlist-chart-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  // display: flex;
+  // justify-content: space-between;
 }
 
 #watchlist-intervals-container {
@@ -84,25 +83,46 @@
   display: flex;
 }
 
+#watchlist-chart-header-top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
 .watchlist-chart-name-container {
-  border-right: 1px solid rgba($white,.1);
-  padding-right: 2rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+#watchlist-stock-name {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding-right: .4rem;
+}
+
+#watchlist-stock-symbol {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
 }
 
 #watchlist-latest-price {
-  color: $colorDark-accent;
-  font-size: 1.5rem;
+  color: $white;
+  font-size: 2rem;
   font-weight: 600;
-  padding-left: 2rem;
 
   h2 {
-    margin-bottom: .1rem;
+    margin-right: 1rem;
   }
+}
+
+#watchlist-change-percent {
 
   h3 {
-    color: rgba($white,.8);
-    font-size: .8rem;
-    font-weight: 300;
+    font-size: 1.2rem;
+    line-height: 25px;
   }
 }
 
@@ -213,17 +233,6 @@
   margin-bottom: 24px;
   min-width: 600px;
   padding: 1.5rem;
-}
-
-#watchlist-stock-name {
-  color: $colorDark-accent;
-  font-size: 1.2rem;
-  margin-bottom: .3rem;
-}
-
-#watchlist-stock-symbol {
-  color: rgba($white,.8);
-  font-size: .9rem;
 }
 
 .watchlist-list {

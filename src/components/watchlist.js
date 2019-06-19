@@ -25,7 +25,8 @@ class Watchlist {
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
-    this.$latestPrice = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
     this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
 
     this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#watchlist-chart');
@@ -49,14 +50,19 @@ class Watchlist {
           <div class="watchlist-data-inner-container">
             <div class="watchlist-chart-container">
               <div class="watchlist-chart-header">
-                <div class="watchlist-chart-stock-container">
-                  <div class="watchlist-chart-name-container">
-                    <h2 id="watchlist-stock-name"></h2>
-                    <h3 id="watchlist-stock-symbol"></h3>
+                <div id="watchlist-chart-header-top-row">
+                  <div class="watchlist-chart-stock-container">
+                    <div class="watchlist-chart-name-container">
+                      <h2 id="watchlist-stock-name"></h2>
+                      <h3 id="watchlist-stock-symbol"></h3>
+                    </div>
                   </div>
-                  <div id="watchlist-latest-price"></div>
+                  <div id="watchlist-intervals-container"></div>
                 </div>
-                <div id="watchlist-intervals-container"></div>
+                <div class="flex-hori-start" style="height: 32px;">
+                  <div id="watchlist-latest-price"></div>
+                  <div id="watchlist-change-percent"></div>
+                </div>
               </div>
               <canvas id="watchlist-chart" width="900" height="320"></canvas>
             </div>
@@ -152,6 +158,8 @@ class Watchlist {
     // store all data for the stock
     else if (requestType === 'allData') {
       return (historicalPrices, news, quote) => {
+        const latestPrice = quote.data.latestPrice;
+        const changePercent = quote.data.changePercent;
         // if stored data exists
         if (store.get(this.symbol) !== null) {
           const storedData = store.get(this.symbol);
@@ -165,7 +173,7 @@ class Watchlist {
             storedData.historicalPrices[this.interval] = historicalPrices.data;
             store.set(this.symbol, storedData);
           }
-          this.renderStockHeader(quote.data.latestPrice);
+          this.renderStockHeader(latestPrice, changePercent);
         }
         // otherwise create data object and store in localStorage
         else {
@@ -179,12 +187,14 @@ class Watchlist {
           }
   
           store.set(this.symbol, dataToStore);
-          this.renderStockHeader(quote.data.latestPrice);
+          this.renderStockHeader(latestPrice, changePercent);
         }
       }
     } else if (requestType === 'latestPrice') {
       return (quote) => {
-        this.renderStockHeader(quote.data.latestPrice);
+        const latestPrice = quote.data.latestPrice;
+        const changePercent = quote.data.changePercent;
+        this.renderStockHeader(latestPrice, changePercent);
       }
     }
   }
@@ -212,14 +222,22 @@ class Watchlist {
   }
 
 
-  renderStockHeader(latestPrice) {
-    const html = `
-      <h2>${latestPrice}</2>
-      <h3>Current Price</h3>
-    `;
+  renderStockHeader(latestPrice, changePercent) {
+    changePercent = (changePercent * 100).toFixed(2);
+    const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
+    const latestPriceHtml = `<h2>${latestPrice}</2>`;
+    const changePercentHtml = `<h3>${plusOrMinus}${changePercent}%</h3>`;
 
-    // this.$latestPrice.empty();
-    this.$latestPrice.html(html);
+    if (changePercent >= 0) {
+      this.$changePercentContainer.removeClass('percent-change-negative');
+      this.$changePercentContainer.addClass('percent-change-positive');
+    } else {
+      this.$changePercentContainer.removeClass('percent-change-positive');
+      this.$changePercentContainer.addClass('percent-change-negative');
+    }
+
+    this.$latestPriceContainer.html(latestPriceHtml);
+    this.$changePercentContainer.html(changePercentHtml);
   }
 
 
@@ -243,6 +261,8 @@ class Watchlist {
 
       // render name and graph for watchlist item
       that.renderStockName(name);
+      that.$latestPriceContainer.empty();
+      that.$changePercentContainer.empty();
 
       // if stored data exists and is less than 1 day old
       if (store.get(that.symbol) !== null && dataUpdateRequired) {
@@ -421,8 +441,9 @@ class Watchlist {
 
   // RENDER STOCK NAME
   renderStockName(name) {
-    this.$stockName.text(name);
-    this.$stockSymbol.text(this.symbol);
+    const stockName = trimString(name, 40);
+    this.$stockName.text(stockName);
+    this.$stockSymbol.html(`(${this.symbol})`);
   }
 
 

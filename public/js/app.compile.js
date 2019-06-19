@@ -30327,7 +30327,7 @@ var StockPopup = function () {
       var volume = (0, _helpers.formatNumberWithCommas)(Math.round(stockData.quote.latestVolume));
       var peRatio = stockData.quote.peRatio;
       var marketCap = (0, _helpers.formatLargeNumber)(stockData.quote.marketCap);
-      var plusOrMinus = changePercent > 0 ? '+' : '';
+      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
 
       // render stock name
       this.$stockName.text(this.companyName + ' (' + this.symbol + ')');
@@ -30717,7 +30717,8 @@ var Watchlist = function () {
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
-    this.$latestPrice = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
     this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
 
     this.intervalsBar = new _intervals2.default(this.$intervalsContainer, this.symbol, '#watchlist-chart');
@@ -30734,7 +30735,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div class="watchlist-chart-stock-container">\n                  <div class="watchlist-chart-name-container">\n                    <h2 id="watchlist-stock-name"></h2>\n                    <h3 id="watchlist-stock-symbol"></h3>\n                  </div>\n                  <div id="watchlist-latest-price"></div>\n                </div>\n                <div id="watchlist-intervals-container"></div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-intervals-container"></div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -30812,6 +30813,8 @@ var Watchlist = function () {
       // store all data for the stock
       else if (requestType === 'allData') {
           return function (historicalPrices, news, quote) {
+            var latestPrice = quote.data.latestPrice;
+            var changePercent = quote.data.changePercent;
             // if stored data exists
             if (_store2.default.get(_this.symbol) !== null) {
               var storedData = _store2.default.get(_this.symbol);
@@ -30825,7 +30828,7 @@ var Watchlist = function () {
                 storedData.historicalPrices[_this.interval] = historicalPrices.data;
                 _store2.default.set(_this.symbol, storedData);
               }
-              _this.renderStockHeader(quote.data.latestPrice);
+              _this.renderStockHeader(latestPrice, changePercent);
             }
             // otherwise create data object and store in localStorage
             else {
@@ -30837,12 +30840,14 @@ var Watchlist = function () {
                 };
 
                 _store2.default.set(_this.symbol, dataToStore);
-                _this.renderStockHeader(quote.data.latestPrice);
+                _this.renderStockHeader(latestPrice, changePercent);
               }
           };
         } else if (requestType === 'latestPrice') {
           return function (quote) {
-            _this.renderStockHeader(quote.data.latestPrice);
+            var latestPrice = quote.data.latestPrice;
+            var changePercent = quote.data.changePercent;
+            _this.renderStockHeader(latestPrice, changePercent);
           };
         }
     }
@@ -30872,11 +30877,22 @@ var Watchlist = function () {
     }
   }, {
     key: 'renderStockHeader',
-    value: function renderStockHeader(latestPrice) {
-      var html = '\n      <h2>' + latestPrice + '</2>\n      <h3>Current Price</h3>\n    ';
+    value: function renderStockHeader(latestPrice, changePercent) {
+      changePercent = (changePercent * 100).toFixed(2);
+      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
+      var latestPriceHtml = '<h2>' + latestPrice + '</2>';
+      var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '%</h3>';
 
-      // this.$latestPrice.empty();
-      this.$latestPrice.html(html);
+      if (changePercent >= 0) {
+        this.$changePercentContainer.removeClass('percent-change-negative');
+        this.$changePercentContainer.addClass('percent-change-positive');
+      } else {
+        this.$changePercentContainer.removeClass('percent-change-positive');
+        this.$changePercentContainer.addClass('percent-change-negative');
+      }
+
+      this.$latestPriceContainer.html(latestPriceHtml);
+      this.$changePercentContainer.html(changePercentHtml);
     }
 
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
@@ -30902,6 +30918,8 @@ var Watchlist = function () {
 
         // render name and graph for watchlist item
         that.renderStockName(name);
+        that.$latestPriceContainer.empty();
+        that.$changePercentContainer.empty();
 
         // if stored data exists and is less than 1 day old
         if (_store2.default.get(that.symbol) !== null && dataUpdateRequired) {
@@ -31044,8 +31062,9 @@ var Watchlist = function () {
   }, {
     key: 'renderStockName',
     value: function renderStockName(name) {
-      this.$stockName.text(name);
-      this.$stockSymbol.text(this.symbol);
+      var stockName = (0, _helpers.trimString)(name, 40);
+      this.$stockName.text(stockName);
+      this.$stockSymbol.html('(' + this.symbol + ')');
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)

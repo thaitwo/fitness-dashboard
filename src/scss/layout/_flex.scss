@@ -1,3 +1,21 @@
+.flex-sp-btwn {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.flex-hori-start {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+.flex-vert {
+  display: flex;
+  flex-direction: column;
+}
+
 .l-flex {
   display: flex;
 
