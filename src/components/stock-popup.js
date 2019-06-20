@@ -4,6 +4,7 @@ import axios from 'axios';
 import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
 import Intervals from './intervals.js';
+import WatchButton from './watch-button.js';
 
 // update watchlist button logic to show only after data had been loaded
 // fixed bug that hid exit icon after initial popup display
@@ -34,15 +35,10 @@ class StockPopup {
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
     this.intervals = new Intervals(this.$intervalsContainer, this.symbol, '#popup-chart');
+    this.watchButton = new WatchButton('#popup-header', this.symbol);
 
     this.getStockData();
-    this.activateEventListeners();
-  }
-
-
-  // CHECK IF WATCHLIST HAS THIS STOCK
-  isInWatchlist(symbol) {
-    return this.watchlist.some(stock => stock.symbol === symbol);
+    this.closePopup();
   }
 
 
@@ -54,10 +50,6 @@ class StockPopup {
           <div id="popup-top-container">
             <div id="popup-header">
               <h2 id="popup-stock-name"></h2>
-              <button id="popup-button-watchlist" class="button button-popup-watchlist">
-                <i class="far fa-eye"></i>
-                <span>Watch</span>
-              </button>
             </div>
             <div id="popup-intervals-container"></div>
           </div>
@@ -96,54 +88,9 @@ class StockPopup {
   }
 
 
-  // ACTIVATE EVENT LISTENERS
-  activateEventListeners() {
+  // CLOSE POPUP EVENT HANDLER
+  closePopup() {
     const that = this;
-    const isInWatchlist = this.isInWatchlist(this.symbol);
-    // update watchlist button state
-    this.toggleButtonState(isInWatchlist);
-
-    // Add/remove stock from watchlist
-    this.$popupContentContainer.on('click', '#popup-button-watchlist', function(event) {
-      event.preventDefault();
-
-      const $this = $(this);
-      const $starIconContainer = $(`#stocks-list button#${that.symbol} .icon-add-watchlist`);
-      const $starIcon = $(`#stocks-list button#${that.symbol} i`);
-
-      // if stock is not in watchlist, then add to watchlist
-      if (!that.isInWatchlist(that.symbol)) {
-        that.watchlist.push({
-          symbol: that.symbol,
-          name: that.companyName
-        });
-        store.set('watchlist', that.watchlist);
-
-        // update watchlist button to REMOVE
-        $this.addClass('isWatched');
-        $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
-
-        $starIcon.removeClass('far').addClass('fas');
-        $starIconContainer.toggleClass('is-selected');
-      }
-      // if stock exist, then remove it from watchlist
-      else {
-        // remove stock from watchlist array
-        let index = that.watchlist.findIndex(stock => stock.symbol === that.symbol);
-        if (index != -1) {
-          that.watchlist.splice(index, 1);
-        }
-
-        // store upated watchlist array
-        store.set('watchlist', that.watchlist);
-
-        // update watchlist button to ADD
-        $this.removeClass('isWatched');
-        $this.html('<i class="far fa-eye"></i>Watch');
-        $starIconContainer.toggleClass('is-selected');
-        $starIcon.removeClass('fas').addClass('far');
-      }
-    });
 
     // Disable closing of viewer upon click on popup container
     this.$popupContentContainer.on('click', function(event) {
@@ -160,27 +107,6 @@ class StockPopup {
     this.$popupContainer.on('click', function() {
       that.destroy();
     });
-  }
-
-
-  // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
-  toggleButtonState(boolean) {
-    // if stock exist in watchlist, display 'remove from watchlist' button
-    if (boolean === true) {
-      this.$watchlistButton.addClass('isWatched');
-      this.$watchlistButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
-    }
-    // if stock doesn't exist in watchlist, display 'add to watchlist' button
-    else {
-      this.$watchlistButton.removeClass('isWatched');
-      this.$watchlistButton.html('<i class="far fa-eye"></i>Watch');
-    }
-
-    // if stock exist in local storage, show 'watchlist add/remove' button
-    // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
-    // if (store.has(this.symbol)) {
-    //   this.$watchlistButton.removeClass('is-hidden');
-    // }
   }
 
 

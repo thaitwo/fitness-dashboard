@@ -30092,6 +30092,10 @@ var _intervals = __webpack_require__(12);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
+var _watchButton = __webpack_require__(177);
+
+var _watchButton2 = _interopRequireDefault(_watchButton);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -30127,28 +30131,19 @@ var StockPopup = function () {
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
     this.intervals = new _intervals2.default(this.$intervalsContainer, this.symbol, '#popup-chart');
+    this.watchButton = new _watchButton2.default('#popup-header', this.symbol);
 
     this.getStockData();
-    this.activateEventListeners();
+    this.closePopup();
   }
 
-  // CHECK IF WATCHLIST HAS THIS STOCK
+  // RENDER HTML FOR POPUP MODAL
 
 
   _createClass(StockPopup, [{
-    key: 'isInWatchlist',
-    value: function isInWatchlist(symbol) {
-      return this.watchlist.some(function (stock) {
-        return stock.symbol === symbol;
-      });
-    }
-
-    // RENDER HTML FOR POPUP MODAL
-
-  }, {
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n              <button id="popup-button-watchlist" class="button button-popup-watchlist">\n                <i class="far fa-eye"></i>\n                <span>Watch</span>\n              </button>\n            </div>\n            <div id="popup-intervals-container"></div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n            </div>\n            <div id="popup-intervals-container"></div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -30163,59 +30158,12 @@ var StockPopup = function () {
       this.$popupContainer.remove();
     }
 
-    // ACTIVATE EVENT LISTENERS
+    // CLOSE POPUP EVENT HANDLER
 
   }, {
-    key: 'activateEventListeners',
-    value: function activateEventListeners() {
+    key: 'closePopup',
+    value: function closePopup() {
       var that = this;
-      var isInWatchlist = this.isInWatchlist(this.symbol);
-      // update watchlist button state
-      this.toggleButtonState(isInWatchlist);
-
-      // Add/remove stock from watchlist
-      this.$popupContentContainer.on('click', '#popup-button-watchlist', function (event) {
-        event.preventDefault();
-
-        var $this = (0, _jquery2.default)(this);
-        var $starIconContainer = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' .icon-add-watchlist');
-        var $starIcon = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' i');
-
-        // if stock is not in watchlist, then add to watchlist
-        if (!that.isInWatchlist(that.symbol)) {
-          that.watchlist.push({
-            symbol: that.symbol,
-            name: that.companyName
-          });
-          _store2.default.set('watchlist', that.watchlist);
-
-          // update watchlist button to REMOVE
-          $this.addClass('isWatched');
-          $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
-
-          $starIcon.removeClass('far').addClass('fas');
-          $starIconContainer.toggleClass('is-selected');
-        }
-        // if stock exist, then remove it from watchlist
-        else {
-            // remove stock from watchlist array
-            var index = that.watchlist.findIndex(function (stock) {
-              return stock.symbol === that.symbol;
-            });
-            if (index != -1) {
-              that.watchlist.splice(index, 1);
-            }
-
-            // store upated watchlist array
-            _store2.default.set('watchlist', that.watchlist);
-
-            // update watchlist button to ADD
-            $this.removeClass('isWatched');
-            $this.html('<i class="far fa-eye"></i>Watch');
-            $starIconContainer.toggleClass('is-selected');
-            $starIcon.removeClass('fas').addClass('far');
-          }
-      });
 
       // Disable closing of viewer upon click on popup container
       this.$popupContentContainer.on('click', function (event) {
@@ -30232,29 +30180,6 @@ var StockPopup = function () {
       this.$popupContainer.on('click', function () {
         that.destroy();
       });
-    }
-
-    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
-
-  }, {
-    key: 'toggleButtonState',
-    value: function toggleButtonState(boolean) {
-      // if stock exist in watchlist, display 'remove from watchlist' button
-      if (boolean === true) {
-        this.$watchlistButton.addClass('isWatched');
-        this.$watchlistButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
-      }
-      // if stock doesn't exist in watchlist, display 'add to watchlist' button
-      else {
-          this.$watchlistButton.removeClass('isWatched');
-          this.$watchlistButton.html('<i class="far fa-eye"></i>Watch');
-        }
-
-      // if stock exist in local storage, show 'watchlist add/remove' button
-      // this is bc we initially want to hide this button when loading a new popup (data not stored in local storage)
-      // if (store.has(this.symbol)) {
-      //   this.$watchlistButton.removeClass('is-hidden');
-      // }
     }
 
     // RENDER STOCK CONTENT FOR POPUP
@@ -63764,6 +63689,161 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 173 */,
+/* 174 */,
+/* 175 */,
+/* 176 */,
+/* 177 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(4);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WatchButton = function () {
+  function WatchButton(containerId, symbol) {
+    _classCallCheck(this, WatchButton);
+
+    this.$buttonContainer = (0, _jquery2.default)(containerId);
+    this.symbol = symbol;
+    this.watchlist = _store2.default.get('watchlist') || [];
+    this.isInWatchlist = this.isInWatchlist();
+
+    this.insertButton();
+    this.$watchButton = (0, _jquery2.default)('#watch-button');
+    this.addOrRemoveFromWatchlistHandler();
+  }
+
+  // INSERT BUTTON IN DOM
+
+
+  _createClass(WatchButton, [{
+    key: 'insertButton',
+    value: function insertButton() {
+      var isWatched = void 0,
+          label = void 0,
+          iconClass = void 0;
+
+      if (this.isInWatchlist) {
+        isWatched = 'isWatched';
+        label = 'Unwatch';
+        iconClass = 'fa-eye-slash';
+      } else {
+        isWatched = '';
+        label = 'Watch';
+        iconClass = 'fa-eye';
+      }
+
+      var html = '\n      <button id="watch-button" class="button button-popup-watchlist ' + isWatched + '">\n        <i class="far ' + iconClass + '"></i>\n        <span>' + label + '</span>\n      </button>\n    ';
+
+      this.$buttonContainer.append(html);
+    }
+
+    // CHECK IF WATCHLIST HAS THIS STOCK
+
+  }, {
+    key: 'isInWatchlist',
+    value: function isInWatchlist() {
+      var _this = this;
+
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === _this.symbol;
+      });
+    }
+
+    // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
+
+  }, {
+    key: 'addOrRemoveFromWatchlistHandler',
+    value: function addOrRemoveFromWatchlistHandler() {
+      var that = this;
+      this.toggleButtonState(this.isInWatchlist);
+
+      // Add/remove stock from watchlist
+      this.$watchButton.on('click', function (event) {
+        event.preventDefault();
+        var $this = (0, _jquery2.default)(this);
+        var $starIconContainer = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' .icon-add-watchlist');
+        var $starIcon = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' i');
+
+        // if stock is not in watchlist, then add to watchlist
+        if (!that.isInWatchlist) {
+          that.watchlist.push({
+            symbol: that.symbol,
+            name: that.companyName
+          });
+          _store2.default.set('watchlist', that.watchlist);
+
+          // update watchlist button to REMOVE
+          $this.addClass('isWatched');
+          $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
+
+          $starIcon.removeClass('far').addClass('fas');
+          $starIconContainer.toggleClass('is-selected');
+        }
+        // if stock exist, then remove it from watchlist
+        else {
+            // remove stock from watchlist array
+            var index = that.watchlist.findIndex(function (stock) {
+              return stock.symbol === that.symbol;
+            });
+            if (index != -1) {
+              that.watchlist.splice(index, 1);
+            }
+
+            // store upated watchlist array
+            _store2.default.set('watchlist', that.watchlist);
+
+            // update watchlist button to ADD
+            $this.removeClass('isWatched');
+            $this.html('<i class="far fa-eye"></i>Watch');
+            $starIconContainer.toggleClass('is-selected');
+            $starIcon.removeClass('fas').addClass('far');
+          }
+      });
+    }
+
+    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
+
+  }, {
+    key: 'toggleButtonState',
+    value: function toggleButtonState(boolean) {
+      // if stock exist in watchlist, display 'remove from watchlist' button
+      if (boolean === true) {
+        this.$watchButton.addClass('isWatched');
+        this.$watchButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
+      }
+      // if stock doesn't exist in watchlist, display 'add to watchlist' button
+      else {
+          this.$watchButton.removeClass('isWatched');
+          this.$watchButton.html('<i class="far fa-eye"></i>Watch');
+        }
+    }
+  }]);
+
+  return WatchButton;
+}();
+
+exports.default = WatchButton;
 
 /***/ })
 /******/ ]);
