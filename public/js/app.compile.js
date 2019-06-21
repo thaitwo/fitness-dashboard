@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(170)("./" + name);
+                __webpack_require__(171)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4683,7 +4683,7 @@
 
 
 var bind = __webpack_require__(11);
-var isBuffer = __webpack_require__(168);
+var isBuffer = __webpack_require__(169);
 
 /*global toString:true*/
 
@@ -15592,12 +15592,6 @@ return jQuery;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(145);
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports) {
 
 /*! store2 - v2.7.1 - 2018-11-15
@@ -15857,6 +15851,12 @@ module.exports = __webpack_require__(145);
 
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__(145);
+
+/***/ }),
 /* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15973,7 +15973,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chart = __webpack_require__(167);
+var _chart = __webpack_require__(168);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -16399,11 +16399,11 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(4);
+var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -29972,7 +29972,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(171);
+var _navigo = __webpack_require__(172);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
@@ -29980,7 +29980,7 @@ var _stocks = __webpack_require__(165);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
-var _watchlist = __webpack_require__(166);
+var _watchlist = __webpack_require__(167);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -30074,11 +30074,11 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(4);
+var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -30092,17 +30092,13 @@ var _intervals = __webpack_require__(12);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _watchButton = __webpack_require__(177);
+var _watchButton = __webpack_require__(166);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// update watchlist button logic to show only after data had been loaded
-// fixed bug that hid exit icon after initial popup display
-// issue: referenced icon element before registering it
 
 var StockPopup = function () {
   function StockPopup(companySymbol, companyName) {
@@ -30131,7 +30127,7 @@ var StockPopup = function () {
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
     this.intervals = new _intervals2.default(this.$intervalsContainer, this.symbol, '#popup-chart');
-    this.watchButton = new _watchButton2.default('#popup-header', this.symbol);
+    this.watchButton = new _watchButton2.default('#popup-watch-button', this.symbol, this.companyName);
 
     this.getStockData();
     this.closePopup();
@@ -30143,7 +30139,7 @@ var StockPopup = function () {
   _createClass(StockPopup, [{
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n            </div>\n            <div id="popup-intervals-container"></div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n            </div>\n            <div id="popup-wbutton-intervals">\n              <div id="popup-watch-button"></div>\n              <div id="popup-intervals-container"></div>\n            </div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -30241,6 +30237,7 @@ var StockPopup = function () {
       var stockData = _store2.default.get('' + this.symbol);
 
       // get stock info from local storage
+      var companyName = (0, _helpers.trimString)(this.companyName, 36);
       var latestPrice = stockData.quote.latestPrice;
       var changePercent = (stockData.quote.changePercent * 100).toFixed(2);
       var closePrice = stockData.quote.close;
@@ -30255,7 +30252,7 @@ var StockPopup = function () {
       var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
 
       // render stock name
-      this.$stockName.text(this.companyName + ' (' + this.symbol + ')');
+      this.$stockName.text(companyName + ' (' + this.symbol + ')');
       this.$latestPriceContainer.text(latestPrice);
       this.$changePercentContainer.text('' + plusOrMinus + changePercent + '%');
       if (changePercent >= 0) {
@@ -30332,15 +30329,15 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(169);
+var _lodash = __webpack_require__(170);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
-var _store = __webpack_require__(4);
+var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _axios = __webpack_require__(3);
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -30597,11 +30594,170 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(4);
+var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _axios = __webpack_require__(3);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WatchButton = function () {
+  function WatchButton(containerId, symbol, companyName, refreshPage) {
+    _classCallCheck(this, WatchButton);
+
+    this.$buttonContainer = (0, _jquery2.default)(containerId);
+    this.symbol = symbol;
+    this.companyName = companyName;
+    this.refreshPage = refreshPage;
+    this.watchlist = _store2.default.get('watchlist') || [];
+    this.isInWatchlist = this.isInWatchlist();
+    this.$watchlist = (0, _jquery2.default)('.watchlist-list');
+
+    this.insertButton();
+    this.$watchButton = (0, _jquery2.default)('#watch-button');
+    this.addOrRemoveFromWatchlistHandler();
+  }
+
+  // INSERT BUTTON IN DOM
+
+
+  _createClass(WatchButton, [{
+    key: 'insertButton',
+    value: function insertButton() {
+      var isWatched = void 0,
+          label = void 0,
+          iconClass = void 0;
+
+      if (this.isInWatchlist) {
+        isWatched = 'isWatched';
+        label = 'Unwatch';
+        iconClass = 'fa-eye-slash';
+      } else {
+        isWatched = '';
+        label = 'Watch';
+        iconClass = 'fa-eye';
+      }
+
+      var html = '\n      <button id="watch-button" class="button button-popup-watchlist ' + isWatched + '">\n        <i class="far ' + iconClass + '"></i>\n        <span>' + label + '</span>\n      </button>\n    ';
+
+      this.$buttonContainer.empty();
+      this.$buttonContainer.append(html);
+    }
+
+    // CHECK IF WATCHLIST HAS THIS STOCK
+
+  }, {
+    key: 'isInWatchlist',
+    value: function isInWatchlist() {
+      var _this = this;
+
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === _this.symbol;
+      });
+    }
+
+    // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
+
+  }, {
+    key: 'addOrRemoveFromWatchlistHandler',
+    value: function addOrRemoveFromWatchlistHandler() {
+      var that = this;
+      this.toggleButtonState(this.isInWatchlist);
+
+      // Add/remove stock from watchlist
+      this.$watchButton.on('click', function (event) {
+        event.preventDefault();
+        var $this = (0, _jquery2.default)(this);
+        var $starIconContainer = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' .icon-add-watchlist');
+        var $starIcon = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' i');
+
+        // if stock is not in watchlist, then add to watchlist
+        if (!that.isInWatchlist) {
+          that.watchlist.push({
+            symbol: that.symbol,
+            name: that.companyName
+          });
+          _store2.default.set('watchlist', that.watchlist);
+
+          // update watchlist button to REMOVE
+          $this.addClass('isWatched');
+          $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
+          $starIcon.removeClass('far').addClass('fas');
+          $starIconContainer.toggleClass('is-selected');
+        }
+        // if stock exist, then remove it from watchlist
+        else {
+            // remove stock from watchlist array
+            var index = that.watchlist.findIndex(function (stock) {
+              return stock.symbol === that.symbol;
+            });
+            if (index != -1) {
+              that.watchlist.splice(index, 1);
+            }
+
+            // store upated watchlist array
+            _store2.default.set('watchlist', that.watchlist);
+
+            // update watchlist button to ADD
+            $this.removeClass('isWatched');
+            $this.html('<i class="far fa-eye"></i>Watch');
+            $starIconContainer.toggleClass('is-selected');
+            $starIcon.removeClass('fas').addClass('far');
+
+            // use case for Watchlist page to refresh page when stock is removed from watchlist
+            if (that.refreshPage) {
+              window.location.reload();
+            }
+          }
+      });
+    }
+
+    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
+
+  }, {
+    key: 'toggleButtonState',
+    value: function toggleButtonState(boolean) {
+      // if stock exist in watchlist, display 'remove from watchlist' button
+      if (boolean === true) {
+        this.$watchButton.addClass('isWatched');
+        this.$watchButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
+      }
+      // if stock doesn't exist in watchlist, display 'add to watchlist' button
+      else {
+          this.$watchButton.removeClass('isWatched');
+          this.$watchButton.html('<i class="far fa-eye"></i>Watch');
+        }
+    }
+  }]);
+
+  return WatchButton;
+}();
+
+exports.default = WatchButton;
+
+/***/ }),
+/* 167 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
@@ -30615,6 +30771,10 @@ var _intervals = __webpack_require__(12);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
+var _watchButton = __webpack_require__(166);
+
+var _watchButton2 = _interopRequireDefault(_watchButton);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -30627,10 +30787,11 @@ var Watchlist = function () {
 
     this.$container = container;
     this.graph;
-    this.symbol = _store2.default.get('watchlist')[0].symbol || '';
+    this.selectedStockIndex = _store2.default.get('selectedStockIndex') || 0;
+    this.symbol = _store2.default.get('watchlist')[this.selectedStockIndex].symbol || '';
+    this.companyName = _store2.default.get('watchlist')[this.selectedStockIndex].name || '';
     this.interval = '1m';
     this.watchlist = _store2.default.get('watchlist') || [];
-
     this.renderCanvasHTML();
 
     this.$watchlistCanvas = (0, _jquery2.default)('.watchlist-canvas');
@@ -30644,23 +30805,41 @@ var Watchlist = function () {
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
     this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
+    this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
     this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
 
     this.intervalsBar = new _intervals2.default(this.$intervalsContainer, this.symbol, '#watchlist-chart');
+    this.watchButton;
 
-    this.getStocks();
-    this.renderDataForFirstStock();
-    this.activateEventListeners();
+    this.displayStocks();
+    // this.renderDataForFirstStock();
+    this.renderOnUnwatch();
+    this.loadStockDataHandler();
     this.udpateGraphIntervals();
   }
 
-  // RENDER WATCHLIST CANVAS
-
-
   _createClass(Watchlist, [{
+    key: 'renderOnUnwatch',
+    value: function renderOnUnwatch() {
+      if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+        // console.info( "This page is reloaded", this.selectedStockIndex);
+        this.symbol = _store2.default.get('watchlist')[this.selectedStockIndex].symbol;
+        // console.log('symbol', this.symbol);
+        // this.renderDataForFirstStock();
+        this.fetchStockData('allData');
+      } else {
+        // console.info( "This page is not reloaded");
+        // this.renderDataForFirstStock();
+        this.fetchStockData('allData');
+      }
+    }
+
+    // RENDER WATCHLIST CANVAS
+
+  }, {
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ol class="watchlist-list"></ol>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-intervals-container"></div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -30668,14 +30847,16 @@ var Watchlist = function () {
     // POPULATE WATCHLIST CONTAINER WITH STOCKS
 
   }, {
-    key: 'getStocks',
-    value: function getStocks() {
+    key: 'displayStocks',
+    value: function displayStocks() {
+      var _this = this;
+
       var list = this.watchlist.map(function (stock, index) {
         var symbol = stock.symbol;
         var name = stock.name;
         var isActive = '';
 
-        if (index === 0) {
+        if (index === _this.selectedStockIndex) {
           isActive = 'active';
         }
 
@@ -30712,7 +30893,7 @@ var Watchlist = function () {
       else if (requestType === 'allData') {
           return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         } else if (requestType === 'latestPrice') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         }
     }
 
@@ -30721,58 +30902,58 @@ var Watchlist = function () {
   }, {
     key: 'formatAjaxResponseAction',
     value: function formatAjaxResponseAction(requestType) {
-      var _this = this;
+      var _this2 = this;
 
       // store historical prices
       if (requestType === 'prices') {
         return function (historicalPrices) {
-          var storedData = _store2.default.get(_this.symbol);
+          var storedData = _store2.default.get(_this2.symbol);
 
           // if data for selected interval does not exist in localStorage
-          if (!(_this.interval in storedData.historicalPrices)) {
-            storedData.historicalPrices[_this.interval] = historicalPrices.data;
-            _store2.default.set(_this.symbol, storedData);
+          if (!(_this2.interval in storedData.historicalPrices)) {
+            storedData.historicalPrices[_this2.interval] = historicalPrices.data;
+            _store2.default.set(_this2.symbol, storedData);
           }
         };
       }
       // store all data for the stock
       else if (requestType === 'allData') {
           return function (historicalPrices, news, quote) {
-            var latestPrice = quote.data.latestPrice;
-            var changePercent = quote.data.changePercent;
+            // const latestPrice = quote.data.latestPrice;
+            // const changePercent = quote.data.changePercent;
             // if stored data exists
-            if (_store2.default.get(_this.symbol) !== null) {
-              var storedData = _store2.default.get(_this.symbol);
+            if (_store2.default.get(_this2.symbol) !== null) {
+              var storedData = _store2.default.get(_this2.symbol);
 
               // if data for selected interval does not exist in localStorage
               // then add data for selected interval into localStorage
               // case: the current selected interval is 6M for stock1
               // when we click on stock2, we need to check if data for 6M
               // exists in localStorage
-              if (!(_this.interval in storedData.historicalPrices)) {
-                storedData.historicalPrices[_this.interval] = historicalPrices.data;
-                _store2.default.set(_this.symbol, storedData);
+              if (!(_this2.interval in storedData.historicalPrices)) {
+                storedData.historicalPrices[_this2.interval] = historicalPrices.data;
+                _store2.default.set(_this2.symbol, storedData);
               }
-              _this.renderStockHeader(latestPrice, changePercent);
+              _this2.renderStockHeader(quote.data);
             }
             // otherwise create data object and store in localStorage
             else {
                 var dataToStore = {
-                  historicalPrices: _defineProperty({}, _this.interval, historicalPrices.data),
+                  historicalPrices: _defineProperty({}, _this2.interval, historicalPrices.data),
                   news: news.data,
                   quote: quote.data,
                   time: Date.now()
                 };
 
-                _store2.default.set(_this.symbol, dataToStore);
-                _this.renderStockHeader(latestPrice, changePercent);
+                _store2.default.set(_this2.symbol, dataToStore);
+                _this2.renderStockHeader(quote.data);
               }
           };
         } else if (requestType === 'latestPrice') {
           return function (quote) {
             var latestPrice = quote.data.latestPrice;
             var changePercent = quote.data.changePercent;
-            _this.renderStockHeader(latestPrice, changePercent);
+            _this2.renderStockHeader(quote.data);
           };
         }
     }
@@ -30782,7 +30963,7 @@ var Watchlist = function () {
   }, {
     key: 'fetchStockData',
     value: function fetchStockData(requestType) {
-      var _this2 = this;
+      var _this3 = this;
 
       var requests = this.formatAjaxRequest(requestType);
       var responseAction = this.formatAjaxResponseAction(requestType);
@@ -30791,22 +30972,31 @@ var Watchlist = function () {
         return console.log(error);
       }).finally(function () {
         if (requestType === 'prices') {
-          _this2.renderGraph();
+          _this3.renderGraph();
         } else if (requestType === 'allData') {
           // functions below don't receive data arguments bc they will retrieve data from localStorage
-          _this2.renderGraph();
-          _this2.renderKeyStats();
-          _this2.renderNews();
+          _this3.renderGraph();
+          _this3.renderKeyStats();
+          _this3.renderNews();
+          _this3.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', _this3.symbol, _this3.companyName, true);
         }
       });
     }
+
+    // DISPLAY STOCK INFO IN HEADER
+
   }, {
     key: 'renderStockHeader',
-    value: function renderStockHeader(latestPrice, changePercent) {
-      changePercent = (changePercent * 100).toFixed(2);
+    value: function renderStockHeader(data) {
+      var companyName = (0, _helpers.trimString)(data.companyName, 36);
+      var changePercent = (data.changePercent * 100).toFixed(2);
+      var latestPrice = data.latestPrice;
       var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
       var latestPriceHtml = '<h2>' + latestPrice + '</2>';
       var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '%</h3>';
+
+      this.$stockName.html(companyName);
+      this.$stockSymbol.html('(' + this.symbol + ')');
 
       if (changePercent >= 0) {
         this.$changePercentContainer.removeClass('percent-change-negative');
@@ -30823,8 +31013,8 @@ var Watchlist = function () {
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
 
   }, {
-    key: 'activateEventListeners',
-    value: function activateEventListeners() {
+    key: 'loadStockDataHandler',
+    value: function loadStockDataHandler() {
       var that = this;
 
       // Display graph & data for watchlist item
@@ -30842,11 +31032,12 @@ var Watchlist = function () {
         clickedEl.addClass('active');
 
         // render name and graph for watchlist item
-        that.renderStockName(name);
+        // that.renderStockName(name);
+        // that.watchButton = new WatchButton('#watchlist-chart-header-watch-button', symbol, name, true);
         that.$latestPriceContainer.empty();
         that.$changePercentContainer.empty();
 
-        // if stored data exists and is less than 1 day old
+        // if stored data exists and is less than 6 hours old
         if (_store2.default.get(that.symbol) !== null && dataUpdateRequired) {
           that.fetchStockData('latestPrice');
           that.renderGraph();
@@ -30858,15 +31049,26 @@ var Watchlist = function () {
             _store2.default.remove(that.symbol);
             that.fetchStockData('allData');
           }
+
+        // get index of selected stock
+        var selectedStockIndex = that.watchlist.findIndex(function (stock) {
+          return stock.symbol === symbol;
+        });
+        console.log('wLength', that.watchlist.length);
+        console.log(selectedStockIndex);
+        if (selectedStockIndex == that.watchlist.length - 1) {
+          selectedStockIndex = selectedStockIndex - 1;
+        };
+        _store2.default.set('selectedStockIndex', selectedStockIndex);
       });
     }
 
-    // Calculate whether local storage for stock is more than 1 hour old
+    // Calculate whether local storage for stock is more than 6 hours old
 
   }, {
     key: 'calcLocalStorageAge',
     value: function calcLocalStorageAge() {
-      var oneHour = 60 * 60 * 1 * 1000;
+      var oneHour = 60 * 60 * 6 * 1000;
       var newTime = Date.now();
       var oldTime = void 0;
 
@@ -30965,7 +31167,8 @@ var Watchlist = function () {
         var name = this.watchlist[0].name;
         var isMoreThanOneDay = this.calcLocalStorageAge();
 
-        this.renderStockName(name);
+        // this.renderStockName(name);
+        this.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', this.symbol, name, true);
 
         // update localStorage with new data if data is older than 12 hours
         if (isMoreThanOneDay) {
@@ -30987,7 +31190,7 @@ var Watchlist = function () {
   }, {
     key: 'renderStockName',
     value: function renderStockName(name) {
-      var stockName = (0, _helpers.trimString)(name, 40);
+      var stockName = (0, _helpers.trimString)(name, 36);
       this.$stockName.text(stockName);
       this.$stockSymbol.html('(' + this.symbol + ')');
     }
@@ -31024,7 +31227,7 @@ var Watchlist = function () {
 exports.default = Watchlist;
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -45710,7 +45913,7 @@ return src;
 
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports) {
 
 /*!
@@ -45737,7 +45940,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -62849,10 +63052,10 @@ function isSlowBuffer (obj) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(172), __webpack_require__(142)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(173), __webpack_require__(142)(module)))
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -63125,10 +63328,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 170;
+webpackContext.id = 171;
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -63664,7 +63867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports) {
 
 var g;
@@ -63689,161 +63892,6 @@ try {
 
 module.exports = g;
 
-
-/***/ }),
-/* 173 */,
-/* 174 */,
-/* 175 */,
-/* 176 */,
-/* 177 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(4);
-
-var _store2 = _interopRequireDefault(_store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var WatchButton = function () {
-  function WatchButton(containerId, symbol) {
-    _classCallCheck(this, WatchButton);
-
-    this.$buttonContainer = (0, _jquery2.default)(containerId);
-    this.symbol = symbol;
-    this.watchlist = _store2.default.get('watchlist') || [];
-    this.isInWatchlist = this.isInWatchlist();
-
-    this.insertButton();
-    this.$watchButton = (0, _jquery2.default)('#watch-button');
-    this.addOrRemoveFromWatchlistHandler();
-  }
-
-  // INSERT BUTTON IN DOM
-
-
-  _createClass(WatchButton, [{
-    key: 'insertButton',
-    value: function insertButton() {
-      var isWatched = void 0,
-          label = void 0,
-          iconClass = void 0;
-
-      if (this.isInWatchlist) {
-        isWatched = 'isWatched';
-        label = 'Unwatch';
-        iconClass = 'fa-eye-slash';
-      } else {
-        isWatched = '';
-        label = 'Watch';
-        iconClass = 'fa-eye';
-      }
-
-      var html = '\n      <button id="watch-button" class="button button-popup-watchlist ' + isWatched + '">\n        <i class="far ' + iconClass + '"></i>\n        <span>' + label + '</span>\n      </button>\n    ';
-
-      this.$buttonContainer.append(html);
-    }
-
-    // CHECK IF WATCHLIST HAS THIS STOCK
-
-  }, {
-    key: 'isInWatchlist',
-    value: function isInWatchlist() {
-      var _this = this;
-
-      return this.watchlist.some(function (stock) {
-        return stock.symbol === _this.symbol;
-      });
-    }
-
-    // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
-
-  }, {
-    key: 'addOrRemoveFromWatchlistHandler',
-    value: function addOrRemoveFromWatchlistHandler() {
-      var that = this;
-      this.toggleButtonState(this.isInWatchlist);
-
-      // Add/remove stock from watchlist
-      this.$watchButton.on('click', function (event) {
-        event.preventDefault();
-        var $this = (0, _jquery2.default)(this);
-        var $starIconContainer = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' .icon-add-watchlist');
-        var $starIcon = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' i');
-
-        // if stock is not in watchlist, then add to watchlist
-        if (!that.isInWatchlist) {
-          that.watchlist.push({
-            symbol: that.symbol,
-            name: that.companyName
-          });
-          _store2.default.set('watchlist', that.watchlist);
-
-          // update watchlist button to REMOVE
-          $this.addClass('isWatched');
-          $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
-
-          $starIcon.removeClass('far').addClass('fas');
-          $starIconContainer.toggleClass('is-selected');
-        }
-        // if stock exist, then remove it from watchlist
-        else {
-            // remove stock from watchlist array
-            var index = that.watchlist.findIndex(function (stock) {
-              return stock.symbol === that.symbol;
-            });
-            if (index != -1) {
-              that.watchlist.splice(index, 1);
-            }
-
-            // store upated watchlist array
-            _store2.default.set('watchlist', that.watchlist);
-
-            // update watchlist button to ADD
-            $this.removeClass('isWatched');
-            $this.html('<i class="far fa-eye"></i>Watch');
-            $starIconContainer.toggleClass('is-selected');
-            $starIcon.removeClass('fas').addClass('far');
-          }
-      });
-    }
-
-    // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
-
-  }, {
-    key: 'toggleButtonState',
-    value: function toggleButtonState(boolean) {
-      // if stock exist in watchlist, display 'remove from watchlist' button
-      if (boolean === true) {
-        this.$watchButton.addClass('isWatched');
-        this.$watchButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
-      }
-      // if stock doesn't exist in watchlist, display 'add to watchlist' button
-      else {
-          this.$watchButton.removeClass('isWatched');
-          this.$watchButton.html('<i class="far fa-eye"></i>Watch');
-        }
-    }
-  }]);
-
-  return WatchButton;
-}();
-
-exports.default = WatchButton;
 
 /***/ })
 /******/ ]);

@@ -2,11 +2,14 @@ import $ from 'jquery';
 import store from 'store2';
 
 class WatchButton {
-  constructor(containerId, symbol) {
+  constructor(containerId, symbol, companyName, refreshPage) {
     this.$buttonContainer = $(containerId);
     this.symbol = symbol;
+    this.companyName = companyName;
+    this.refreshPage = refreshPage;
     this.watchlist = store.get('watchlist') || [];
     this.isInWatchlist = this.isInWatchlist();
+    this.$watchlist = $('.watchlist-list');
 
     this.insertButton();
     this.$watchButton = $('#watch-button');
@@ -37,6 +40,7 @@ class WatchButton {
       </button>
     `;
 
+    this.$buttonContainer.empty();
     this.$buttonContainer.append(html);
   }
 
@@ -70,7 +74,6 @@ class WatchButton {
         // update watchlist button to REMOVE
         $this.addClass('isWatched');
         $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
-
         $starIcon.removeClass('far').addClass('fas');
         $starIconContainer.toggleClass('is-selected');
       }
@@ -90,9 +93,15 @@ class WatchButton {
         $this.html('<i class="far fa-eye"></i>Watch');
         $starIconContainer.toggleClass('is-selected');
         $starIcon.removeClass('fas').addClass('far');
+        
+        // use case for Watchlist page to refresh page when stock is removed from watchlist
+        if (that.refreshPage) {
+          window.location.reload();
+        }
       }
     });
   }
+
 
   // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
   toggleButtonState(boolean) {

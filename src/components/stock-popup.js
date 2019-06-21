@@ -6,10 +6,6 @@ import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
 
-// update watchlist button logic to show only after data had been loaded
-// fixed bug that hid exit icon after initial popup display
-  // issue: referenced icon element before registering it
-
 class StockPopup {
   constructor(companySymbol, companyName) {
     this.symbol = companySymbol;
@@ -35,7 +31,7 @@ class StockPopup {
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
 
     this.intervals = new Intervals(this.$intervalsContainer, this.symbol, '#popup-chart');
-    this.watchButton = new WatchButton('#popup-header', this.symbol);
+    this.watchButton = new WatchButton('#popup-watch-button', this.symbol, this.companyName);
 
     this.getStockData();
     this.closePopup();
@@ -51,7 +47,10 @@ class StockPopup {
             <div id="popup-header">
               <h2 id="popup-stock-name"></h2>
             </div>
-            <div id="popup-intervals-container"></div>
+            <div id="popup-wbutton-intervals">
+              <div id="popup-watch-button"></div>
+              <div id="popup-intervals-container"></div>
+            </div>
           </div>
           <div id="popup-data-container">
             <div id="popup-summary-container">
@@ -168,6 +167,7 @@ class StockPopup {
     const stockData = store.get(`${this.symbol}`);
 
     // get stock info from local storage
+    const companyName = trimString(this.companyName, 36);
     const latestPrice = stockData.quote.latestPrice;
     const changePercent = (stockData.quote.changePercent * 100).toFixed(2);
     const closePrice = stockData.quote.close;
@@ -182,7 +182,7 @@ class StockPopup {
     const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
 
     // render stock name
-    this.$stockName.text(`${this.companyName} (${this.symbol})`);
+    this.$stockName.text(`${companyName} (${this.symbol})`);
     this.$latestPriceContainer.text(latestPrice);
     this.$changePercentContainer.text(`${plusOrMinus}${changePercent}%`);
     if (changePercent >= 0) {

@@ -4,16 +4,17 @@ import axios from 'axios';
 import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
 import Intervals from './intervals.js';
-
+import WatchButton from './watch-button.js';
 
 class Watchlist {
   constructor(container) {
     this.$container = container;
     this.graph;
-    this.symbol = store.get('watchlist')[0].symbol || '';
+    this.selectedStockIndex = store.get('selectedStockIndex') || 0;
+    this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol || '';
+    this.companyName = store.get('watchlist')[this.selectedStockIndex].name || '';
     this.interval = '1m';
     this.watchlist = store.get('watchlist') || [];
-
     this.renderCanvasHTML();
 
     this.$watchlistCanvas = $('.watchlist-canvas');
@@ -27,14 +28,32 @@ class Watchlist {
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
     this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
+    this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
     this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
 
     this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#watchlist-chart');
+    this.watchButton;
 
-    this.getStocks();
-    this.renderDataForFirstStock();
-    this.activateEventListeners();
+    this.displayStocks();
+    // this.renderDataForFirstStock();
+    this.renderOnUnwatch();
+    this.loadStockDataHandler();
     this.udpateGraphIntervals();
+  }
+
+
+  renderOnUnwatch() {
+    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
+      // console.info( "This page is reloaded", this.selectedStockIndex);
+      this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol;
+      // console.log('symbol', this.symbol);
+      // this.renderDataForFirstStock();
+      this.fetchStockData('allData');
+    } else {
+      // console.info( "This page is not reloaded");
+      // this.renderDataForFirstStock();
+      this.fetchStockData('allData');
+    }
   }
 
 
@@ -44,7 +63,7 @@ class Watchlist {
       <div class="watchlist-canvas">
         <div class="watchlist-container">
           <h2 class="watchlist-title">Watchlist</h2>
-          <ol class="watchlist-list"></ol>
+          <ul class="watchlist-list"></ul>
         </div>
         <div class="watchlist-data-container">
           <div class="watchlist-data-inner-container">
@@ -57,7 +76,10 @@ class Watchlist {
                       <h3 id="watchlist-stock-symbol"></h3>
                     </div>
                   </div>
-                  <div id="watchlist-intervals-container"></div>
+                  <div id="watchlist-chart-header-btn-intervals">
+                    <div id="watchlist-chart-header-watch-button"></div>
+                    <div id="watchlist-intervals-container"></div>
+                  </div>
                 </div>
                 <div class="flex-hori-start" style="height: 32px;">
                   <div id="watchlist-latest-price"></div>
@@ -80,13 +102,13 @@ class Watchlist {
 
 
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
-  getStocks() {
-    let list = this.watchlist.map((stock, index) => {
+  displayStocks() {
+    const list = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
       const name = stock.name;
       let isActive = '';
 
-      if (index === 0) {
+      if (index === this.selectedStockIndex) {
         isActive = 'active';
       }
 
@@ -135,7 +157,7 @@ class Watchlist {
     }
     else if (requestType === 'latestPrice') {
       return [
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/price?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
       ]
     }
   }
@@ -158,8 +180,8 @@ class Watchlist {
     // store all data for the stock
     else if (requestType === 'allData') {
       return (historicalPrices, news, quote) => {
-        const latestPrice = quote.data.latestPrice;
-        const changePercent = quote.data.changePercent;
+        // const latestPrice = quote.data.latestPrice;
+        // const changePercent = quote.data.changePercent;
         // if stored data exists
         if (store.get(this.symbol) !== null) {
           const storedData = store.get(this.symbol);
@@ -173,7 +195,7 @@ class Watchlist {
             storedData.historicalPrices[this.interval] = historicalPrices.data;
             store.set(this.symbol, storedData);
           }
-          this.renderStockHeader(latestPrice, changePercent);
+          this.renderStockHeader(quote.data);
         }
         // otherwise create data object and store in localStorage
         else {
@@ -187,14 +209,14 @@ class Watchlist {
           }
   
           store.set(this.symbol, dataToStore);
-          this.renderStockHeader(latestPrice, changePercent);
+          this.renderStockHeader(quote.data);
         }
       }
     } else if (requestType === 'latestPrice') {
       return (quote) => {
         const latestPrice = quote.data.latestPrice;
         const changePercent = quote.data.changePercent;
-        this.renderStockHeader(latestPrice, changePercent);
+        this.renderStockHeader(quote.data);
       }
     }
   }
@@ -217,16 +239,23 @@ class Watchlist {
         this.renderGraph();
         this.renderKeyStats();
         this.renderNews();
+        this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, this.companyName, true);
       }
     })
   }
 
 
-  renderStockHeader(latestPrice, changePercent) {
-    changePercent = (changePercent * 100).toFixed(2);
+  // DISPLAY STOCK INFO IN HEADER
+  renderStockHeader(data) {
+    const companyName = trimString(data.companyName, 36);
+    const changePercent = (data.changePercent * 100).toFixed(2);
+    const latestPrice = data.latestPrice;
     const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
     const latestPriceHtml = `<h2>${latestPrice}</2>`;
     const changePercentHtml = `<h3>${plusOrMinus}${changePercent}%</h3>`;
+
+    this.$stockName.html(companyName);
+    this.$stockSymbol.html(`(${this.symbol})`);
 
     if (changePercent >= 0) {
       this.$changePercentContainer.removeClass('percent-change-negative');
@@ -242,7 +271,7 @@ class Watchlist {
 
 
   // ACTIVATE EVENT LISTENERS FOR WATCHLIST
-  activateEventListeners() {
+  loadStockDataHandler() {
     const that = this;
 
     // Display graph & data for watchlist item
@@ -258,13 +287,15 @@ class Watchlist {
       // add active class to clicked watchlist item
       watchlistItems.removeClass('active');
       clickedEl.addClass('active');
+      
 
       // render name and graph for watchlist item
-      that.renderStockName(name);
+      // that.renderStockName(name);
+      // that.watchButton = new WatchButton('#watchlist-chart-header-watch-button', symbol, name, true);
       that.$latestPriceContainer.empty();
       that.$changePercentContainer.empty();
 
-      // if stored data exists and is less than 1 day old
+      // if stored data exists and is less than 6 hours old
       if (store.get(that.symbol) !== null && dataUpdateRequired) {
         that.fetchStockData('latestPrice');
         that.renderGraph();
@@ -276,13 +307,24 @@ class Watchlist {
         store.remove(that.symbol);
         that.fetchStockData('allData');
       }
+
+      // get index of selected stock
+      let selectedStockIndex = that.watchlist.findIndex((stock) => {
+        return stock.symbol === symbol;
+      });
+      console.log('wLength', that.watchlist.length);
+      console.log(selectedStockIndex);
+      if (selectedStockIndex == (that.watchlist.length - 1)) {
+        selectedStockIndex = selectedStockIndex - 1;
+      };
+      store.set('selectedStockIndex', selectedStockIndex);
     });
   }
 
 
-  // Calculate whether local storage for stock is more than 1 hour old
+  // Calculate whether local storage for stock is more than 6 hours old
   calcLocalStorageAge() {
-    const oneHour = 60 * 60 * 1 * 1000;
+    const oneHour = 60 * 60 * 6 * 1000;
     const newTime = Date.now();
     let oldTime;
 
@@ -420,7 +462,8 @@ class Watchlist {
       const name = this.watchlist[0].name;
       const isMoreThanOneDay = this.calcLocalStorageAge();
 
-      this.renderStockName(name);
+      // this.renderStockName(name);
+      this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, name, true);
 
       // update localStorage with new data if data is older than 12 hours
       if (isMoreThanOneDay) {
@@ -441,7 +484,7 @@ class Watchlist {
 
   // RENDER STOCK NAME
   renderStockName(name) {
-    const stockName = trimString(name, 40);
+    const stockName = trimString(name, 36);
     this.$stockName.text(stockName);
     this.$stockSymbol.html(`(${this.symbol})`);
   }

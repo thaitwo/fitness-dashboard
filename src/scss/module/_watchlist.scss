@@ -21,9 +21,13 @@
   margin-bottom: 2rem;
 }
 
-.watchlist-chart-header {
-  // display: flex;
-  // justify-content: space-between;
+#watchlist-chart-header-btn-intervals {
+  display: flex;
+  justify-content: flex-start;
+
+  #watch-button {
+    margin-right: 24px;
+  }
 }
 
 #watchlist-intervals-container {

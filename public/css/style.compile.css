@@ -128,9 +128,8 @@ body {
     font-weight: 600;
     height: 28px;
     line-height: 28px;
-    margin-top: -5px;
-    margin-left: 40px;
-    padding: 0 10px;
+    margin: 0 24px;
+    padding: 0 8px;
     text-transform: capitalize; }
     .button.button-popup-watchlist i {
       padding-right: 6px; }
@@ -321,6 +320,10 @@ body {
   display: flex;
   justify-content: flex-start; }
 
+#popup-wbutton-intervals {
+  display: flex;
+  justify-content: flex-start; }
+
 #time-intervals {
   border: 2px solid #2B3152;
   border-radius: 4px;
@@ -332,7 +335,7 @@ body {
     border-right: 2px solid #2B3152;
     box-sizing: border-box;
     color: #FFFFFF;
-    line-height: 28px;
+    line-height: 24px;
     min-width: 48px;
     text-align: center; }
     #time-intervals li:last-child {
@@ -612,6 +615,12 @@ body {
   font-size: 1.2rem;
   font-weight: 500;
   margin-bottom: 2rem; }
+
+#watchlist-chart-header-btn-intervals {
+  display: flex;
+  justify-content: flex-start; }
+  #watchlist-chart-header-btn-intervals #watch-button {
+    margin-right: 24px; }
 
 #watchlist-intervals-container {
   position: relative; }
