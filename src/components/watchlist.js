@@ -314,9 +314,9 @@ class Watchlist {
       });
       console.log('wLength', that.watchlist.length);
       console.log(selectedStockIndex);
-      if (selectedStockIndex == (that.watchlist.length - 1)) {
-        selectedStockIndex = selectedStockIndex - 1;
-      };
+      // if (selectedStockIndex == (that.watchlist.length - 1)) {
+      //   selectedStockIndex = selectedStockIndex - 1;
+      // };
       store.set('selectedStockIndex', selectedStockIndex);
     });
   }

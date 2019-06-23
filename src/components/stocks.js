@@ -14,12 +14,9 @@ class Stocks {
     this.$stocksContainer = $('.stocks-container');
     this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
     this.$stockListContainer = this.$stocksContainer.find('#stocks-list');
-    this.count = 1;
 
     this.getStocks();
-
     this.displayPopup();
-    // this.activateScroll();
   }
 
 
@@ -28,7 +25,7 @@ class Stocks {
     let html =
       `
         <div class="stocks-container">
-          <h3>Technology Stocks</h3>
+          <h3>Most Active Stocks</h3>
           <div class="icon-loading">
             <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
           </div>
@@ -47,37 +44,37 @@ class Stocks {
 
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
-    const stocks = store.get(`stocks${this.count}`) || [];
+    const stocks = store.get(`stocks`) || [];
 
     // check if local storage exist
     if (stocks.length) {
-      this.renderStocks(this.count);
+      this.renderStocks();
     }
     else {
-      this.fetchStocks(this.count);
+      this.fetchStocks();
     }
   }
 
 
   // GET LIST OF COMPANIES
-  fetchStocks(num) {
+  fetchStocks() {
     // display loading icon
     this.$loadingIcon.addClass('is-visible');
 
     axios({
       method: 'get',
-      url: 'https://cloud.iexapis.com/v1/stock/market/collection/sector',
+      url: 'https://cloud.iexapis.com/v1/stock/market/collection/list',
       responseType: 'json',
       params: {
-        collectionName: 'Technology',
+        collectionName: 'mostactive',
         token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
       }
     })
     .then((response) => {
       const stocks = response.data;
       // store list of stocks
-      store.set(`stocks${num}`, stocks);
-      this.renderStocks(num);
+      store.set(`stocks`, stocks);
+      this.renderStocks();
     })
     .catch((error) => {
       console.log(error);
@@ -89,12 +86,11 @@ class Stocks {
 
 
   // RENDER LIST OF COMPANIES
-  renderStocks(num) {
-    const stocks = store.get(`stocks${num}`);
-    // console.log('stocks', stocks);
+  renderStocks() {
+    const stocks = store.get(`stocks`);
 
     // render html list for 100 stocks
-    const list =  stocks.slice(0, 375).map((stock) => {
+    const list =  stocks.map((stock) => {
       const { symbol, companyName } = stock;
       const name = companyName;
       let iconClass;
@@ -155,7 +151,7 @@ class Stocks {
       if (this.$stocksContainer.scrollTop() + this.$stocksContainer.innerHeight() >= this.$stockListContainer.height()) {
         this.count++;
         if (store.get(`stocks${this.count}`)) {
-          this.renderStocks(this.count);
+          // this.renderStocks(this.count);
         }
         else {
           this.fetchStocks(this.count);

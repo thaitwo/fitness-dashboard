@@ -74,6 +74,7 @@
   justify-content: space-between;
 
   > div {
+    box-shadow: 0 0 8px rgba($black,.24);
     flex: 1;
   }
 }
@@ -198,9 +199,8 @@
 .watchlist-container {
   background: $colorDark-dark;
   border-radius: 10px;
-  // box-shadow: 0 0 8px rgba($black,.24);
+  box-shadow: 0 0 8px rgba($black,.24);
   box-sizing: border-box;
-  // height: 100%;
   overflow: auto;
   padding: 24px;
   position: fixed;
@@ -210,6 +210,7 @@
   margin-bottom: 24px;
   min-height: 320px;
   min-width: 264px;
+  max-width: 280px;
 
   a {
     text-decoration: none;
@@ -233,6 +234,7 @@
 .watchlist-chart-container {
   background: $colorDark-dark;
   border-radius: 10px;
+  box-shadow: 0 0 8px rgba($black,.24);
   height: 380px;
   margin-bottom: 24px;
   min-width: 600px;
