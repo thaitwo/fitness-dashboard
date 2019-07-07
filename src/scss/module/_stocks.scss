@@ -1,16 +1,18 @@
+#home-row-second {
+  display: flex;
+  flex-direction: row;
+  padding: 24px;
+}
+
 .stocks-container {
   background: $colorDark-dark;
   border-radius: 10px;
+  box-sizing: border-box;
+  flex: 1;
+  margin-right: 24px;
+  overflow: auto;
   padding: 30px 60px;
   padding: 24px;
-  position: absolute;
-  overflow: auto;
-  bottom: 24px;
-  box-sizing: border-box;
-  top: 24px;
-  left: 24px;
-  right: 24px;
-  width: 620px;
 
   h3 {
     color: $white;
@@ -19,6 +21,12 @@
     font-weight: 300;
     margin: 0 0 30px;
   }
+}
+
+#top-gainers {
+  background: $colorDark-dark;
+  border-radius: 10px;
+  flex: 1;
 }
 
 .stocks-tabs {
@@ -34,12 +42,11 @@
   button {
     background: $colorDark-dark;
     border: none;
-    // border-bottom: 1px solid rgba($white, .06);
     box-sizing: border-box;
     display: block;
-    height: 36px;
     outline: none;
-    padding: 0;
+    padding: 4px 0;
+    position: relative;
     text-align: left;
     transition: all .3s;
     width: 100%;
@@ -56,18 +63,15 @@
   .stock-code {
     color: $colorDark-accent;
     display: block;
-    float: left;
     font-family: $font-primary;
     font-size: 14px;
     font-weight: 500;
     line-height: 24px;
-    width: 56px;
   }
 
   .stock-name {
     color: rgba($white, .8);
     display: block;
-    float: left;
     font-family: $font-primary;
     font-size: 14px;
     font-weight: 400;
@@ -77,8 +81,11 @@
 
   .icon-add-watchlist {
     color: $bluegrey-100;
-    float: right;
     font-size: 1.2rem;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 4;
 
     &.is-selected {

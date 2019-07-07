@@ -24,12 +24,15 @@ class Stocks {
   render() {
     let html =
       `
-        <div class="stocks-container">
-          <h3>Most Active Stocks</h3>
-          <div class="icon-loading">
-            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        <div id="home-row-second">
+          <div class="stocks-container">
+            <h3>Most Active Stocks</h3>
+            <div class="icon-loading">
+              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            </div>
+            <ol id="stocks-list" class="stocks-list"></ol>
           </div>
-          <ol id="stocks-list" class="stocks-list"></ol>
+          <div id="top-gainers"></div>
         </div>
       `;
     this.$container.append(html);
@@ -102,8 +105,8 @@ class Stocks {
         return `
           <li>
             <button id="${symbol}">
-              <span class="stock-code">${symbol}</span>
-              <span class="stock-name">${name}</span>
+              <div class="stock-code">${symbol}</div>
+              <div class="stock-name">${name}</div>
               <span class="icon-add-watchlist is-selected"><i class="${iconClass} fa-star"></i></span>
             </button>
           </li>

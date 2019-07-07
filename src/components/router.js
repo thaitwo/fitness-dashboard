@@ -36,9 +36,9 @@ class Router {
 
     // Routes handler
     this.router.on({
-      'stocks': () => {
-        this.currentPage = new Stocks(this.$canvas);
-      },
+      // 'stocks': () => {
+      //   this.currentPage = new Stocks(this.$canvas);
+      // },
       'compare': () => {
         // Insert functionality
       },
@@ -46,6 +46,7 @@ class Router {
         this.currentPage = new Watchlist(this.$canvas);
       },
       '*': () => {
+        this.currentPage = new Stocks(this.$canvas);
       }
     })
     .resolve();

@@ -30187,16 +30187,18 @@ var Router = function () {
 
       // Routes handler
       this.router.on({
-        'stocks': function stocks() {
-          _this.currentPage = new _stocks2.default(_this.$canvas);
-        },
+        // 'stocks': () => {
+        //   this.currentPage = new Stocks(this.$canvas);
+        // },
         'compare': function compare() {
           // Insert functionality
         },
         'watchlist': function watchlist() {
           _this.currentPage = new _watchlist2.default(_this.$canvas);
         },
-        '*': function _() {}
+        '*': function _() {
+          _this.currentPage = new _stocks2.default(_this.$canvas);
+        }
       }).resolve();
 
       // Global hook => clear page & event handlers before loading new route/page
@@ -30364,7 +30366,7 @@ var StockPopup = function () {
       // display loading icon
       this.$loadingIcon.addClass('is-visible');
       // request stock data
-      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (historicalPrices, quote, news) {
+      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (historicalPrices, quote, news) {
         // store company data
         var dataToStore = {
           historicalPrices: {
@@ -30398,7 +30400,7 @@ var StockPopup = function () {
       // get stock info from local storage
       var companyName = (0, _helpers.trimString)(this.companyName, 36);
       var latestPrice = stockData.quote.latestPrice;
-      var changePercent = (stockData.quote.changePercent * 100).toFixed(2);
+      var changePercent = stockData.quote.changePercent.toFixed(2);
       var closePrice = stockData.quote.close;
       var openPrice = stockData.quote.open;
       var low = stockData.quote.low;
@@ -30531,7 +30533,7 @@ var Stocks = function () {
   _createClass(Stocks, [{
     key: 'render',
     value: function render() {
-      var html = '\n        <div class="stocks-container">\n          <h3>Most Active Stocks</h3>\n          <div class="icon-loading">\n            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n          </div>\n          <ol id="stocks-list" class="stocks-list"></ol>\n        </div>\n      ';
+      var html = '\n        <div id="home-row-second">\n          <div class="stocks-container">\n            <h3>Most Active Stocks</h3>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="stocks-list" class="stocks-list"></ol>\n          </div>\n          <div id="top-gainers"></div>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -30611,7 +30613,7 @@ var Stocks = function () {
         if (_this2.isInWatchlist(symbol)) {
           iconClass = 'fas';
 
-          return '\n          <li>\n            <button id="' + symbol + '">\n              <span class="stock-code">' + symbol + '</span>\n              <span class="stock-name">' + name + '</span>\n              <span class="icon-add-watchlist is-selected"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
+          return '\n          <li>\n            <button id="' + symbol + '">\n              <div class="stock-code">' + symbol + '</div>\n              <div class="stock-name">' + name + '</div>\n              <span class="icon-add-watchlist is-selected"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
         }
         // if stock doesn't exist, display line icon with gray color
         else {
@@ -30887,9 +30889,9 @@ var Watchlist = function () {
       }
       // request all data for this stock
       else if (requestType === 'allData') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         } else if (requestType === 'latestPrice') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         }
     }
 
@@ -30985,7 +30987,7 @@ var Watchlist = function () {
     key: 'renderStockHeader',
     value: function renderStockHeader(data) {
       var companyName = (0, _helpers.trimString)(data.companyName, 36);
-      var changePercent = (data.changePercent * 100).toFixed(2);
+      var changePercent = data.changePercent.toFixed(2);
       var latestPrice = data.latestPrice;
       var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
       var latestPriceHtml = '<h2>' + latestPrice + '</2>';

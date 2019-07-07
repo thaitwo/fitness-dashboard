@@ -431,25 +431,31 @@ body {
 #popup-chart {
   height: 400px !important; }
 
+#home-row-second {
+  display: flex;
+  flex-direction: row;
+  padding: 24px; }
+
 .stocks-container {
   background: #151C40;
   border-radius: 10px;
-  padding: 30px 60px;
-  padding: 24px;
-  position: absolute;
-  overflow: auto;
-  bottom: 24px;
   box-sizing: border-box;
-  top: 24px;
-  left: 24px;
-  right: 24px;
-  width: 620px; }
+  flex: 1;
+  margin-right: 24px;
+  overflow: auto;
+  padding: 30px 60px;
+  padding: 24px; }
   .stocks-container h3 {
     color: #FFFFFF;
     font-family: "Mukta", sans-serif;
     font-size: 18px;
     font-weight: 300;
     margin: 0 0 30px; }
+
+#top-gainers {
+  background: #151C40;
+  border-radius: 10px;
+  flex: 1; }
 
 .stocks-tabs {
   height: 60px; }
@@ -462,9 +468,9 @@ body {
   border: none;
   box-sizing: border-box;
   display: block;
-  height: 36px;
   outline: none;
-  padding: 0;
+  padding: 4px 0;
+  position: relative;
   text-align: left;
   transition: all .3s;
   width: 100%; }
@@ -476,17 +482,14 @@ body {
 .stocks-list .stock-code {
   color: #F9A825;
   display: block;
-  float: left;
   font-family: "Mukta", sans-serif;
   font-size: 14px;
   font-weight: 500;
-  line-height: 24px;
-  width: 56px; }
+  line-height: 24px; }
 
 .stocks-list .stock-name {
   color: rgba(255, 255, 255, 0.8);
   display: block;
-  float: left;
   font-family: "Mukta", sans-serif;
   font-size: 14px;
   font-weight: 400;
@@ -495,8 +498,11 @@ body {
 
 .stocks-list .icon-add-watchlist {
   color: #CFD8DC;
-  float: right;
   font-size: 1.2rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 4; }
   .stocks-list .icon-add-watchlist.is-selected {
     color: #FFCA28; }
@@ -651,7 +657,7 @@ body {
   position: absolute;
   top: 24px;
   right: 24px;
-  left: 327px; }
+  left: 312px; }
 
 #watchlist-summary-container {
   display: flex;

@@ -132,7 +132,7 @@ class StockPopup {
     // request stock data
     axios.all([
       axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
       axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     ])
     .then(axios.spread((historicalPrices, quote, news) => {
@@ -169,7 +169,7 @@ class StockPopup {
     // get stock info from local storage
     const companyName = trimString(this.companyName, 36);
     const latestPrice = stockData.quote.latestPrice;
-    const changePercent = (stockData.quote.changePercent * 100).toFixed(2);
+    const changePercent = stockData.quote.changePercent.toFixed(2);
     const closePrice = stockData.quote.close;
     const openPrice = stockData.quote.open;
     const low = stockData.quote.low;

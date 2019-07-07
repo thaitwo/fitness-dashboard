@@ -152,12 +152,12 @@ class Watchlist {
       return [
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
         axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
       ]
     }
     else if (requestType === 'latestPrice') {
       return [
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
       ]
     }
   }
@@ -248,7 +248,7 @@ class Watchlist {
   // DISPLAY STOCK INFO IN HEADER
   renderStockHeader(data) {
     const companyName = trimString(data.companyName, 36);
-    const changePercent = (data.changePercent * 100).toFixed(2);
+    const changePercent = data.changePercent.toFixed(2);
     const latestPrice = data.latestPrice;
     const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
     const latestPriceHtml = `<h2>${latestPrice}</2>`;
