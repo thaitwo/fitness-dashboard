@@ -11,9 +11,9 @@ class Stocks {
     this.popup;
     this.watchlist = store.get('watchlist') || [];
     this.render();
-    this.$stocksContainer = $('.stocks-container');
+    this.$stocksContainer = $('#most-active-container');
     this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
-    this.$stockListContainer = this.$stocksContainer.find('#stocks-list');
+    this.$stockListContainer = this.$stocksContainer.find('#most-active');
 
     this.getStocks();
     this.displayPopup();
@@ -25,14 +25,33 @@ class Stocks {
     let html =
       `
         <div id="home-row-second">
-          <div class="stocks-container">
-            <h3>Most Active Stocks</h3>
+          <div id="most-active-container" class="box margin-right">
+            <h2 class="text-header">Most Active</h2>
             <div class="icon-loading">
               <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             </div>
-            <ol id="stocks-list" class="stocks-list"></ol>
+            <ol id="most-active" class="most-active">
+              <li id="most-active-header-row">
+                <div>Company</div>
+                <div>Last Price</div>
+                <div>Change</div>
+                <div>% Change</div>
+                <div></div>
+              </li>
+            </ol>
           </div>
-          <div id="top-gainers"></div>
+          <div id="top-gainers-container" class="box">
+            <h2 class="text-header">Top Gainers</h2>
+            <ol id="top-gainers" class="most-active">
+              <li id="top-gainers-header-row">
+                <div>Company</div>
+                <div>Last Price</div>
+                <div>Change</div>
+                <div>% Change</div>
+                <div></div>
+              </li>
+            </ol>
+          </div>
         </div>
       `;
     this.$container.append(html);
@@ -47,11 +66,13 @@ class Stocks {
 
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
-    const stocks = store.get(`stocks`) || [];
+    const mostActive = store.get('mostActive') || [];
+    const topGainers = store.get('topGainers') || [];
 
     // check if local storage exist
-    if (stocks.length) {
-      this.renderStocks();
+    if (mostActive.length && topGainers.length) {
+      this.renderStocks('#most-active', 'mostActive');
+      this.renderStocks('#top-gainers', 'topGainers');
     }
     else {
       this.fetchStocks();
@@ -64,21 +85,16 @@ class Stocks {
     // display loading icon
     this.$loadingIcon.addClass('is-visible');
 
-    axios({
-      method: 'get',
-      url: 'https://cloud.iexapis.com/v1/stock/market/collection/list',
-      responseType: 'json',
-      params: {
-        collectionName: 'mostactive',
-        token: 'pk_a12f90684f2a44f180bcaeb4eff4086d',
-      }
-    })
-    .then((response) => {
-      const stocks = response.data;
-      // store list of stocks
-      store.set(`stocks`, stocks);
-      this.renderStocks();
-    })
+    axios.all([
+      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=mostactive&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=gainers&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    ])
+    .then(axios.spread((mostActive, gainers) => {
+      store.set('mostActive', mostActive.data);
+      store.set('topGainers', gainers.data);
+      this.renderStocks('#most-active', 'mostActive');
+      this.renderStocks('#top-gainers', 'topGainers');
+    }))
     .catch((error) => {
       console.log(error);
     })
@@ -88,46 +104,54 @@ class Stocks {
   }
 
 
-  // RENDER LIST OF COMPANIES
-  renderStocks() {
-    const stocks = store.get(`stocks`);
+  // RENDER MOST ACTIVE
+  renderStocks(container, listType) {
+    const stocks = store.get(listType);
 
     // render html list for 100 stocks
     const list =  stocks.map((stock) => {
-      const { symbol, companyName } = stock;
-      const name = companyName;
+      let { symbol, companyName, latestPrice, change, changePercent } = stock;
+      changePercent = (changePercent * 100).toFixed(2);
       let iconClass;
+      let isNegative;
+      let isSelected = '';
+
+      if (change < 0) {
+        isNegative = 'is-negative';
+      }
 
       // if stock exist in watchlist array, dispay solid icon with gold color
       if (this.isInWatchlist(symbol)) {
         iconClass = 'fas';
-
-        return `
-          <li>
-            <button id="${symbol}">
-              <div class="stock-code">${symbol}</div>
-              <div class="stock-name">${name}</div>
-              <span class="icon-add-watchlist is-selected"><i class="${iconClass} fa-star"></i></span>
-            </button>
-          </li>
-        `;
+        isSelected = 'is-selected';
       }
       // if stock doesn't exist, display line icon with gray color
       else {
         iconClass = 'far';
-
-        return `
-          <li>
-            <button id="${symbol}">
-              <span class="stock-code">${symbol}</span>
-              <span class="stock-name">${name}</span>
-              <span class="icon-add-watchlist"><i class="${iconClass} fa-star"></i></span>
-            </button>
-          </li>
-        `;
       }
+      
+      return `
+        <li id="${symbol}">
+          <div class="most-active-stock-name">
+            <span class="stock-code">${symbol}</span>
+            <span class="stock-name">${companyName}</span>
+          </div>
+          <div>
+            <p>${latestPrice}</p>
+          </div>
+          <div class="most-active-change ${isNegative}">
+            <p>${change}</p>
+          </div>
+          <div class="most-active-change-percent ${isNegative}">
+            <p>${changePercent}%</p>
+          </div>
+          <div>
+            <span class="icon-add-watchlist ${isSelected}"><i class="${iconClass} fa-star"></i></span>
+          </div>
+        </li>
+      `;
     });
-    this.$stockListContainer.append(list);
+    $(container).append(list);
     this.activateWatchlistIcon();
   }
 
@@ -136,11 +160,12 @@ class Stocks {
   displayPopup() {
     const that = this;
 
-    this.$stockListContainer.on('click', 'button', function(event) {
+    this.$stockListContainer.on('click', '.most-active-stock-name', function(event) {
       event.preventDefault();
 
-      let companyId = this.id;
+      let companyId = $(this).closest('li')[0].id;
       let companyName = $(this).find('span.stock-name')[0].innerText;
+      console.log(companyId, companyName);
 
       // create new popup
       that.popup = new StockPopup(companyId, companyName);
@@ -176,8 +201,8 @@ class Stocks {
       const $icon = $this.find('i');
 
       // get stock id and stock name from sibling elements
-      const stockSymbol = $this.siblings('.stock-code')[0].innerText;
-      const stockName = $this.siblings('.stock-name')[0].innerText;
+      const stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
+      const stockName = $this.closest('li').find('.stock-name')[0].innerText;
       // retrieve watchlist:
       // not doing this causes a bug where after you click watch/unwatch and close popup,
       // the star icon will not work on the first click attempt for the stock 

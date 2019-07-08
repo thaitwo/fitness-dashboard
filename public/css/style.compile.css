@@ -288,7 +288,7 @@ body {
   border-radius: 10px;
   margin-bottom: 24px;
   padding: 1.5rem; }
-  .box.marginRight {
+  .box.margin-right {
     margin-right: 1.5rem; }
 
 /* MODULE */
@@ -436,23 +436,11 @@ body {
   flex-direction: row;
   padding: 24px; }
 
-.stocks-container {
-  background: #151C40;
-  border-radius: 10px;
-  box-sizing: border-box;
+#most-active-container {
   flex: 1;
-  margin-right: 24px;
-  overflow: auto;
-  padding: 30px 60px;
-  padding: 24px; }
-  .stocks-container h3 {
-    color: #FFFFFF;
-    font-family: "Mukta", sans-serif;
-    font-size: 18px;
-    font-weight: 300;
-    margin: 0 0 30px; }
+  overflow: auto; }
 
-#top-gainers {
+#top-gainers-container {
   background: #151C40;
   border-radius: 10px;
   flex: 1; }
@@ -460,10 +448,40 @@ body {
 .stocks-tabs {
   height: 60px; }
 
-.stocks-list li {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+.most-active #most-active-header-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  display: flex;
+  font-size: 13px;
+  font-weight: 300;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 16px; }
 
-.stocks-list button {
+.most-active li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  position: relative; }
+  .most-active li div {
+    flex: 2;
+    display: flex;
+    align-items: center; }
+  .most-active li .most-active-stock-name:hover {
+    cursor: pointer; }
+    .most-active li .most-active-stock-name:hover .stock-name {
+      color: #F9A825; }
+  .most-active li div:first-of-type {
+    display: unset;
+    flex: 4; }
+  .most-active li div:last-of-type {
+    flex: 1;
+    display: unset;
+    max-width: 24px; }
+
+.most-active button {
   background: #151C40;
   border: none;
   box-sizing: border-box;
@@ -474,39 +492,45 @@ body {
   text-align: left;
   transition: all .3s;
   width: 100%; }
-  .stocks-list button:hover {
+  .most-active button:hover {
     cursor: pointer; }
-    .stocks-list button:hover .stock-name {
+    .most-active button:hover .stock-name {
       color: #F9A825; }
 
-.stocks-list .stock-code {
+.most-active .stock-code {
   color: #F9A825;
   display: block;
   font-family: "Mukta", sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  line-height: 24px; }
+  line-height: 16px; }
 
-.stocks-list .stock-name {
+.most-active .stock-name {
   color: rgba(255, 255, 255, 0.8);
   display: block;
   font-family: "Mukta", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 16px;
   overflow-y: hidden; }
 
-.stocks-list .icon-add-watchlist {
+.most-active .most-active-change,
+.most-active .most-active-change-percent {
+  color: #43A047;
+  font-weight: 500; }
+
+.most-active .icon-add-watchlist {
   color: #CFD8DC;
   font-size: 1.2rem;
   position: absolute;
   right: 0;
   top: 50%;
-  transform: translateY(-50%);
-  z-index: 4; }
-  .stocks-list .icon-add-watchlist.is-selected {
+  transform: translateY(-50%); }
+  .most-active .icon-add-watchlist.is-selected {
     color: #FFCA28; }
-  .stocks-list .icon-add-watchlist svg {
+  .most-active .icon-add-watchlist:hover {
+    cursor: pointer; }
+  .most-active .icon-add-watchlist svg {
     height: 24px;
     width: auto; }
 
@@ -924,6 +948,9 @@ body {
 ** State / Color
 **
 */
+.is-negative {
+  color: #e53935 !important; }
+
 .no-padding {
   padding: 0 !important;
   margin: 0 !important; }

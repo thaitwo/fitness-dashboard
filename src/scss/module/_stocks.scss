@@ -4,26 +4,12 @@
   padding: 24px;
 }
 
-.stocks-container {
-  background: $colorDark-dark;
-  border-radius: 10px;
-  box-sizing: border-box;
+#most-active-container {
   flex: 1;
-  margin-right: 24px;
   overflow: auto;
-  padding: 30px 60px;
-  padding: 24px;
-
-  h3 {
-    color: $white;
-    font-family: $font-primary;
-    font-size: 18px;
-    font-weight: 300;
-    margin: 0 0 30px;
-  }
 }
 
-#top-gainers {
+#top-gainers-container {
   background: $colorDark-dark;
   border-radius: 10px;
   flex: 1;
@@ -33,10 +19,54 @@
   height: 60px;
 }
 
-.stocks-list {
+.most-active {
+
+  #most-active-header-row {
+    border-bottom: 1px solid rgba($white, .2);
+    color: $white;
+    display: flex;
+    font-size: 13px;
+    font-weight: 300;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
 
   li {
     border-bottom: 1px solid rgba($white, .06);
+    color: $white;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    position: relative;
+
+    div {
+      flex: 2;
+      display: flex;
+      align-items: center;
+    }
+
+    .most-active-stock-name {
+
+      &:hover {
+        cursor: pointer;
+  
+        .stock-name {
+          color: $colorDark-accent;
+        }
+      }
+    }
+
+    div:first-of-type {
+      display: unset;
+      flex: 4;
+    }
+
+    div:last-of-type {
+      flex: 1;
+      display: unset;
+      max-width: 24px;
+    }
   }
 
   button {
@@ -64,19 +94,25 @@
     color: $colorDark-accent;
     display: block;
     font-family: $font-primary;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
-    line-height: 24px;
+    line-height: 16px;
   }
 
   .stock-name {
     color: rgba($white, .8);
     display: block;
     font-family: $font-primary;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 24px;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 16px;
     overflow-y: hidden;
+  }
+
+  .most-active-change,
+  .most-active-change-percent {
+    color: $green-600;
+    font-weight: 500;
   }
 
   .icon-add-watchlist {
@@ -86,10 +122,13 @@
     right: 0;
     top: 50%;
     transform: translateY(-50%);
-    z-index: 4;
 
     &.is-selected {
       color: $amber-400;
+    }
+
+    &:hover {
+      cursor: pointer;
     }
 
     svg {

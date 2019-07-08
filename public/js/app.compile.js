@@ -30519,9 +30519,9 @@ var Stocks = function () {
     this.popup;
     this.watchlist = _store2.default.get('watchlist') || [];
     this.render();
-    this.$stocksContainer = (0, _jquery2.default)('.stocks-container');
+    this.$stocksContainer = (0, _jquery2.default)('#most-active-container');
     this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
-    this.$stockListContainer = this.$stocksContainer.find('#stocks-list');
+    this.$stockListContainer = this.$stocksContainer.find('#most-active');
 
     this.getStocks();
     this.displayPopup();
@@ -30533,7 +30533,7 @@ var Stocks = function () {
   _createClass(Stocks, [{
     key: 'render',
     value: function render() {
-      var html = '\n        <div id="home-row-second">\n          <div class="stocks-container">\n            <h3>Most Active Stocks</h3>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="stocks-list" class="stocks-list"></ol>\n          </div>\n          <div id="top-gainers"></div>\n        </div>\n      ';
+      var html = '\n        <div id="home-row-second">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="most-active">\n              <li id="most-active-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div></div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="most-active">\n              <li id="top-gainers-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div></div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -30552,11 +30552,13 @@ var Stocks = function () {
   }, {
     key: 'getStocks',
     value: function getStocks() {
-      var stocks = _store2.default.get('stocks') || [];
+      var mostActive = _store2.default.get('mostActive') || [];
+      var topGainers = _store2.default.get('topGainers') || [];
 
       // check if local storage exist
-      if (stocks.length) {
-        this.renderStocks();
+      if (mostActive.length && topGainers.length) {
+        this.renderStocks('#most-active', 'mostActive');
+        this.renderStocks('#top-gainers', 'topGainers');
       } else {
         this.fetchStocks();
       }
@@ -30572,57 +30574,57 @@ var Stocks = function () {
       // display loading icon
       this.$loadingIcon.addClass('is-visible');
 
-      (0, _axios2.default)({
-        method: 'get',
-        url: 'https://cloud.iexapis.com/v1/stock/market/collection/list',
-        responseType: 'json',
-        params: {
-          collectionName: 'mostactive',
-          token: 'pk_a12f90684f2a44f180bcaeb4eff4086d'
-        }
-      }).then(function (response) {
-        var stocks = response.data;
-        // store list of stocks
-        _store2.default.set('stocks', stocks);
-        _this.renderStocks();
-      }).catch(function (error) {
+      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=mostactive&token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=gainers&token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (mostActive, gainers) {
+        _store2.default.set('mostActive', mostActive.data);
+        _store2.default.set('topGainers', gainers.data);
+        _this.renderStocks('#most-active', 'mostActive');
+        _this.renderStocks('#top-gainers', 'topGainers');
+      })).catch(function (error) {
         console.log(error);
       }).finally(function () {
         _this.$loadingIcon.removeClass('is-visible');
       });
     }
 
-    // RENDER LIST OF COMPANIES
+    // RENDER MOST ACTIVE
 
   }, {
     key: 'renderStocks',
-    value: function renderStocks() {
+    value: function renderStocks(container, listType) {
       var _this2 = this;
 
-      var stocks = _store2.default.get('stocks');
+      var stocks = _store2.default.get(listType);
 
       // render html list for 100 stocks
       var list = stocks.map(function (stock) {
         var symbol = stock.symbol,
-            companyName = stock.companyName;
+            companyName = stock.companyName,
+            latestPrice = stock.latestPrice,
+            change = stock.change,
+            changePercent = stock.changePercent;
 
-        var name = companyName;
+        changePercent = (changePercent * 100).toFixed(2);
         var iconClass = void 0;
+        var isNegative = void 0;
+        var isSelected = '';
+
+        if (change < 0) {
+          isNegative = 'is-negative';
+        }
 
         // if stock exist in watchlist array, dispay solid icon with gold color
         if (_this2.isInWatchlist(symbol)) {
           iconClass = 'fas';
-
-          return '\n          <li>\n            <button id="' + symbol + '">\n              <div class="stock-code">' + symbol + '</div>\n              <div class="stock-name">' + name + '</div>\n              <span class="icon-add-watchlist is-selected"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
+          isSelected = 'is-selected';
         }
         // if stock doesn't exist, display line icon with gray color
         else {
             iconClass = 'far';
-
-            return '\n          <li>\n            <button id="' + symbol + '">\n              <span class="stock-code">' + symbol + '</span>\n              <span class="stock-name">' + name + '</span>\n              <span class="icon-add-watchlist"><i class="' + iconClass + ' fa-star"></i></span>\n            </button>\n          </li>\n        ';
           }
+
+        return '\n        <li id="' + symbol + '">\n          <div class="most-active-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + changePercent + '%</p>\n          </div>\n          <div>\n            <span class="icon-add-watchlist ' + isSelected + '"><i class="' + iconClass + ' fa-star"></i></span>\n          </div>\n        </li>\n      ';
       });
-      this.$stockListContainer.append(list);
+      (0, _jquery2.default)(container).append(list);
       this.activateWatchlistIcon();
     }
 
@@ -30633,11 +30635,12 @@ var Stocks = function () {
     value: function displayPopup() {
       var that = this;
 
-      this.$stockListContainer.on('click', 'button', function (event) {
+      this.$stockListContainer.on('click', '.most-active-stock-name', function (event) {
         event.preventDefault();
 
-        var companyId = this.id;
+        var companyId = (0, _jquery2.default)(this).closest('li')[0].id;
         var companyName = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
+        console.log(companyId, companyName);
 
         // create new popup
         that.popup = new _stockPopup2.default(companyId, companyName);
@@ -30678,8 +30681,8 @@ var Stocks = function () {
         var $icon = $this.find('i');
 
         // get stock id and stock name from sibling elements
-        var stockSymbol = $this.siblings('.stock-code')[0].innerText;
-        var stockName = $this.siblings('.stock-name')[0].innerText;
+        var stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
+        var stockName = $this.closest('li').find('.stock-name')[0].innerText;
         // retrieve watchlist:
         // not doing this causes a bug where after you click watch/unwatch and close popup,
         // the star icon will not work on the first click attempt for the stock 
@@ -30837,7 +30840,7 @@ var Watchlist = function () {
   }, {
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box marginRight"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }

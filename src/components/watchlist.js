@@ -89,7 +89,7 @@ class Watchlist {
               <canvas id="watchlist-chart" width="900" height="320"></canvas>
             </div>
             <div id="watchlist-summary-container">
-              <div id="watchlist-key-stats-container" class="box marginRight"></div>
+              <div id="watchlist-key-stats-container" class="box margin-right"></div>
               <div id="watchlist-news-container" class="box"></div>
             </div>
           </div>
