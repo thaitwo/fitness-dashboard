@@ -13,7 +13,7 @@ class Stocks {
     this.render();
     this.$stocksContainer = $('#most-active-container');
     this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
-    this.$stockListContainer = this.$stocksContainer.find('#most-active');
+    this.$stockListContainer = $('.stock-list');
 
     this.getStocks();
     this.displayPopup();
@@ -30,25 +30,25 @@ class Stocks {
             <div class="icon-loading">
               <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
             </div>
-            <ol id="most-active" class="most-active">
-              <li id="most-active-header-row">
+            <ol id="most-active" class="stock-list">
+              <li class="stock-list-header-row">
                 <div>Company</div>
                 <div>Last Price</div>
                 <div>Change</div>
                 <div>% Change</div>
-                <div></div>
+                <div>Watch</div>
               </li>
             </ol>
           </div>
           <div id="top-gainers-container" class="box">
             <h2 class="text-header">Top Gainers</h2>
-            <ol id="top-gainers" class="most-active">
-              <li id="top-gainers-header-row">
+            <ol id="top-gainers" class="stock-list">
+              <li class="stock-list-header-row">
                 <div>Company</div>
                 <div>Last Price</div>
                 <div>Change</div>
                 <div>% Change</div>
-                <div></div>
+                <div>Watch</div>
               </li>
             </ol>
           </div>
@@ -111,14 +111,22 @@ class Stocks {
     // render html list for 100 stocks
     const list =  stocks.map((stock) => {
       let { symbol, companyName, latestPrice, change, changePercent } = stock;
-      changePercent = (changePercent * 100).toFixed(2);
       let iconClass;
       let isNegative;
+      let plusMinusSign;
       let isSelected = '';
 
       if (change < 0) {
         isNegative = 'is-negative';
+        plusMinusSign = '-';
+      } else if (change == 0) {
+        plusMinusSign = '';
+      } else {
+        plusMinusSign = '+';
       }
+
+      change = Math.abs(change);
+      changePercent = Math.abs((changePercent * 100).toFixed(2));
 
       // if stock exist in watchlist array, dispay solid icon with gold color
       if (this.isInWatchlist(symbol)) {
@@ -132,7 +140,7 @@ class Stocks {
       
       return `
         <li id="${symbol}">
-          <div class="most-active-stock-name">
+          <div class="clickable-stock-name">
             <span class="stock-code">${symbol}</span>
             <span class="stock-name">${companyName}</span>
           </div>
@@ -140,19 +148,19 @@ class Stocks {
             <p>${latestPrice}</p>
           </div>
           <div class="most-active-change ${isNegative}">
-            <p>${change}</p>
+            <p>${plusMinusSign} ${change}</p>
           </div>
           <div class="most-active-change-percent ${isNegative}">
-            <p>${changePercent}%</p>
+            <p>${plusMinusSign} ${changePercent}<span>%</span></p>
           </div>
           <div>
-            <span class="icon-add-watchlist ${isSelected}"><i class="${iconClass} fa-star"></i></span>
+            <span class="icon-watchlist ${isSelected}"><i class="${iconClass} fa-star"></i></span>
           </div>
         </li>
       `;
     });
     $(container).append(list);
-    this.activateWatchlistIcon();
+    this.activateWatchlistIcon(container);
   }
 
 
@@ -160,12 +168,11 @@ class Stocks {
   displayPopup() {
     const that = this;
 
-    this.$stockListContainer.on('click', '.most-active-stock-name', function(event) {
+    this.$stockListContainer.on('click', '.clickable-stock-name', function(event) {
       event.preventDefault();
 
       let companyId = $(this).closest('li')[0].id;
       let companyName = $(this).find('span.stock-name')[0].innerText;
-      console.log(companyId, companyName);
 
       // create new popup
       that.popup = new StockPopup(companyId, companyName);
@@ -190,10 +197,10 @@ class Stocks {
 
 
   // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
-  activateWatchlistIcon() {
+  activateWatchlistIcon(containerId) {
     const that = this;
 
-    this.$stockListContainer.on('click', '.icon-add-watchlist', function(event) {
+    $(containerId).on('click', '.icon-watchlist', function(event) {
       const $this = $(this);
       event.stopPropagation();
 
@@ -203,6 +210,7 @@ class Stocks {
       // get stock id and stock name from sibling elements
       const stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
       const stockName = $this.closest('li').find('.stock-name')[0].innerText;
+      // console.log(stockSymbol, stockName);
       // retrieve watchlist:
       // not doing this causes a bug where after you click watch/unwatch and close popup,
       // the star icon will not work on the first click attempt for the stock 

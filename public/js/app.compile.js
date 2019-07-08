@@ -30521,7 +30521,7 @@ var Stocks = function () {
     this.render();
     this.$stocksContainer = (0, _jquery2.default)('#most-active-container');
     this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
-    this.$stockListContainer = this.$stocksContainer.find('#most-active');
+    this.$stockListContainer = (0, _jquery2.default)('.stock-list');
 
     this.getStocks();
     this.displayPopup();
@@ -30533,7 +30533,7 @@ var Stocks = function () {
   _createClass(Stocks, [{
     key: 'render',
     value: function render() {
-      var html = '\n        <div id="home-row-second">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="most-active">\n              <li id="most-active-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div></div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="most-active">\n              <li id="top-gainers-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div></div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
+      var html = '\n        <div id="home-row-second">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -30603,14 +30603,22 @@ var Stocks = function () {
             change = stock.change,
             changePercent = stock.changePercent;
 
-        changePercent = (changePercent * 100).toFixed(2);
         var iconClass = void 0;
         var isNegative = void 0;
+        var plusMinusSign = void 0;
         var isSelected = '';
 
         if (change < 0) {
           isNegative = 'is-negative';
+          plusMinusSign = '-';
+        } else if (change == 0) {
+          plusMinusSign = '';
+        } else {
+          plusMinusSign = '+';
         }
+
+        change = Math.abs(change);
+        changePercent = Math.abs((changePercent * 100).toFixed(2));
 
         // if stock exist in watchlist array, dispay solid icon with gold color
         if (_this2.isInWatchlist(symbol)) {
@@ -30622,10 +30630,10 @@ var Stocks = function () {
             iconClass = 'far';
           }
 
-        return '\n        <li id="' + symbol + '">\n          <div class="most-active-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + changePercent + '%</p>\n          </div>\n          <div>\n            <span class="icon-add-watchlist ' + isSelected + '"><i class="' + iconClass + ' fa-star"></i></span>\n          </div>\n        </li>\n      ';
+        return '\n        <li id="' + symbol + '">\n          <div class="clickable-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + changePercent + '<span>%</span></p>\n          </div>\n          <div>\n            <span class="icon-watchlist ' + isSelected + '"><i class="' + iconClass + ' fa-star"></i></span>\n          </div>\n        </li>\n      ';
       });
       (0, _jquery2.default)(container).append(list);
-      this.activateWatchlistIcon();
+      this.activateWatchlistIcon(container);
     }
 
     // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
@@ -30635,12 +30643,11 @@ var Stocks = function () {
     value: function displayPopup() {
       var that = this;
 
-      this.$stockListContainer.on('click', '.most-active-stock-name', function (event) {
+      this.$stockListContainer.on('click', '.clickable-stock-name', function (event) {
         event.preventDefault();
 
         var companyId = (0, _jquery2.default)(this).closest('li')[0].id;
         var companyName = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
-        console.log(companyId, companyName);
 
         // create new popup
         that.popup = new _stockPopup2.default(companyId, companyName);
@@ -30670,10 +30677,10 @@ var Stocks = function () {
 
   }, {
     key: 'activateWatchlistIcon',
-    value: function activateWatchlistIcon() {
+    value: function activateWatchlistIcon(containerId) {
       var that = this;
 
-      this.$stockListContainer.on('click', '.icon-add-watchlist', function (event) {
+      (0, _jquery2.default)(containerId).on('click', '.icon-watchlist', function (event) {
         var $this = (0, _jquery2.default)(this);
         event.stopPropagation();
 
@@ -30683,6 +30690,7 @@ var Stocks = function () {
         // get stock id and stock name from sibling elements
         var stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
         var stockName = $this.closest('li').find('.stock-name')[0].innerText;
+        // console.log(stockSymbol, stockName);
         // retrieve watchlist:
         // not doing this causes a bug where after you click watch/unwatch and close popup,
         // the star icon will not work on the first click attempt for the stock 
