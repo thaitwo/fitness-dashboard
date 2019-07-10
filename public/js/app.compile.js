@@ -30506,6 +30506,10 @@ var _stockPopup = __webpack_require__(165);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
+var _news = __webpack_require__(178);
+
+var _news2 = _interopRequireDefault(_news);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -30525,15 +30529,26 @@ var Stocks = function () {
 
     this.getStocks();
     this.displayPopup();
+    this.mostActiveSymbols = this.getMostActiveSymbols();
+    this.news = new _news2.default('#home-news', this.mostActiveSymbols, 1);
   }
 
-  // RENDER HTML
-
-
   _createClass(Stocks, [{
+    key: 'getMostActiveSymbols',
+    value: function getMostActiveSymbols() {
+      var symbols = _store2.default.get('mostActive');
+
+      return symbols.slice(0, 5).map(function (stock) {
+        return stock.symbol;
+      });
+    }
+
+    // RENDER HTML
+
+  }, {
     key: 'render',
     value: function render() {
-      var html = '\n        <div id="home-row-second">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
+      var html = '\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n        <div class="home-row">\n          <div id="home-news" class="box margin-right">\n            <h2 class="text-header">Latest News</h2>\n          </div>\n          <div id="home-favorites" class="box">\n            <h2 class="text-header">Favorites</h2>\n          </div>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -30596,7 +30611,7 @@ var Stocks = function () {
       var stocks = _store2.default.get(listType);
 
       // render html list for 100 stocks
-      var list = stocks.map(function (stock) {
+      var list = stocks.slice(0, 5).map(function (stock) {
         var symbol = stock.symbol,
             companyName = stock.companyName,
             latestPrice = stock.latestPrice,
@@ -63901,6 +63916,106 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 174 */,
+/* 175 */,
+/* 176 */,
+/* 177 */,
+/* 178 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var News = function () {
+  function News(containerId, symbolArray, numOfArticlesPerStock) {
+    _classCallCheck(this, News);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    this.symbols = symbolArray;
+    this.num = numOfArticlesPerStock;
+    this.numOfStocks = symbolArray.length;
+
+    this.fetchNews();
+  }
+
+  _createClass(News, [{
+    key: 'formatAxiosRequests',
+    value: function formatAxiosRequests() {
+      var _this = this;
+
+      return this.symbols.map(function (symbol) {
+        return _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/' + _this.num + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d');
+      });
+    }
+  }, {
+    key: 'fetchNews',
+    value: function fetchNews() {
+      var _this2 = this;
+
+      if (_store2.default.get('homeNews') !== null) {
+        this.renderNews();
+      } else {
+        var requests = this.formatAxiosRequests();
+
+        _axios2.default.all(requests).then(_axios2.default.spread(function (symbol1, symbol2, symbol3, symbol4, symbol5) {
+          var newsArticles = [{ articles: symbol1.data }, { articles: symbol2.data }, { articles: symbol3.data }, { articles: symbol4.data }, { articles: symbol5.data }];
+
+          _store2.default.set('homeNews', newsArticles);
+        })).catch(function (error) {
+          return console.log(error);
+        }).finally(function () {
+          _this2.renderNews();
+        });
+      }
+    }
+  }, {
+    key: 'renderNews',
+    value: function renderNews() {
+      var newsArticlesData = _store2.default.get('homeNews');
+      this.$container.append('<ul class="home-news"></ul>');
+
+      var articles = newsArticlesData.map(function (company) {
+        var article = company.articles[0];
+        var headline = article.headline;
+        var image = article.image;
+        var source = article.source;
+        var url = article.url;
+
+        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div>\n              <img src="' + image + '" class="news-image" onerror="this.onerror=null;this.src=\'https://www.dcsltd.co.uk/wp-content/themes/dcs/images/ui.news-image-placeholder.jpg\';" />\n            </div>\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + '</p>\n            </div>\n          </a>\n        </li>\n      ';
+      });
+
+      (0, _jquery2.default)('.home-news').append(articles);
+    }
+  }]);
+
+  return News;
+}();
+
+exports.default = News;
 
 /***/ })
 /******/ ]);

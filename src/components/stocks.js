@@ -3,6 +3,7 @@ import _ from 'lodash';
 import store from 'store2';
 import axios from 'axios';
 import StockPopup from './stock-popup.js';
+import News from './news.js';
 
 class Stocks {
   constructor(container) {
@@ -17,6 +18,17 @@ class Stocks {
 
     this.getStocks();
     this.displayPopup();
+    this.mostActiveSymbols = this.getMostActiveSymbols();
+    this.news = new News('#home-news', this.mostActiveSymbols, 1);
+  }
+
+
+  getMostActiveSymbols() {
+    const symbols = store.get('mostActive');
+
+    return symbols.slice(0, 5).map((stock) => {
+      return stock.symbol;
+    })
   }
 
 
@@ -24,7 +36,7 @@ class Stocks {
   render() {
     let html =
       `
-        <div id="home-row-second">
+        <div class="home-row">
           <div id="most-active-container" class="box margin-right">
             <h2 class="text-header">Most Active</h2>
             <div class="icon-loading">
@@ -51,6 +63,14 @@ class Stocks {
                 <div>Watch</div>
               </li>
             </ol>
+          </div>
+        </div>
+        <div class="home-row">
+          <div id="home-news" class="box margin-right">
+            <h2 class="text-header">Latest News</h2>
+          </div>
+          <div id="home-favorites" class="box">
+            <h2 class="text-header">Favorites</h2>
           </div>
         </div>
       `;
@@ -109,7 +129,7 @@ class Stocks {
     const stocks = store.get(listType);
 
     // render html list for 100 stocks
-    const list =  stocks.map((stock) => {
+    const list =  stocks.slice(0, 5).map((stock) => {
       let { symbol, companyName, latestPrice, change, changePercent } = stock;
       let iconClass;
       let isNegative;
