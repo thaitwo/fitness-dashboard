@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(171)("./" + name);
+                __webpack_require__(172)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4683,7 +4683,7 @@
 
 
 var bind = __webpack_require__(11);
-var isBuffer = __webpack_require__(169);
+var isBuffer = __webpack_require__(170);
 
 /*global toString:true*/
 
@@ -15973,7 +15973,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _chart = __webpack_require__(168);
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _chart = __webpack_require__(169);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -15993,10 +15997,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 */
 
 var Graph = function () {
-  function Graph(canvasId, newData, newLabels, graphType, options) {
+  function Graph(canvasId, newData) {
+    var newLabels = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+    var graphType = arguments[3];
+    var lineTension = arguments[4];
+    var options = arguments[5];
+
     _classCallCheck(this, Graph);
 
-    this.canvasId = canvasId;
+    this.$canvasId = (0, _jquery2.default)(canvasId);
     this.graphType = graphType || 'line';
 
     this.data = {
@@ -16017,7 +16026,7 @@ var Graph = function () {
         pointHoverRadius: 5,
         // pointRadius: 5,
         radius: 4,
-        lineTension: 0
+        lineTension: lineTension || 0
       }]
     };
 
@@ -16100,7 +16109,7 @@ var Graph = function () {
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
-      this.graph = new _chart2.default(this.canvasId, {
+      this.graph = new _chart2.default(this.$canvasId, {
         type: this.graphType,
         data: this.data,
         options: this.options
@@ -29161,7 +29170,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(164);
+var _router = __webpack_require__(165);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -30131,15 +30140,111 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(172);
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var News = function () {
+  function News(containerId, symbolArray, numOfArticlesPerStock) {
+    _classCallCheck(this, News);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    this.symbols = symbolArray;
+    this.num = numOfArticlesPerStock;
+    this.numOfStocks = symbolArray.length;
+
+    this.fetchNews();
+  }
+
+  _createClass(News, [{
+    key: 'formatAxiosRequests',
+    value: function formatAxiosRequests() {
+      var _this = this;
+
+      return this.symbols.map(function (symbol) {
+        return _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/' + _this.num + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d');
+      });
+    }
+  }, {
+    key: 'fetchNews',
+    value: function fetchNews() {
+      var _this2 = this;
+
+      if (_store2.default.get('homeNews') !== null) {
+        this.renderNews();
+      } else {
+        var requests = this.formatAxiosRequests();
+
+        _axios2.default.all(requests).then(_axios2.default.spread(function (symbol1, symbol2, symbol3, symbol4, symbol5) {
+          var newsArticles = [{ articles: symbol1.data }, { articles: symbol2.data }, { articles: symbol3.data }, { articles: symbol4.data }, { articles: symbol5.data }];
+
+          _store2.default.set('homeNews', newsArticles);
+        })).catch(function (error) {
+          return console.log(error);
+        }).finally(function () {
+          _this2.renderNews();
+        });
+      }
+    }
+  }, {
+    key: 'renderNews',
+    value: function renderNews() {
+      var newsArticlesData = _store2.default.get('homeNews');
+      this.$container.append('<ul class="home-news"></ul>');
+
+      var articles = newsArticlesData.map(function (company) {
+        var article = company.articles[0];
+        var headline = article.headline;
+        var image = article.image;
+        var source = article.source;
+        var url = article.url;
+
+        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div>\n              <img src="' + image + '" class="news-image" onerror="this.onerror=null;this.src=\'https://www.dcsltd.co.uk/wp-content/themes/dcs/images/ui.news-image-placeholder.jpg\';" />\n            </div>\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + '</p>\n            </div>\n          </a>\n        </li>\n      ';
+      });
+
+      (0, _jquery2.default)('.home-news').append(articles);
+    }
+  }]);
+
+  return News;
+}();
+
+exports.default = News;
+
+/***/ }),
+/* 165 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _navigo = __webpack_require__(173);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stocks = __webpack_require__(166);
+var _stocks = __webpack_require__(167);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
-var _watchlist = __webpack_require__(167);
+var _watchlist = __webpack_require__(168);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -30219,7 +30324,7 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30440,7 +30545,7 @@ var StockPopup = function () {
       var dateLabels = this.getHistoricalData(stockData, 'date');
 
       // create new graph for this company stock
-      this.graph = new _graph2.default(this.$chartContainer, priceData, dateLabels);
+      this.graph = new _graph2.default('#popup-chart', priceData, dateLabels);
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
@@ -30474,7 +30579,7 @@ var StockPopup = function () {
 exports.default = StockPopup;
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30490,7 +30595,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(170);
+var _lodash = __webpack_require__(171);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -30502,11 +30607,15 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _stockPopup = __webpack_require__(165);
+var _stockPopup = __webpack_require__(166);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
-var _news = __webpack_require__(178);
+var _graphCard = __webpack_require__(179);
+
+var _graphCard2 = _interopRequireDefault(_graphCard);
+
+var _news = __webpack_require__(164);
 
 var _news2 = _interopRequireDefault(_news);
 
@@ -30530,10 +30639,16 @@ var Stocks = function () {
     this.getStocks();
     this.displayPopup();
     this.mostActiveSymbols = this.getMostActiveSymbols();
+    this.graphCard1 = new _graphCard2.default('#home-graphCard1', 'SPY');
+    this.graphCard2 = new _graphCard2.default('#home-graphCard2', 'DIA');
+    this.graphCard3 = new _graphCard2.default('#home-graphCard3', 'NDAQ');
     this.news = new _news2.default('#home-news', this.mostActiveSymbols, 1);
   }
 
   _createClass(Stocks, [{
+    key: 'renderCards',
+    value: function renderCards() {}
+  }, {
     key: 'getMostActiveSymbols',
     value: function getMostActiveSymbols() {
       var symbols = _store2.default.get('mostActive');
@@ -30548,7 +30663,7 @@ var Stocks = function () {
   }, {
     key: 'render',
     value: function render() {
-      var html = '\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n        <div class="home-row">\n          <div id="home-news" class="box margin-right">\n            <h2 class="text-header">Latest News</h2>\n          </div>\n          <div id="home-favorites" class="box">\n            <h2 class="text-header">Favorites</h2>\n          </div>\n        </div>\n      ';
+      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n          <div id="home-graphCard3"></div>\n        </div>\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="top-gainers-container" class="box">\n            <h2 class="text-header">Top Gainers</h2>\n            <ol id="top-gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n        <div class="home-row">\n          <div id="home-news" class="box margin-right">\n            <h2 class="text-header">Latest News</h2>\n          </div>\n          <div id="home-favorites" class="box">\n            <h2 class="text-header">Favorites</h2>\n          </div>\n        </div>\n      ';
       this.$container.append(html);
     }
 
@@ -30761,7 +30876,7 @@ var Stocks = function () {
 exports.default = Stocks;
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31147,7 +31262,7 @@ var Watchlist = function () {
         if (this.graph) {
           this.graph.destroy();
         }
-        this.graph = new _graph2.default(this.$watchlistChart, prices, dates);
+        this.graph = new _graph2.default('#watchlist-chart', prices, dates);
       }
       // if it doesn't exist, make data request
       else {
@@ -31251,7 +31366,7 @@ var Watchlist = function () {
 exports.default = Watchlist;
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -45937,7 +46052,7 @@ return src;
 
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports) {
 
 /*!
@@ -45964,7 +46079,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -63076,10 +63191,10 @@ function isSlowBuffer (obj) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(173), __webpack_require__(143)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(174), __webpack_require__(143)(module)))
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -63352,10 +63467,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 171;
+webpackContext.id = 172;
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -63891,7 +64006,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 173 */
+/* 174 */
 /***/ (function(module, exports) {
 
 var g;
@@ -63918,11 +64033,11 @@ module.exports = g;
 
 
 /***/ }),
-/* 174 */,
 /* 175 */,
 /* 176 */,
 /* 177 */,
-/* 178 */
+/* 178 */,
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -63946,76 +64061,99 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _graph = __webpack_require__(6);
+
+var _graph2 = _interopRequireDefault(_graph);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var News = function () {
-  function News(containerId, symbolArray, numOfArticlesPerStock) {
-    _classCallCheck(this, News);
+var GraphCard = function () {
+  function GraphCard(containerId, symbol) {
+    _classCallCheck(this, GraphCard);
 
-    this.$container = (0, _jquery2.default)(containerId);
-    this.symbols = symbolArray;
-    this.num = numOfArticlesPerStock;
-    this.numOfStocks = symbolArray.length;
+    this.container = (0, _jquery2.default)(containerId);
+    this.symbol = symbol;
 
-    this.fetchNews();
+    this.renderCard();
+    this.$cardHeader = this.container.find('.graphCard-header');
+    this.$cardGraphContainer = (0, _jquery2.default)('.graphCard-graph-container');
   }
 
-  _createClass(News, [{
-    key: 'formatAxiosRequests',
-    value: function formatAxiosRequests() {
+  // RENDER HTML FOR CARD
+
+
+  _createClass(GraphCard, [{
+    key: 'renderCard',
+    value: function renderCard() {
+      var cardHtml = '\n      <div class="graphCard-small box">\n        <div class="graphCard-header"></div>\n        <div class="graphCard-graph-container">\n          <canvas id="graphCard-graph-' + this.symbol + '" width="300" height="200"></canvas>  \n        </div>\n      </div>\n    ';
+
+      this.container.append(cardHtml);
+      this.fetchGraphPoints();
+    }
+
+    // FETCH DATA FOR SYMBOL
+
+  }, {
+    key: 'fetchGraphPoints',
+    value: function fetchGraphPoints() {
       var _this = this;
 
-      return this.symbols.map(function (symbol) {
-        return _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/' + _this.num + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d');
+      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (data) {
+        _this.renderHeader(data);
+        _this.renderGraph(data);
+      })).catch(function (error) {
+        return console.log(error);
       });
     }
+
+    // RENDER STOCK HEADER INFO
+
   }, {
-    key: 'fetchNews',
-    value: function fetchNews() {
-      var _this2 = this;
+    key: 'renderHeader',
+    value: function renderHeader(data) {
+      var symbol = data.data.quote.symbol;
+      var company = data.data.quote.companyName;
+      var latestPrice = data.data.quote.latestPrice;
 
-      if (_store2.default.get('homeNews') !== null) {
-        this.renderNews();
-      } else {
-        var requests = this.formatAxiosRequests();
+      var html = '\n      <div>\n        <h2 class="graphCard-company">' + company + '</h2>\n        <h3 class="graphCard-symbol">' + symbol + '</h3>\n      </div>\n    ';
 
-        _axios2.default.all(requests).then(_axios2.default.spread(function (symbol1, symbol2, symbol3, symbol4, symbol5) {
-          var newsArticles = [{ articles: symbol1.data }, { articles: symbol2.data }, { articles: symbol3.data }, { articles: symbol4.data }, { articles: symbol5.data }];
-
-          _store2.default.set('homeNews', newsArticles);
-        })).catch(function (error) {
-          return console.log(error);
-        }).finally(function () {
-          _this2.renderNews();
-        });
-      }
+      this.$cardHeader.append(html);
     }
+
+    // RENDER GRAPH IN CARD
+
   }, {
-    key: 'renderNews',
-    value: function renderNews() {
-      var newsArticlesData = _store2.default.get('homeNews');
-      this.$container.append('<ul class="home-news"></ul>');
+    key: 'renderGraph',
+    value: function renderGraph(data) {
+      var graphPoints = data.data.chart;
+      var prices = this.getHistoricalData(graphPoints, 'close');
+      var dates = this.getHistoricalData(graphPoints, 'date');
 
-      var articles = newsArticlesData.map(function (company) {
-        var article = company.articles[0];
-        var headline = article.headline;
-        var image = article.image;
-        var source = article.source;
-        var url = article.url;
+      new _graph2.default('#graphCard-graph-' + this.symbol, prices, dates, 'line', 0.4);
+    }
 
-        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div>\n              <img src="' + image + '" class="news-image" onerror="this.onerror=null;this.src=\'https://www.dcsltd.co.uk/wp-content/themes/dcs/images/ui.news-image-placeholder.jpg\';" />\n            </div>\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + '</p>\n            </div>\n          </a>\n        </li>\n      ';
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getHistoricalData',
+    value: function getHistoricalData(data, key) {
+      return data.map(function (day) {
+        if (key === 'date') {
+          var date = day[key].split('-');
+          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
+        } else {
+          return day[key];
+        }
       });
-
-      (0, _jquery2.default)('.home-news').append(articles);
     }
   }]);
 
-  return News;
+  return GraphCard;
 }();
 
-exports.default = News;
+exports.default = GraphCard;
 
 /***/ })
 /******/ ]);

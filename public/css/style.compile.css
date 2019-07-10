@@ -286,6 +286,7 @@ body {
 .box {
   background-color: #151C40;
   border-radius: 10px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
   margin-bottom: 24px;
   padding: 1.5rem; }
   .box.margin-right {
@@ -583,6 +584,15 @@ body {
   .home-news .news-text-content .news-source {
     font-size: 14px;
     opacity: .6; }
+
+#home-graph-cards-container > div {
+  margin-right: 24px; }
+
+#home-graph-cards-container > div:last-of-type {
+  margin-right: 0; }
+
+#graphCard-graph {
+  max-height: 350px; }
 
 .chart-container {
   background-color: #FFFFFF;
@@ -898,6 +908,28 @@ body {
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap; }
+
+.graphCard-header {
+  color: #FFFFFF;
+  display: flex;
+  align-items: center; }
+
+.graphCard-company {
+  font-weight: 600;
+  margin-bottom: 3px; }
+
+.graphCard-symbol {
+  font-size: 14px;
+  font-weight: 400;
+  opacity: .4; }
+
+.graphCard-logo {
+  background-color: #FFFFFF;
+  border-radius: 100rem;
+  margin-right: 16px;
+  max-height: 24px;
+  max-width: 24px;
+  padding: 6px; }
 
 .sidebar {
   background-color: #151C40;

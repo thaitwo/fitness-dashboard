@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import Chart from 'chart.js';
 
 /**
@@ -12,8 +13,8 @@ import Chart from 'chart.js';
 */
 
 class Graph {
-  constructor(canvasId, newData, newLabels, graphType, options) {
-    this.canvasId = canvasId;
+  constructor(canvasId, newData, newLabels = '', graphType, lineTension, options) {
+    this.$canvasId = $(canvasId);
     this.graphType = graphType || 'line';
 
     this.data = {
@@ -34,7 +35,7 @@ class Graph {
         pointHoverRadius: 5,
         // pointRadius: 5,
         radius: 4,
-        lineTension: 0
+        lineTension: lineTension || 0
       }]
     };
 
@@ -110,7 +111,7 @@ class Graph {
 
   // RENDER NEW CHART
   renderGraph() {
-    this.graph = new Chart(this.canvasId, {
+    this.graph = new Chart(this.$canvasId, {
       type: this.graphType,
       data: this.data,
       options: this.options

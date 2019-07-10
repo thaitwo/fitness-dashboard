@@ -241,7 +241,7 @@ class StockPopup {
     let dateLabels = this.getHistoricalData(stockData, 'date');
 
     // create new graph for this company stock
-    this.graph = new Graph(this.$chartContainer, priceData, dateLabels);
+    this.graph = new Graph('#popup-chart', priceData, dateLabels);
   }
 
 

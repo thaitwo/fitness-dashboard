@@ -3,6 +3,7 @@ import _ from 'lodash';
 import store from 'store2';
 import axios from 'axios';
 import StockPopup from './stock-popup.js';
+import GraphCard from './graph-card.js';
 import News from './news.js';
 
 class Stocks {
@@ -19,7 +20,15 @@ class Stocks {
     this.getStocks();
     this.displayPopup();
     this.mostActiveSymbols = this.getMostActiveSymbols();
+    this.graphCard1 = new GraphCard('#home-graphCard1', 'SPY');
+    this.graphCard2 = new GraphCard('#home-graphCard2', 'DIA');
+    this.graphCard3 = new GraphCard('#home-graphCard3', 'NDAQ');
     this.news = new News('#home-news', this.mostActiveSymbols, 1);
+  }
+
+
+  renderCards() {
+
   }
 
 
@@ -36,6 +45,11 @@ class Stocks {
   render() {
     let html =
       `
+        <div id="home-graph-cards-container" class="home-row">
+          <div id="home-graphCard1"></div>
+          <div id="home-graphCard2"></div>
+          <div id="home-graphCard3"></div>
+        </div>
         <div class="home-row">
           <div id="most-active-container" class="box margin-right">
             <h2 class="text-header">Most Active</h2>

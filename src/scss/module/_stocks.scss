@@ -206,3 +206,22 @@
     }
   }
 }
+
+#home-graph-cards-container {
+
+  > div {
+    margin-right: 24px;
+  }
+
+  > div:last-of-type {
+    margin-right: 0;
+  }
+}
+
+.graphCard-small {
+  // max-width: 30%;
+}
+
+#graphCard-graph {
+  max-height: 350px;
+}

@@ -382,7 +382,7 @@ class Watchlist {
       if (this.graph) {
         this.graph.destroy();
       }
-      this.graph = new Graph(this.$watchlistChart, prices, dates);
+      this.graph = new Graph('#watchlist-chart', prices, dates);
     }
     // if it doesn't exist, make data request
     else {
