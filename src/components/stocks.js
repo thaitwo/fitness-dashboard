@@ -19,9 +19,8 @@ class Stocks {
 
     this.getStocks();
     this.displayPopup();
-    this.mostActiveSymbols = this.getMostActiveSymbols();
-    this.renderGraphCards();
-    this.news = new News('#home-news', this.mostActiveSymbols, 1);
+    this.mostActiveSymbols;
+    this.news;
   }
 
 
@@ -118,9 +117,12 @@ class Stocks {
 
     // check if local storage exist
     if (mostActive.length && gainers.length && losers.length) {
+      this.mostActiveSymbols = this.getMostActiveSymbols();
       this.renderStocks('#most-active', 'mostActive');
       this.renderStocks('#gainers', 'gainers');
       this.renderStocks('#losers', 'losers');
+      this.renderGraphCards();
+      this.news = new News('#home-news', this.mostActiveSymbols, 1);
     }
     else {
       this.fetchStocks();
@@ -142,15 +144,18 @@ class Stocks {
       store.set('mostActive', mostActive.data);
       store.set('gainers', gainers.data);
       store.set('losers', losers.data);
-      this.renderStocks('#most-active', 'mostActive');
-      this.renderStocks('#gainers', 'gainers');
-      this.renderStocks('#losers', 'losers');
     }))
     .catch((error) => {
       console.log(error);
     })
     .finally(() => {
+      this.mostActiveSymbols = this.getMostActiveSymbols();
       this.$loadingIcon.removeClass('is-visible');
+      this.renderStocks('#most-active', 'mostActive');
+      this.renderStocks('#gainers', 'gainers');
+      this.renderStocks('#losers', 'losers');
+      this.renderGraphCards();
+      this.news = new News('#home-news', this.mostActiveSymbols, 1);
     });
   }
 

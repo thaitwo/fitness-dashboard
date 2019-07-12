@@ -48,24 +48,24 @@ class News {
 
   renderNews() {
     const newsArticlesData = store.get('homeNews');
-    this.$container.append('<ul class="home-news"></ul>')
+    this.$container.append('<ul class="news-list"></ul>')
     
     const articles = newsArticlesData.map((company) => {
       const article = company.articles[0];
       const headline = article.headline;
-      const image = article.image;
       const source = article.source;
       const url = article.url;
+      const dateInstance = new Date(article.datetime);
+      const month = dateInstance.getMonth();
+      const date = dateInstance.getDay();
+      const year = dateInstance.getFullYear();
 
       return `
         <li>
           <a href="${url}" target="_blank">
-            <div>
-              <img src="${image}" class="news-image" onerror="this.onerror=null;this.src='https://www.dcsltd.co.uk/wp-content/themes/dcs/images/ui.news-image-placeholder.jpg';" />
-            </div>
             <div class="news-text-content">
               <h3 class="news-headline">${headline}</h3>
-              <p class="news-source">${source}</p>
+              <p class="news-source">${source} - ${month}/${date}/${year}</p>
             </div>
           </a>
         </li>
@@ -73,7 +73,7 @@ class News {
     });
 
     
-    $('.home-news').append(articles);
+    $('.news-list').append(articles);
   }
 }
 

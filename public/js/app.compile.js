@@ -30371,19 +30371,22 @@ var News = function () {
     key: 'renderNews',
     value: function renderNews() {
       var newsArticlesData = _store2.default.get('homeNews');
-      this.$container.append('<ul class="home-news"></ul>');
+      this.$container.append('<ul class="news-list"></ul>');
 
       var articles = newsArticlesData.map(function (company) {
         var article = company.articles[0];
         var headline = article.headline;
-        var image = article.image;
         var source = article.source;
         var url = article.url;
+        var dateInstance = new Date(article.datetime);
+        var month = dateInstance.getMonth();
+        var date = dateInstance.getDay();
+        var year = dateInstance.getFullYear();
 
-        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div>\n              <img src="' + image + '" class="news-image" onerror="this.onerror=null;this.src=\'https://www.dcsltd.co.uk/wp-content/themes/dcs/images/ui.news-image-placeholder.jpg\';" />\n            </div>\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + '</p>\n            </div>\n          </a>\n        </li>\n      ';
+        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + ' - ' + month + '/' + date + '/' + year + '</p>\n            </div>\n          </a>\n        </li>\n      ';
       });
 
-      (0, _jquery2.default)('.home-news').append(articles);
+      (0, _jquery2.default)('.news-list').append(articles);
     }
   }]);
 
@@ -30811,9 +30814,8 @@ var Stocks = function () {
 
     this.getStocks();
     this.displayPopup();
-    this.mostActiveSymbols = this.getMostActiveSymbols();
-    this.renderGraphCards();
-    this.news = new _news2.default('#home-news', this.mostActiveSymbols, 1);
+    this.mostActiveSymbols;
+    this.news;
   }
 
   _createClass(Stocks, [{
@@ -30866,9 +30868,12 @@ var Stocks = function () {
 
       // check if local storage exist
       if (mostActive.length && gainers.length && losers.length) {
+        this.mostActiveSymbols = this.getMostActiveSymbols();
         this.renderStocks('#most-active', 'mostActive');
         this.renderStocks('#gainers', 'gainers');
         this.renderStocks('#losers', 'losers');
+        this.renderGraphCards();
+        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 1);
       } else {
         this.fetchStocks();
       }
@@ -30888,13 +30893,16 @@ var Stocks = function () {
         _store2.default.set('mostActive', mostActive.data);
         _store2.default.set('gainers', gainers.data);
         _store2.default.set('losers', losers.data);
-        _this.renderStocks('#most-active', 'mostActive');
-        _this.renderStocks('#gainers', 'gainers');
-        _this.renderStocks('#losers', 'losers');
       })).catch(function (error) {
         console.log(error);
       }).finally(function () {
+        _this.mostActiveSymbols = _this.getMostActiveSymbols();
         _this.$loadingIcon.removeClass('is-visible');
+        _this.renderStocks('#most-active', 'mostActive');
+        _this.renderStocks('#gainers', 'gainers');
+        _this.renderStocks('#losers', 'losers');
+        _this.renderGraphCards();
+        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 1);
       });
     }
 

@@ -154,7 +154,7 @@
     transform: translateY(-50%);
 
     &.is-selected {
-      color: $amber-400;
+      color: $colorDark-accent;
     }
 
     &:hover {
@@ -164,45 +164,6 @@
     svg {
       height: 24px;
       width: auto;
-    }
-  }
-}
-
-.home-news {
-  
-  li {
-    list-style-type: none;
-    margin-bottom: 16px;
-
-    &:hover .news-text-content {
-      color: $colorDark-accent;
-    }
-  }
-
-  a {
-    display: flex;
-    text-decoration: none;
-  }
-
-  .news-image {
-    border-radius: 3px;
-    height: 40px;
-    margin-right: 16px;
-    object-fit: cover;
-    width: 48px;
-  }
-
-  .news-text-content {
-    color: $white;
-
-    .news-headline {
-      line-height: 20px;
-      margin-bottom: 4px;
-    }
-
-    .news-source {
-      font-size: 14px;
-      opacity: .6;
     }
   }
 }
