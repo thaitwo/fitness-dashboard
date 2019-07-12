@@ -18,7 +18,7 @@
   min-width: 500px;
 }
 
-#top-gainers-container {
+#gainers-container {
   background: $colorDark-dark;
   border-radius: 10px;
   flex: 1;
@@ -186,10 +186,10 @@
 
   .news-image {
     border-radius: 3px;
-    height: 56px;
+    height: 40px;
     margin-right: 16px;
     object-fit: cover;
-    width: 64px;
+    width: 48px;
   }
 
   .news-text-content {

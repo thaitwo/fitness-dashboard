@@ -13,7 +13,7 @@ import Chart from 'chart.js';
 */
 
 class Graph {
-  constructor(canvasId, newData, newLabels = '', graphType, lineTension, options) {
+  constructor(canvasId, newData, newLabels = '', graphType, options) {
     this.$canvasId = $(canvasId);
     this.graphType = graphType || 'line';
 
@@ -33,9 +33,8 @@ class Graph {
         pointHoverBorderWidth: 2,
         pointHoverBackgroundColor: 'rgb(249,168,37)',
         pointHoverRadius: 5,
-        // pointRadius: 5,
         radius: 4,
-        lineTension: lineTension || 0
+        lineTension: 0
       }]
     };
 

@@ -20,15 +20,18 @@ class Stocks {
     this.getStocks();
     this.displayPopup();
     this.mostActiveSymbols = this.getMostActiveSymbols();
-    this.graphCard1 = new GraphCard('#home-graphCard1', 'SPY');
-    this.graphCard2 = new GraphCard('#home-graphCard2', 'DIA');
-    this.graphCard3 = new GraphCard('#home-graphCard3', 'NDAQ');
+    this.renderGraphCards();
     this.news = new News('#home-news', this.mostActiveSymbols, 1);
   }
 
 
-  renderCards() {
+  renderGraphCards() {
+    const mostActiveSymbols = store.get('mostActive');
 
+    mostActiveSymbols.slice(0, 3).map((stock, index) => {
+      const symbol = stock.symbol;
+      new GraphCard(`#home-graphCard${index}`, symbol, );
+    });
   }
 
 
@@ -46,9 +49,9 @@ class Stocks {
     let html =
       `
         <div id="home-graph-cards-container" class="home-row">
+          <div id="home-graphCard0"></div>
           <div id="home-graphCard1"></div>
           <div id="home-graphCard2"></div>
-          <div id="home-graphCard3"></div>
         </div>
         <div class="home-row">
           <div id="most-active-container" class="box margin-right">
@@ -66,9 +69,14 @@ class Stocks {
               </li>
             </ol>
           </div>
-          <div id="top-gainers-container" class="box">
-            <h2 class="text-header">Top Gainers</h2>
-            <ol id="top-gainers" class="stock-list">
+          <div id="home-news" class="box">
+            <h2 class="text-header">Latest News</h2>
+          </div>
+        </div>
+        <div class="home-row">
+          <div id="gainers-container" class="box margin-right">
+            <h2 class="text-header">Gainers</h2>
+            <ol id="gainers" class="stock-list">
               <li class="stock-list-header-row">
                 <div>Company</div>
                 <div>Last Price</div>
@@ -78,13 +86,17 @@ class Stocks {
               </li>
             </ol>
           </div>
-        </div>
-        <div class="home-row">
-          <div id="home-news" class="box margin-right">
-            <h2 class="text-header">Latest News</h2>
-          </div>
-          <div id="home-favorites" class="box">
-            <h2 class="text-header">Favorites</h2>
+          <div id="losers-container" class="box">
+            <h2 class="text-header">Losers</h2>
+            <ol id="losers" class="stock-list">
+              <li class="stock-list-header-row">
+                <div>Company</div>
+                <div>Last Price</div>
+                <div>Change</div>
+                <div>% Change</div>
+                <div>Watch</div>
+              </li>
+            </ol>
           </div>
         </div>
       `;
@@ -101,12 +113,14 @@ class Stocks {
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
     const mostActive = store.get('mostActive') || [];
-    const topGainers = store.get('topGainers') || [];
+    const gainers = store.get('gainers') || [];
+    const losers = store.get('losers') || [];
 
     // check if local storage exist
-    if (mostActive.length && topGainers.length) {
+    if (mostActive.length && gainers.length && losers.length) {
       this.renderStocks('#most-active', 'mostActive');
-      this.renderStocks('#top-gainers', 'topGainers');
+      this.renderStocks('#gainers', 'gainers');
+      this.renderStocks('#losers', 'losers');
     }
     else {
       this.fetchStocks();
@@ -121,13 +135,16 @@ class Stocks {
 
     axios.all([
       axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=mostactive&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=gainers&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=gainers&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=losers&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     ])
-    .then(axios.spread((mostActive, gainers) => {
+    .then(axios.spread((mostActive, gainers, losers) => {
       store.set('mostActive', mostActive.data);
-      store.set('topGainers', gainers.data);
+      store.set('gainers', gainers.data);
+      store.set('losers', losers.data);
       this.renderStocks('#most-active', 'mostActive');
-      this.renderStocks('#top-gainers', 'topGainers');
+      this.renderStocks('#gainers', 'gainers');
+      this.renderStocks('#losers', 'losers');
     }))
     .catch((error) => {
       console.log(error);
@@ -142,7 +159,7 @@ class Stocks {
   renderStocks(container, listType) {
     const stocks = store.get(listType);
 
-    // render html list for 100 stocks
+    // render html list for stocks
     const list =  stocks.slice(0, 5).map((stock) => {
       let { symbol, companyName, latestPrice, change, changePercent } = stock;
       let iconClass;
