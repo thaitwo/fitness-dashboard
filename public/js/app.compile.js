@@ -29191,12 +29191,32 @@ var Nav = function () {
     this.router = new _router2.default();
     // ACTIVATE SIDEBAR NAV
     this.activateNav();
+    this.setActiveTabOnRefresh();
   }
 
-  // ACTIVATE SIDEBAR NAV
+  // SET ACTIVE MENU ITEM ON PAGE RELOAD
 
 
   _createClass(Nav, [{
+    key: 'setActiveTabOnRefresh',
+    value: function setActiveTabOnRefresh() {
+      var _this = this;
+
+      (0, _jquery2.default)(document).ready(function () {
+        var url = document.URL;
+        var pageId = url.split('#')[1];
+
+        if (pageId.substr(-1) === '/') {
+          pageId = pageId.slice(0, -1);
+        }
+
+        _this.updateActiveClass(pageId);
+      });
+    }
+
+    // ACTIVATE SIDEBAR NAV
+
+  }, {
     key: 'activateNav',
     value: function activateNav() {
       var that = this;
@@ -29223,7 +29243,7 @@ var Nav = function () {
     value: function updateActiveClass(activeButtonId) {
       var buttons = this.$navContainer.find('.active');
       var activeButton = this.$navContainer.find('a#' + activeButtonId);
-
+      console.log(buttons);
       buttons.removeClass('active');
       activeButton.addClass('active');
     }

@@ -15,6 +15,22 @@ class Nav {
     this.router = new Router();
     // ACTIVATE SIDEBAR NAV
     this.activateNav();
+    this.setActiveTabOnRefresh();
+  }
+
+
+  // SET ACTIVE MENU ITEM ON PAGE RELOAD
+  setActiveTabOnRefresh() {
+    $(document).ready(() => {
+      const url = document.URL;
+      let pageId = url.split('#')[1];
+
+      if (pageId.substr(-1) === '/') {
+        pageId = pageId.slice(0, -1);
+      }
+
+      this.updateActiveClass(pageId);
+    })
   }
 
 
@@ -43,7 +59,7 @@ class Nav {
   updateActiveClass(activeButtonId) {
     const buttons = this.$navContainer.find('.active');
     const activeButton = this.$navContainer.find(`a#${activeButtonId}`);
-
+    console.log(buttons);
     buttons.removeClass('active');
     activeButton.addClass('active');
   }
