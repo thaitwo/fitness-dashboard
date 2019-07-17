@@ -881,6 +881,27 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap; }
 
+#watchlist-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center; }
+  #watchlist-empty .watchlist-empty-content {
+    padding-bottom: 5rem; }
+  #watchlist-empty h3 {
+    color: #F9A825;
+    font-size: 1.5rem;
+    margin-bottom: 1rem; }
+  #watchlist-empty p {
+    color: #FFFFFF;
+    font-size: 1.1rem;
+    font-weight: 300; }
+  #watchlist-empty img {
+    max-width: 200px;
+    -webkit-filter: invert(100%);
+    margin-bottom: 2rem; }
+
 .graphCard-header {
   color: #FFFFFF;
   display: flex;

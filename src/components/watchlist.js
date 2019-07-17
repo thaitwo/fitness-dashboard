@@ -11,11 +11,16 @@ class Watchlist {
     this.$container = container;
     this.graph;
     this.selectedStockIndex = store.get('selectedStockIndex') || 0;
-    this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol || '';
-    this.companyName = store.get('watchlist')[this.selectedStockIndex].name || '';
-    this.interval = '1m';
     this.watchlist = store.get('watchlist') || [];
-    this.renderCanvasHTML();
+    this.interval = '1m';
+
+    if (this.watchlist.length > 0) {
+      this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol || '';
+      this.companyName = store.get('watchlist')[this.selectedStockIndex].name || '';
+      this.renderCanvasHTML();
+    } else {
+      this.renderEmptyWatchlistCanvas();
+    }
 
     this.$watchlistCanvas = $('.watchlist-canvas');
     this.$watchlistContainer = this.$watchlistCanvas.find('.watchlist-container');
@@ -31,27 +36,40 @@ class Watchlist {
     this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
     this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
 
-    this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#watchlist-chart');
+    this.intervalsBar;
     this.watchButton;
 
-    this.displayStocks();
-    // this.renderDataForFirstStock();
-    this.renderOnUnwatch();
+    if (this.watchlist.length > 0) {
+      this.displayStocks();
+    }
+    
     this.loadStockDataHandler();
     this.udpateGraphIntervals();
   }
 
+  
+  // RENDER CANVAS WITH NO WATCHLIST
+  renderEmptyWatchlistCanvas() {
+    let html = `
+      <div id="watchlist-empty">
+        <div class="watchlist-empty-content">
+          <img src="../public/images/watchlist-icon.png" />
+          <h3>Your Watchlist will appear here</h3>
+          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="fas fa-star"></i></span> symbol next to a company's name.</p>
+        </div>
+      </div>
+    `;
 
+    this.$container.append(html);
+  }
+
+
+  // RELOAD PAGE WHEN STOCK IS REMOVED FROM WATCHLIST
   renderOnUnwatch() {
-    if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
-      // console.info( "This page is reloaded", this.selectedStockIndex);
+    if (performance.navigation.type == performance.navigation.TYPE_RELOAD && this.watchlist.length > 0) {
       this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol;
-      // console.log('symbol', this.symbol);
-      // this.renderDataForFirstStock();
       this.fetchStockData('allData');
     } else {
-      // console.info( "This page is not reloaded");
-      // this.renderDataForFirstStock();
       this.fetchStockData('allData');
     }
   }
@@ -123,6 +141,7 @@ class Watchlist {
     });
 
     this.$watchlist.append(list);
+    this.renderOnUnwatch();
   }
 
 
@@ -312,8 +331,6 @@ class Watchlist {
       let selectedStockIndex = that.watchlist.findIndex((stock) => {
         return stock.symbol === symbol;
       });
-      console.log('wLength', that.watchlist.length);
-      console.log(selectedStockIndex);
       // if (selectedStockIndex == (that.watchlist.length - 1)) {
       //   selectedStockIndex = selectedStockIndex - 1;
       // };
@@ -383,6 +400,7 @@ class Watchlist {
         this.graph.destroy();
       }
       this.graph = new Graph('#watchlist-chart', prices, dates);
+      this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#watchlist-chart');
     }
     // if it doesn't exist, make data request
     else {
