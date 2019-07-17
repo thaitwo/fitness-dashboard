@@ -29204,7 +29204,14 @@ var Nav = function () {
 
       (0, _jquery2.default)(document).ready(function () {
         var url = document.URL;
-        var pageId = url.split('#')[1];
+        var pageId = void 0;
+
+        // set dashboard menu item as active on initial app load
+        if (url.indexOf('#') != -1) {
+          pageId = url.split('#')[1];
+        } else {
+          pageId = 'dashboard';
+        }
 
         if (pageId.substr(-1) === '/') {
           pageId = pageId.slice(0, -1);

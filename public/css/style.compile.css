@@ -148,16 +148,14 @@ body {
 
 .logo {
   background-color: #151C40;
+  color: #F9A825;
+  font-family: "Mukta", sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 64px;
   height: 64px;
   margin: 0;
   padding-left: 33px; }
-  .logo a {
-    color: #F9A825;
-    font-family: "Mukta", sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    line-height: 64px;
-    text-decoration: none; }
 
 /* LAYOUT */
 .flex-sp-btwn {

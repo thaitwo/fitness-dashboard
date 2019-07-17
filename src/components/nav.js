@@ -23,7 +23,14 @@ class Nav {
   setActiveTabOnRefresh() {
     $(document).ready(() => {
       const url = document.URL;
-      let pageId = url.split('#')[1];
+      let pageId;
+
+      // set dashboard menu item as active on initial app load
+      if (url.indexOf('#') != -1) {
+        pageId = url.split('#')[1];
+      } else {
+        pageId = 'dashboard';
+      }
 
       if (pageId.substr(-1) === '/') {
         pageId = pageId.slice(0, -1);
