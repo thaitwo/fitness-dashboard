@@ -31185,7 +31185,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderEmptyWatchlistCanvas',
     value: function renderEmptyWatchlistCanvas() {
-      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="../public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="fas fa-star"></i></span> symbol next to a company\'s name.</p>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="fas fa-star"></i></span> symbol next to a company\'s name.</p>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }

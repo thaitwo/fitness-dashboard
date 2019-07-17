@@ -996,7 +996,7 @@ body {
 ============================================================== */
 .search-form {
   height: 58px;
-  margin-left: 300px; }
+  margin-left: 24px; }
 
 .search-box {
   background-color: #ECEFF1;
@@ -1013,7 +1013,7 @@ body {
   padding: 0 16px;
   text-align: left;
   transition: all .3s;
-  width: 480px; }
+  width: 440px; }
   .search-box:hover, .search-box:focus {
     background-color: #FFFFFF; }
 

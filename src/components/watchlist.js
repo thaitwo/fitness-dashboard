@@ -53,7 +53,7 @@ class Watchlist {
     let html = `
       <div id="watchlist-empty">
         <div class="watchlist-empty-content">
-          <img src="../public/images/watchlist-icon.png" />
+          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />
           <h3>Your Watchlist will appear here</h3>
           <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="fas fa-star"></i></span> symbol next to a company's name.</p>
         </div>
