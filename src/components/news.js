@@ -1,13 +1,15 @@
 import $ from 'jquery';
-import store from 'store2';
+import store, { local } from 'store2';
 import axios from 'axios';
 
+// issue: can't retrieve news data for specific symbol
 class News {
-  constructor(containerId, symbolArray, numOfArticlesPerStock) {
+  constructor(containerId, symbolArray, localStorageKey, numOfArticlesPerStock = 10) {
     this.$container = $(containerId);
     this.symbols = symbolArray;
     this.num = numOfArticlesPerStock;
     this.numOfStocks = symbolArray.length;
+    this.localStorageKey = localStorageKey;
 
     this.fetchNews();
   }
@@ -21,22 +23,19 @@ class News {
 
 
   fetchNews() {
-    if (store.get('homeNews') !== null) {
+    // If news data for stock exists in localStorage...
+    if (store.get(this.localStorageKey) !== null) {
       this.renderNews();
     } else {
       const requests = this.formatAxiosRequests();
       
       axios.all(requests)
-      .then(axios.spread((symbol1, symbol2, symbol3, symbol4, symbol5) => {
-        const newsArticles = [
-          {articles: symbol1.data},
-          {articles: symbol2.data},
-          {articles: symbol3.data},
-          {articles: symbol4.data},
-          {articles: symbol5.data},
-        ];
+      .then(axios.spread((...response) => {
+        const newsArticles = response.map((companyNews) => {
+          return companyNews.data[0];
+        })
 
-        store.set('homeNews', newsArticles);
+        store.set(this.localStorageKey, newsArticles);
       }))
       .catch(error => console.log(error))
       .finally(() => {
@@ -46,12 +45,18 @@ class News {
   }
 
 
+  // RENDER NEWS ARTICLES
   renderNews() {
-    const newsArticlesData = store.get('homeNews');
-    this.$container.append('<ul class="news-list"></ul>')
+    let newsArticlesData;
+
+    if (this.localStorageKey === 'homeNews') {
+      newsArticlesData = store.get(this.localStorageKey);
+    } else {
+      newsArticlesData = store.get(this.localStorageKey).news;
+    }
+    this.$container.append('<ul class="news-list"></ul>');
     
-    const articles = newsArticlesData.map((company) => {
-      const article = company.articles[0];
+    const articles = newsArticlesData.map((article) => {
       const headline = article.headline;
       const source = article.source;
       const url = article.url;
@@ -72,7 +77,7 @@ class News {
       `;
     });
 
-    
+    $('.news-list').empty();
     $('.news-list').append(articles);
   }
 }

@@ -5,11 +5,15 @@ import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helper
 import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
+import KeyStats from './keystats.js';
+import News from './news.js';
 
 class Watchlist {
   constructor(container) {
     this.$container = container;
     this.graph;
+    this.keyStats;
+    this.latestNews;
     this.selectedStockIndex = store.get('selectedStockIndex') || 0;
     this.watchlist = store.get('watchlist') || [];
     this.interval = '1m';
@@ -29,7 +33,7 @@ class Watchlist {
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol')
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
-    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
+    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-keystats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
     this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
@@ -107,8 +111,10 @@ class Watchlist {
               <canvas id="watchlist-chart" width="900" height="320"></canvas>
             </div>
             <div id="watchlist-summary-container">
-              <div id="watchlist-key-stats-container" class="box margin-right"></div>
-              <div id="watchlist-news-container" class="box"></div>
+              <div id="watchlist-keystats-container" class="box margin-right"></div>
+              <div id="watchlist-news-container" class="box">
+                <h2 class="text-header">Latest News</h2>
+              </div>
             </div>
           </div>
         </div>
@@ -126,6 +132,7 @@ class Watchlist {
       const name = stock.name;
       let isActive = '';
 
+      // set 'active' class to watchlist item with index that matches selectedStockIndex
       if (index === this.selectedStockIndex) {
         isActive = 'active';
       }
@@ -169,9 +176,7 @@ class Watchlist {
     // request all data for this stock
     else if (requestType === 'allData') {
       return [
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.interval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+        axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=${this.interval}&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
       ]
     }
     else if (requestType === 'latestPrice') {
@@ -186,21 +191,22 @@ class Watchlist {
   formatAjaxResponseAction(requestType) {
     // store historical prices
     if (requestType === 'prices') {
-      return (historicalPrices) => {
+      return (chart) => {
         const storedData = store.get(this.symbol);
 
         // if data for selected interval does not exist in localStorage
-        if (!(this.interval in storedData.historicalPrices)) {
-          storedData.historicalPrices[this.interval] = historicalPrices.data;
+        if (!(this.interval in storedData.chart)) {
+          storedData.chart[this.interval] = chart.data;
           store.set(this.symbol, storedData);
         }
       }
     }
     // store all data for the stock
     else if (requestType === 'allData') {
-      return (historicalPrices, news, quote) => {
-        // const latestPrice = quote.data.latestPrice;
-        // const changePercent = quote.data.changePercent;
+      return (response) => {
+        const chart = response.data.chart;
+        const news = response.data.news;
+        const quote = response.data.quote;
         // if stored data exists
         if (store.get(this.symbol) !== null) {
           const storedData = store.get(this.symbol);
@@ -208,33 +214,31 @@ class Watchlist {
           // if data for selected interval does not exist in localStorage
           // then add data for selected interval into localStorage
           // case: the current selected interval is 6M for stock1
-          // when we click on stock2, we need to check if data for 6M
-          // exists in localStorage
-          if (!(this.interval in storedData.historicalPrices)) {
-            storedData.historicalPrices[this.interval] = historicalPrices.data;
+          // when we click on stock2, we need to check if data for 6M for
+          // stock2 exists in localStorage
+          if (!(this.interval in storedData.chart)) {
+            storedData.chart[this.interval] = chart.data;
             store.set(this.symbol, storedData);
           }
-          this.renderStockHeader(quote.data);
+          this.renderStockHeader(quote);
         }
         // otherwise create data object and store in localStorage
         else {
           const dataToStore = {
-            historicalPrices: {
-              [this.interval]: historicalPrices.data, // this.interval will be set to the selected interval
+            chart: {
+              [this.interval]: chart, // this.interval will be set to the selected interval
             },
-            news: news.data,
-            quote: quote.data,
+            news: news,
+            quote: quote,
             time: Date.now()
           }
   
           store.set(this.symbol, dataToStore);
-          this.renderStockHeader(quote.data);
+          this.renderStockHeader(quote);
         }
       }
     } else if (requestType === 'latestPrice') {
       return (quote) => {
-        const latestPrice = quote.data.latestPrice;
-        const changePercent = quote.data.changePercent;
         this.renderStockHeader(quote.data);
       }
     }
@@ -256,8 +260,8 @@ class Watchlist {
       else if (requestType === 'allData') {
         // functions below don't receive data arguments bc they will retrieve data from localStorage
         this.renderGraph();
-        this.renderKeyStats();
-        this.renderNews();
+        this.keyStats = new KeyStats('#watchlist-keystats-container', this.symbol);
+        this.latestNews = new News('#watchlist-news-container', [this.symbol], this.symbol);
         this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, this.companyName, true);
       }
     })
@@ -309,17 +313,15 @@ class Watchlist {
       
 
       // render name and graph for watchlist item
-      // that.renderStockName(name);
-      // that.watchButton = new WatchButton('#watchlist-chart-header-watch-button', symbol, name, true);
       that.$latestPriceContainer.empty();
       that.$changePercentContainer.empty();
 
       // if stored data exists and is less than 6 hours old
-      if (store.get(that.symbol) !== null && dataUpdateRequired) {
+      if (store.get(that.symbol) !== null && !dataUpdateRequired) {
         that.fetchStockData('latestPrice');
         that.renderGraph();
-        that.renderKeyStats();
-        that.renderNews();
+        that.keyStats = new KeyStats('#watchlist-keystats-container', that.symbol);
+        that.latestNews = new News('#watchlist-news-container', [that.symbol], that.symbol);
       }
       // clear stored data for stock and fetch new data
       else {
@@ -355,41 +357,12 @@ class Watchlist {
   }
 
 
-  // RENDER NEWS
-  renderNews() {
-    if (store.get(this.symbol).news !== null) {
-      const news = store.get(this.symbol).news;
-      
-      const newsArticles = news.map((item) => {
-        let headline = item.headline;
-        headline = trimString(headline, 120);
-        let summary = item.summary;
-        summary = trimString(summary, 160);
-        const url = item.url;
-
-        return `
-          <article class="watchlist-news-article">
-            <a href="${url}" target="_blank">
-              <h2>${headline}</h2>
-              <p>${summary}</p>
-            </a<
-          </article>
-        `
-      });
-
-      this.$newsContainer.empty();
-      this.$newsContainer.append(`<h2 class="text-header">Latest News</h2>`);
-      this.$newsContainer.append(newsArticles);
-    }
-  }
-
-
   // RENDER GRAPH
   renderGraph() {
     const storedData = store.get(this.symbol);
     // if historical prices for selected interval does exist in localStorage
-    if (this.interval in storedData.historicalPrices) {
-      const storedData = store.get(this.symbol).historicalPrices[this.interval];
+    if (this.interval in storedData.chart) {
+      const storedData = store.get(this.symbol).chart[this.interval];
       // get closing prices for stock
       const prices = this.getHistoricalData(storedData, 'close');
       // get dates for closing prices
@@ -409,70 +382,6 @@ class Watchlist {
   }
 
 
-  // RENDER KEY STATISTICS
-  renderKeyStats() {
-    if (store.get(this.symbol).quote !== null) {
-      const stats = store.get(this.symbol).keyStats;
-      const quote = store.get(this.symbol).quote;
-
-      const close = quote.close;
-      const open = quote.open;
-      const high = quote.high;
-      const low = quote.low;
-      const marketCap = formatLargeNumber(quote.marketCap);
-      const peRatio = quote.peRatio;
-      const wk52High = quote.week52High;
-      const wk52Low = quote.week52Low;
-      const volume = formatNumberWithCommas(Math.round(quote.latestVolume));
-
-      const keyStatsHTML = `
-        <h2 class="text-header">Key Statistics</h2>
-        <table id="key-stats-table">
-          <tr>
-            <td>Close</td>
-            <td>${close}</td>
-          </tr>
-          <tr>
-            <td>Open</td>
-            <td>${open}</td>
-          </tr>
-          <tr>
-            <td>High</td>
-            <td>${high}</td>
-          </tr>
-          <tr>
-            <td>Low</td>
-            <td>${low}</td>
-          </tr>
-          <tr>
-            <td>Market Cap</td>
-            <td>${marketCap}</td>
-          </tr>
-          <tr>
-            <td>P/E Ratio</td>
-            <td>${peRatio}</td>
-          </tr>
-          <tr>
-            <td>52 Wk High</td>
-            <td>${wk52High}</td>
-          </tr>
-          <tr>
-            <td>52 Wk Low</td>
-            <td>${wk52Low}</td>
-          </tr>
-          <tr>
-            <td>Volume</td>
-            <td>${volume}</td>
-          </tr>
-        </table>
-      `;
-
-      this.$keyStatsContainer.empty();
-      this.$keyStatsContainer.append(keyStatsHTML);
-    }
-  }
-
-
   // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
   renderDataForFirstStock() {
     // if watchlist has at least one item, render item(s)
@@ -480,7 +389,6 @@ class Watchlist {
       const name = this.watchlist[0].name;
       const isMoreThanOneDay = this.calcLocalStorageAge();
 
-      // this.renderStockName(name);
       this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, name, true);
 
       // update localStorage with new data if data is older than 12 hours

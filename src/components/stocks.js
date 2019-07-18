@@ -24,6 +24,7 @@ class Stocks {
   }
 
 
+  // RENDER SMALL GRAPH CARDS
   renderGraphCards() {
     const mostActiveSymbols = store.get('mostActive');
 
@@ -34,6 +35,7 @@ class Stocks {
   }
 
 
+  // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
   getMostActiveSymbols() {
     const symbols = store.get('mostActive');
 
@@ -103,7 +105,7 @@ class Stocks {
   }
 
 
-  // Check If Watchlist Has Stock. RETURNS BOOLEAN
+  // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
   isInWatchlist(symbol) {
     return this.watchlist.some(stock => stock.symbol === symbol);
   }
@@ -122,7 +124,7 @@ class Stocks {
       this.renderStocks('#gainers', 'gainers');
       this.renderStocks('#losers', 'losers');
       this.renderGraphCards();
-      this.news = new News('#home-news', this.mostActiveSymbols, 1);
+      this.news = new News('#home-news', this.mostActiveSymbols, 'homeNews', 1);
     }
     else {
       this.fetchStocks();
@@ -155,7 +157,7 @@ class Stocks {
       this.renderStocks('#gainers', 'gainers');
       this.renderStocks('#losers', 'losers');
       this.renderGraphCards();
-      this.news = new News('#home-news', this.mostActiveSymbols, 1);
+      this.news = new News('#home-news', this.mostActiveSymbols, 'homeNews', 1);
     });
   }
 
@@ -233,22 +235,6 @@ class Stocks {
       // create new popup
       that.popup = new StockPopup(companyId, companyName);
     });
-  }
-
-
-  // LOAD MORE STOCK ON SCROLL
-  activateScroll() {
-    this.$stocksContainer.on('scroll', _.debounce(() => {
-      if (this.$stocksContainer.scrollTop() + this.$stocksContainer.innerHeight() >= this.$stockListContainer.height()) {
-        this.count++;
-        if (store.get(`stocks${this.count}`)) {
-          // this.renderStocks(this.count);
-        }
-        else {
-          this.fetchStocks(this.count);
-        }
-      }
-    }, 500));
   }
 
 

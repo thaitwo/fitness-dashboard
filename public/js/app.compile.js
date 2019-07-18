@@ -30134,6 +30134,10 @@ var _nav = __webpack_require__(144);
 
 var _nav2 = _interopRequireDefault(_nav);
 
+var _search = __webpack_require__(180);
+
+var _search2 = _interopRequireDefault(_search);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -30143,6 +30147,8 @@ var App = function App() {
 
   // ACTIVATE SIDEBAR NAVIGATION
   new _nav2.default('nav-sidebar', true);
+
+  new _search2.default();
 };
 
 new App();
@@ -30351,14 +30357,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// issue: can't retrieve news data for specific symbol
 var News = function () {
-  function News(containerId, symbolArray, numOfArticlesPerStock) {
+  function News(containerId, symbolArray, localStorageKey) {
+    var numOfArticlesPerStock = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
+
     _classCallCheck(this, News);
 
     this.$container = (0, _jquery2.default)(containerId);
     this.symbols = symbolArray;
     this.num = numOfArticlesPerStock;
     this.numOfStocks = symbolArray.length;
+    this.localStorageKey = localStorageKey;
 
     this.fetchNews();
   }
@@ -30377,15 +30387,22 @@ var News = function () {
     value: function fetchNews() {
       var _this2 = this;
 
-      if (_store2.default.get('homeNews') !== null) {
+      // If news data for stock exists in localStorage...
+      if (_store2.default.get(this.localStorageKey) !== null) {
         this.renderNews();
       } else {
         var requests = this.formatAxiosRequests();
 
-        _axios2.default.all(requests).then(_axios2.default.spread(function (symbol1, symbol2, symbol3, symbol4, symbol5) {
-          var newsArticles = [{ articles: symbol1.data }, { articles: symbol2.data }, { articles: symbol3.data }, { articles: symbol4.data }, { articles: symbol5.data }];
+        _axios2.default.all(requests).then(_axios2.default.spread(function () {
+          for (var _len = arguments.length, response = Array(_len), _key = 0; _key < _len; _key++) {
+            response[_key] = arguments[_key];
+          }
 
-          _store2.default.set('homeNews', newsArticles);
+          var newsArticles = response.map(function (companyNews) {
+            return companyNews.data[0];
+          });
+
+          _store2.default.set(_this2.localStorageKey, newsArticles);
         })).catch(function (error) {
           return console.log(error);
         }).finally(function () {
@@ -30393,14 +30410,22 @@ var News = function () {
         });
       }
     }
+
+    // RENDER NEWS ARTICLES
+
   }, {
     key: 'renderNews',
     value: function renderNews() {
-      var newsArticlesData = _store2.default.get('homeNews');
+      var newsArticlesData = void 0;
+
+      if (this.localStorageKey === 'homeNews') {
+        newsArticlesData = _store2.default.get(this.localStorageKey);
+      } else {
+        newsArticlesData = _store2.default.get(this.localStorageKey).news;
+      }
       this.$container.append('<ul class="news-list"></ul>');
 
-      var articles = newsArticlesData.map(function (company) {
-        var article = company.articles[0];
+      var articles = newsArticlesData.map(function (article) {
         var headline = article.headline;
         var source = article.source;
         var url = article.url;
@@ -30412,6 +30437,7 @@ var News = function () {
         return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + ' - ' + month + '/' + date + '/' + year + '</p>\n            </div>\n          </a>\n        </li>\n      ';
       });
 
+      (0, _jquery2.default)('.news-list').empty();
       (0, _jquery2.default)('.news-list').append(articles);
     }
   }]);
@@ -30844,6 +30870,9 @@ var Stocks = function () {
     this.news;
   }
 
+  // RENDER SMALL GRAPH CARDS
+
+
   _createClass(Stocks, [{
     key: 'renderGraphCards',
     value: function renderGraphCards() {
@@ -30854,6 +30883,9 @@ var Stocks = function () {
         new _graphCard2.default('#home-graphCard' + index, symbol);
       });
     }
+
+    // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
+
   }, {
     key: 'getMostActiveSymbols',
     value: function getMostActiveSymbols() {
@@ -30873,7 +30905,7 @@ var Stocks = function () {
       this.$container.append(html);
     }
 
-    // Check If Watchlist Has Stock. RETURNS BOOLEAN
+    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
 
   }, {
     key: 'isInWatchlist',
@@ -30899,7 +30931,7 @@ var Stocks = function () {
         this.renderStocks('#gainers', 'gainers');
         this.renderStocks('#losers', 'losers');
         this.renderGraphCards();
-        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 1);
+        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'homeNews', 1);
       } else {
         this.fetchStocks();
       }
@@ -30928,7 +30960,7 @@ var Stocks = function () {
         _this.renderStocks('#gainers', 'gainers');
         _this.renderStocks('#losers', 'losers');
         _this.renderGraphCards();
-        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 1);
+        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'homeNews', 1);
       });
     }
 
@@ -30998,25 +31030,6 @@ var Stocks = function () {
         // create new popup
         that.popup = new _stockPopup2.default(companyId, companyName);
       });
-    }
-
-    // LOAD MORE STOCK ON SCROLL
-
-  }, {
-    key: 'activateScroll',
-    value: function activateScroll() {
-      var _this3 = this;
-
-      this.$stocksContainer.on('scroll', _lodash2.default.debounce(function () {
-        if (_this3.$stocksContainer.scrollTop() + _this3.$stocksContainer.innerHeight() >= _this3.$stockListContainer.height()) {
-          _this3.count++;
-          if (_store2.default.get('stocks' + _this3.count)) {
-            // this.renderStocks(this.count);
-          } else {
-            _this3.fetchStocks(_this3.count);
-          }
-        }
-      }, 500));
     }
 
     // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
@@ -31130,6 +31143,14 @@ var _watchButton = __webpack_require__(13);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
+var _keystats = __webpack_require__(181);
+
+var _keystats2 = _interopRequireDefault(_keystats);
+
+var _news = __webpack_require__(165);
+
+var _news2 = _interopRequireDefault(_news);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -31142,6 +31163,8 @@ var Watchlist = function () {
 
     this.$container = container;
     this.graph;
+    this.keyStats;
+    this.latestNews;
     this.selectedStockIndex = _store2.default.get('selectedStockIndex') || 0;
     this.watchlist = _store2.default.get('watchlist') || [];
     this.interval = '1m';
@@ -31161,7 +31184,7 @@ var Watchlist = function () {
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
     this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
-    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-key-stats-container');
+    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-keystats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
     this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
@@ -31208,7 +31231,7 @@ var Watchlist = function () {
   }, {
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-key-stats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box">\n                <h2 class="text-header">Latest News</h2>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }
@@ -31225,6 +31248,7 @@ var Watchlist = function () {
         var name = stock.name;
         var isActive = '';
 
+        // set 'active' class to watchlist item with index that matches selectedStockIndex
         if (index === _this.selectedStockIndex) {
           isActive = 'active';
         }
@@ -31261,7 +31285,7 @@ var Watchlist = function () {
       }
       // request all data for this stock
       else if (requestType === 'allData') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=' + this.interval + '&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         } else if (requestType === 'latestPrice') {
           return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
         }
@@ -31276,21 +31300,22 @@ var Watchlist = function () {
 
       // store historical prices
       if (requestType === 'prices') {
-        return function (historicalPrices) {
+        return function (chart) {
           var storedData = _store2.default.get(_this2.symbol);
 
           // if data for selected interval does not exist in localStorage
-          if (!(_this2.interval in storedData.historicalPrices)) {
-            storedData.historicalPrices[_this2.interval] = historicalPrices.data;
+          if (!(_this2.interval in storedData.chart)) {
+            storedData.chart[_this2.interval] = chart.data;
             _store2.default.set(_this2.symbol, storedData);
           }
         };
       }
       // store all data for the stock
       else if (requestType === 'allData') {
-          return function (historicalPrices, news, quote) {
-            // const latestPrice = quote.data.latestPrice;
-            // const changePercent = quote.data.changePercent;
+          return function (response) {
+            var chart = response.data.chart;
+            var news = response.data.news;
+            var quote = response.data.quote;
             // if stored data exists
             if (_store2.default.get(_this2.symbol) !== null) {
               var storedData = _store2.default.get(_this2.symbol);
@@ -31298,31 +31323,29 @@ var Watchlist = function () {
               // if data for selected interval does not exist in localStorage
               // then add data for selected interval into localStorage
               // case: the current selected interval is 6M for stock1
-              // when we click on stock2, we need to check if data for 6M
-              // exists in localStorage
-              if (!(_this2.interval in storedData.historicalPrices)) {
-                storedData.historicalPrices[_this2.interval] = historicalPrices.data;
+              // when we click on stock2, we need to check if data for 6M for
+              // stock2 exists in localStorage
+              if (!(_this2.interval in storedData.chart)) {
+                storedData.chart[_this2.interval] = chart.data;
                 _store2.default.set(_this2.symbol, storedData);
               }
-              _this2.renderStockHeader(quote.data);
+              _this2.renderStockHeader(quote);
             }
             // otherwise create data object and store in localStorage
             else {
                 var dataToStore = {
-                  historicalPrices: _defineProperty({}, _this2.interval, historicalPrices.data),
-                  news: news.data,
-                  quote: quote.data,
+                  chart: _defineProperty({}, _this2.interval, chart),
+                  news: news,
+                  quote: quote,
                   time: Date.now()
                 };
 
                 _store2.default.set(_this2.symbol, dataToStore);
-                _this2.renderStockHeader(quote.data);
+                _this2.renderStockHeader(quote);
               }
           };
         } else if (requestType === 'latestPrice') {
           return function (quote) {
-            var latestPrice = quote.data.latestPrice;
-            var changePercent = quote.data.changePercent;
             _this2.renderStockHeader(quote.data);
           };
         }
@@ -31346,8 +31369,8 @@ var Watchlist = function () {
         } else if (requestType === 'allData') {
           // functions below don't receive data arguments bc they will retrieve data from localStorage
           _this3.renderGraph();
-          _this3.renderKeyStats();
-          _this3.renderNews();
+          _this3.keyStats = new _keystats2.default('#watchlist-keystats-container', _this3.symbol);
+          _this3.latestNews = new _news2.default('#watchlist-news-container', [_this3.symbol], _this3.symbol);
           _this3.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', _this3.symbol, _this3.companyName, true);
         }
       });
@@ -31402,17 +31425,15 @@ var Watchlist = function () {
         clickedEl.addClass('active');
 
         // render name and graph for watchlist item
-        // that.renderStockName(name);
-        // that.watchButton = new WatchButton('#watchlist-chart-header-watch-button', symbol, name, true);
         that.$latestPriceContainer.empty();
         that.$changePercentContainer.empty();
 
         // if stored data exists and is less than 6 hours old
-        if (_store2.default.get(that.symbol) !== null && dataUpdateRequired) {
+        if (_store2.default.get(that.symbol) !== null && !dataUpdateRequired) {
           that.fetchStockData('latestPrice');
           that.renderGraph();
-          that.renderKeyStats();
-          that.renderNews();
+          that.keyStats = new _keystats2.default('#watchlist-keystats-container', that.symbol);
+          that.latestNews = new _news2.default('#watchlist-news-container', [that.symbol], that.symbol);
         }
         // clear stored data for stock and fetch new data
         else {
@@ -31449,30 +31470,6 @@ var Watchlist = function () {
       }
     }
 
-    // RENDER NEWS
-
-  }, {
-    key: 'renderNews',
-    value: function renderNews() {
-      if (_store2.default.get(this.symbol).news !== null) {
-        var news = _store2.default.get(this.symbol).news;
-
-        var newsArticles = news.map(function (item) {
-          var headline = item.headline;
-          headline = (0, _helpers.trimString)(headline, 120);
-          var summary = item.summary;
-          summary = (0, _helpers.trimString)(summary, 160);
-          var url = item.url;
-
-          return '\n          <article class="watchlist-news-article">\n            <a href="' + url + '" target="_blank">\n              <h2>' + headline + '</h2>\n              <p>' + summary + '</p>\n            </a<\n          </article>\n        ';
-        });
-
-        this.$newsContainer.empty();
-        this.$newsContainer.append('<h2 class="text-header">Latest News</h2>');
-        this.$newsContainer.append(newsArticles);
-      }
-    }
-
     // RENDER GRAPH
 
   }, {
@@ -31480,8 +31477,8 @@ var Watchlist = function () {
     value: function renderGraph() {
       var storedData = _store2.default.get(this.symbol);
       // if historical prices for selected interval does exist in localStorage
-      if (this.interval in storedData.historicalPrices) {
-        var _storedData = _store2.default.get(this.symbol).historicalPrices[this.interval];
+      if (this.interval in storedData.chart) {
+        var _storedData = _store2.default.get(this.symbol).chart[this.interval];
         // get closing prices for stock
         var prices = this.getHistoricalData(_storedData, 'close');
         // get dates for closing prices
@@ -31500,32 +31497,6 @@ var Watchlist = function () {
         }
     }
 
-    // RENDER KEY STATISTICS
-
-  }, {
-    key: 'renderKeyStats',
-    value: function renderKeyStats() {
-      if (_store2.default.get(this.symbol).quote !== null) {
-        var stats = _store2.default.get(this.symbol).keyStats;
-        var quote = _store2.default.get(this.symbol).quote;
-
-        var close = quote.close;
-        var open = quote.open;
-        var high = quote.high;
-        var low = quote.low;
-        var marketCap = (0, _helpers.formatLargeNumber)(quote.marketCap);
-        var peRatio = quote.peRatio;
-        var wk52High = quote.week52High;
-        var wk52Low = quote.week52Low;
-        var volume = (0, _helpers.formatNumberWithCommas)(Math.round(quote.latestVolume));
-
-        var keyStatsHTML = '\n        <h2 class="text-header">Key Statistics</h2>\n        <table id="key-stats-table">\n          <tr>\n            <td>Close</td>\n            <td>' + close + '</td>\n          </tr>\n          <tr>\n            <td>Open</td>\n            <td>' + open + '</td>\n          </tr>\n          <tr>\n            <td>High</td>\n            <td>' + high + '</td>\n          </tr>\n          <tr>\n            <td>Low</td>\n            <td>' + low + '</td>\n          </tr>\n          <tr>\n            <td>Market Cap</td>\n            <td>' + marketCap + '</td>\n          </tr>\n          <tr>\n            <td>P/E Ratio</td>\n            <td>' + peRatio + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk High</td>\n            <td>' + wk52High + '</td>\n          </tr>\n          <tr>\n            <td>52 Wk Low</td>\n            <td>' + wk52Low + '</td>\n          </tr>\n          <tr>\n            <td>Volume</td>\n            <td>' + volume + '</td>\n          </tr>\n        </table>\n      ';
-
-        this.$keyStatsContainer.empty();
-        this.$keyStatsContainer.append(keyStatsHTML);
-      }
-    }
-
     // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
 
   }, {
@@ -31536,7 +31507,6 @@ var Watchlist = function () {
         var name = this.watchlist[0].name;
         var isMoreThanOneDay = this.calcLocalStorageAge();
 
-        // this.renderStockName(name);
         this.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', this.symbol, name, true);
 
         // update localStorage with new data if data is older than 12 hours
@@ -64261,6 +64231,133 @@ try {
 
 module.exports = g;
 
+
+/***/ }),
+/* 176 */,
+/* 177 */,
+/* 178 */,
+/* 179 */,
+/* 180 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Search = function () {
+  function Search() {
+    _classCallCheck(this, Search);
+
+    this.$searchBox = (0, _jquery2.default)('#search-box');
+    this.ENTER_KEY = 13;
+    this.ESCAPE_KEY = 27;
+    this.getSearchValue();
+  }
+
+  // RETREIVE VALUE FROM SEARCH BOX
+
+
+  _createClass(Search, [{
+    key: 'getSearchValue',
+    value: function getSearchValue() {
+      var that = this;
+
+      this.$searchBox.on('keypress', function (event) {
+        var keyPressed = event.which || event.keyCode;
+
+        if (keyPressed === that.ENTER_KEY) {
+          var value = event.target.value.trim();
+          console.log(value);
+        }
+      });
+    }
+  }]);
+
+  return Search;
+}();
+
+exports.default = Search;
+
+/***/ }),
+/* 181 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _helpers = __webpack_require__(14);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var KeyStats = function () {
+  function KeyStats(containerId, symbol) {
+    _classCallCheck(this, KeyStats);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    // If data for stock exists in localStorage...
+    if (_store2.default.get(symbol).quote !== null) {
+      this.data = _store2.default.get(symbol).quote;
+      this.close = this.data.close;
+      this.open = this.data.open;
+      this.high = this.data.high;
+      this.low = this.data.low;
+      this.marketCap = (0, _helpers.formatLargeNumber)(this.data.marketCap);
+      this.peRatio = this.data.peRatio;
+      this.wk52High = this.data.week52High;
+      this.wk52Low = this.data.week52Low;
+      this.volume = (0, _helpers.formatNumberWithCommas)(Math.round(this.data.latestVolume));
+    }
+
+    this.renderKeyStats();
+  }
+
+  // RENDER KEY STATS FOR STOCKS
+
+
+  _createClass(KeyStats, [{
+    key: 'renderKeyStats',
+    value: function renderKeyStats() {
+
+      var keyStatsHTML = '\n      <h2 class="text-header">Key Statistics</h2>\n      <table id="key-stats-table">\n        <tr>\n          <td>Close</td>\n          <td>' + this.close + '</td>\n        </tr>\n        <tr>\n          <td>Open</td>\n          <td>' + this.open + '</td>\n        </tr>\n        <tr>\n          <td>High</td>\n          <td>' + this.high + '</td>\n        </tr>\n        <tr>\n          <td>Low</td>\n          <td>' + this.low + '</td>\n        </tr>\n        <tr>\n          <td>Market Cap</td>\n          <td>' + this.marketCap + '</td>\n        </tr>\n        <tr>\n          <td>P/E Ratio</td>\n          <td>' + this.peRatio + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk High</td>\n          <td>' + this.wk52High + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk Low</td>\n          <td>' + this.wk52Low + '</td>\n        </tr>\n        <tr>\n          <td>Volume</td>\n          <td>' + this.volume + '</td>\n        </tr>\n      </table>\n    ';
+
+      this.$container.empty();
+      this.$container.append(keyStatsHTML);
+    }
+  }]);
+
+  return KeyStats;
+}();
+
+exports.default = KeyStats;
 
 /***/ })
 /******/ ]);
