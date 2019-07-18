@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 163);
+/******/ 	return __webpack_require__(__webpack_require__.s = 165);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(173)("./" + name);
+                __webpack_require__(175)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4673,7 +4673,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(143)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(144)(module)))
 
 /***/ }),
 /* 1 */
@@ -4682,8 +4682,8 @@
 "use strict";
 
 
-var bind = __webpack_require__(11);
-var isBuffer = __webpack_require__(171);
+var bind = __webpack_require__(12);
+var isBuffer = __webpack_require__(173);
 
 /*global toString:true*/
 
@@ -15854,7 +15854,7 @@ return jQuery;
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(146);
+module.exports = __webpack_require__(148);
 
 /***/ }),
 /* 5 */
@@ -15873,7 +15873,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _chart = __webpack_require__(170);
+var _chart = __webpack_require__(172);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -16024,7 +16024,7 @@ exports.default = Graph;
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var normalizeHeaderName = __webpack_require__(160);
+var normalizeHeaderName = __webpack_require__(162);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -16040,10 +16040,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(7);
+    adapter = __webpack_require__(8);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(7);
+    adapter = __webpack_require__(8);
   }
   return adapter;
 }
@@ -16118,22 +16118,54 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(142)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(143)))
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatLargeNumber = formatLargeNumber;
+exports.formatNumberWithCommas = formatNumberWithCommas;
+exports.trimString = trimString;
+// FORMATE LARGE NUMBERS
+function formatLargeNumber(num) {
+  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+}
+
+// Insert commas into numbers
+function formatNumberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// TRIM STRINGS TO SPECIFIED LENGTH
+function trimString(string, length) {
+  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(1);
-var settle = __webpack_require__(152);
-var buildURL = __webpack_require__(155);
-var parseHeaders = __webpack_require__(161);
-var isURLSameOrigin = __webpack_require__(159);
-var createError = __webpack_require__(10);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(154);
+var settle = __webpack_require__(154);
+var buildURL = __webpack_require__(157);
+var parseHeaders = __webpack_require__(163);
+var isURLSameOrigin = __webpack_require__(161);
+var createError = __webpack_require__(11);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(156);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -16230,7 +16262,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(157);
+      var cookies = __webpack_require__(159);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -16306,10 +16338,10 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(142)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(143)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16335,7 +16367,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16347,13 +16379,13 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var enhanceError = __webpack_require__(151);
+var enhanceError = __webpack_require__(153);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -16372,7 +16404,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16390,7 +16422,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16475,7 +16507,7 @@ var Intervals = function () {
 
       _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.selectedInterval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
         var storedData = _store2.default.get(_this.symbol);
-        storedData.historicalPrices[_this.selectedInterval] = response.data;
+        storedData.chart[_this.selectedInterval] = response.data;
         _store2.default.set(_this.symbol, storedData);
       }).catch(function (error) {
         console.log(error);
@@ -16492,8 +16524,8 @@ var Intervals = function () {
       var storedData = _store2.default.get(this.symbol);
 
       // if historical prices for selected interval does exist in localStorage
-      if (this.selectedInterval in storedData.historicalPrices) {
-        var _storedData = _store2.default.get(this.symbol).historicalPrices[this.selectedInterval];
+      if (this.selectedInterval in storedData.chart) {
+        var _storedData = _store2.default.get(this.symbol).chart[this.selectedInterval];
         // get closing prices for stock
         var prices = this.getHistoricalData(_storedData, 'close');
         // get dates for closing prices
@@ -16545,7 +16577,126 @@ var Intervals = function () {
 exports.default = Intervals;
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// issue: can't retrieve news data for specific symbol
+var News = function () {
+  function News(containerId, symbolArray, localStorageKey) {
+    var numOfArticlesPerStock = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
+
+    _classCallCheck(this, News);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    this.symbols = symbolArray;
+    this.num = numOfArticlesPerStock;
+    this.numOfStocks = symbolArray.length;
+    this.localStorageKey = localStorageKey;
+
+    this.fetchNews();
+  }
+
+  _createClass(News, [{
+    key: 'formatAxiosRequests',
+    value: function formatAxiosRequests() {
+      var _this = this;
+
+      return this.symbols.map(function (symbol) {
+        return _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/' + _this.num + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d');
+      });
+    }
+  }, {
+    key: 'fetchNews',
+    value: function fetchNews() {
+      var _this2 = this;
+
+      // If news data for stock exists in localStorage...
+      if (_store2.default.get(this.localStorageKey) !== null) {
+        this.renderNews();
+      } else {
+        var requests = this.formatAxiosRequests();
+
+        _axios2.default.all(requests).then(_axios2.default.spread(function () {
+          for (var _len = arguments.length, response = Array(_len), _key = 0; _key < _len; _key++) {
+            response[_key] = arguments[_key];
+          }
+
+          var newsArticles = response.map(function (companyNews) {
+            return companyNews.data[0];
+          });
+
+          _store2.default.set(_this2.localStorageKey, newsArticles);
+        })).catch(function (error) {
+          return console.log(error);
+        }).finally(function () {
+          _this2.renderNews();
+        });
+      }
+    }
+
+    // RENDER NEWS ARTICLES
+
+  }, {
+    key: 'renderNews',
+    value: function renderNews() {
+      var newsArticlesData = void 0;
+
+      if (this.localStorageKey === 'homeNews') {
+        newsArticlesData = _store2.default.get(this.localStorageKey);
+      } else {
+        newsArticlesData = _store2.default.get(this.localStorageKey).news;
+      }
+      this.$container.append('<ul class="news-list"></ul>');
+
+      var articles = newsArticlesData.map(function (article) {
+        var headline = article.headline;
+        var source = article.source;
+        var url = article.url;
+        var dateInstance = new Date(article.datetime);
+        var month = dateInstance.getMonth();
+        var date = dateInstance.getDay();
+        var year = dateInstance.getFullYear();
+
+        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + ' - ' + month + '/' + date + '/' + year + '</p>\n            </div>\n          </a>\n        </li>\n      ';
+      });
+
+      (0, _jquery2.default)('.news-list').empty();
+      (0, _jquery2.default)('.news-list').append(articles);
+    }
+  }]);
+
+  return News;
+}();
+
+exports.default = News;
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16704,39 +16855,7 @@ var WatchButton = function () {
 exports.default = WatchButton;
 
 /***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.formatLargeNumber = formatLargeNumber;
-exports.formatNumberWithCommas = formatNumberWithCommas;
-exports.trimString = trimString;
-// FORMATE LARGE NUMBERS
-function formatLargeNumber(num) {
-  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
-  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-  // Three Zeroes for Thousands
-  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-}
-
-// Insert commas into numbers
-function formatNumberWithCommas(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// TRIM STRINGS TO SPECIFIED LENGTH
-function trimString(string, length) {
-  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-}
-
-/***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16813,7 +16932,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16876,7 +16995,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -16939,7 +17058,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17065,7 +17184,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17128,7 +17247,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17236,7 +17355,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17299,7 +17418,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17438,7 +17557,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17547,7 +17666,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17683,7 +17802,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17777,7 +17896,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17839,7 +17958,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17962,7 +18081,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18085,7 +18204,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18197,7 +18316,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18352,7 +18471,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18444,7 +18563,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18620,7 +18739,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18687,7 +18806,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18771,7 +18890,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18835,7 +18954,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18915,7 +19034,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18995,7 +19114,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19075,7 +19194,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19178,7 +19297,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19282,7 +19401,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19353,7 +19472,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19424,7 +19543,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19491,7 +19610,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19562,7 +19681,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19633,7 +19752,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19699,7 +19818,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19770,7 +19889,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19845,7 +19964,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19941,7 +20060,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20037,7 +20156,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20133,7 +20252,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20217,7 +20336,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20287,7 +20406,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20397,7 +20516,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20510,7 +20629,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20574,7 +20693,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20652,7 +20771,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20734,7 +20853,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20821,7 +20940,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20900,7 +21019,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20981,7 +21100,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21061,7 +21180,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21142,7 +21261,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21269,7 +21388,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21397,7 +21516,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21498,7 +21617,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21626,7 +21745,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21784,7 +21903,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21898,7 +22017,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21997,7 +22116,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22083,7 +22202,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22219,7 +22338,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22292,7 +22411,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22365,7 +22484,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22461,7 +22580,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22547,7 +22666,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22640,7 +22759,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22731,7 +22850,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22845,7 +22964,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22975,7 +23094,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23060,7 +23179,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23183,7 +23302,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23274,7 +23393,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23414,7 +23533,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23488,7 +23607,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23610,7 +23729,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23711,7 +23830,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23827,7 +23946,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23895,7 +24014,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23989,7 +24108,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24074,7 +24193,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24182,7 +24301,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24346,7 +24465,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24432,7 +24551,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24518,7 +24637,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24582,7 +24701,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24679,7 +24798,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24745,7 +24864,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24872,7 +24991,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24963,7 +25082,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25054,7 +25173,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25118,7 +25237,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25246,7 +25365,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25376,7 +25495,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25441,7 +25560,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25510,7 +25629,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25589,7 +25708,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25775,7 +25894,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25877,7 +25996,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25941,7 +26060,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26016,7 +26135,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26176,7 +26295,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26353,7 +26472,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26425,7 +26544,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26540,7 +26659,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26655,7 +26774,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26747,7 +26866,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26820,7 +26939,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26883,7 +27002,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27016,7 +27135,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27109,7 +27228,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27180,7 +27299,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27300,7 +27419,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27371,7 +27490,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27437,7 +27556,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27563,7 +27682,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -27661,7 +27780,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27756,7 +27875,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27818,7 +27937,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27880,7 +27999,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js language configuration
@@ -28003,7 +28122,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28161,7 +28280,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28263,7 +28382,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28325,7 +28444,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28387,7 +28506,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28470,7 +28589,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28542,7 +28661,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28606,7 +28725,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28720,7 +28839,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28827,7 +28946,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28934,7 +29053,7 @@ function trimString(string, length) {
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -29124,7 +29243,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -29152,7 +29271,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29168,7 +29287,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(166);
+var _router = __webpack_require__(168);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -29261,21 +29380,76 @@ var Nav = function () {
 exports.default = Nav;
 
 /***/ }),
-/* 145 */
-/***/ (function(module, exports) {
-
-// removed by extract-text-webpack-plugin
-
-/***/ }),
 /* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(2);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Search = function () {
+  function Search() {
+    _classCallCheck(this, Search);
+
+    this.$searchBox = (0, _jquery2.default)('#search-box');
+    this.ENTER_KEY = 13;
+    this.ESCAPE_KEY = 27;
+    this.getSearchValue();
+  }
+
+  // RETREIVE VALUE FROM SEARCH BOX
+
+
+  _createClass(Search, [{
+    key: 'getSearchValue',
+    value: function getSearchValue() {
+      var that = this;
+
+      this.$searchBox.on('keypress', function (event) {
+        var keyPressed = event.which || event.keyCode;
+
+        if (keyPressed === that.ENTER_KEY) {
+          var value = event.target.value.trim();
+          console.log(value);
+        }
+      });
+    }
+  }]);
+
+  return Search;
+}();
+
+exports.default = Search;
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports) {
+
+// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 148 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var utils = __webpack_require__(1);
-var bind = __webpack_require__(11);
-var Axios = __webpack_require__(148);
+var bind = __webpack_require__(12);
+var Axios = __webpack_require__(150);
 var defaults = __webpack_require__(6);
 
 /**
@@ -29309,15 +29483,15 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(8);
-axios.CancelToken = __webpack_require__(147);
-axios.isCancel = __webpack_require__(9);
+axios.Cancel = __webpack_require__(9);
+axios.CancelToken = __webpack_require__(149);
+axios.isCancel = __webpack_require__(10);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(162);
+axios.spread = __webpack_require__(164);
 
 module.exports = axios;
 
@@ -29326,13 +29500,13 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cancel = __webpack_require__(8);
+var Cancel = __webpack_require__(9);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -29390,7 +29564,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29398,8 +29572,8 @@ module.exports = CancelToken;
 
 var defaults = __webpack_require__(6);
 var utils = __webpack_require__(1);
-var InterceptorManager = __webpack_require__(149);
-var dispatchRequest = __webpack_require__(150);
+var InterceptorManager = __webpack_require__(151);
+var dispatchRequest = __webpack_require__(152);
 
 /**
  * Create a new instance of Axios
@@ -29476,7 +29650,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29535,18 +29709,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(1);
-var transformData = __webpack_require__(153);
-var isCancel = __webpack_require__(9);
+var transformData = __webpack_require__(155);
+var isCancel = __webpack_require__(10);
 var defaults = __webpack_require__(6);
-var isAbsoluteURL = __webpack_require__(158);
-var combineURLs = __webpack_require__(156);
+var isAbsoluteURL = __webpack_require__(160);
+var combineURLs = __webpack_require__(158);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -29628,7 +29802,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29656,13 +29830,13 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var createError = __webpack_require__(10);
+var createError = __webpack_require__(11);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -29689,7 +29863,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29716,7 +29890,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29759,7 +29933,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 155 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29832,7 +30006,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 156 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29853,7 +30027,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 157 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29913,7 +30087,7 @@ module.exports = (
 
 
 /***/ }),
-/* 158 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29934,7 +30108,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 159 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30009,7 +30183,7 @@ module.exports = (
 
 
 /***/ }),
-/* 160 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30028,7 +30202,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 161 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30088,7 +30262,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 162 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30122,19 +30296,19 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 163 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(145);
+__webpack_require__(147);
 
-var _nav = __webpack_require__(144);
+var _nav = __webpack_require__(145);
 
 var _nav2 = _interopRequireDefault(_nav);
 
-var _search = __webpack_require__(180);
+var _search = __webpack_require__(146);
 
 var _search2 = _interopRequireDefault(_search);
 
@@ -30154,7 +30328,7 @@ var App = function App() {
 new App();
 
 /***/ }),
-/* 164 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30329,7 +30503,7 @@ var GraphCard = function () {
 exports.default = GraphCard;
 
 /***/ }),
-/* 165 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30349,106 +30523,55 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
+var _helpers = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// issue: can't retrieve news data for specific symbol
-var News = function () {
-  function News(containerId, symbolArray, localStorageKey) {
-    var numOfArticlesPerStock = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
-
-    _classCallCheck(this, News);
+var KeyStats = function () {
+  function KeyStats(containerId, symbol) {
+    _classCallCheck(this, KeyStats);
 
     this.$container = (0, _jquery2.default)(containerId);
-    this.symbols = symbolArray;
-    this.num = numOfArticlesPerStock;
-    this.numOfStocks = symbolArray.length;
-    this.localStorageKey = localStorageKey;
+    // If data for stock exists in localStorage...
+    if (_store2.default.get(symbol).quote !== null) {
+      this.data = _store2.default.get(symbol).quote;
+      this.close = this.data.close;
+      this.open = this.data.open;
+      this.high = this.data.high;
+      this.low = this.data.low;
+      this.marketCap = (0, _helpers.formatLargeNumber)(this.data.marketCap);
+      this.peRatio = this.data.peRatio;
+      this.wk52High = this.data.week52High;
+      this.wk52Low = this.data.week52Low;
+      this.volume = (0, _helpers.formatNumberWithCommas)(Math.round(this.data.latestVolume));
+    }
 
-    this.fetchNews();
+    this.renderKeyStats();
   }
 
-  _createClass(News, [{
-    key: 'formatAxiosRequests',
-    value: function formatAxiosRequests() {
-      var _this = this;
+  // RENDER KEY STATS FOR STOCKS
 
-      return this.symbols.map(function (symbol) {
-        return _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/' + _this.num + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d');
-      });
-    }
-  }, {
-    key: 'fetchNews',
-    value: function fetchNews() {
-      var _this2 = this;
 
-      // If news data for stock exists in localStorage...
-      if (_store2.default.get(this.localStorageKey) !== null) {
-        this.renderNews();
-      } else {
-        var requests = this.formatAxiosRequests();
+  _createClass(KeyStats, [{
+    key: 'renderKeyStats',
+    value: function renderKeyStats() {
 
-        _axios2.default.all(requests).then(_axios2.default.spread(function () {
-          for (var _len = arguments.length, response = Array(_len), _key = 0; _key < _len; _key++) {
-            response[_key] = arguments[_key];
-          }
+      var keyStatsHTML = '\n      <h2 class="text-header">Key Statistics</h2>\n      <table id="key-stats-table">\n        <tr>\n          <td>Close</td>\n          <td>' + this.close + '</td>\n        </tr>\n        <tr>\n          <td>Open</td>\n          <td>' + this.open + '</td>\n        </tr>\n        <tr>\n          <td>High</td>\n          <td>' + this.high + '</td>\n        </tr>\n        <tr>\n          <td>Low</td>\n          <td>' + this.low + '</td>\n        </tr>\n        <tr>\n          <td>Market Cap</td>\n          <td>' + this.marketCap + '</td>\n        </tr>\n        <tr>\n          <td>P/E Ratio</td>\n          <td>' + this.peRatio + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk High</td>\n          <td>' + this.wk52High + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk Low</td>\n          <td>' + this.wk52Low + '</td>\n        </tr>\n        <tr>\n          <td>Volume</td>\n          <td>' + this.volume + '</td>\n        </tr>\n      </table>\n    ';
 
-          var newsArticles = response.map(function (companyNews) {
-            return companyNews.data[0];
-          });
-
-          _store2.default.set(_this2.localStorageKey, newsArticles);
-        })).catch(function (error) {
-          return console.log(error);
-        }).finally(function () {
-          _this2.renderNews();
-        });
-      }
-    }
-
-    // RENDER NEWS ARTICLES
-
-  }, {
-    key: 'renderNews',
-    value: function renderNews() {
-      var newsArticlesData = void 0;
-
-      if (this.localStorageKey === 'homeNews') {
-        newsArticlesData = _store2.default.get(this.localStorageKey);
-      } else {
-        newsArticlesData = _store2.default.get(this.localStorageKey).news;
-      }
-      this.$container.append('<ul class="news-list"></ul>');
-
-      var articles = newsArticlesData.map(function (article) {
-        var headline = article.headline;
-        var source = article.source;
-        var url = article.url;
-        var dateInstance = new Date(article.datetime);
-        var month = dateInstance.getMonth();
-        var date = dateInstance.getDay();
-        var year = dateInstance.getFullYear();
-
-        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + ' - ' + month + '/' + date + '/' + year + '</p>\n            </div>\n          </a>\n        </li>\n      ';
-      });
-
-      (0, _jquery2.default)('.news-list').empty();
-      (0, _jquery2.default)('.news-list').append(articles);
+      this.$container.empty();
+      this.$container.append(keyStatsHTML);
     }
   }]);
 
-  return News;
+  return KeyStats;
 }();
 
-exports.default = News;
+exports.default = KeyStats;
 
 /***/ }),
-/* 166 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30464,15 +30587,15 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(174);
+var _navigo = __webpack_require__(176);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stocks = __webpack_require__(168);
+var _stocks = __webpack_require__(170);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
-var _watchlist = __webpack_require__(169);
+var _watchlist = __webpack_require__(171);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -30552,7 +30675,7 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30576,17 +30699,17 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(14);
+var _helpers = __webpack_require__(7);
 
 var _graph = __webpack_require__(5);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _intervals = __webpack_require__(12);
+var _intervals = __webpack_require__(13);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _watchButton = __webpack_require__(13);
+var _watchButton = __webpack_require__(15);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
@@ -30699,18 +30822,19 @@ var StockPopup = function () {
       // display loading icon
       this.$loadingIcon.addClass('is-visible');
       // request stock data
-      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (historicalPrices, quote, news) {
+      _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
+        console.log(response);
         // store company data
         var dataToStore = {
-          historicalPrices: {
-            '1m': historicalPrices.data // this.interval will be set to the selected interval
+          chart: {
+            '1m': response.data.chart // this.interval will be set to the selected interval
           },
-          news: news.data,
-          quote: quote.data,
+          news: response.data.news,
+          quote: response.data.quote,
           time: Date.now()
         };
         _store2.default.set('' + _this.symbol, dataToStore);
-      })).catch(function (error) {
+      }).catch(function (error) {
         console.log(error);
       }).finally(function () {
         _this.renderStockInfo();
@@ -30764,7 +30888,7 @@ var StockPopup = function () {
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
-      var stockData = _store2.default.get('' + this.symbol).historicalPrices['1m'];
+      var stockData = _store2.default.get('' + this.symbol).chart['1m'];
 
       // get opening prices for company stock
       var priceData = this.getHistoricalData(stockData, 'close');
@@ -30807,7 +30931,7 @@ var StockPopup = function () {
 exports.default = StockPopup;
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30823,7 +30947,7 @@ var _jquery = __webpack_require__(2);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(172);
+var _lodash = __webpack_require__(174);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -30835,15 +30959,15 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _stockPopup = __webpack_require__(167);
+var _stockPopup = __webpack_require__(169);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
-var _graphCard = __webpack_require__(164);
+var _graphCard = __webpack_require__(166);
 
 var _graphCard2 = _interopRequireDefault(_graphCard);
 
-var _news = __webpack_require__(165);
+var _news = __webpack_require__(14);
 
 var _news2 = _interopRequireDefault(_news);
 
@@ -31105,7 +31229,7 @@ var Stocks = function () {
 exports.default = Stocks;
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31129,25 +31253,25 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(14);
+var _helpers = __webpack_require__(7);
 
 var _graph = __webpack_require__(5);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _intervals = __webpack_require__(12);
+var _intervals = __webpack_require__(13);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _watchButton = __webpack_require__(13);
+var _watchButton = __webpack_require__(15);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _keystats = __webpack_require__(181);
+var _keystats = __webpack_require__(167);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
-var _news = __webpack_require__(165);
+var _news = __webpack_require__(14);
 
 var _news2 = _interopRequireDefault(_news);
 
@@ -31566,7 +31690,7 @@ var Watchlist = function () {
 exports.default = Watchlist;
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -46252,7 +46376,7 @@ return src;
 
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports) {
 
 /*!
@@ -46279,7 +46403,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -63391,267 +63515,267 @@ function isSlowBuffer (obj) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(175), __webpack_require__(143)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(177), __webpack_require__(144)(module)))
 
 /***/ }),
-/* 173 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 15,
-	"./af.js": 15,
-	"./ar": 22,
-	"./ar-dz": 16,
-	"./ar-dz.js": 16,
-	"./ar-kw": 17,
-	"./ar-kw.js": 17,
-	"./ar-ly": 18,
-	"./ar-ly.js": 18,
-	"./ar-ma": 19,
-	"./ar-ma.js": 19,
-	"./ar-sa": 20,
-	"./ar-sa.js": 20,
-	"./ar-tn": 21,
-	"./ar-tn.js": 21,
-	"./ar.js": 22,
-	"./az": 23,
-	"./az.js": 23,
-	"./be": 24,
-	"./be.js": 24,
-	"./bg": 25,
-	"./bg.js": 25,
-	"./bm": 26,
-	"./bm.js": 26,
-	"./bn": 27,
-	"./bn.js": 27,
-	"./bo": 28,
-	"./bo.js": 28,
-	"./br": 29,
-	"./br.js": 29,
-	"./bs": 30,
-	"./bs.js": 30,
-	"./ca": 31,
-	"./ca.js": 31,
-	"./cs": 32,
-	"./cs.js": 32,
-	"./cv": 33,
-	"./cv.js": 33,
-	"./cy": 34,
-	"./cy.js": 34,
-	"./da": 35,
-	"./da.js": 35,
-	"./de": 38,
-	"./de-at": 36,
-	"./de-at.js": 36,
-	"./de-ch": 37,
-	"./de-ch.js": 37,
-	"./de.js": 38,
-	"./dv": 39,
-	"./dv.js": 39,
-	"./el": 40,
-	"./el.js": 40,
-	"./en-SG": 41,
-	"./en-SG.js": 41,
-	"./en-au": 42,
-	"./en-au.js": 42,
-	"./en-ca": 43,
-	"./en-ca.js": 43,
-	"./en-gb": 44,
-	"./en-gb.js": 44,
-	"./en-ie": 45,
-	"./en-ie.js": 45,
-	"./en-il": 46,
-	"./en-il.js": 46,
-	"./en-nz": 47,
-	"./en-nz.js": 47,
-	"./eo": 48,
-	"./eo.js": 48,
-	"./es": 51,
-	"./es-do": 49,
-	"./es-do.js": 49,
-	"./es-us": 50,
-	"./es-us.js": 50,
-	"./es.js": 51,
-	"./et": 52,
-	"./et.js": 52,
-	"./eu": 53,
-	"./eu.js": 53,
-	"./fa": 54,
-	"./fa.js": 54,
-	"./fi": 55,
-	"./fi.js": 55,
-	"./fo": 56,
-	"./fo.js": 56,
-	"./fr": 59,
-	"./fr-ca": 57,
-	"./fr-ca.js": 57,
-	"./fr-ch": 58,
-	"./fr-ch.js": 58,
-	"./fr.js": 59,
-	"./fy": 60,
-	"./fy.js": 60,
-	"./ga": 61,
-	"./ga.js": 61,
-	"./gd": 62,
-	"./gd.js": 62,
-	"./gl": 63,
-	"./gl.js": 63,
-	"./gom-latn": 64,
-	"./gom-latn.js": 64,
-	"./gu": 65,
-	"./gu.js": 65,
-	"./he": 66,
-	"./he.js": 66,
-	"./hi": 67,
-	"./hi.js": 67,
-	"./hr": 68,
-	"./hr.js": 68,
-	"./hu": 69,
-	"./hu.js": 69,
-	"./hy-am": 70,
-	"./hy-am.js": 70,
-	"./id": 71,
-	"./id.js": 71,
-	"./is": 72,
-	"./is.js": 72,
-	"./it": 74,
-	"./it-ch": 73,
-	"./it-ch.js": 73,
-	"./it.js": 74,
-	"./ja": 75,
-	"./ja.js": 75,
-	"./jv": 76,
-	"./jv.js": 76,
-	"./ka": 77,
-	"./ka.js": 77,
-	"./kk": 78,
-	"./kk.js": 78,
-	"./km": 79,
-	"./km.js": 79,
-	"./kn": 80,
-	"./kn.js": 80,
-	"./ko": 81,
-	"./ko.js": 81,
-	"./ku": 82,
-	"./ku.js": 82,
-	"./ky": 83,
-	"./ky.js": 83,
-	"./lb": 84,
-	"./lb.js": 84,
-	"./lo": 85,
-	"./lo.js": 85,
-	"./lt": 86,
-	"./lt.js": 86,
-	"./lv": 87,
-	"./lv.js": 87,
-	"./me": 88,
-	"./me.js": 88,
-	"./mi": 89,
-	"./mi.js": 89,
-	"./mk": 90,
-	"./mk.js": 90,
-	"./ml": 91,
-	"./ml.js": 91,
-	"./mn": 92,
-	"./mn.js": 92,
-	"./mr": 93,
-	"./mr.js": 93,
-	"./ms": 95,
-	"./ms-my": 94,
-	"./ms-my.js": 94,
-	"./ms.js": 95,
-	"./mt": 96,
-	"./mt.js": 96,
-	"./my": 97,
-	"./my.js": 97,
-	"./nb": 98,
-	"./nb.js": 98,
-	"./ne": 99,
-	"./ne.js": 99,
-	"./nl": 101,
-	"./nl-be": 100,
-	"./nl-be.js": 100,
-	"./nl.js": 101,
-	"./nn": 102,
-	"./nn.js": 102,
-	"./pa-in": 103,
-	"./pa-in.js": 103,
-	"./pl": 104,
-	"./pl.js": 104,
-	"./pt": 106,
-	"./pt-br": 105,
-	"./pt-br.js": 105,
-	"./pt.js": 106,
-	"./ro": 107,
-	"./ro.js": 107,
-	"./ru": 108,
-	"./ru.js": 108,
-	"./sd": 109,
-	"./sd.js": 109,
-	"./se": 110,
-	"./se.js": 110,
-	"./si": 111,
-	"./si.js": 111,
-	"./sk": 112,
-	"./sk.js": 112,
-	"./sl": 113,
-	"./sl.js": 113,
-	"./sq": 114,
-	"./sq.js": 114,
-	"./sr": 116,
-	"./sr-cyrl": 115,
-	"./sr-cyrl.js": 115,
-	"./sr.js": 116,
-	"./ss": 117,
-	"./ss.js": 117,
-	"./sv": 118,
-	"./sv.js": 118,
-	"./sw": 119,
-	"./sw.js": 119,
-	"./ta": 120,
-	"./ta.js": 120,
-	"./te": 121,
-	"./te.js": 121,
-	"./tet": 122,
-	"./tet.js": 122,
-	"./tg": 123,
-	"./tg.js": 123,
-	"./th": 124,
-	"./th.js": 124,
-	"./tl-ph": 125,
-	"./tl-ph.js": 125,
-	"./tlh": 126,
-	"./tlh.js": 126,
-	"./tr": 127,
-	"./tr.js": 127,
-	"./tzl": 128,
-	"./tzl.js": 128,
-	"./tzm": 130,
-	"./tzm-latn": 129,
-	"./tzm-latn.js": 129,
-	"./tzm.js": 130,
-	"./ug-cn": 131,
-	"./ug-cn.js": 131,
-	"./uk": 132,
-	"./uk.js": 132,
-	"./ur": 133,
-	"./ur.js": 133,
-	"./uz": 135,
-	"./uz-latn": 134,
-	"./uz-latn.js": 134,
-	"./uz.js": 135,
-	"./vi": 136,
-	"./vi.js": 136,
-	"./x-pseudo": 137,
-	"./x-pseudo.js": 137,
-	"./yo": 138,
-	"./yo.js": 138,
-	"./zh-cn": 139,
-	"./zh-cn.js": 139,
-	"./zh-hk": 140,
-	"./zh-hk.js": 140,
-	"./zh-tw": 141,
-	"./zh-tw.js": 141
+	"./af": 16,
+	"./af.js": 16,
+	"./ar": 23,
+	"./ar-dz": 17,
+	"./ar-dz.js": 17,
+	"./ar-kw": 18,
+	"./ar-kw.js": 18,
+	"./ar-ly": 19,
+	"./ar-ly.js": 19,
+	"./ar-ma": 20,
+	"./ar-ma.js": 20,
+	"./ar-sa": 21,
+	"./ar-sa.js": 21,
+	"./ar-tn": 22,
+	"./ar-tn.js": 22,
+	"./ar.js": 23,
+	"./az": 24,
+	"./az.js": 24,
+	"./be": 25,
+	"./be.js": 25,
+	"./bg": 26,
+	"./bg.js": 26,
+	"./bm": 27,
+	"./bm.js": 27,
+	"./bn": 28,
+	"./bn.js": 28,
+	"./bo": 29,
+	"./bo.js": 29,
+	"./br": 30,
+	"./br.js": 30,
+	"./bs": 31,
+	"./bs.js": 31,
+	"./ca": 32,
+	"./ca.js": 32,
+	"./cs": 33,
+	"./cs.js": 33,
+	"./cv": 34,
+	"./cv.js": 34,
+	"./cy": 35,
+	"./cy.js": 35,
+	"./da": 36,
+	"./da.js": 36,
+	"./de": 39,
+	"./de-at": 37,
+	"./de-at.js": 37,
+	"./de-ch": 38,
+	"./de-ch.js": 38,
+	"./de.js": 39,
+	"./dv": 40,
+	"./dv.js": 40,
+	"./el": 41,
+	"./el.js": 41,
+	"./en-SG": 42,
+	"./en-SG.js": 42,
+	"./en-au": 43,
+	"./en-au.js": 43,
+	"./en-ca": 44,
+	"./en-ca.js": 44,
+	"./en-gb": 45,
+	"./en-gb.js": 45,
+	"./en-ie": 46,
+	"./en-ie.js": 46,
+	"./en-il": 47,
+	"./en-il.js": 47,
+	"./en-nz": 48,
+	"./en-nz.js": 48,
+	"./eo": 49,
+	"./eo.js": 49,
+	"./es": 52,
+	"./es-do": 50,
+	"./es-do.js": 50,
+	"./es-us": 51,
+	"./es-us.js": 51,
+	"./es.js": 52,
+	"./et": 53,
+	"./et.js": 53,
+	"./eu": 54,
+	"./eu.js": 54,
+	"./fa": 55,
+	"./fa.js": 55,
+	"./fi": 56,
+	"./fi.js": 56,
+	"./fo": 57,
+	"./fo.js": 57,
+	"./fr": 60,
+	"./fr-ca": 58,
+	"./fr-ca.js": 58,
+	"./fr-ch": 59,
+	"./fr-ch.js": 59,
+	"./fr.js": 60,
+	"./fy": 61,
+	"./fy.js": 61,
+	"./ga": 62,
+	"./ga.js": 62,
+	"./gd": 63,
+	"./gd.js": 63,
+	"./gl": 64,
+	"./gl.js": 64,
+	"./gom-latn": 65,
+	"./gom-latn.js": 65,
+	"./gu": 66,
+	"./gu.js": 66,
+	"./he": 67,
+	"./he.js": 67,
+	"./hi": 68,
+	"./hi.js": 68,
+	"./hr": 69,
+	"./hr.js": 69,
+	"./hu": 70,
+	"./hu.js": 70,
+	"./hy-am": 71,
+	"./hy-am.js": 71,
+	"./id": 72,
+	"./id.js": 72,
+	"./is": 73,
+	"./is.js": 73,
+	"./it": 75,
+	"./it-ch": 74,
+	"./it-ch.js": 74,
+	"./it.js": 75,
+	"./ja": 76,
+	"./ja.js": 76,
+	"./jv": 77,
+	"./jv.js": 77,
+	"./ka": 78,
+	"./ka.js": 78,
+	"./kk": 79,
+	"./kk.js": 79,
+	"./km": 80,
+	"./km.js": 80,
+	"./kn": 81,
+	"./kn.js": 81,
+	"./ko": 82,
+	"./ko.js": 82,
+	"./ku": 83,
+	"./ku.js": 83,
+	"./ky": 84,
+	"./ky.js": 84,
+	"./lb": 85,
+	"./lb.js": 85,
+	"./lo": 86,
+	"./lo.js": 86,
+	"./lt": 87,
+	"./lt.js": 87,
+	"./lv": 88,
+	"./lv.js": 88,
+	"./me": 89,
+	"./me.js": 89,
+	"./mi": 90,
+	"./mi.js": 90,
+	"./mk": 91,
+	"./mk.js": 91,
+	"./ml": 92,
+	"./ml.js": 92,
+	"./mn": 93,
+	"./mn.js": 93,
+	"./mr": 94,
+	"./mr.js": 94,
+	"./ms": 96,
+	"./ms-my": 95,
+	"./ms-my.js": 95,
+	"./ms.js": 96,
+	"./mt": 97,
+	"./mt.js": 97,
+	"./my": 98,
+	"./my.js": 98,
+	"./nb": 99,
+	"./nb.js": 99,
+	"./ne": 100,
+	"./ne.js": 100,
+	"./nl": 102,
+	"./nl-be": 101,
+	"./nl-be.js": 101,
+	"./nl.js": 102,
+	"./nn": 103,
+	"./nn.js": 103,
+	"./pa-in": 104,
+	"./pa-in.js": 104,
+	"./pl": 105,
+	"./pl.js": 105,
+	"./pt": 107,
+	"./pt-br": 106,
+	"./pt-br.js": 106,
+	"./pt.js": 107,
+	"./ro": 108,
+	"./ro.js": 108,
+	"./ru": 109,
+	"./ru.js": 109,
+	"./sd": 110,
+	"./sd.js": 110,
+	"./se": 111,
+	"./se.js": 111,
+	"./si": 112,
+	"./si.js": 112,
+	"./sk": 113,
+	"./sk.js": 113,
+	"./sl": 114,
+	"./sl.js": 114,
+	"./sq": 115,
+	"./sq.js": 115,
+	"./sr": 117,
+	"./sr-cyrl": 116,
+	"./sr-cyrl.js": 116,
+	"./sr.js": 117,
+	"./ss": 118,
+	"./ss.js": 118,
+	"./sv": 119,
+	"./sv.js": 119,
+	"./sw": 120,
+	"./sw.js": 120,
+	"./ta": 121,
+	"./ta.js": 121,
+	"./te": 122,
+	"./te.js": 122,
+	"./tet": 123,
+	"./tet.js": 123,
+	"./tg": 124,
+	"./tg.js": 124,
+	"./th": 125,
+	"./th.js": 125,
+	"./tl-ph": 126,
+	"./tl-ph.js": 126,
+	"./tlh": 127,
+	"./tlh.js": 127,
+	"./tr": 128,
+	"./tr.js": 128,
+	"./tzl": 129,
+	"./tzl.js": 129,
+	"./tzm": 131,
+	"./tzm-latn": 130,
+	"./tzm-latn.js": 130,
+	"./tzm.js": 131,
+	"./ug-cn": 132,
+	"./ug-cn.js": 132,
+	"./uk": 133,
+	"./uk.js": 133,
+	"./ur": 134,
+	"./ur.js": 134,
+	"./uz": 136,
+	"./uz-latn": 135,
+	"./uz-latn.js": 135,
+	"./uz.js": 136,
+	"./vi": 137,
+	"./vi.js": 137,
+	"./x-pseudo": 138,
+	"./x-pseudo.js": 138,
+	"./yo": 139,
+	"./yo.js": 139,
+	"./zh-cn": 140,
+	"./zh-cn.js": 140,
+	"./zh-hk": 141,
+	"./zh-hk.js": 141,
+	"./zh-tw": 142,
+	"./zh-tw.js": 142
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -63667,10 +63791,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 173;
+webpackContext.id = 175;
 
 /***/ }),
-/* 174 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -64206,7 +64330,7 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 175 */
+/* 177 */
 /***/ (function(module, exports) {
 
 var g;
@@ -64231,133 +64355,6 @@ try {
 
 module.exports = g;
 
-
-/***/ }),
-/* 176 */,
-/* 177 */,
-/* 178 */,
-/* 179 */,
-/* 180 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Search = function () {
-  function Search() {
-    _classCallCheck(this, Search);
-
-    this.$searchBox = (0, _jquery2.default)('#search-box');
-    this.ENTER_KEY = 13;
-    this.ESCAPE_KEY = 27;
-    this.getSearchValue();
-  }
-
-  // RETREIVE VALUE FROM SEARCH BOX
-
-
-  _createClass(Search, [{
-    key: 'getSearchValue',
-    value: function getSearchValue() {
-      var that = this;
-
-      this.$searchBox.on('keypress', function (event) {
-        var keyPressed = event.which || event.keyCode;
-
-        if (keyPressed === that.ENTER_KEY) {
-          var value = event.target.value.trim();
-          console.log(value);
-        }
-      });
-    }
-  }]);
-
-  return Search;
-}();
-
-exports.default = Search;
-
-/***/ }),
-/* 181 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(2);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _helpers = __webpack_require__(14);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var KeyStats = function () {
-  function KeyStats(containerId, symbol) {
-    _classCallCheck(this, KeyStats);
-
-    this.$container = (0, _jquery2.default)(containerId);
-    // If data for stock exists in localStorage...
-    if (_store2.default.get(symbol).quote !== null) {
-      this.data = _store2.default.get(symbol).quote;
-      this.close = this.data.close;
-      this.open = this.data.open;
-      this.high = this.data.high;
-      this.low = this.data.low;
-      this.marketCap = (0, _helpers.formatLargeNumber)(this.data.marketCap);
-      this.peRatio = this.data.peRatio;
-      this.wk52High = this.data.week52High;
-      this.wk52Low = this.data.week52Low;
-      this.volume = (0, _helpers.formatNumberWithCommas)(Math.round(this.data.latestVolume));
-    }
-
-    this.renderKeyStats();
-  }
-
-  // RENDER KEY STATS FOR STOCKS
-
-
-  _createClass(KeyStats, [{
-    key: 'renderKeyStats',
-    value: function renderKeyStats() {
-
-      var keyStatsHTML = '\n      <h2 class="text-header">Key Statistics</h2>\n      <table id="key-stats-table">\n        <tr>\n          <td>Close</td>\n          <td>' + this.close + '</td>\n        </tr>\n        <tr>\n          <td>Open</td>\n          <td>' + this.open + '</td>\n        </tr>\n        <tr>\n          <td>High</td>\n          <td>' + this.high + '</td>\n        </tr>\n        <tr>\n          <td>Low</td>\n          <td>' + this.low + '</td>\n        </tr>\n        <tr>\n          <td>Market Cap</td>\n          <td>' + this.marketCap + '</td>\n        </tr>\n        <tr>\n          <td>P/E Ratio</td>\n          <td>' + this.peRatio + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk High</td>\n          <td>' + this.wk52High + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk Low</td>\n          <td>' + this.wk52Low + '</td>\n        </tr>\n        <tr>\n          <td>Volume</td>\n          <td>' + this.volume + '</td>\n        </tr>\n      </table>\n    ';
-
-      this.$container.empty();
-      this.$container.append(keyStatsHTML);
-    }
-  }]);
-
-  return KeyStats;
-}();
-
-exports.default = KeyStats;
 
 /***/ })
 /******/ ]);

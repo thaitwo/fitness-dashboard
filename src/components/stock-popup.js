@@ -130,23 +130,20 @@ class StockPopup {
     // display loading icon
     this.$loadingIcon.addClass('is-visible');
     // request stock data
-    axios.all([
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/1m?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/news/last/4?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
-    ])
-    .then(axios.spread((historicalPrices, quote, news) => {
+    axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    .then((response) => {
+      console.log(response);
       // store company data
       const dataToStore = {
-        historicalPrices: {
-          '1m': historicalPrices.data, // this.interval will be set to the selected interval
+        chart: {
+          '1m': response.data.chart, // this.interval will be set to the selected interval
         },
-        news: news.data,
-        quote: quote.data,
+        news: response.data.news,
+        quote: response.data.quote,
         time: Date.now()
       }
       store.set(`${this.symbol}`, dataToStore);
-    }))
+    })
     .catch((error) => {
       console.log(error);
     })
@@ -232,7 +229,7 @@ class StockPopup {
 
   // RENDER GRAPH
   renderGraph() {
-    const stockData = store.get(`${this.symbol}`).historicalPrices['1m'];
+    const stockData = store.get(`${this.symbol}`).chart['1m'];
 
     // get opening prices for company stock
     let priceData = this.getHistoricalData(stockData, 'close');

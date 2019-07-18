@@ -57,7 +57,7 @@ class Intervals {
     axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.selectedInterval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     .then((response) => {
       const storedData = store.get(this.symbol);
-      storedData.historicalPrices[this.selectedInterval] = response.data;
+      storedData.chart[this.selectedInterval] = response.data;
       store.set(this.symbol, storedData);
     })
     .catch((error) => {
@@ -74,8 +74,8 @@ class Intervals {
     const storedData = store.get(this.symbol);
 
     // if historical prices for selected interval does exist in localStorage
-    if (this.selectedInterval in storedData.historicalPrices) {
-      const storedData = store.get(this.symbol).historicalPrices[this.selectedInterval];
+    if (this.selectedInterval in storedData.chart) {
+      const storedData = store.get(this.symbol).chart[this.selectedInterval];
       // get closing prices for stock
       const prices = this.getHistoricalData(storedData, 'close');
       // get dates for closing prices
