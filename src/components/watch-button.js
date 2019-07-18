@@ -8,35 +8,32 @@ class WatchButton {
     this.companyName = companyName;
     this.refreshPage = refreshPage;
     this.watchlist = store.get('watchlist') || [];
-    this.isInWatchlist = this.isInWatchlist();
+    this.isWatched = this.isInWatchlist();
     this.$watchlist = $('.watchlist-list');
 
     this.insertButton();
     this.$watchButton = $('#watch-button');
+    this.$starIcon = this.$watchButton.find('i');
     this.addOrRemoveFromWatchlistHandler();
   }
 
 
   // INSERT BUTTON IN DOM
   insertButton() {
-    let isWatched,
-        label,
-        iconClass;
+    let watchStatus,
+        iconStyle;
 
-    if (this.isInWatchlist) {
-      isWatched = 'isWatched';
-      label = 'Unwatch';
-      iconClass = 'fa-eye-slash';
+    if (this.isWatched) {
+      watchStatus = 'isWatched';
+      iconStyle = 'fas';
     } else {
-      isWatched = '';
-      label = 'Watch';
-      iconClass = 'fa-eye';
+      watchStatus = '';
+      iconStyle = 'far';
     }
 
     const html = `
-      <button id="watch-button" class="button button-popup-watchlist ${isWatched}">
-        <i class="far ${iconClass}"></i>
-        <span>${label}</span>
+      <button id="watch-button" class="button button-popup-watchlist ${watchStatus}">
+        <i class="${iconStyle} fa-star"></i>
       </button>
     `;
 
@@ -54,28 +51,19 @@ class WatchButton {
   // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
   addOrRemoveFromWatchlistHandler() {
     const that = this;
-    this.toggleButtonState(this.isInWatchlist);
 
     // Add/remove stock from watchlist
     this.$watchButton.on('click', function(event) {
       event.preventDefault();
-      const $this = $(this);
-      const $starIconContainer = $(`#stocks-list button#${that.symbol} .icon-add-watchlist`);
-      const $starIcon = $(`#stocks-list button#${that.symbol} i`);
+      that.toggleButtonState(that.isWatched);
 
       // if stock is not in watchlist, then add to watchlist
-      if (!that.isInWatchlist) {
+      if (!that.isWatched) {
         that.watchlist.push({
           symbol: that.symbol,
           name: that.companyName
         });
         store.set('watchlist', that.watchlist);
-
-        // update watchlist button to REMOVE
-        $this.addClass('isWatched');
-        $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
-        $starIcon.removeClass('far').addClass('fas');
-        $starIconContainer.toggleClass('is-selected');
       }
       // if stock exist, then remove it from watchlist
       else {
@@ -87,18 +75,13 @@ class WatchButton {
 
         // store upated watchlist array
         store.set('watchlist', that.watchlist);
-
-        // update watchlist button to ADD
-        $this.removeClass('isWatched');
-        $this.html('<i class="far fa-eye"></i>Watch');
-        $starIconContainer.toggleClass('is-selected');
-        $starIcon.removeClass('fas').addClass('far');
         
         // use case for Watchlist page to refresh page when stock is removed from watchlist
         if (that.refreshPage) {
           window.location.reload();
         }
       }
+      that.isWatched = that.isInWatchlist();
     });
   }
 
@@ -107,13 +90,13 @@ class WatchButton {
   toggleButtonState(boolean) {
     // if stock exist in watchlist, display 'remove from watchlist' button
     if (boolean === true) {
-      this.$watchButton.addClass('isWatched');
-      this.$watchButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
+      this.$starIcon.removeClass('fas').addClass('far');
+      this.$watchButton.removeClass('isWatched');
     }
     // if stock doesn't exist in watchlist, display 'add to watchlist' button
     else {
-      this.$watchButton.removeClass('isWatched');
-      this.$watchButton.html('<i class="far fa-eye"></i>Watch');
+      this.$starIcon.removeClass('far').addClass('fas');
+      this.$watchButton.addClass('isWatched');
     }
   }
 }

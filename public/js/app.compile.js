@@ -16729,11 +16729,12 @@ var WatchButton = function () {
     this.companyName = companyName;
     this.refreshPage = refreshPage;
     this.watchlist = _store2.default.get('watchlist') || [];
-    this.isInWatchlist = this.isInWatchlist();
+    this.isWatched = this.isInWatchlist();
     this.$watchlist = (0, _jquery2.default)('.watchlist-list');
 
     this.insertButton();
     this.$watchButton = (0, _jquery2.default)('#watch-button');
+    this.$starIcon = this.$watchButton.find('i');
     this.addOrRemoveFromWatchlistHandler();
   }
 
@@ -16743,21 +16744,18 @@ var WatchButton = function () {
   _createClass(WatchButton, [{
     key: 'insertButton',
     value: function insertButton() {
-      var isWatched = void 0,
-          label = void 0,
-          iconClass = void 0;
+      var watchStatus = void 0,
+          iconStyle = void 0;
 
-      if (this.isInWatchlist) {
-        isWatched = 'isWatched';
-        label = 'Unwatch';
-        iconClass = 'fa-eye-slash';
+      if (this.isWatched) {
+        watchStatus = 'isWatched';
+        iconStyle = 'fas';
       } else {
-        isWatched = '';
-        label = 'Watch';
-        iconClass = 'fa-eye';
+        watchStatus = '';
+        iconStyle = 'far';
       }
 
-      var html = '\n      <button id="watch-button" class="button button-popup-watchlist ' + isWatched + '">\n        <i class="far ' + iconClass + '"></i>\n        <span>' + label + '</span>\n      </button>\n    ';
+      var html = '\n      <button id="watch-button" class="button button-popup-watchlist ' + watchStatus + '">\n        <i class="' + iconStyle + ' fa-star"></i>\n      </button>\n    ';
 
       this.$buttonContainer.empty();
       this.$buttonContainer.append(html);
@@ -16781,28 +16779,19 @@ var WatchButton = function () {
     key: 'addOrRemoveFromWatchlistHandler',
     value: function addOrRemoveFromWatchlistHandler() {
       var that = this;
-      this.toggleButtonState(this.isInWatchlist);
 
       // Add/remove stock from watchlist
       this.$watchButton.on('click', function (event) {
         event.preventDefault();
-        var $this = (0, _jquery2.default)(this);
-        var $starIconContainer = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' .icon-add-watchlist');
-        var $starIcon = (0, _jquery2.default)('#stocks-list button#' + that.symbol + ' i');
+        that.toggleButtonState(that.isWatched);
 
         // if stock is not in watchlist, then add to watchlist
-        if (!that.isInWatchlist) {
+        if (!that.isWatched) {
           that.watchlist.push({
             symbol: that.symbol,
             name: that.companyName
           });
           _store2.default.set('watchlist', that.watchlist);
-
-          // update watchlist button to REMOVE
-          $this.addClass('isWatched');
-          $this.html('<i class="fas fa-eye-slash"></i>Unwatch');
-          $starIcon.removeClass('far').addClass('fas');
-          $starIconContainer.toggleClass('is-selected');
         }
         // if stock exist, then remove it from watchlist
         else {
@@ -16817,17 +16806,12 @@ var WatchButton = function () {
             // store upated watchlist array
             _store2.default.set('watchlist', that.watchlist);
 
-            // update watchlist button to ADD
-            $this.removeClass('isWatched');
-            $this.html('<i class="far fa-eye"></i>Watch');
-            $starIconContainer.toggleClass('is-selected');
-            $starIcon.removeClass('fas').addClass('far');
-
             // use case for Watchlist page to refresh page when stock is removed from watchlist
             if (that.refreshPage) {
               window.location.reload();
             }
           }
+        that.isWatched = that.isInWatchlist();
       });
     }
 
@@ -16838,13 +16822,13 @@ var WatchButton = function () {
     value: function toggleButtonState(boolean) {
       // if stock exist in watchlist, display 'remove from watchlist' button
       if (boolean === true) {
-        this.$watchButton.addClass('isWatched');
-        this.$watchButton.html('<i class="fas fa-eye-slash"></i>Unwatch');
+        this.$starIcon.removeClass('fas').addClass('far');
+        this.$watchButton.removeClass('isWatched');
       }
       // if stock doesn't exist in watchlist, display 'add to watchlist' button
       else {
-          this.$watchButton.removeClass('isWatched');
-          this.$watchButton.html('<i class="far fa-eye"></i>Watch');
+          this.$starIcon.removeClass('far').addClass('fas');
+          this.$watchButton.addClass('isWatched');
         }
     }
   }]);
@@ -30823,7 +30807,6 @@ var StockPopup = function () {
       this.$loadingIcon.addClass('is-visible');
       // request stock data
       _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
-        console.log(response);
         // store company data
         var dataToStore = {
           chart: {
@@ -31332,7 +31315,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderEmptyWatchlistCanvas',
     value: function renderEmptyWatchlistCanvas() {
-      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="fas fa-star"></i></span> symbol next to a company\'s name.</p>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol next to a company\'s name.</p>\n        </div>\n      </div>\n    ';
 
       this.$container.append(html);
     }

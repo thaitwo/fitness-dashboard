@@ -16,11 +16,10 @@
 
   &.button-popup-watchlist {
     background-color: transparent;
-    border: 1px solid rgba($white,1);
     border-radius: 4px;
     box-sizing: border-box;
     color: rgba($white, 1);
-    font-size: .75rem;
+    font-size: 1.2rem;
     font-weight: 600;
     height: 28px;
     line-height: 28px;
@@ -29,19 +28,15 @@
     text-transform: capitalize;
 
     i {
-      padding-right: 6px;
     }
   
     &:hover {
-      background-color: $white;
-      color: $colorDark-dark;
       cursor: pointer;
     }
   }
 
-  &.isWatched {
-    background-color: $white;
-    color: $colorDark-dark;
+  &.isWatched i {
+    color: $colorDark-accent;
   }
 
   &.has-warning {

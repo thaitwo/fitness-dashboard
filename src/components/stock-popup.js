@@ -132,7 +132,6 @@ class StockPopup {
     // request stock data
     axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     .then((response) => {
-      console.log(response);
       // store company data
       const dataToStore = {
         chart: {

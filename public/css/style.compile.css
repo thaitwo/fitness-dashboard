@@ -120,26 +120,20 @@ body {
     cursor: pointer; }
   .button.button-popup-watchlist {
     background-color: transparent;
-    border: 1px solid white;
     border-radius: 4px;
     box-sizing: border-box;
     color: white;
-    font-size: .75rem;
+    font-size: 1.2rem;
     font-weight: 600;
     height: 28px;
     line-height: 28px;
     margin: 0 24px;
     padding: 0 8px;
     text-transform: capitalize; }
-    .button.button-popup-watchlist i {
-      padding-right: 6px; }
     .button.button-popup-watchlist:hover {
-      background-color: #FFFFFF;
-      color: #151C40;
       cursor: pointer; }
-  .button.isWatched {
-    background-color: #FFFFFF;
-    color: #151C40; }
+  .button.isWatched i {
+    color: #F9A825; }
   .button.has-warning {
     background: #ef9a9a; }
     .button.has-warning:hover {
