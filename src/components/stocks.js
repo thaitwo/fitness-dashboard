@@ -217,6 +217,7 @@ class Stocks {
         </li>
       `;
     });
+    
     $(container).append(list);
     this.activateWatchlistIcon(container);
   }

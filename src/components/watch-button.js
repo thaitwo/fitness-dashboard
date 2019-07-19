@@ -2,7 +2,7 @@ import $ from 'jquery';
 import store from 'store2';
 
 class WatchButton {
-  constructor(containerId, symbol, companyName, refreshPage) {
+  constructor(containerId, symbol, companyName, refreshPage = false) {
     this.$buttonContainer = $(containerId);
     this.symbol = symbol;
     this.companyName = companyName;
@@ -86,17 +86,44 @@ class WatchButton {
   }
 
 
+  // UPDATE STAR ICON STYLE ON DASHBOARD PAGE BASED ON POPUP STAR ICON
+  updateStarIcon(isWatched) {
+    const $starIconWrapper = $('.stock-list').find(`li#${this.symbol} .icon-watchlist`);
+    const $starIcon = $starIconWrapper.find('i');
+
+    if (isWatched) {
+      $starIconWrapper.removeClass('is-selected');
+      $starIcon.removeClass('fas').addClass('far');
+    } else {
+      $starIconWrapper.addClass('is-selected');
+      $starIcon.removeClass('far').addClass('fas');
+    }
+  }
+
+
   // UPDATE WATCHLIST BUTTON STATE - TRUE: STOCK IN WATCHLIST, FALSE: STOCK NOT IN WATCHLIST
-  toggleButtonState(boolean) {
-    // if stock exist in watchlist, display 'remove from watchlist' button
-    if (boolean === true) {
+  toggleButtonState(isWatched) {
+    // if stock exist in watchlist, make star icon hollow
+    if (isWatched === true) {
       this.$starIcon.removeClass('fas').addClass('far');
       this.$watchButton.removeClass('isWatched');
+      
+      // this.refreshPage will only be true for the Watchlist page.
+      // if on Dashboard page, update star icon style based on Watchlist status of Popup
+      if (!this.refreshPage) {
+        this.updateStarIcon();
+      }
     }
-    // if stock doesn't exist in watchlist, display 'add to watchlist' button
+    // if stock doesn't exist in watchlist, make star icon solid
     else {
       this.$starIcon.removeClass('far').addClass('fas');
       this.$watchButton.addClass('isWatched');
+
+      // this.refreshPage will only be true for the Watchlist page.
+      // if on Dashboard page, update star icon style based on Watchlist status of Popup
+      if (!this.refreshPage) {
+        this.updateStarIcon();
+      }
     }
   }
 }
