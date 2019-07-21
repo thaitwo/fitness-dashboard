@@ -2,12 +2,12 @@ import $ from 'jquery';
 import Navigo from 'navigo';
 import Stocks from './stocks';
 import Watchlist from './watchlist';
-const DASHBOARD_URL = 'dashboard/';
+const DASHBOARD_URL = 'stocks/';
 
 
 class Router {
   constructor() {
-    this.$canvas = $('.dashboard-canvas');
+    this.$canvas = $('.canvas');
 
     // INITIALIZE NAVIGO ROUTER
     this.root = null;
@@ -22,7 +22,7 @@ class Router {
 
   // CHANGE PAGE / RENDER URL
   changePage(pageId) {
-    if (pageId === 'dashboard') {
+    if (pageId === 'stocks') {
       this.router.navigate(`${DASHBOARD_URL}`);
     }
     else {

@@ -111,7 +111,7 @@ class WatchButton {
       // this.refreshPage will only be true for the Watchlist page.
       // if on Dashboard page, update star icon style based on Watchlist status of Popup
       if (!this.refreshPage) {
-        this.updateStarIcon();
+        this.updateStarIcon(isWatched);
       }
     }
     // if stock doesn't exist in watchlist, make star icon solid
@@ -122,7 +122,7 @@ class WatchButton {
       // this.refreshPage will only be true for the Watchlist page.
       // if on Dashboard page, update star icon style based on Watchlist status of Popup
       if (!this.refreshPage) {
-        this.updateStarIcon();
+        this.updateStarIcon(isWatched);
       }
     }
   }

@@ -29,7 +29,7 @@ class Nav {
       if (url.indexOf('#') != -1) {
         pageId = url.split('#')[1];
       } else {
-        pageId = 'dashboard';
+        pageId = 'stocks';
       }
 
       if (pageId.substr(-1) === '/') {
