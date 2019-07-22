@@ -1,49 +1,54 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
+import ChartBox from './chartbox';
 
 class Stock {
   constructor(symbol) {
     this.symbol = symbol;
     this.$canvas = $('.canvas');
+    this.renderHtml();
+
+    // If data exists in local storage...
+    if (store.get(this.symbol) !== null) { 
+      new ChartBox('#singlestock-chart-container', this.symbol);
+    }
+    // If data doesn't exist...
+    else {
+      this.fetchData();
+    }
   }
 
-  renderHtmlLayout() {
+
+  // RENDER HTML LAYOUT
+  renderHtml() {
     const html = `
       <div>
         <div>
-          <div class="">
-            <div class="box">
-              <div class="singlestock-chart-header">
-                <div id="singlestock-chart-header-toprow">
-                  <div class="singlestock-chart-name-container">
-                    <h2 id="singlestock-chart-name"></h2>
-                    <h3 id="singlestock-chart-symbol"></h3>
-                  </div>
-                  <div id="singlestock-chart-watch-intervals">
-                    <div id="singlestock-chart-watch-button"></div>
-                    <div id="singlestock-intervals-container"></div>
-                  </div>
-                </div>
-                <div class="flex-hori-start" style="height: 32px;">
-                  <div id="singlestock-latestprice"></div>
-                  <div id="singlestock-changepercent"></div>
-                </div>
-              </div>
-              <canvas id="singlestock-chart" width="900" height="320"></canvas>
-            </div>
+          <div>
+            <div id="singlestock-chart-container" class="box"></div>
           </div>
         </div>
       </div>
     `;
+
+    this.$canvas.empty();
+    this.$canvas.append(html);
   }
 
 
-  renderChart() {
-
+  // FETCH DATA WITH AJAX
+  fetchData() {
+    axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    .then((response) => {
+      const symbol = this.symbol.toUpperCase();
+      store.set(symbol, response.data);
+      new ChartBox('#singlestock-chart-container', this.symbol);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
-
-  
 }
 
 export default Stock;

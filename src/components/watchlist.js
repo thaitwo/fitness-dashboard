@@ -408,14 +408,6 @@ class Watchlist {
   }
 
 
-  // RENDER STOCK NAME
-  renderStockName(name) {
-    const stockName = trimString(name, 36);
-    this.$stockName.text(stockName);
-    this.$stockSymbol.html(`(${this.symbol})`);
-  }
-
-
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
   getHistoricalData(data, key) {
     return data.map((day) => {

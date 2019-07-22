@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
+import Stock from './stock';
 import Stocks from './stocks';
 import Watchlist from './watchlist';
 const DASHBOARD_URL = 'stocks/';
@@ -36,9 +37,10 @@ class Router {
 
     // Routes handler
     this.router.on({
-      // 'stocks': () => {
-      //   this.currentPage = new Stocks(this.$canvas);
-      // },
+      'stocks/:symbol': (params) => {
+        const symbol = params.symbol.toUpperCase();
+        this.currentPage = new Stock(symbol);
+      },
       'compare': () => {
         // Insert functionality
       },
