@@ -1,0 +1,9 @@
+.stock-summary-container {
+  display: flex;
+  justify-content: space-between;
+
+  > div {
+    box-shadow: 0 0 8px rgba($black,.24);
+    flex: 1;
+  }
+}

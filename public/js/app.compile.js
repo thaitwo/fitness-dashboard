@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 165);
+/******/ 	return __webpack_require__(__webpack_require__.s = 166);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(176)("./" + name);
+                __webpack_require__(178)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4673,7 +4673,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(144)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(145)(module)))
 
 /***/ }),
 /* 1 */
@@ -15288,7 +15288,7 @@ return jQuery;
 
 
 var bind = __webpack_require__(12);
-var isBuffer = __webpack_require__(174);
+var isBuffer = __webpack_require__(176);
 
 /*global toString:true*/
 
@@ -15854,7 +15854,7 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(148);
+module.exports = __webpack_require__(149);
 
 /***/ }),
 /* 5 */
@@ -15873,7 +15873,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _chart = __webpack_require__(173);
+var _chart = __webpack_require__(175);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -16021,10 +16021,42 @@ exports.default = Graph;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.formatLargeNumber = formatLargeNumber;
+exports.formatNumberWithCommas = formatNumberWithCommas;
+exports.trimString = trimString;
+// FORMATE LARGE NUMBERS
+function formatLargeNumber(num) {
+  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+}
+
+// Insert commas into numbers
+function formatNumberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// TRIM STRINGS TO SPECIFIED LENGTH
+function trimString(string, length) {
+  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(2);
-var normalizeHeaderName = __webpack_require__(162);
+var normalizeHeaderName = __webpack_require__(163);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -16118,39 +16150,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(143)))
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.formatLargeNumber = formatLargeNumber;
-exports.formatNumberWithCommas = formatNumberWithCommas;
-exports.trimString = trimString;
-// FORMATE LARGE NUMBERS
-function formatLargeNumber(num) {
-  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
-  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-  // Three Zeroes for Thousands
-  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-}
-
-// Insert commas into numbers
-function formatNumberWithCommas(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// TRIM STRINGS TO SPECIFIED LENGTH
-function trimString(string, length) {
-  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-}
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(144)))
 
 /***/ }),
 /* 8 */
@@ -16160,12 +16160,12 @@ function trimString(string, length) {
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(2);
-var settle = __webpack_require__(154);
-var buildURL = __webpack_require__(157);
-var parseHeaders = __webpack_require__(163);
-var isURLSameOrigin = __webpack_require__(161);
+var settle = __webpack_require__(155);
+var buildURL = __webpack_require__(158);
+var parseHeaders = __webpack_require__(164);
+var isURLSameOrigin = __webpack_require__(162);
 var createError = __webpack_require__(11);
-var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(156);
+var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(157);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -16262,7 +16262,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(159);
+      var cookies = __webpack_require__(160);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -16338,7 +16338,7 @@ module.exports = function xhrAdapter(config) {
   });
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(143)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(144)))
 
 /***/ }),
 /* 9 */
@@ -16385,7 +16385,7 @@ module.exports = function isCancel(value) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(153);
+var enhanceError = __webpack_require__(154);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -16455,10 +16455,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Intervals = function () {
-  function Intervals(intervalsContainer, symbol, chartContainer) {
+  function Intervals(intervalsContainerId, symbol, chartContainer) {
     _classCallCheck(this, Intervals);
 
-    this.intervalsContainer = intervalsContainer;
+    this.$intervalsContainer = (0, _jquery2.default)(intervalsContainerId);
     this.symbol = symbol;
     this.$chartContainer = (0, _jquery2.default)(chartContainer);
     this.graph;
@@ -16478,7 +16478,7 @@ var Intervals = function () {
     value: function renderIntervals() {
       var html = '\n      <ul id="time-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
 
-      this.intervalsContainer.html(html);
+      this.$intervalsContainer.html(html);
     }
 
     // CLICK HANDLER TO UPDATE GRAPH
@@ -16671,7 +16671,7 @@ var News = function () {
       } else {
         newsArticlesData = _store2.default.get(this.localStorageKey).news;
       }
-      this.$container.append('<ul class="news-list"></ul>');
+      this.$container.append('<h2 class="text-header">Latest News</h2><ul class="news-list"></ul>');
 
       var articles = newsArticlesData.map(function (article) {
         var headline = article.headline;
@@ -29069,6 +29069,542 @@ exports.default = WatchButton;
 
 /***/ }),
 /* 143 */
+/***/ (function(module, exports, __webpack_require__) {
+
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(true)
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define("Navigo", [], factory);
+	else if(typeof exports === 'object')
+		exports["Navigo"] = factory();
+	else
+		root["Navigo"] = factory();
+})(this, function() {
+return /******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId])
+/******/ 			return installedModules[moduleId].exports;
+/******/
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			exports: {},
+/******/ 			id: moduleId,
+/******/ 			loaded: false
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.loaded = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function isPushStateAvailable() {
+	  return !!(typeof window !== 'undefined' && window.history && window.history.pushState);
+	}
+	
+	function Navigo(r, useHash, hash) {
+	  this.root = null;
+	  this._routes = [];
+	  this._useHash = useHash;
+	  this._hash = typeof hash === 'undefined' ? '#' : hash;
+	  this._paused = false;
+	  this._destroyed = false;
+	  this._lastRouteResolved = null;
+	  this._notFoundHandler = null;
+	  this._defaultHandler = null;
+	  this._usePushState = !useHash && isPushStateAvailable();
+	  this._onLocationChange = this._onLocationChange.bind(this);
+	  this._genericHooks = null;
+	  this._historyAPIUpdateMethod = 'pushState';
+	
+	  if (r) {
+	    this.root = useHash ? r.replace(/\/$/, '/' + this._hash) : r.replace(/\/$/, '');
+	  } else if (useHash) {
+	    this.root = this._cLoc().split(this._hash)[0].replace(/\/$/, '/' + this._hash);
+	  }
+	
+	  this._listen();
+	  this.updatePageLinks();
+	}
+	
+	function clean(s) {
+	  if (s instanceof RegExp) return s;
+	  return s.replace(/\/+$/, '').replace(/^\/+/, '^/');
+	}
+	
+	function regExpResultToParams(match, names) {
+	  if (names.length === 0) return null;
+	  if (!match) return null;
+	  return match.slice(1, match.length).reduce(function (params, value, index) {
+	    if (params === null) params = {};
+	    params[names[index]] = decodeURIComponent(value);
+	    return params;
+	  }, null);
+	}
+	
+	function replaceDynamicURLParts(route) {
+	  var paramNames = [],
+	      regexp;
+	
+	  if (route instanceof RegExp) {
+	    regexp = route;
+	  } else {
+	    regexp = new RegExp(route.replace(Navigo.PARAMETER_REGEXP, function (full, dots, name) {
+	      paramNames.push(name);
+	      return Navigo.REPLACE_VARIABLE_REGEXP;
+	    }).replace(Navigo.WILDCARD_REGEXP, Navigo.REPLACE_WILDCARD) + Navigo.FOLLOWED_BY_SLASH_REGEXP, Navigo.MATCH_REGEXP_FLAGS);
+	  }
+	  return { regexp: regexp, paramNames: paramNames };
+	}
+	
+	function getUrlDepth(url) {
+	  return url.replace(/\/$/, '').split('/').length;
+	}
+	
+	function compareUrlDepth(urlA, urlB) {
+	  return getUrlDepth(urlB) - getUrlDepth(urlA);
+	}
+	
+	function findMatchedRoutes(url) {
+	  var routes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
+	
+	  return routes.map(function (route) {
+	    var _replaceDynamicURLPar = replaceDynamicURLParts(clean(route.route)),
+	        regexp = _replaceDynamicURLPar.regexp,
+	        paramNames = _replaceDynamicURLPar.paramNames;
+	
+	    var match = url.replace(/^\/+/, '/').match(regexp);
+	    var params = regExpResultToParams(match, paramNames);
+	
+	    return match ? { match: match, route: route, params: params } : false;
+	  }).filter(function (m) {
+	    return m;
+	  });
+	}
+	
+	function match(url, routes) {
+	  return findMatchedRoutes(url, routes)[0] || false;
+	}
+	
+	function root(url, routes) {
+	  var matched = routes.map(function (route) {
+	    return route.route === '' || route.route === '*' ? url : url.split(new RegExp(route.route + '($|\/)'))[0];
+	  });
+	  var fallbackURL = clean(url);
+	
+	  if (matched.length > 1) {
+	    return matched.reduce(function (result, url) {
+	      if (result.length > url.length) result = url;
+	      return result;
+	    }, matched[0]);
+	  } else if (matched.length === 1) {
+	    return matched[0];
+	  }
+	  return fallbackURL;
+	}
+	
+	function isHashChangeAPIAvailable() {
+	  return !!(typeof window !== 'undefined' && 'onhashchange' in window);
+	}
+	
+	function extractGETParameters(url) {
+	  return url.split(/\?(.*)?$/).slice(1).join('');
+	}
+	
+	function getOnlyURL(url, useHash, hash) {
+	  var onlyURL = url,
+	      split;
+	  var cleanGETParam = function cleanGETParam(str) {
+	    return str.split(/\?(.*)?$/)[0];
+	  };
+	
+	  if (typeof hash === 'undefined') {
+	    // To preserve BC
+	    hash = '#';
+	  }
+	
+	  if (isPushStateAvailable() && !useHash) {
+	    onlyURL = cleanGETParam(url).split(hash)[0];
+	  } else {
+	    split = url.split(hash);
+	    onlyURL = split.length > 1 ? cleanGETParam(split[1]) : cleanGETParam(split[0]);
+	  }
+	
+	  return onlyURL;
+	}
+	
+	function manageHooks(handler, hooks, params) {
+	  if (hooks && (typeof hooks === 'undefined' ? 'undefined' : _typeof(hooks)) === 'object') {
+	    if (hooks.before) {
+	      hooks.before(function () {
+	        var shouldRoute = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+	
+	        if (!shouldRoute) return;
+	        handler();
+	        hooks.after && hooks.after(params);
+	      }, params);
+	    } else if (hooks.after) {
+	      handler();
+	      hooks.after && hooks.after(params);
+	    }
+	    return;
+	  }
+	  handler();
+	};
+	
+	function isHashedRoot(url, useHash, hash) {
+	  if (isPushStateAvailable() && !useHash) {
+	    return false;
+	  }
+	
+	  if (!url.match(hash)) {
+	    return false;
+	  }
+	
+	  var split = url.split(hash);
+	
+	  if (split.length < 2 || split[1] === '') {
+	    return true;
+	  }
+	
+	  return false;
+	};
+	
+	Navigo.prototype = {
+	  helpers: {
+	    match: match,
+	    root: root,
+	    clean: clean,
+	    getOnlyURL: getOnlyURL
+	  },
+	  navigate: function navigate(path, absolute) {
+	    var to;
+	
+	    path = path || '';
+	    if (this._usePushState) {
+	      to = (!absolute ? this._getRoot() + '/' : '') + path.replace(/^\/+/, '/');
+	      to = to.replace(/([^:])(\/{2,})/g, '$1/');
+	      history[this._historyAPIUpdateMethod]({}, '', to);
+	      this.resolve();
+	    } else if (typeof window !== 'undefined') {
+	      path = path.replace(new RegExp('^' + this._hash), '');
+	      window.location.href = window.location.href.replace(/#$/, '').replace(new RegExp(this._hash + '.*$'), '') + this._hash + path;
+	    }
+	    return this;
+	  },
+	  on: function on() {
+	    var _this = this;
+	
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+	
+	    if (typeof args[0] === 'function') {
+	      this._defaultHandler = { handler: args[0], hooks: args[1] };
+	    } else if (args.length >= 2) {
+	      if (args[0] === '/') {
+	        var func = args[1];
+	
+	        if (_typeof(args[1]) === 'object') {
+	          func = args[1].uses;
+	        }
+	
+	        this._defaultHandler = { handler: func, hooks: args[2] };
+	      } else {
+	        this._add(args[0], args[1], args[2]);
+	      }
+	    } else if (_typeof(args[0]) === 'object') {
+	      var orderedRoutes = Object.keys(args[0]).sort(compareUrlDepth);
+	
+	      orderedRoutes.forEach(function (route) {
+	        _this.on(route, args[0][route]);
+	      });
+	    }
+	    return this;
+	  },
+	  off: function off(handler) {
+	    if (this._defaultHandler !== null && handler === this._defaultHandler.handler) {
+	      this._defaultHandler = null;
+	    } else if (this._notFoundHandler !== null && handler === this._notFoundHandler.handler) {
+	      this._notFoundHandler = null;
+	    }
+	    this._routes = this._routes.reduce(function (result, r) {
+	      if (r.handler !== handler) result.push(r);
+	      return result;
+	    }, []);
+	    return this;
+	  },
+	  notFound: function notFound(handler, hooks) {
+	    this._notFoundHandler = { handler: handler, hooks: hooks };
+	    return this;
+	  },
+	  resolve: function resolve(current) {
+	    var _this2 = this;
+	
+	    var handler, m;
+	    var url = (current || this._cLoc()).replace(this._getRoot(), '');
+	
+	    if (this._useHash) {
+	      url = url.replace(new RegExp('^\/' + this._hash), '/');
+	    }
+	
+	    var GETParameters = extractGETParameters(current || this._cLoc());
+	    var onlyURL = getOnlyURL(url, this._useHash, this._hash);
+	
+	    if (this._paused) return false;
+	
+	    if (this._lastRouteResolved && onlyURL === this._lastRouteResolved.url && GETParameters === this._lastRouteResolved.query) {
+	      if (this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.already) {
+	        this._lastRouteResolved.hooks.already(this._lastRouteResolved.params);
+	      }
+	      return false;
+	    }
+	
+	    m = match(onlyURL, this._routes);
+	
+	    if (m) {
+	      this._callLeave();
+	      this._lastRouteResolved = {
+	        url: onlyURL,
+	        query: GETParameters,
+	        hooks: m.route.hooks,
+	        params: m.params,
+	        name: m.route.name
+	      };
+	      handler = m.route.handler;
+	      manageHooks(function () {
+	        manageHooks(function () {
+	          m.route.route instanceof RegExp ? handler.apply(undefined, _toConsumableArray(m.match.slice(1, m.match.length))) : handler(m.params, GETParameters);
+	        }, m.route.hooks, m.params, _this2._genericHooks);
+	      }, this._genericHooks, m.params);
+	      return m;
+	    } else if (this._defaultHandler && (onlyURL === '' || onlyURL === '/' || onlyURL === this._hash || isHashedRoot(onlyURL, this._useHash, this._hash))) {
+	      manageHooks(function () {
+	        manageHooks(function () {
+	          _this2._callLeave();
+	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._defaultHandler.hooks };
+	          _this2._defaultHandler.handler(GETParameters);
+	        }, _this2._defaultHandler.hooks);
+	      }, this._genericHooks);
+	      return true;
+	    } else if (this._notFoundHandler) {
+	      manageHooks(function () {
+	        manageHooks(function () {
+	          _this2._callLeave();
+	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._notFoundHandler.hooks };
+	          _this2._notFoundHandler.handler(GETParameters);
+	        }, _this2._notFoundHandler.hooks);
+	      }, this._genericHooks);
+	    }
+	    return false;
+	  },
+	  destroy: function destroy() {
+	    this._routes = [];
+	    this._destroyed = true;
+	    clearTimeout(this._listeningInterval);
+	    if (typeof window !== 'undefined') {
+	      window.removeEventListener('popstate', this._onLocationChange);
+	      window.removeEventListener('hashchange', this._onLocationChange);
+	    }
+	  },
+	  updatePageLinks: function updatePageLinks() {
+	    var self = this;
+	
+	    if (typeof document === 'undefined') return;
+	
+	    this._findLinks().forEach(function (link) {
+	      if (!link.hasListenerAttached) {
+	        link.addEventListener('click', function (e) {
+	          var location = self.getLinkPath(link);
+	
+	          if (!self._destroyed) {
+	            e.preventDefault();
+	            self.navigate(location.replace(/\/+$/, '').replace(/^\/+/, '/'));
+	          }
+	        });
+	        link.hasListenerAttached = true;
+	      }
+	    });
+	  },
+	  generate: function generate(name) {
+	    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+	
+	    var result = this._routes.reduce(function (result, route) {
+	      var key;
+	
+	      if (route.name === name) {
+	        result = route.route;
+	        for (key in data) {
+	          result = result.toString().replace(':' + key, data[key]);
+	        }
+	      }
+	      return result;
+	    }, '');
+	
+	    return this._useHash ? this._hash + result : result;
+	  },
+	  link: function link(path) {
+	    return this._getRoot() + path;
+	  },
+	  pause: function pause() {
+	    var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+	
+	    this._paused = status;
+	    if (status) {
+	      this._historyAPIUpdateMethod = 'replaceState';
+	    } else {
+	      this._historyAPIUpdateMethod = 'pushState';
+	    }
+	  },
+	  resume: function resume() {
+	    this.pause(false);
+	  },
+	  historyAPIUpdateMethod: function historyAPIUpdateMethod(value) {
+	    if (typeof value === 'undefined') return this._historyAPIUpdateMethod;
+	    this._historyAPIUpdateMethod = value;
+	    return value;
+	  },
+	  disableIfAPINotAvailable: function disableIfAPINotAvailable() {
+	    if (!isPushStateAvailable()) {
+	      this.destroy();
+	    }
+	  },
+	  lastRouteResolved: function lastRouteResolved() {
+	    return this._lastRouteResolved;
+	  },
+	  getLinkPath: function getLinkPath(link) {
+	    return link.pathname || link.getAttribute('href');
+	  },
+	  hooks: function hooks(_hooks) {
+	    this._genericHooks = _hooks;
+	  },
+	
+	  _add: function _add(route) {
+	    var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+	    var hooks = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+	
+	    if (typeof route === 'string') {
+	      route = encodeURI(route);
+	    }
+	    if ((typeof handler === 'undefined' ? 'undefined' : _typeof(handler)) === 'object') {
+	      this._routes.push({
+	        route: route,
+	        handler: handler.uses,
+	        name: handler.as,
+	        hooks: hooks || handler.hooks
+	      });
+	    } else {
+	      this._routes.push({ route: route, handler: handler, hooks: hooks });
+	    }
+	    return this._add;
+	  },
+	  _getRoot: function _getRoot() {
+	    if (this.root !== null) return this.root;
+	    this.root = root(this._cLoc().split('?')[0], this._routes);
+	    return this.root;
+	  },
+	  _listen: function _listen() {
+	    var _this3 = this;
+	
+	    if (this._usePushState) {
+	      window.addEventListener('popstate', this._onLocationChange);
+	    } else if (isHashChangeAPIAvailable()) {
+	      window.addEventListener('hashchange', this._onLocationChange);
+	    } else {
+	      var cached = this._cLoc(),
+	          current = void 0,
+	          _check = void 0;
+	
+	      _check = function check() {
+	        current = _this3._cLoc();
+	        if (cached !== current) {
+	          cached = current;
+	          _this3.resolve();
+	        }
+	        _this3._listeningInterval = setTimeout(_check, 200);
+	      };
+	      _check();
+	    }
+	  },
+	  _cLoc: function _cLoc() {
+	    if (typeof window !== 'undefined') {
+	      if (typeof window.__NAVIGO_WINDOW_LOCATION_MOCK__ !== 'undefined') {
+	        return window.__NAVIGO_WINDOW_LOCATION_MOCK__;
+	      }
+	      return clean(window.location.href);
+	    }
+	    return '';
+	  },
+	  _findLinks: function _findLinks() {
+	    return [].slice.call(document.querySelectorAll('[data-navigo]'));
+	  },
+	  _onLocationChange: function _onLocationChange() {
+	    this.resolve();
+	  },
+	  _callLeave: function _callLeave() {
+	    if (this._lastRouteResolved && this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.leave) {
+	      this._lastRouteResolved.hooks.leave();
+	    }
+	  }
+	};
+	
+	Navigo.PARAMETER_REGEXP = /([:*])(\w+)/g;
+	Navigo.WILDCARD_REGEXP = /\*/g;
+	Navigo.REPLACE_VARIABLE_REGEXP = '([^\/]+)';
+	Navigo.REPLACE_WILDCARD = '(?:.*)';
+	Navigo.FOLLOWED_BY_SLASH_REGEXP = '(?:\/$|$)';
+	Navigo.MATCH_REGEXP_FLAGS = '';
+	
+	exports.default = Navigo;
+	module.exports = exports['default'];
+
+/***/ }
+/******/ ])
+});
+;
+//# sourceMappingURL=navigo.js.map
+
+/***/ }),
+/* 144 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -29258,7 +29794,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -29286,7 +29822,7 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29302,7 +29838,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(168);
+var _router = __webpack_require__(170);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -29325,7 +29861,7 @@ var Nav = function () {
     this.router = new _router2.default();
     // ACTIVATE SIDEBAR NAV
     this.activateNav();
-    this.setActiveTabOnRefresh();
+    // this.setActiveTabOnRefresh();
   }
 
   // SET ACTIVE MENU ITEM ON PAGE RELOAD
@@ -29395,7 +29931,7 @@ var Nav = function () {
 exports.default = Nav;
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29411,7 +29947,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(177);
+var _navigo = __webpack_require__(143);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
@@ -29459,13 +29995,13 @@ var Search = function () {
 exports.default = Search;
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29473,8 +30009,8 @@ exports.default = Search;
 
 var utils = __webpack_require__(2);
 var bind = __webpack_require__(12);
-var Axios = __webpack_require__(150);
-var defaults = __webpack_require__(6);
+var Axios = __webpack_require__(151);
+var defaults = __webpack_require__(7);
 
 /**
  * Create an instance of Axios
@@ -29508,14 +30044,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(9);
-axios.CancelToken = __webpack_require__(149);
+axios.CancelToken = __webpack_require__(150);
 axios.isCancel = __webpack_require__(10);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(164);
+axios.spread = __webpack_require__(165);
 
 module.exports = axios;
 
@@ -29524,7 +30060,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29588,16 +30124,16 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaults = __webpack_require__(6);
+var defaults = __webpack_require__(7);
 var utils = __webpack_require__(2);
-var InterceptorManager = __webpack_require__(151);
-var dispatchRequest = __webpack_require__(152);
+var InterceptorManager = __webpack_require__(152);
+var dispatchRequest = __webpack_require__(153);
 
 /**
  * Create a new instance of Axios
@@ -29674,7 +30210,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29733,18 +30269,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(2);
-var transformData = __webpack_require__(155);
+var transformData = __webpack_require__(156);
 var isCancel = __webpack_require__(10);
-var defaults = __webpack_require__(6);
-var isAbsoluteURL = __webpack_require__(160);
-var combineURLs = __webpack_require__(158);
+var defaults = __webpack_require__(7);
+var isAbsoluteURL = __webpack_require__(161);
+var combineURLs = __webpack_require__(159);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -29826,7 +30362,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29854,7 +30390,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29887,7 +30423,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29914,7 +30450,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29957,7 +30493,7 @@ module.exports = btoa;
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30030,7 +30566,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30051,7 +30587,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30111,7 +30647,7 @@ module.exports = (
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30132,7 +30668,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30207,7 +30743,7 @@ module.exports = (
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30226,7 +30762,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30286,7 +30822,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30320,19 +30856,19 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(147);
+__webpack_require__(148);
 
-var _nav = __webpack_require__(145);
+var _nav = __webpack_require__(146);
 
 var _nav2 = _interopRequireDefault(_nav);
 
-var _search = __webpack_require__(146);
+var _search = __webpack_require__(147);
 
 var _search2 = _interopRequireDefault(_search);
 
@@ -30352,7 +30888,147 @@ var App = function App() {
 new App();
 
 /***/ }),
-/* 166 */
+/* 167 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _graph = __webpack_require__(5);
+
+var _graph2 = _interopRequireDefault(_graph);
+
+var _intervals = __webpack_require__(13);
+
+var _intervals2 = _interopRequireDefault(_intervals);
+
+var _helpers = __webpack_require__(6);
+
+var _watchButton = __webpack_require__(15);
+
+var _watchButton2 = _interopRequireDefault(_watchButton);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ChartBox = function () {
+  function ChartBox(containerId, symbol) {
+    _classCallCheck(this, ChartBox);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    this.symbol = symbol;
+    this.graph;
+    this.intervalsBar;
+    this.watchButton;
+    this.interval = '1m';
+    this.renderHtml();
+    this.$stockName = (0, _jquery2.default)('#singlestock-chart-name');
+    this.$stockSymbol = (0, _jquery2.default)('#singlestock-chart-symbol');
+    this.$changePercentContainer = (0, _jquery2.default)('#singlestock-chart-change-percent');
+    this.$latestPriceContainer = (0, _jquery2.default)('#singlestock-chart-latest-price');
+    this.renderHeader();
+    this.renderChart();
+  }
+
+  // RENDER HTML LAYOUT
+
+
+  _createClass(ChartBox, [{
+    key: 'renderHtml',
+    value: function renderHtml() {
+      var html = '\n      <div>\n        <div class="chart-header-top-row">\n          <div class="chart-name-container">\n            <h2 id="singlestock-chart-name" class="chart-stock-name"></h2>\n            <h3 id="singlestock-chart-symbol" class="chart-stock-symbol"></h3>\n          </div>\n          <div class="chart-watch-intervals-container">\n            <div id="singlestock-chart-watch-button"></div>\n            <div id="singlestock-intervals-container" class="chart-intervals-container"></div>\n          </div>\n        </div>\n        <div class="flex-hori-start" style="height: 32px;">\n          <div id="singlestock-chart-latest-price" class="chart-latest-price"></div>\n          <div id="singlestock-chart-change-percent" class="chart-change-percent"></div>\n        </div>\n      </div>\n      <canvas id="singlestock-chart" class="chart-container" width="900" height="320"></canvas>\n    ';
+
+      this.$container.empty();
+      this.$container.append(html);
+    }
+
+    // RENDER HEADER INFO
+
+  }, {
+    key: 'renderHeader',
+    value: function renderHeader() {
+      var storeData = _store2.default.get(this.symbol).quote;
+      var companyName = (0, _helpers.trimString)(storeData.companyName, 36);
+      var changePercent = storeData.changePercent.toFixed(2);
+      var latestPrice = storeData.latestPrice;
+      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
+      var latestPriceHtml = '<h2>' + latestPrice + '</2>';
+      var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '%</h3>';
+
+      this.$stockName.html(companyName);
+      this.$stockSymbol.html('(' + this.symbol + ')');
+
+      if (changePercent >= 0) {
+        this.$changePercentContainer.removeClass('percent-change-negative');
+        this.$changePercentContainer.addClass('percent-change-positive');
+      } else {
+        this.$changePercentContainer.removeClass('percent-change-positive');
+        this.$changePercentContainer.addClass('percent-change-negative');
+      }
+
+      this.$latestPriceContainer.html(latestPriceHtml);
+      this.$changePercentContainer.html(changePercentHtml);
+    }
+
+    // RENDER CHART
+
+  }, {
+    key: 'renderChart',
+    value: function renderChart() {
+      var storedData = _store2.default.get(this.symbol).chart[this.interval];
+      var companyName = _store2.default.get(this.symbol).quote.companyName;
+      // get closing prices for stock
+      var prices = this.getChartData(storedData, 'close');
+      // get dates for closing prices
+      var dates = this.getChartData(storedData, 'date');
+
+      // delete graph if any exists and create new graph
+      if (this.graph) {
+        this.graph.destroy();
+      }
+      this.graph = new _graph2.default('#singlestock-chart', prices, dates);
+      this.intervalsBar = new _intervals2.default('#singlestock-intervals-container', this.symbol, '#singlestock-chart');
+      this.watchButton = new _watchButton2.default('#singlestock-chart-watch-button', this.symbol, companyName);
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getChartData',
+    value: function getChartData(data, key) {
+      return data.map(function (day) {
+        if (key === 'date') {
+          var date = day[key].split('-');
+          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
+        } else {
+          return day[key];
+        }
+      });
+    }
+  }]);
+
+  return ChartBox;
+}();
+
+exports.default = ChartBox;
+
+/***/ }),
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30415,8 +31091,7 @@ var GraphCard = function () {
     value: function fetchGraphPoints() {
       var _this = this;
 
-      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d'), _axios2.default.get('https://cloud.iexapis.com/v1/stock/market/sector-performance?token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (data, sector) {
-        // console.log(sector);
+      _axios2.default.all([_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d')]).then(_axios2.default.spread(function (data) {
         _this.renderHeader(data);
         _this.renderGraph(data);
       })).catch(function (error) {
@@ -30527,7 +31202,7 @@ var GraphCard = function () {
 exports.default = GraphCard;
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30547,7 +31222,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _helpers = __webpack_require__(7);
+var _helpers = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30595,7 +31270,7 @@ var KeyStats = function () {
 exports.default = KeyStats;
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30611,19 +31286,19 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(177);
+var _navigo = __webpack_require__(143);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stock = __webpack_require__(170);
+var _stock = __webpack_require__(172);
 
 var _stock2 = _interopRequireDefault(_stock);
 
-var _stocks = __webpack_require__(171);
+var _stocks = __webpack_require__(173);
 
 var _stocks2 = _interopRequireDefault(_stocks);
 
-var _watchlist = __webpack_require__(172);
+var _watchlist = __webpack_require__(174);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -30704,7 +31379,7 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30728,7 +31403,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(7);
+var _helpers = __webpack_require__(6);
 
 var _graph = __webpack_require__(5);
 
@@ -30761,7 +31436,6 @@ var StockPopup = function () {
 
     // REGISTER POPUP ELEMENTS
     this.$popupContainer = (0, _jquery2.default)('.popup-modal');
-    this.$intervalsContainer = this.$popupContainer.find('#popup-intervals-container');
     this.$popupContentContainer = this.$popupContainer.find('.popup-stock-container');
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$latestPriceContainer = this.$popupContainer.find('#popup-latest-price');
@@ -30771,10 +31445,8 @@ var StockPopup = function () {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
-
-    this.intervals = new _intervals2.default(this.$intervalsContainer, this.symbol, '#popup-chart');
+    this.intervals = new _intervals2.default('#watchlist-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new _watchButton2.default('#popup-watch-button', this.symbol, this.companyName);
-
     this.getStockData();
     this.closePopup();
   }
@@ -30959,7 +31631,7 @@ var StockPopup = function () {
 exports.default = StockPopup;
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30983,11 +31655,21 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _chartbox = __webpack_require__(183);
+var _chartbox = __webpack_require__(167);
 
 var _chartbox2 = _interopRequireDefault(_chartbox);
 
+var _keystats = __webpack_require__(169);
+
+var _keystats2 = _interopRequireDefault(_keystats);
+
+var _news = __webpack_require__(14);
+
+var _news2 = _interopRequireDefault(_news);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -30997,11 +31679,14 @@ var Stock = function () {
 
     this.symbol = symbol;
     this.$canvas = (0, _jquery2.default)('.canvas');
+    this.interval = '1m';
     this.renderHtml();
 
     // If data exists in local storage...
     if (_store2.default.get(this.symbol) !== null) {
       new _chartbox2.default('#singlestock-chart-container', this.symbol);
+      new _keystats2.default('#singlestock-keystats-container', this.symbol);
+      new _news2.default('#singlestock-news-container', [this.symbol], this.symbol);
     }
     // If data doesn't exist...
     else {
@@ -31015,7 +31700,7 @@ var Stock = function () {
   _createClass(Stock, [{
     key: 'renderHtml',
     value: function renderHtml() {
-      var html = '\n      <div>\n        <div>\n          <div>\n            <div id="singlestock-chart-container" class="box"></div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div>\n        <div>\n          <div>\n            <div id="singlestock-chart-container" class="box"></div>\n          </div>\n          <div class="stock-summary-container">\n            <div id="singlestock-keystats-container" class="box margin-right"></div>\n            <div id="singlestock-news-container" class="news-container box">\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$canvas.empty();
       this.$canvas.append(html);
@@ -31030,10 +31715,19 @@ var Stock = function () {
 
       _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
         var symbol = _this.symbol.toUpperCase();
-        _store2.default.set(symbol, response.data);
-        new _chartbox2.default('#singlestock-chart-container', _this.symbol);
+        var dataToStore = {
+          chart: _defineProperty({}, _this.interval, response.data.chart),
+          news: response.data.news,
+          quote: response.data.quote,
+          time: Date.now()
+        };
+        _store2.default.set(symbol, dataToStore);
       }).catch(function (error) {
         console.log(error);
+      }).finally(function () {
+        new _chartbox2.default('#singlestock-chart-container', _this.symbol);
+        new _keystats2.default('#singlestock-keystats-container', _this.symbol);
+        new _news2.default('#singlestock-news-container', [_this.symbol], _this.symbol);
       });
     }
   }]);
@@ -31044,7 +31738,7 @@ var Stock = function () {
 exports.default = Stock;
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31060,7 +31754,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _lodash = __webpack_require__(175);
+var _lodash = __webpack_require__(177);
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
@@ -31072,11 +31766,11 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _stockPopup = __webpack_require__(169);
+var _stockPopup = __webpack_require__(171);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
-var _graphCard = __webpack_require__(166);
+var _graphCard = __webpack_require__(168);
 
 var _graphCard2 = _interopRequireDefault(_graphCard);
 
@@ -31138,7 +31832,8 @@ var Stocks = function () {
   }, {
     key: 'render',
     value: function render() {
-      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="home-news" class="box">\n            <h2 class="text-header">Latest News</h2>\n          </div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right">\n            <h2 class="text-header">Gainers</h2>\n            <ol id="gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="losers-container" class="box">\n            <h2 class="text-header">Losers</h2>\n            <ol id="losers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
+      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="home-news" class="box"></div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right">\n            <h2 class="text-header">Gainers</h2>\n            <ol id="gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="losers-container" class="box">\n            <h2 class="text-header">Losers</h2>\n            <ol id="losers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
+      this.$container.empty();
       this.$container.append(html);
     }
 
@@ -31163,6 +31858,7 @@ var Stocks = function () {
 
       // check if local storage exist
       if (mostActive.length && gainers.length && losers.length) {
+        console.log('yes');
         this.mostActiveSymbols = this.getMostActiveSymbols();
         this.renderStocks('#most-active', 'mostActive');
         this.renderStocks('#gainers', 'gainers');
@@ -31343,7 +32039,7 @@ var Stocks = function () {
 exports.default = Stocks;
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31367,7 +32063,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(7);
+var _helpers = __webpack_require__(6);
 
 var _graph = __webpack_require__(5);
 
@@ -31381,7 +32077,7 @@ var _watchButton = __webpack_require__(15);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _keystats = __webpack_require__(167);
+var _keystats = __webpack_require__(169);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
@@ -31427,8 +32123,6 @@ var Watchlist = function () {
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
     this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
     this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
-    this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
-
     this.intervalsBar;
     this.watchButton;
 
@@ -31469,8 +32163,9 @@ var Watchlist = function () {
   }, {
     key: 'renderCanvasHTML',
     value: function renderCanvasHTML() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box">\n                <h2 class="text-header">Latest News</h2>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
+      this.$container.empty();
       this.$container.append(html);
     }
 
@@ -31603,10 +32298,10 @@ var Watchlist = function () {
         return console.log(error);
       }).finally(function () {
         if (requestType === 'prices') {
-          _this3.renderGraph();
+          _this3.renderChart();
         } else if (requestType === 'allData') {
           // functions below don't receive data arguments bc they will retrieve data from localStorage
-          _this3.renderGraph();
+          _this3.renderChart();
           _this3.keyStats = new _keystats2.default('#watchlist-keystats-container', _this3.symbol);
           _this3.latestNews = new _news2.default('#watchlist-news-container', [_this3.symbol], _this3.symbol);
           _this3.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', _this3.symbol, _this3.companyName, true);
@@ -31669,7 +32364,7 @@ var Watchlist = function () {
         // if stored data exists and is less than 6 hours old
         if (_store2.default.get(that.symbol) !== null && !dataUpdateRequired) {
           that.fetchStockData('latestPrice');
-          that.renderGraph();
+          that.renderChart();
           that.keyStats = new _keystats2.default('#watchlist-keystats-container', that.symbol);
           that.latestNews = new _news2.default('#watchlist-news-container', [that.symbol], that.symbol);
         }
@@ -31708,26 +32403,26 @@ var Watchlist = function () {
       }
     }
 
-    // RENDER GRAPH
+    // RENDER CHART
 
   }, {
-    key: 'renderGraph',
-    value: function renderGraph() {
+    key: 'renderChart',
+    value: function renderChart() {
       var storedData = _store2.default.get(this.symbol);
       // if historical prices for selected interval does exist in localStorage
       if (this.interval in storedData.chart) {
         var _storedData = _store2.default.get(this.symbol).chart[this.interval];
         // get closing prices for stock
-        var prices = this.getHistoricalData(_storedData, 'close');
+        var prices = this.getChartData(_storedData, 'close');
         // get dates for closing prices
-        var dates = this.getHistoricalData(_storedData, 'date');
+        var dates = this.getChartData(_storedData, 'date');
 
         // delete graph if any exists and create new graph
         if (this.graph) {
           this.graph.destroy();
         }
         this.graph = new _graph2.default('#watchlist-chart', prices, dates);
-        this.intervalsBar = new _intervals2.default(this.$intervalsContainer, this.symbol, '#watchlist-chart');
+        this.intervalsBar = new _intervals2.default('#watchlist-intervals-container', this.symbol, '#watchlist-chart');
       }
       // if it doesn't exist, make data request
       else {
@@ -31765,8 +32460,8 @@ var Watchlist = function () {
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
-    key: 'getHistoricalData',
-    value: function getHistoricalData(data, key) {
+    key: 'getChartData',
+    value: function getChartData(data, key) {
       return data.map(function (day) {
         if (key === 'date') {
           var date = day[key].split('-');
@@ -31794,7 +32489,7 @@ var Watchlist = function () {
 exports.default = Watchlist;
 
 /***/ }),
-/* 173 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -46480,7 +47175,7 @@ return src;
 
 
 /***/ }),
-/* 174 */
+/* 176 */
 /***/ (function(module, exports) {
 
 /*!
@@ -46507,7 +47202,7 @@ function isSlowBuffer (obj) {
 
 
 /***/ }),
-/* 175 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, module) {var __WEBPACK_AMD_DEFINE_RESULT__;/**
@@ -63619,10 +64314,10 @@ function isSlowBuffer (obj) {
   }
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(178), __webpack_require__(144)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(179), __webpack_require__(145)(module)))
 
 /***/ }),
-/* 176 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -63895,546 +64590,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 176;
+webpackContext.id = 178;
 
 /***/ }),
-/* 177 */
-/***/ (function(module, exports, __webpack_require__) {
-
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(true)
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define("Navigo", [], factory);
-	else if(typeof exports === 'object')
-		exports["Navigo"] = factory();
-	else
-		root["Navigo"] = factory();
-})(this, function() {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
-/******/
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function isPushStateAvailable() {
-	  return !!(typeof window !== 'undefined' && window.history && window.history.pushState);
-	}
-	
-	function Navigo(r, useHash, hash) {
-	  this.root = null;
-	  this._routes = [];
-	  this._useHash = useHash;
-	  this._hash = typeof hash === 'undefined' ? '#' : hash;
-	  this._paused = false;
-	  this._destroyed = false;
-	  this._lastRouteResolved = null;
-	  this._notFoundHandler = null;
-	  this._defaultHandler = null;
-	  this._usePushState = !useHash && isPushStateAvailable();
-	  this._onLocationChange = this._onLocationChange.bind(this);
-	  this._genericHooks = null;
-	  this._historyAPIUpdateMethod = 'pushState';
-	
-	  if (r) {
-	    this.root = useHash ? r.replace(/\/$/, '/' + this._hash) : r.replace(/\/$/, '');
-	  } else if (useHash) {
-	    this.root = this._cLoc().split(this._hash)[0].replace(/\/$/, '/' + this._hash);
-	  }
-	
-	  this._listen();
-	  this.updatePageLinks();
-	}
-	
-	function clean(s) {
-	  if (s instanceof RegExp) return s;
-	  return s.replace(/\/+$/, '').replace(/^\/+/, '^/');
-	}
-	
-	function regExpResultToParams(match, names) {
-	  if (names.length === 0) return null;
-	  if (!match) return null;
-	  return match.slice(1, match.length).reduce(function (params, value, index) {
-	    if (params === null) params = {};
-	    params[names[index]] = decodeURIComponent(value);
-	    return params;
-	  }, null);
-	}
-	
-	function replaceDynamicURLParts(route) {
-	  var paramNames = [],
-	      regexp;
-	
-	  if (route instanceof RegExp) {
-	    regexp = route;
-	  } else {
-	    regexp = new RegExp(route.replace(Navigo.PARAMETER_REGEXP, function (full, dots, name) {
-	      paramNames.push(name);
-	      return Navigo.REPLACE_VARIABLE_REGEXP;
-	    }).replace(Navigo.WILDCARD_REGEXP, Navigo.REPLACE_WILDCARD) + Navigo.FOLLOWED_BY_SLASH_REGEXP, Navigo.MATCH_REGEXP_FLAGS);
-	  }
-	  return { regexp: regexp, paramNames: paramNames };
-	}
-	
-	function getUrlDepth(url) {
-	  return url.replace(/\/$/, '').split('/').length;
-	}
-	
-	function compareUrlDepth(urlA, urlB) {
-	  return getUrlDepth(urlB) - getUrlDepth(urlA);
-	}
-	
-	function findMatchedRoutes(url) {
-	  var routes = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
-	
-	  return routes.map(function (route) {
-	    var _replaceDynamicURLPar = replaceDynamicURLParts(clean(route.route)),
-	        regexp = _replaceDynamicURLPar.regexp,
-	        paramNames = _replaceDynamicURLPar.paramNames;
-	
-	    var match = url.replace(/^\/+/, '/').match(regexp);
-	    var params = regExpResultToParams(match, paramNames);
-	
-	    return match ? { match: match, route: route, params: params } : false;
-	  }).filter(function (m) {
-	    return m;
-	  });
-	}
-	
-	function match(url, routes) {
-	  return findMatchedRoutes(url, routes)[0] || false;
-	}
-	
-	function root(url, routes) {
-	  var matched = routes.map(function (route) {
-	    return route.route === '' || route.route === '*' ? url : url.split(new RegExp(route.route + '($|\/)'))[0];
-	  });
-	  var fallbackURL = clean(url);
-	
-	  if (matched.length > 1) {
-	    return matched.reduce(function (result, url) {
-	      if (result.length > url.length) result = url;
-	      return result;
-	    }, matched[0]);
-	  } else if (matched.length === 1) {
-	    return matched[0];
-	  }
-	  return fallbackURL;
-	}
-	
-	function isHashChangeAPIAvailable() {
-	  return !!(typeof window !== 'undefined' && 'onhashchange' in window);
-	}
-	
-	function extractGETParameters(url) {
-	  return url.split(/\?(.*)?$/).slice(1).join('');
-	}
-	
-	function getOnlyURL(url, useHash, hash) {
-	  var onlyURL = url,
-	      split;
-	  var cleanGETParam = function cleanGETParam(str) {
-	    return str.split(/\?(.*)?$/)[0];
-	  };
-	
-	  if (typeof hash === 'undefined') {
-	    // To preserve BC
-	    hash = '#';
-	  }
-	
-	  if (isPushStateAvailable() && !useHash) {
-	    onlyURL = cleanGETParam(url).split(hash)[0];
-	  } else {
-	    split = url.split(hash);
-	    onlyURL = split.length > 1 ? cleanGETParam(split[1]) : cleanGETParam(split[0]);
-	  }
-	
-	  return onlyURL;
-	}
-	
-	function manageHooks(handler, hooks, params) {
-	  if (hooks && (typeof hooks === 'undefined' ? 'undefined' : _typeof(hooks)) === 'object') {
-	    if (hooks.before) {
-	      hooks.before(function () {
-	        var shouldRoute = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-	
-	        if (!shouldRoute) return;
-	        handler();
-	        hooks.after && hooks.after(params);
-	      }, params);
-	    } else if (hooks.after) {
-	      handler();
-	      hooks.after && hooks.after(params);
-	    }
-	    return;
-	  }
-	  handler();
-	};
-	
-	function isHashedRoot(url, useHash, hash) {
-	  if (isPushStateAvailable() && !useHash) {
-	    return false;
-	  }
-	
-	  if (!url.match(hash)) {
-	    return false;
-	  }
-	
-	  var split = url.split(hash);
-	
-	  if (split.length < 2 || split[1] === '') {
-	    return true;
-	  }
-	
-	  return false;
-	};
-	
-	Navigo.prototype = {
-	  helpers: {
-	    match: match,
-	    root: root,
-	    clean: clean,
-	    getOnlyURL: getOnlyURL
-	  },
-	  navigate: function navigate(path, absolute) {
-	    var to;
-	
-	    path = path || '';
-	    if (this._usePushState) {
-	      to = (!absolute ? this._getRoot() + '/' : '') + path.replace(/^\/+/, '/');
-	      to = to.replace(/([^:])(\/{2,})/g, '$1/');
-	      history[this._historyAPIUpdateMethod]({}, '', to);
-	      this.resolve();
-	    } else if (typeof window !== 'undefined') {
-	      path = path.replace(new RegExp('^' + this._hash), '');
-	      window.location.href = window.location.href.replace(/#$/, '').replace(new RegExp(this._hash + '.*$'), '') + this._hash + path;
-	    }
-	    return this;
-	  },
-	  on: function on() {
-	    var _this = this;
-	
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-	
-	    if (typeof args[0] === 'function') {
-	      this._defaultHandler = { handler: args[0], hooks: args[1] };
-	    } else if (args.length >= 2) {
-	      if (args[0] === '/') {
-	        var func = args[1];
-	
-	        if (_typeof(args[1]) === 'object') {
-	          func = args[1].uses;
-	        }
-	
-	        this._defaultHandler = { handler: func, hooks: args[2] };
-	      } else {
-	        this._add(args[0], args[1], args[2]);
-	      }
-	    } else if (_typeof(args[0]) === 'object') {
-	      var orderedRoutes = Object.keys(args[0]).sort(compareUrlDepth);
-	
-	      orderedRoutes.forEach(function (route) {
-	        _this.on(route, args[0][route]);
-	      });
-	    }
-	    return this;
-	  },
-	  off: function off(handler) {
-	    if (this._defaultHandler !== null && handler === this._defaultHandler.handler) {
-	      this._defaultHandler = null;
-	    } else if (this._notFoundHandler !== null && handler === this._notFoundHandler.handler) {
-	      this._notFoundHandler = null;
-	    }
-	    this._routes = this._routes.reduce(function (result, r) {
-	      if (r.handler !== handler) result.push(r);
-	      return result;
-	    }, []);
-	    return this;
-	  },
-	  notFound: function notFound(handler, hooks) {
-	    this._notFoundHandler = { handler: handler, hooks: hooks };
-	    return this;
-	  },
-	  resolve: function resolve(current) {
-	    var _this2 = this;
-	
-	    var handler, m;
-	    var url = (current || this._cLoc()).replace(this._getRoot(), '');
-	
-	    if (this._useHash) {
-	      url = url.replace(new RegExp('^\/' + this._hash), '/');
-	    }
-	
-	    var GETParameters = extractGETParameters(current || this._cLoc());
-	    var onlyURL = getOnlyURL(url, this._useHash, this._hash);
-	
-	    if (this._paused) return false;
-	
-	    if (this._lastRouteResolved && onlyURL === this._lastRouteResolved.url && GETParameters === this._lastRouteResolved.query) {
-	      if (this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.already) {
-	        this._lastRouteResolved.hooks.already(this._lastRouteResolved.params);
-	      }
-	      return false;
-	    }
-	
-	    m = match(onlyURL, this._routes);
-	
-	    if (m) {
-	      this._callLeave();
-	      this._lastRouteResolved = {
-	        url: onlyURL,
-	        query: GETParameters,
-	        hooks: m.route.hooks,
-	        params: m.params,
-	        name: m.route.name
-	      };
-	      handler = m.route.handler;
-	      manageHooks(function () {
-	        manageHooks(function () {
-	          m.route.route instanceof RegExp ? handler.apply(undefined, _toConsumableArray(m.match.slice(1, m.match.length))) : handler(m.params, GETParameters);
-	        }, m.route.hooks, m.params, _this2._genericHooks);
-	      }, this._genericHooks, m.params);
-	      return m;
-	    } else if (this._defaultHandler && (onlyURL === '' || onlyURL === '/' || onlyURL === this._hash || isHashedRoot(onlyURL, this._useHash, this._hash))) {
-	      manageHooks(function () {
-	        manageHooks(function () {
-	          _this2._callLeave();
-	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._defaultHandler.hooks };
-	          _this2._defaultHandler.handler(GETParameters);
-	        }, _this2._defaultHandler.hooks);
-	      }, this._genericHooks);
-	      return true;
-	    } else if (this._notFoundHandler) {
-	      manageHooks(function () {
-	        manageHooks(function () {
-	          _this2._callLeave();
-	          _this2._lastRouteResolved = { url: onlyURL, query: GETParameters, hooks: _this2._notFoundHandler.hooks };
-	          _this2._notFoundHandler.handler(GETParameters);
-	        }, _this2._notFoundHandler.hooks);
-	      }, this._genericHooks);
-	    }
-	    return false;
-	  },
-	  destroy: function destroy() {
-	    this._routes = [];
-	    this._destroyed = true;
-	    clearTimeout(this._listeningInterval);
-	    if (typeof window !== 'undefined') {
-	      window.removeEventListener('popstate', this._onLocationChange);
-	      window.removeEventListener('hashchange', this._onLocationChange);
-	    }
-	  },
-	  updatePageLinks: function updatePageLinks() {
-	    var self = this;
-	
-	    if (typeof document === 'undefined') return;
-	
-	    this._findLinks().forEach(function (link) {
-	      if (!link.hasListenerAttached) {
-	        link.addEventListener('click', function (e) {
-	          var location = self.getLinkPath(link);
-	
-	          if (!self._destroyed) {
-	            e.preventDefault();
-	            self.navigate(location.replace(/\/+$/, '').replace(/^\/+/, '/'));
-	          }
-	        });
-	        link.hasListenerAttached = true;
-	      }
-	    });
-	  },
-	  generate: function generate(name) {
-	    var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-	
-	    var result = this._routes.reduce(function (result, route) {
-	      var key;
-	
-	      if (route.name === name) {
-	        result = route.route;
-	        for (key in data) {
-	          result = result.toString().replace(':' + key, data[key]);
-	        }
-	      }
-	      return result;
-	    }, '');
-	
-	    return this._useHash ? this._hash + result : result;
-	  },
-	  link: function link(path) {
-	    return this._getRoot() + path;
-	  },
-	  pause: function pause() {
-	    var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-	
-	    this._paused = status;
-	    if (status) {
-	      this._historyAPIUpdateMethod = 'replaceState';
-	    } else {
-	      this._historyAPIUpdateMethod = 'pushState';
-	    }
-	  },
-	  resume: function resume() {
-	    this.pause(false);
-	  },
-	  historyAPIUpdateMethod: function historyAPIUpdateMethod(value) {
-	    if (typeof value === 'undefined') return this._historyAPIUpdateMethod;
-	    this._historyAPIUpdateMethod = value;
-	    return value;
-	  },
-	  disableIfAPINotAvailable: function disableIfAPINotAvailable() {
-	    if (!isPushStateAvailable()) {
-	      this.destroy();
-	    }
-	  },
-	  lastRouteResolved: function lastRouteResolved() {
-	    return this._lastRouteResolved;
-	  },
-	  getLinkPath: function getLinkPath(link) {
-	    return link.pathname || link.getAttribute('href');
-	  },
-	  hooks: function hooks(_hooks) {
-	    this._genericHooks = _hooks;
-	  },
-	
-	  _add: function _add(route) {
-	    var handler = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-	    var hooks = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-	
-	    if (typeof route === 'string') {
-	      route = encodeURI(route);
-	    }
-	    if ((typeof handler === 'undefined' ? 'undefined' : _typeof(handler)) === 'object') {
-	      this._routes.push({
-	        route: route,
-	        handler: handler.uses,
-	        name: handler.as,
-	        hooks: hooks || handler.hooks
-	      });
-	    } else {
-	      this._routes.push({ route: route, handler: handler, hooks: hooks });
-	    }
-	    return this._add;
-	  },
-	  _getRoot: function _getRoot() {
-	    if (this.root !== null) return this.root;
-	    this.root = root(this._cLoc().split('?')[0], this._routes);
-	    return this.root;
-	  },
-	  _listen: function _listen() {
-	    var _this3 = this;
-	
-	    if (this._usePushState) {
-	      window.addEventListener('popstate', this._onLocationChange);
-	    } else if (isHashChangeAPIAvailable()) {
-	      window.addEventListener('hashchange', this._onLocationChange);
-	    } else {
-	      var cached = this._cLoc(),
-	          current = void 0,
-	          _check = void 0;
-	
-	      _check = function check() {
-	        current = _this3._cLoc();
-	        if (cached !== current) {
-	          cached = current;
-	          _this3.resolve();
-	        }
-	        _this3._listeningInterval = setTimeout(_check, 200);
-	      };
-	      _check();
-	    }
-	  },
-	  _cLoc: function _cLoc() {
-	    if (typeof window !== 'undefined') {
-	      if (typeof window.__NAVIGO_WINDOW_LOCATION_MOCK__ !== 'undefined') {
-	        return window.__NAVIGO_WINDOW_LOCATION_MOCK__;
-	      }
-	      return clean(window.location.href);
-	    }
-	    return '';
-	  },
-	  _findLinks: function _findLinks() {
-	    return [].slice.call(document.querySelectorAll('[data-navigo]'));
-	  },
-	  _onLocationChange: function _onLocationChange() {
-	    this.resolve();
-	  },
-	  _callLeave: function _callLeave() {
-	    if (this._lastRouteResolved && this._lastRouteResolved.hooks && this._lastRouteResolved.hooks.leave) {
-	      this._lastRouteResolved.hooks.leave();
-	    }
-	  }
-	};
-	
-	Navigo.PARAMETER_REGEXP = /([:*])(\w+)/g;
-	Navigo.WILDCARD_REGEXP = /\*/g;
-	Navigo.REPLACE_VARIABLE_REGEXP = '([^\/]+)';
-	Navigo.REPLACE_WILDCARD = '(?:.*)';
-	Navigo.FOLLOWED_BY_SLASH_REGEXP = '(?:\/$|$)';
-	Navigo.MATCH_REGEXP_FLAGS = '';
-	
-	exports.default = Navigo;
-	module.exports = exports['default'];
-
-/***/ }
-/******/ ])
-});
-;
-//# sourceMappingURL=navigo.js.map
-
-/***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports) {
 
 var g;
@@ -64459,134 +64618,6 @@ try {
 
 module.exports = g;
 
-
-/***/ }),
-/* 179 */,
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _helpers = __webpack_require__(7);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ChartBox = function () {
-  function ChartBox(containerId, symbol) {
-    _classCallCheck(this, ChartBox);
-
-    this.$container = (0, _jquery2.default)(containerId);
-    this.symbol = symbol;
-    this.graph;
-    this.interval = '1m';
-    this.renderHtml();
-    this.$stockName = (0, _jquery2.default)('#singlestock-chart-name');
-    this.$stockSymbol = (0, _jquery2.default)('#singlestock-chart-symbol');
-    this.$changePercentContainer = (0, _jquery2.default)('#singlestock-chart-changepercent');
-    this.$latestPriceContainer = (0, _jquery2.default)('#singlestock-chart-latestprice');
-    this.renderHeader();
-    this.renderGraph();
-  }
-
-  // RENDER HTML LAYOUT
-
-
-  _createClass(ChartBox, [{
-    key: 'renderHtml',
-    value: function renderHtml() {
-      var html = '\n      <div class="singlestock-chart-header">\n        <div id="singlestock-chart-header-toprow">\n          <div class="singlestock-chart-name-container">\n            <h2 id="singlestock-chart-name"></h2>\n            <h3 id="singlestock-chart-symbol"></h3>\n          </div>\n          <div id="singlestock-chart-watch-intervals">\n            <div id="singlestock-chart-watch-button"></div>\n            <div id="singlestock-intervals-container"></div>\n          </div>\n        </div>\n        <div class="flex-hori-start" style="height: 32px;">\n          <div id="singlestock-chart-latestprice"></div>\n          <div id="singlestock-chart-changepercent"></div>\n        </div>\n      </div>\n      <canvas id="singlestock-chart" width="900" height="320"></canvas>\n    ';
-
-      this.$container.empty();
-      this.$container.append(html);
-    }
-
-    // RENDER HEADER INFO
-
-  }, {
-    key: 'renderHeader',
-    value: function renderHeader() {
-      var storeData = _store2.default.get(this.symbol).quote;
-      var companyName = (0, _helpers.trimString)(storeData.companyName, 36);
-      var changePercent = storeData.changePercent.toFixed(2);
-      var latestPrice = storeData.latestPrice;
-      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
-      var latestPriceHtml = '<h2>' + latestPrice + '</2>';
-      var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '%</h3>';
-
-      this.$stockName.html(companyName);
-      this.$stockSymbol.html('(' + this.symbol + ')');
-
-      if (changePercent >= 0) {
-        this.$changePercentContainer.removeClass('percent-change-negative');
-        this.$changePercentContainer.addClass('percent-change-positive');
-      } else {
-        this.$changePercentContainer.removeClass('percent-change-positive');
-        this.$changePercentContainer.addClass('percent-change-negative');
-      }
-
-      this.$latestPriceContainer.html(latestPriceHtml);
-      this.$changePercentContainer.html(changePercentHtml);
-    }
-
-    // RENDER GRAPH
-
-  }, {
-    key: 'renderGraph',
-    value: function renderGraph() {
-      var storedData = _store2.default.get(this.symbol).chart[this.interval];
-      // get closing prices for stock
-      var prices = this.getHistoricalData(storedData, 'close');
-      // get dates for closing prices
-      var dates = this.getHistoricalData(storedData, 'date');
-
-      // delete graph if any exists and create new graph
-      if (this.graph) {
-        this.graph.destroy();
-      }
-      this.graph = new Graph('#singlestock-chart', prices, dates);
-      this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#singlestock-chart');
-    }
-
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getHistoricalData',
-    value: function getHistoricalData(data, key) {
-      return data.map(function (day) {
-        if (key === 'date') {
-          var date = day[key].split('-');
-          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
-        } else {
-          return day[key];
-        }
-      });
-    }
-  }]);
-
-  return ChartBox;
-}();
-
-exports.default = ChartBox;
 
 /***/ })
 /******/ ]);

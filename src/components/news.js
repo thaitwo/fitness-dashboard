@@ -54,7 +54,7 @@ class News {
     } else {
       newsArticlesData = store.get(this.localStorageKey).news;
     }
-    this.$container.append('<ul class="news-list"></ul>');
+    this.$container.append('<h2 class="text-header">Latest News</h2><ul class="news-list"></ul>');
     
     const articles = newsArticlesData.map((article) => {
       const headline = article.headline;

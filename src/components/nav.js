@@ -15,7 +15,7 @@ class Nav {
     this.router = new Router();
     // ACTIVATE SIDEBAR NAV
     this.activateNav();
-    this.setActiveTabOnRefresh();
+    // this.setActiveTabOnRefresh();
   }
 
 

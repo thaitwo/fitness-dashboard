@@ -70,9 +70,7 @@ class Stocks {
               </li>
             </ol>
           </div>
-          <div id="home-news" class="box">
-            <h2 class="text-header">Latest News</h2>
-          </div>
+          <div id="home-news" class="box"></div>
         </div>
         <div class="home-row">
           <div id="gainers-container" class="box margin-right">
@@ -101,6 +99,7 @@ class Stocks {
           </div>
         </div>
       `;
+    this.$container.empty();
     this.$container.append(html);
   }
 
@@ -119,6 +118,7 @@ class Stocks {
 
     // check if local storage exist
     if (mostActive.length && gainers.length && losers.length) {
+      console.log('yes');
       this.mostActiveSymbols = this.getMostActiveSymbols();
       this.renderStocks('#most-active', 'mostActive');
       this.renderStocks('#gainers', 'gainers');

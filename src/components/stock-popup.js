@@ -19,7 +19,6 @@ class StockPopup {
   
     // REGISTER POPUP ELEMENTS
     this.$popupContainer = $('.popup-modal');
-    this.$intervalsContainer = this.$popupContainer.find('#popup-intervals-container');
     this.$popupContentContainer = this.$popupContainer.find('.popup-stock-container');
     this.$chartContainer = this.$popupContainer.find('#popup-chart');
     this.$latestPriceContainer = this.$popupContainer.find('#popup-latest-price');
@@ -29,10 +28,8 @@ class StockPopup {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
-
-    this.intervals = new Intervals(this.$intervalsContainer, this.symbol, '#popup-chart');
+    this.intervals = new Intervals('#watchlist-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new WatchButton('#popup-watch-button', this.symbol, this.companyName);
-
     this.getStockData();
     this.closePopup();
   }

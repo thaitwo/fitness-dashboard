@@ -33,11 +33,9 @@ class GraphCard {
   // FETCH DATA FOR SYMBOL
   fetchGraphPoints() {
     axios.all([
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/market/sector-performance?token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
+      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     ])
-    .then(axios.spread((data, sector) => {
-      // console.log(sector);
+    .then(axios.spread((data) => {
       this.renderHeader(data);
       this.renderGraph(data);
     }))

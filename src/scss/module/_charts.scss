@@ -1,8 +1,65 @@
 .chart-container {
-  background-color: $white;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0,0,0,.12);
-  margin-bottom: 30px;
+  max-height: 320px;
+}
+
+.chart-intervals-container {
+  position: relative;
+
+  #time-intervals {
+    margin-right: 0;
+  }
+}
+
+.chart-header-top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: .5rem;
+}
+
+.chart-name-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.chart-stock-name {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding-right: .4rem;
+}
+
+.chart-stock-symbol {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
+}
+
+.chart-latest-price {
+  color: $white;
+  font-size: 2rem;
+  font-weight: 600;
+
+  h2 {
+    margin-right: 1rem;
+  }
+}
+
+.chart-change-percent {
+  
+  h3 {
+    font-size: 1.2rem;
+    line-height: 25px;
+  }
+}
+
+.chart-watch-intervals-container {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.chart-watch-button {
+  margin-right: 24px;
 }
 
 .chart-watchlist-container {

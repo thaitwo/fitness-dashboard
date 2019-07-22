@@ -38,8 +38,6 @@ class Watchlist {
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
     this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
     this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
-    this.$intervalsContainer = this.$watchlistCanvas.find('#watchlist-intervals-container');
-
     this.intervalsBar;
     this.watchButton;
 
@@ -112,15 +110,14 @@ class Watchlist {
             </div>
             <div id="watchlist-summary-container">
               <div id="watchlist-keystats-container" class="box margin-right"></div>
-              <div id="watchlist-news-container" class="box">
-                <h2 class="text-header">Latest News</h2>
-              </div>
+              <div id="watchlist-news-container" class="box"></div>
             </div>
           </div>
         </div>
       </div>
     `;
 
+    this.$container.empty();
     this.$container.append(html);
   }
 
@@ -255,11 +252,11 @@ class Watchlist {
     .catch(error => console.log(error))
     .finally(() => {
       if (requestType === 'prices') {
-        this.renderGraph();
+        this.renderChart();
       }
       else if (requestType === 'allData') {
         // functions below don't receive data arguments bc they will retrieve data from localStorage
-        this.renderGraph();
+        this.renderChart();
         this.keyStats = new KeyStats('#watchlist-keystats-container', this.symbol);
         this.latestNews = new News('#watchlist-news-container', [this.symbol], this.symbol);
         this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, this.companyName, true);
@@ -319,7 +316,7 @@ class Watchlist {
       // if stored data exists and is less than 6 hours old
       if (store.get(that.symbol) !== null && !dataUpdateRequired) {
         that.fetchStockData('latestPrice');
-        that.renderGraph();
+        that.renderChart();
         that.keyStats = new KeyStats('#watchlist-keystats-container', that.symbol);
         that.latestNews = new News('#watchlist-news-container', [that.symbol], that.symbol);
       }
@@ -357,23 +354,23 @@ class Watchlist {
   }
 
 
-  // RENDER GRAPH
-  renderGraph() {
+  // RENDER CHART
+  renderChart() {
     const storedData = store.get(this.symbol);
     // if historical prices for selected interval does exist in localStorage
     if (this.interval in storedData.chart) {
       const storedData = store.get(this.symbol).chart[this.interval];
       // get closing prices for stock
-      const prices = this.getHistoricalData(storedData, 'close');
+      const prices = this.getChartData(storedData, 'close');
       // get dates for closing prices
-      const dates = this.getHistoricalData(storedData, 'date');
+      const dates = this.getChartData(storedData, 'date');
       
       // delete graph if any exists and create new graph
       if (this.graph) {
         this.graph.destroy();
       }
       this.graph = new Graph('#watchlist-chart', prices, dates);
-      this.intervalsBar = new Intervals(this.$intervalsContainer, this.symbol, '#watchlist-chart');
+      this.intervalsBar = new Intervals('#watchlist-intervals-container', this.symbol, '#watchlist-chart');
     }
     // if it doesn't exist, make data request
     else {
@@ -409,7 +406,7 @@ class Watchlist {
 
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getHistoricalData(data, key) {
+  getChartData(data, key) {
     return data.map((day) => {
       if (key === 'date') {
         const date = day[key].split('-');

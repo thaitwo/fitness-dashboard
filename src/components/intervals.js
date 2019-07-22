@@ -4,8 +4,8 @@ import axios from 'axios';
 import Graph from './graph.js';
 
 class Intervals {
-  constructor(intervalsContainer, symbol, chartContainer) {
-    this.intervalsContainer = intervalsContainer;
+  constructor(intervalsContainerId, symbol, chartContainer) {
+    this.$intervalsContainer = $(intervalsContainerId);
     this.symbol = symbol;
     this.$chartContainer = $(chartContainer);
     this.graph;
@@ -33,7 +33,7 @@ class Intervals {
       </ul>
     `;
 
-    this.intervalsContainer.html(html);
+    this.$intervalsContainer.html(html);
   }
 
 

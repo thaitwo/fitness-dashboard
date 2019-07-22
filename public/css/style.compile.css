@@ -424,6 +424,13 @@ body {
 #popup-chart {
   height: 400px !important; }
 
+.stock-summary-container {
+  display: flex;
+  justify-content: space-between; }
+  .stock-summary-container > div {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.24);
+    flex: 1; }
+
 #home-row-second {
   display: flex;
   flex-direction: row; }
@@ -561,10 +568,51 @@ body {
   max-height: 350px; }
 
 .chart-container {
-  background-color: #FFFFFF;
-  border-radius: 4px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  margin-bottom: 30px; }
+  max-height: 320px; }
+
+.chart-intervals-container {
+  position: relative; }
+  .chart-intervals-container #time-intervals {
+    margin-right: 0; }
+
+.chart-header-top-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: .5rem; }
+
+.chart-name-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start; }
+
+.chart-stock-name {
+  color: #F9A825;
+  font-size: 1.2rem;
+  font-weight: 500;
+  padding-right: .4rem; }
+
+.chart-stock-symbol {
+  color: #F9A825;
+  font-size: 1.2rem; }
+
+.chart-latest-price {
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-weight: 600; }
+  .chart-latest-price h2 {
+    margin-right: 1rem; }
+
+.chart-change-percent h3 {
+  font-size: 1.2rem;
+  line-height: 25px; }
+
+.chart-watch-intervals-container {
+  display: flex;
+  justify-content: flex-start; }
+
+.chart-watch-button {
+  margin-right: 24px; }
 
 .chart-watchlist-container {
   background-color: #CFD8DC;
@@ -917,6 +965,10 @@ body {
   max-height: 24px;
   max-width: 24px;
   padding: 6px; }
+
+.news-container {
+  max-height: 376px;
+  overflow: auto; }
 
 .news-list li {
   list-style-type: none;
