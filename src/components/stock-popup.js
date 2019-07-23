@@ -28,7 +28,7 @@ class StockPopup {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
-    this.intervals = new Intervals('#watchlist-intervals-container', this.symbol, '#popup-chart');
+    this.intervals = new Intervals('#popup-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new WatchButton('#popup-watch-button', this.symbol, this.companyName);
     this.getStockData();
     this.closePopup();

@@ -14,10 +14,10 @@ class ChartBox {
     this.watchButton;
     this.interval = '1m';
     this.renderHtml();
-    this.$stockName = $('#singlestock-chart-name');
-    this.$stockSymbol = $('#singlestock-chart-symbol');
-    this.$changePercentContainer = $('#singlestock-chart-change-percent');
-    this.$latestPriceContainer = $('#singlestock-chart-latest-price');
+    this.$stockName = $('#chartbox-stock-name');
+    this.$stockSymbol = $('#chartbox-stock-symbol');
+    this.$changePercentContainer = $('#chartbox-change-percent');
+    this.$latestPriceContainer = $('#chartbox-latest-price');
     this.renderHeader();
     this.renderChart();
   }
@@ -27,22 +27,22 @@ class ChartBox {
   renderHtml() {
     const html = `
       <div>
-        <div class="chart-header-top-row">
-          <div class="chart-name-container">
-            <h2 id="singlestock-chart-name" class="chart-stock-name"></h2>
-            <h3 id="singlestock-chart-symbol" class="chart-stock-symbol"></h3>
+        <div class="chartbox-header-top-row">
+          <div class="chartbox-name-container">
+            <h2 id="chartbox-stock-name" class="chartbox-stock-name"></h2>
+            <h3 id="chartbox-stock-symbol" class="chartbox-stock-symbol"></h3>
           </div>
-          <div class="chart-watch-intervals-container">
-            <div id="singlestock-chart-watch-button"></div>
-            <div id="singlestock-intervals-container" class="chart-intervals-container"></div>
+          <div class="chartbox-watch-intervals-container">
+            <div id="chartbox-watch-button"></div>
+            <div id="chartbox-intervals-container" class="chart-intervals-container"></div>
           </div>
         </div>
         <div class="flex-hori-start" style="height: 32px;">
-          <div id="singlestock-chart-latest-price" class="chart-latest-price"></div>
-          <div id="singlestock-chart-change-percent" class="chart-change-percent"></div>
+          <div id="chartbox-latest-price" class="chartbox-latest-price"></div>
+          <div id="chartbox-change-percent" class="chartbox-change-percent"></div>
         </div>
       </div>
-      <canvas id="singlestock-chart" class="chart-container" width="900" height="320"></canvas>
+      <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>
     `;
 
     this.$container.empty();
@@ -89,9 +89,9 @@ class ChartBox {
     if (this.graph) {
       this.graph.destroy();
     }
-    this.graph = new Graph('#singlestock-chart', prices, dates);
-    this.intervalsBar = new Intervals('#singlestock-intervals-container', this.symbol, '#singlestock-chart');
-    this.watchButton = new WatchButton('#singlestock-chart-watch-button', this.symbol, companyName);
+    this.graph = new Graph('#chartbox-chart', prices, dates);
+    this.intervalsBar = new Intervals('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
+    this.watchButton = new WatchButton('#chartbox-watch-button', this.symbol, companyName);
   }
 
 

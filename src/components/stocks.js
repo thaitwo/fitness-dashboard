@@ -118,7 +118,6 @@ class Stocks {
 
     // check if local storage exist
     if (mostActive.length && gainers.length && losers.length) {
-      console.log('yes');
       this.mostActiveSymbols = this.getMostActiveSymbols();
       this.renderStocks('#most-active', 'mostActive');
       this.renderStocks('#gainers', 'gainers');

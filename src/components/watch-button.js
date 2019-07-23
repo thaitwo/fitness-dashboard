@@ -55,6 +55,7 @@ class WatchButton {
     // Add/remove stock from watchlist
     this.$watchButton.on('click', function(event) {
       event.preventDefault();
+      const pageUrl = document.URL.split('#')[1];
       that.toggleButtonState(that.isWatched);
 
       // if stock is not in watchlist, then add to watchlist
@@ -76,8 +77,8 @@ class WatchButton {
         // store upated watchlist array
         store.set('watchlist', that.watchlist);
         
-        // use case for Watchlist page to refresh page when stock is removed from watchlist
-        if (that.refreshPage) {
+        // Use case for Watchlist page to refresh page when stock is removed from watchlist
+        if (pageUrl === 'watchlist') {
           window.location.reload();
         }
       }

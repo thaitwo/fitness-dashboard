@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
-import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
+import { trimString } from '../helpers/helpers.js';
 import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
@@ -10,7 +10,7 @@ import News from './news.js';
 
 class Watchlist {
   constructor(container) {
-    this.$container = container;
+    this.$canvas = container;
     this.graph;
     this.keyStats;
     this.latestNews;
@@ -18,10 +18,11 @@ class Watchlist {
     this.watchlist = store.get('watchlist') || [];
     this.interval = '1m';
 
+    // IF WATCHLIST HAS STOCKS...
     if (this.watchlist.length > 0) {
       this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol || '';
       this.companyName = store.get('watchlist')[this.selectedStockIndex].name || '';
-      this.renderCanvasHTML();
+      this.renderCanvasHtml();
     } else {
       this.renderEmptyWatchlistCanvas();
     }
@@ -49,36 +50,9 @@ class Watchlist {
     this.udpateGraphIntervals();
   }
 
-  
-  // RENDER CANVAS WITH NO WATCHLIST
-  renderEmptyWatchlistCanvas() {
-    let html = `
-      <div id="watchlist-empty">
-        <div class="watchlist-empty-content">
-          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />
-          <h3>Your Watchlist will appear here</h3>
-          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol next to a company's name.</p>
-        </div>
-      </div>
-    `;
-
-    this.$container.append(html);
-  }
-
-
-  // RELOAD PAGE WHEN STOCK IS REMOVED FROM WATCHLIST
-  renderOnUnwatch() {
-    if (performance.navigation.type == performance.navigation.TYPE_RELOAD && this.watchlist.length > 0) {
-      this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol;
-      this.fetchStockData('allData');
-    } else {
-      this.fetchStockData('allData');
-    }
-  }
-
 
   // RENDER WATCHLIST CANVAS
-  renderCanvasHTML() {
+  renderCanvasHtml() {
     let html = `
       <div class="watchlist-canvas">
         <div class="watchlist-container">
@@ -117,14 +91,31 @@ class Watchlist {
       </div>
     `;
 
-    this.$container.empty();
-    this.$container.append(html);
+    this.$canvas.empty();
+    this.$canvas.append(html);
+  }
+
+  
+  // RENDER CANVAS WITH NO WATCHLIST
+  renderEmptyWatchlistCanvas() {
+    let html = `
+      <div id="watchlist-empty">
+        <div class="watchlist-empty-content">
+          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />
+          <h3>Your Watchlist will appear here</h3>
+          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol next to a company's name.</p>
+        </div>
+      </div>
+    `;
+
+    this.$canvas.empty();
+    this.$canvas.append(html);
   }
 
 
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
   displayStocks() {
-    const list = this.watchlist.map((stock, index) => {
+    const stocks = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
       const name = stock.name;
       let isActive = '';
@@ -144,8 +135,33 @@ class Watchlist {
       `;
     });
 
-    this.$watchlist.append(list);
+    this.$watchlist.empty();
+    this.$watchlist.append(stocks);
     this.renderOnUnwatch();
+  }
+
+
+  // RELOAD PAGE WHEN STOCK IS REMOVED FROM WATCHLIST
+  renderOnUnwatch() {
+    if (this.watchlist.length > 0) {
+      this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol;
+      if (store.get(this.symbol) !== null) {
+        this.renderAllData();
+      }
+    } else {
+      this.fetchStockData('allData');
+    }
+  }
+
+
+  // RENDER ALL STOCK INFO ON PAGE
+  renderAllData() {
+    const quoteData = store.get(this.symbol).quote;
+    this.renderStockHeader(quoteData);
+    this.renderChart();
+    this.keyStats = new KeyStats('#watchlist-keystats-container', this.symbol);
+    this.latestNews = new News('#watchlist-news-container', [this.symbol], this.symbol);
+    this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, this.companyName);
   }
 
 
@@ -259,7 +275,7 @@ class Watchlist {
         this.renderChart();
         this.keyStats = new KeyStats('#watchlist-keystats-container', this.symbol);
         this.latestNews = new News('#watchlist-news-container', [this.symbol], this.symbol);
-        this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, this.companyName, true);
+        this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, this.companyName);
       }
     })
   }
@@ -297,12 +313,10 @@ class Watchlist {
     // Display graph & data for watchlist item
     this.$watchlist.on('click', 'button', function(event) {
       event.preventDefault();
-      const dataUpdateRequired = that.calcLocalStorageAge();
       const clickedEl = $(this).parent();
       const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
-      const symbol = this.id;
-      that.symbol = symbol;
-      const name = $(this).find('.watchlist-item-name').text();
+      that.symbol = this.id;
+      const dataUpdateRequired = that.calcLocalStorageAge();
 
       // add active class to clicked watchlist item
       watchlistItems.removeClass('active');
@@ -312,13 +326,9 @@ class Watchlist {
       // render name and graph for watchlist item
       that.$latestPriceContainer.empty();
       that.$changePercentContainer.empty();
-
       // if stored data exists and is less than 6 hours old
       if (store.get(that.symbol) !== null && !dataUpdateRequired) {
-        that.fetchStockData('latestPrice');
-        that.renderChart();
-        that.keyStats = new KeyStats('#watchlist-keystats-container', that.symbol);
-        that.latestNews = new News('#watchlist-news-container', [that.symbol], that.symbol);
+        that.renderAllData();
       }
       // clear stored data for stock and fetch new data
       else {
@@ -328,7 +338,7 @@ class Watchlist {
 
       // get index of selected stock
       let selectedStockIndex = that.watchlist.findIndex((stock) => {
-        return stock.symbol === symbol;
+        return stock.symbol === that.symbol;
       });
       // if (selectedStockIndex == (that.watchlist.length - 1)) {
       //   selectedStockIndex = selectedStockIndex - 1;
@@ -340,14 +350,14 @@ class Watchlist {
 
   // Calculate whether local storage for stock is more than 6 hours old
   calcLocalStorageAge() {
-    const oneHour = 60 * 60 * 6 * 1000;
+    const sixHours = 60 * 60 * 6 * 1000;
     const newTime = Date.now();
     let oldTime;
 
     // if stored data exists, calculate if data needs to be updated
     if (store.get(this.symbol) !== null) {
       oldTime = store.get(this.symbol).time;
-      return (newTime - oldTime) > oneHour;
+      return (newTime - oldTime) > sixHours;
     } else {
       return true;
     }
@@ -379,32 +389,6 @@ class Watchlist {
   }
 
 
-  // RENDER GRAPH & DATA FOR FIRST STOCK IN WATCHLIST
-  renderDataForFirstStock() {
-    // if watchlist has at least one item, render item(s)
-    if (this.watchlist.length > 0) {
-      const name = this.watchlist[0].name;
-      const isMoreThanOneDay = this.calcLocalStorageAge();
-
-      this.watchButton = new WatchButton('#watchlist-chart-header-watch-button', this.symbol, name, true);
-
-      // update localStorage with new data if data is older than 12 hours
-      if (isMoreThanOneDay) {
-        store.remove(this.symbol);
-        this.fetchStockData('allData');
-      } else {
-        // make Ajax call to get data for company
-        this.fetchStockData('allData');
-      }
-    
-    }
-    // If watchlist is empty, render button with link to stocks page
-    else {
-      this.$watchlistContainer.append(`<a href="/#stocks"><p class="watchlist-add-stocks">Add stocks to watchlist<i class="fa fa-plus-circle" aria-hidden="true"></i></p></a>`);
-    }
-  }
-
-
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
   getChartData(data, key) {
     return data.map((day) => {
@@ -421,7 +405,7 @@ class Watchlist {
   // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
   destroy() {
     if (this.$watchlistCanvas) {
-      this.$container.empty();
+      this.$canvas.empty();
     }
   }
 }
