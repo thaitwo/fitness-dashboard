@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(177)("./" + name);
+                __webpack_require__(175)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4673,7 +4673,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(146)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(177)(module)))
 
 /***/ }),
 /* 1 */
@@ -15287,7 +15287,7 @@ return jQuery;
 "use strict";
 
 
-var bind = __webpack_require__(13);
+var bind = __webpack_require__(14);
 var isBuffer = __webpack_require__(166);
 
 /*global toString:true*/
@@ -15866,6 +15866,22 @@ module.exports = __webpack_require__(150);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var URL_BASE = 'https://sandbox.iexapis.com/v1/stock';
+var API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
+
+exports.URL_BASE = URL_BASE;
+exports.API_TOKEN = API_TOKEN;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -15873,7 +15889,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _chart = __webpack_require__(175);
+var _chart = __webpack_require__(174);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -16017,7 +16033,7 @@ var Graph = function () {
 exports.default = Graph;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16049,7 +16065,7 @@ function trimString(string, length) {
 }
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16072,10 +16088,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(9);
+    adapter = __webpack_require__(10);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(9);
+    adapter = __webpack_require__(10);
   }
   return adapter;
 }
@@ -16150,10 +16166,10 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(178)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(176)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16184,7 +16200,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // issue: can't retrieve news data for specific symbol
 var News = function () {
   function News(containerId, symbolArray, localStorageKey) {
-    var numOfArticlesPerStock = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10;
+    var numOfArticlesPerStock = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
 
     _classCallCheck(this, News);
 
@@ -16241,25 +16257,33 @@ var News = function () {
     key: 'renderNews',
     value: function renderNews() {
       var newsArticlesData = void 0;
+      var articles = void 0;
 
       if (this.localStorageKey === 'homeNews') {
         newsArticlesData = _store2.default.get(this.localStorageKey);
       } else {
         newsArticlesData = _store2.default.get(this.localStorageKey).news;
       }
+
+      this.$container.empty();
       this.$container.append('<h2 class="text-header">Latest News</h2><ul class="news-list"></ul>');
 
-      var articles = newsArticlesData.map(function (article) {
-        var headline = article.headline;
-        var source = article.source;
-        var url = article.url;
-        var dateInstance = new Date(article.datetime);
-        var month = dateInstance.getMonth();
-        var date = dateInstance.getDay();
-        var year = dateInstance.getFullYear();
+      // If there are articles...
+      if (newsArticlesData.length) {
+        articles = newsArticlesData.map(function (article) {
+          var headline = article.headline;
+          var source = article.source;
+          var url = article.url;
+          var dateInstance = new Date(article.datetime);
+          var month = dateInstance.getMonth();
+          var date = dateInstance.getDay();
+          var year = dateInstance.getFullYear();
 
-        return '\n        <li>\n          <a href="' + url + '" target="_blank">\n            <div class="news-text-content">\n              <h3 class="news-headline">' + headline + '</h3>\n              <p class="news-source">' + source + ' - ' + month + '/' + date + '/' + year + '</p>\n            </div>\n          </a>\n        </li>\n      ';
-      });
+          return '\n          <li>\n            <a href="' + url + '" target="_blank">\n              <div class="news-text-content">\n                <h3 class="news-headline">' + headline + '</h3>\n                <p class="news-source">' + source + ' - ' + month + '/' + date + '/' + year + '</p>\n              </div>\n            </a>\n          </li>\n        ';
+        });
+      } else {
+        articles = '\n        <li>\n          <p class="news-no-articles">There are currently no articles for this stock.</p>\n        </li>\n      ';
+      }
 
       (0, _jquery2.default)('.news-list').empty();
       (0, _jquery2.default)('.news-list').append(articles);
@@ -16272,7 +16296,7 @@ var News = function () {
 exports.default = News;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16283,7 +16307,7 @@ var settle = __webpack_require__(156);
 var buildURL = __webpack_require__(158);
 var parseHeaders = __webpack_require__(164);
 var isURLSameOrigin = __webpack_require__(162);
-var createError = __webpack_require__(12);
+var createError = __webpack_require__(13);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -16441,7 +16465,7 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16467,7 +16491,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16479,7 +16503,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16504,7 +16528,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16522,7 +16546,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16542,17 +16566,17 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _graph = __webpack_require__(5);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _intervals = __webpack_require__(15);
+var _intervals = __webpack_require__(16);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
-var _watchButton = __webpack_require__(17);
+var _watchButton = __webpack_require__(18);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
@@ -16662,7 +16686,7 @@ var ChartBox = function () {
 exports.default = ChartBox;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16686,11 +16710,11 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(5);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _const = __webpack_require__(174);
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16819,7 +16843,7 @@ var Intervals = function () {
 exports.default = Intervals;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16839,7 +16863,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16887,7 +16911,7 @@ var KeyStats = function () {
 exports.default = KeyStats;
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17062,7 +17086,7 @@ var WatchButton = function () {
 exports.default = WatchButton;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17139,7 +17163,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17202,7 +17226,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17265,7 +17289,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17391,7 +17415,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17454,7 +17478,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17562,7 +17586,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17625,7 +17649,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17764,7 +17788,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -17873,7 +17897,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18009,7 +18033,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18103,7 +18127,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18165,7 +18189,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18288,7 +18312,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18411,7 +18435,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18523,7 +18547,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18678,7 +18702,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18770,7 +18794,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18946,7 +18970,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19013,7 +19037,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19097,7 +19121,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19161,7 +19185,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19241,7 +19265,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19321,7 +19345,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19401,7 +19425,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19504,7 +19528,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19608,7 +19632,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19679,7 +19703,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19750,7 +19774,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19817,7 +19841,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19888,7 +19912,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19959,7 +19983,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20025,7 +20049,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20096,7 +20120,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20171,7 +20195,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20267,7 +20291,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20363,7 +20387,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20459,7 +20483,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20543,7 +20567,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20613,7 +20637,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20723,7 +20747,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20836,7 +20860,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20900,7 +20924,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20978,7 +21002,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21060,7 +21084,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21147,7 +21171,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21226,7 +21250,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21307,7 +21331,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21387,7 +21411,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21468,7 +21492,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21595,7 +21619,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21723,7 +21747,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21824,7 +21848,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21952,7 +21976,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22110,7 +22134,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22224,7 +22248,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22323,7 +22347,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22409,7 +22433,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22545,7 +22569,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22618,7 +22642,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22691,7 +22715,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22787,7 +22811,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22873,7 +22897,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22966,7 +22990,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23057,7 +23081,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23171,7 +23195,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23301,7 +23325,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23386,7 +23410,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23509,7 +23533,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23600,7 +23624,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23740,7 +23764,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23814,7 +23838,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23936,7 +23960,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24037,7 +24061,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24153,7 +24177,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24221,7 +24245,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24315,7 +24339,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24400,7 +24424,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24508,7 +24532,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24672,7 +24696,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24758,7 +24782,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24844,7 +24868,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24908,7 +24932,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25005,7 +25029,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25071,7 +25095,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25198,7 +25222,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25289,7 +25313,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25380,7 +25404,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25444,7 +25468,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25572,7 +25596,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25702,7 +25726,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25767,7 +25791,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25836,7 +25860,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25915,7 +25939,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26101,7 +26125,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26203,7 +26227,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26267,7 +26291,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26342,7 +26366,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26502,7 +26526,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26679,7 +26703,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26751,7 +26775,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26866,7 +26890,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26981,7 +27005,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27073,7 +27097,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27146,7 +27170,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27209,7 +27233,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27342,7 +27366,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27435,7 +27459,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27506,7 +27530,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27626,7 +27650,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27697,7 +27721,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27763,7 +27787,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27889,7 +27913,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -27987,7 +28011,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28082,7 +28106,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28144,7 +28168,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28206,7 +28230,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js language configuration
@@ -28329,7 +28353,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28487,7 +28511,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28589,7 +28613,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28651,7 +28675,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28713,7 +28737,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28796,7 +28820,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28868,7 +28892,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28932,7 +28956,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29046,7 +29070,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29153,7 +29177,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29260,7 +29284,7 @@ exports.default = WatchButton;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -29796,34 +29820,6 @@ return /******/ (function(modules) { // webpackBootstrap
 //# sourceMappingURL=navigo.js.map
 
 /***/ }),
-/* 146 */
-/***/ (function(module, exports) {
-
-module.exports = function(module) {
-	if(!module.webpackPolyfill) {
-		module.deprecate = function() {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if(!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-
-/***/ }),
 /* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -29949,7 +29945,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(145);
+var _navigo = __webpack_require__(146);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
@@ -30010,9 +30006,9 @@ exports.default = Search;
 
 
 var utils = __webpack_require__(2);
-var bind = __webpack_require__(13);
+var bind = __webpack_require__(14);
 var Axios = __webpack_require__(152);
-var defaults = __webpack_require__(7);
+var defaults = __webpack_require__(8);
 
 /**
  * Create an instance of Axios
@@ -30045,9 +30041,9 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(10);
+axios.Cancel = __webpack_require__(11);
 axios.CancelToken = __webpack_require__(151);
-axios.isCancel = __webpack_require__(11);
+axios.isCancel = __webpack_require__(12);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -30068,7 +30064,7 @@ module.exports.default = axios;
 "use strict";
 
 
-var Cancel = __webpack_require__(10);
+var Cancel = __webpack_require__(11);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -30132,7 +30128,7 @@ module.exports = CancelToken;
 "use strict";
 
 
-var defaults = __webpack_require__(7);
+var defaults = __webpack_require__(8);
 var utils = __webpack_require__(2);
 var InterceptorManager = __webpack_require__(153);
 var dispatchRequest = __webpack_require__(154);
@@ -30279,8 +30275,8 @@ module.exports = InterceptorManager;
 
 var utils = __webpack_require__(2);
 var transformData = __webpack_require__(157);
-var isCancel = __webpack_require__(11);
-var defaults = __webpack_require__(7);
+var isCancel = __webpack_require__(12);
+var defaults = __webpack_require__(8);
 var isAbsoluteURL = __webpack_require__(161);
 var combineURLs = __webpack_require__(159);
 
@@ -30398,7 +30394,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var createError = __webpack_require__(12);
+var createError = __webpack_require__(13);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -30888,11 +30884,11 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(5);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _const = __webpack_require__(174);
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30904,10 +30900,11 @@ var GraphCard = function () {
 
     this.container = (0, _jquery2.default)(containerId);
     this.symbol = symbol;
-
+    this.interval;
     this.renderCard();
     this.$cardHeader = this.container.find('.graphCard-header');
     this.$cardGraphContainer = (0, _jquery2.default)('.graphCard-graph-container');
+    this.renderData();
   }
 
   // RENDER HTML FOR CARD
@@ -30919,7 +30916,16 @@ var GraphCard = function () {
       var cardHtml = '\n      <div class="graphCard-small box">\n        <div class="graphCard-header"></div>\n        <div class="graphCard-graph-container">\n          <canvas id="graphCard-graph-' + this.symbol + '" width="300" height="140"></canvas>  \n        </div>\n      </div>\n    ';
 
       this.container.append(cardHtml);
-      this.fetchGraphPoints();
+    }
+  }, {
+    key: 'renderData',
+    value: function renderData() {
+      if (_store2.default.get(this.symbol) !== null) {
+        this.renderHeader();
+        this.renderChart();
+      } else {
+        this.fetchGraphPoints();
+      }
     }
 
     // FETCH DATA FOR SYMBOL
@@ -30929,11 +30935,21 @@ var GraphCard = function () {
     value: function fetchGraphPoints() {
       var _this = this;
 
-      _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,chart&range=1m&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (data) {
-        _this.renderHeader(data);
-        _this.renderGraph(data);
-      })).catch(function (error) {
+      _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=1m&token=' + _const.API_TOKEN)]).then(function (response) {
+        var data = response[0].data;
+        var dataToStore = {
+          chart: {
+            '1m': data.chart
+          },
+          news: data.news,
+          quote: data.quote
+        };
+        _store2.default.set(_this.symbol, dataToStore);
+      }).catch(function (error) {
         return console.log(error);
+      }).then(function () {
+        _this.renderHeader();
+        _this.renderChart();
       });
     }
 
@@ -30941,24 +30957,26 @@ var GraphCard = function () {
 
   }, {
     key: 'renderHeader',
-    value: function renderHeader(data) {
-      var symbol = data.data.quote.symbol;
-      var company = data.data.quote.companyName;
-      var latestPrice = data.data.quote.latestPrice;
+    value: function renderHeader() {
+      var storedData = _store2.default.get(this.symbol);
+      var symbol = storedData.quote.symbol;
+      var company = storedData.quote.companyName;
+      var latestPrice = storedData.quote.latestPrice;
 
       var html = '\n      <div>\n        <h2 class="graphCard-company">' + company + '</h2>\n        <h3 class="graphCard-symbol">' + symbol + '</h3>\n      </div>\n    ';
 
       this.$cardHeader.append(html);
     }
 
-    // RENDER GRAPH IN CARD
+    // RENDER CHART IN CARD
 
   }, {
-    key: 'renderGraph',
-    value: function renderGraph(data) {
-      var graphPoints = data.data.chart;
-      var prices = this.getHistoricalData(graphPoints, 'close');
-      var dates = this.getHistoricalData(graphPoints, 'date');
+    key: 'renderChart',
+    value: function renderChart() {
+      var storedData = _store2.default.get(this.symbol);
+      var graphPoints = storedData.chart['1m'];
+      var prices = this.getChartData(graphPoints, 'close');
+      var dates = this.getChartData(graphPoints, 'date');
       dates = dates.map(function (date) {
         return date.split('-')[0] + '-' + date.split('-')[1];
       });
@@ -31021,8 +31039,8 @@ var GraphCard = function () {
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
-    key: 'getHistoricalData',
-    value: function getHistoricalData(data, key) {
+    key: 'getChartData',
+    value: function getChartData(data, key) {
       return data.map(function (day) {
         if (key === 'date') {
           var date = day[key].split('-');
@@ -31056,7 +31074,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _navigo = __webpack_require__(145);
+var _navigo = __webpack_require__(146);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
@@ -31173,21 +31191,21 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
-var _graph = __webpack_require__(5);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _intervals = __webpack_require__(15);
+var _intervals = __webpack_require__(16);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _watchButton = __webpack_require__(17);
+var _watchButton = __webpack_require__(18);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _const = __webpack_require__(174);
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31427,15 +31445,15 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _chartbox = __webpack_require__(14);
+var _chartbox = __webpack_require__(15);
 
 var _chartbox2 = _interopRequireDefault(_chartbox);
 
-var _keystats = __webpack_require__(16);
+var _keystats = __webpack_require__(17);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
-var _news = __webpack_require__(8);
+var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
 
@@ -31542,11 +31560,11 @@ var _graphCard = __webpack_require__(168);
 
 var _graphCard2 = _interopRequireDefault(_graphCard);
 
-var _news = __webpack_require__(8);
+var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _const = __webpack_require__(174);
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31832,21 +31850,21 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
-var _chartbox = __webpack_require__(14);
+var _chartbox = __webpack_require__(15);
 
 var _chartbox2 = _interopRequireDefault(_chartbox);
 
-var _keystats = __webpack_require__(16);
+var _keystats = __webpack_require__(17);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
-var _news = __webpack_require__(8);
+var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _const = __webpack_require__(174);
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31969,7 +31987,7 @@ var Watchlist = function () {
     value: function fetchStockData() {
       var _this2 = this;
 
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&range=' + this.interval + '&token=' + _const.API_TOKEN).then(function (response) {
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.interval + '&token=' + _const.API_TOKEN).then(function (response) {
         var chart = response.data.chart;
         var news = response.data.news;
         var quote = response.data.quote;
@@ -32005,33 +32023,6 @@ var Watchlist = function () {
       });
     }
 
-    // DISPLAY STOCK INFO IN HEADER
-
-  }, {
-    key: 'renderStockHeader',
-    value: function renderStockHeader(data) {
-      var companyName = (0, _helpers.trimString)(data.companyName, 36);
-      var changePercent = data.changePercent.toFixed(2);
-      var latestPrice = data.latestPrice;
-      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
-      var latestPriceHtml = '<h2>' + latestPrice + '</2>';
-      var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '%</h3>';
-
-      this.$stockName.html(companyName);
-      this.$stockSymbol.html('(' + this.symbol + ')');
-
-      if (changePercent >= 0) {
-        this.$changePercentContainer.removeClass('percent-change-negative');
-        this.$changePercentContainer.addClass('percent-change-positive');
-      } else {
-        this.$changePercentContainer.removeClass('percent-change-positive');
-        this.$changePercentContainer.addClass('percent-change-negative');
-      }
-
-      this.$latestPriceContainer.html(latestPriceHtml);
-      this.$changePercentContainer.html(changePercentHtml);
-    }
-
     // ACTIVATE EVENT LISTENERS FOR WATCHLIST
 
   }, {
@@ -32054,7 +32045,7 @@ var Watchlist = function () {
         // render name and graph for watchlist item
         that.$latestPriceContainer.empty();
         that.$changePercentContainer.empty();
-        // if stored data exists and is less than 6 hours old
+        // if stored data exists and is less than 1 day old
         if (_store2.default.get(that.symbol) !== null && !dataUpdateRequired) {
           that.renderAllData();
         }
@@ -32093,21 +32084,6 @@ var Watchlist = function () {
       }
     }
 
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getChartData',
-    value: function getChartData(data, key) {
-      return data.map(function (day) {
-        if (key === 'date') {
-          var date = day[key].split('-');
-          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
-        } else {
-          return day[key];
-        }
-      });
-    }
-
     // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
 
   }, {
@@ -32126,22 +32102,6 @@ exports.default = Watchlist;
 
 /***/ }),
 /* 174 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var URL_BASE = 'https://sandbox.iexapis.com/v1/stock';
-var API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
-
-exports.URL_BASE = URL_BASE;
-exports.API_TOKEN = API_TOKEN;
-
-/***/ }),
-/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -46827,265 +46787,264 @@ return src;
 
 
 /***/ }),
-/* 176 */,
-/* 177 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 18,
-	"./af.js": 18,
-	"./ar": 25,
-	"./ar-dz": 19,
-	"./ar-dz.js": 19,
-	"./ar-kw": 20,
-	"./ar-kw.js": 20,
-	"./ar-ly": 21,
-	"./ar-ly.js": 21,
-	"./ar-ma": 22,
-	"./ar-ma.js": 22,
-	"./ar-sa": 23,
-	"./ar-sa.js": 23,
-	"./ar-tn": 24,
-	"./ar-tn.js": 24,
-	"./ar.js": 25,
-	"./az": 26,
-	"./az.js": 26,
-	"./be": 27,
-	"./be.js": 27,
-	"./bg": 28,
-	"./bg.js": 28,
-	"./bm": 29,
-	"./bm.js": 29,
-	"./bn": 30,
-	"./bn.js": 30,
-	"./bo": 31,
-	"./bo.js": 31,
-	"./br": 32,
-	"./br.js": 32,
-	"./bs": 33,
-	"./bs.js": 33,
-	"./ca": 34,
-	"./ca.js": 34,
-	"./cs": 35,
-	"./cs.js": 35,
-	"./cv": 36,
-	"./cv.js": 36,
-	"./cy": 37,
-	"./cy.js": 37,
-	"./da": 38,
-	"./da.js": 38,
-	"./de": 41,
-	"./de-at": 39,
-	"./de-at.js": 39,
-	"./de-ch": 40,
-	"./de-ch.js": 40,
-	"./de.js": 41,
-	"./dv": 42,
-	"./dv.js": 42,
-	"./el": 43,
-	"./el.js": 43,
-	"./en-SG": 44,
-	"./en-SG.js": 44,
-	"./en-au": 45,
-	"./en-au.js": 45,
-	"./en-ca": 46,
-	"./en-ca.js": 46,
-	"./en-gb": 47,
-	"./en-gb.js": 47,
-	"./en-ie": 48,
-	"./en-ie.js": 48,
-	"./en-il": 49,
-	"./en-il.js": 49,
-	"./en-nz": 50,
-	"./en-nz.js": 50,
-	"./eo": 51,
-	"./eo.js": 51,
-	"./es": 54,
-	"./es-do": 52,
-	"./es-do.js": 52,
-	"./es-us": 53,
-	"./es-us.js": 53,
-	"./es.js": 54,
-	"./et": 55,
-	"./et.js": 55,
-	"./eu": 56,
-	"./eu.js": 56,
-	"./fa": 57,
-	"./fa.js": 57,
-	"./fi": 58,
-	"./fi.js": 58,
-	"./fo": 59,
-	"./fo.js": 59,
-	"./fr": 62,
-	"./fr-ca": 60,
-	"./fr-ca.js": 60,
-	"./fr-ch": 61,
-	"./fr-ch.js": 61,
-	"./fr.js": 62,
-	"./fy": 63,
-	"./fy.js": 63,
-	"./ga": 64,
-	"./ga.js": 64,
-	"./gd": 65,
-	"./gd.js": 65,
-	"./gl": 66,
-	"./gl.js": 66,
-	"./gom-latn": 67,
-	"./gom-latn.js": 67,
-	"./gu": 68,
-	"./gu.js": 68,
-	"./he": 69,
-	"./he.js": 69,
-	"./hi": 70,
-	"./hi.js": 70,
-	"./hr": 71,
-	"./hr.js": 71,
-	"./hu": 72,
-	"./hu.js": 72,
-	"./hy-am": 73,
-	"./hy-am.js": 73,
-	"./id": 74,
-	"./id.js": 74,
-	"./is": 75,
-	"./is.js": 75,
-	"./it": 77,
-	"./it-ch": 76,
-	"./it-ch.js": 76,
-	"./it.js": 77,
-	"./ja": 78,
-	"./ja.js": 78,
-	"./jv": 79,
-	"./jv.js": 79,
-	"./ka": 80,
-	"./ka.js": 80,
-	"./kk": 81,
-	"./kk.js": 81,
-	"./km": 82,
-	"./km.js": 82,
-	"./kn": 83,
-	"./kn.js": 83,
-	"./ko": 84,
-	"./ko.js": 84,
-	"./ku": 85,
-	"./ku.js": 85,
-	"./ky": 86,
-	"./ky.js": 86,
-	"./lb": 87,
-	"./lb.js": 87,
-	"./lo": 88,
-	"./lo.js": 88,
-	"./lt": 89,
-	"./lt.js": 89,
-	"./lv": 90,
-	"./lv.js": 90,
-	"./me": 91,
-	"./me.js": 91,
-	"./mi": 92,
-	"./mi.js": 92,
-	"./mk": 93,
-	"./mk.js": 93,
-	"./ml": 94,
-	"./ml.js": 94,
-	"./mn": 95,
-	"./mn.js": 95,
-	"./mr": 96,
-	"./mr.js": 96,
-	"./ms": 98,
-	"./ms-my": 97,
-	"./ms-my.js": 97,
-	"./ms.js": 98,
-	"./mt": 99,
-	"./mt.js": 99,
-	"./my": 100,
-	"./my.js": 100,
-	"./nb": 101,
-	"./nb.js": 101,
-	"./ne": 102,
-	"./ne.js": 102,
-	"./nl": 104,
-	"./nl-be": 103,
-	"./nl-be.js": 103,
-	"./nl.js": 104,
-	"./nn": 105,
-	"./nn.js": 105,
-	"./pa-in": 106,
-	"./pa-in.js": 106,
-	"./pl": 107,
-	"./pl.js": 107,
-	"./pt": 109,
-	"./pt-br": 108,
-	"./pt-br.js": 108,
-	"./pt.js": 109,
-	"./ro": 110,
-	"./ro.js": 110,
-	"./ru": 111,
-	"./ru.js": 111,
-	"./sd": 112,
-	"./sd.js": 112,
-	"./se": 113,
-	"./se.js": 113,
-	"./si": 114,
-	"./si.js": 114,
-	"./sk": 115,
-	"./sk.js": 115,
-	"./sl": 116,
-	"./sl.js": 116,
-	"./sq": 117,
-	"./sq.js": 117,
-	"./sr": 119,
-	"./sr-cyrl": 118,
-	"./sr-cyrl.js": 118,
-	"./sr.js": 119,
-	"./ss": 120,
-	"./ss.js": 120,
-	"./sv": 121,
-	"./sv.js": 121,
-	"./sw": 122,
-	"./sw.js": 122,
-	"./ta": 123,
-	"./ta.js": 123,
-	"./te": 124,
-	"./te.js": 124,
-	"./tet": 125,
-	"./tet.js": 125,
-	"./tg": 126,
-	"./tg.js": 126,
-	"./th": 127,
-	"./th.js": 127,
-	"./tl-ph": 128,
-	"./tl-ph.js": 128,
-	"./tlh": 129,
-	"./tlh.js": 129,
-	"./tr": 130,
-	"./tr.js": 130,
-	"./tzl": 131,
-	"./tzl.js": 131,
-	"./tzm": 133,
-	"./tzm-latn": 132,
-	"./tzm-latn.js": 132,
-	"./tzm.js": 133,
-	"./ug-cn": 134,
-	"./ug-cn.js": 134,
-	"./uk": 135,
-	"./uk.js": 135,
-	"./ur": 136,
-	"./ur.js": 136,
-	"./uz": 138,
-	"./uz-latn": 137,
-	"./uz-latn.js": 137,
-	"./uz.js": 138,
-	"./vi": 139,
-	"./vi.js": 139,
-	"./x-pseudo": 140,
-	"./x-pseudo.js": 140,
-	"./yo": 141,
-	"./yo.js": 141,
-	"./zh-cn": 142,
-	"./zh-cn.js": 142,
-	"./zh-hk": 143,
-	"./zh-hk.js": 143,
-	"./zh-tw": 144,
-	"./zh-tw.js": 144
+	"./af": 19,
+	"./af.js": 19,
+	"./ar": 26,
+	"./ar-dz": 20,
+	"./ar-dz.js": 20,
+	"./ar-kw": 21,
+	"./ar-kw.js": 21,
+	"./ar-ly": 22,
+	"./ar-ly.js": 22,
+	"./ar-ma": 23,
+	"./ar-ma.js": 23,
+	"./ar-sa": 24,
+	"./ar-sa.js": 24,
+	"./ar-tn": 25,
+	"./ar-tn.js": 25,
+	"./ar.js": 26,
+	"./az": 27,
+	"./az.js": 27,
+	"./be": 28,
+	"./be.js": 28,
+	"./bg": 29,
+	"./bg.js": 29,
+	"./bm": 30,
+	"./bm.js": 30,
+	"./bn": 31,
+	"./bn.js": 31,
+	"./bo": 32,
+	"./bo.js": 32,
+	"./br": 33,
+	"./br.js": 33,
+	"./bs": 34,
+	"./bs.js": 34,
+	"./ca": 35,
+	"./ca.js": 35,
+	"./cs": 36,
+	"./cs.js": 36,
+	"./cv": 37,
+	"./cv.js": 37,
+	"./cy": 38,
+	"./cy.js": 38,
+	"./da": 39,
+	"./da.js": 39,
+	"./de": 42,
+	"./de-at": 40,
+	"./de-at.js": 40,
+	"./de-ch": 41,
+	"./de-ch.js": 41,
+	"./de.js": 42,
+	"./dv": 43,
+	"./dv.js": 43,
+	"./el": 44,
+	"./el.js": 44,
+	"./en-SG": 45,
+	"./en-SG.js": 45,
+	"./en-au": 46,
+	"./en-au.js": 46,
+	"./en-ca": 47,
+	"./en-ca.js": 47,
+	"./en-gb": 48,
+	"./en-gb.js": 48,
+	"./en-ie": 49,
+	"./en-ie.js": 49,
+	"./en-il": 50,
+	"./en-il.js": 50,
+	"./en-nz": 51,
+	"./en-nz.js": 51,
+	"./eo": 52,
+	"./eo.js": 52,
+	"./es": 55,
+	"./es-do": 53,
+	"./es-do.js": 53,
+	"./es-us": 54,
+	"./es-us.js": 54,
+	"./es.js": 55,
+	"./et": 56,
+	"./et.js": 56,
+	"./eu": 57,
+	"./eu.js": 57,
+	"./fa": 58,
+	"./fa.js": 58,
+	"./fi": 59,
+	"./fi.js": 59,
+	"./fo": 60,
+	"./fo.js": 60,
+	"./fr": 63,
+	"./fr-ca": 61,
+	"./fr-ca.js": 61,
+	"./fr-ch": 62,
+	"./fr-ch.js": 62,
+	"./fr.js": 63,
+	"./fy": 64,
+	"./fy.js": 64,
+	"./ga": 65,
+	"./ga.js": 65,
+	"./gd": 66,
+	"./gd.js": 66,
+	"./gl": 67,
+	"./gl.js": 67,
+	"./gom-latn": 68,
+	"./gom-latn.js": 68,
+	"./gu": 69,
+	"./gu.js": 69,
+	"./he": 70,
+	"./he.js": 70,
+	"./hi": 71,
+	"./hi.js": 71,
+	"./hr": 72,
+	"./hr.js": 72,
+	"./hu": 73,
+	"./hu.js": 73,
+	"./hy-am": 74,
+	"./hy-am.js": 74,
+	"./id": 75,
+	"./id.js": 75,
+	"./is": 76,
+	"./is.js": 76,
+	"./it": 78,
+	"./it-ch": 77,
+	"./it-ch.js": 77,
+	"./it.js": 78,
+	"./ja": 79,
+	"./ja.js": 79,
+	"./jv": 80,
+	"./jv.js": 80,
+	"./ka": 81,
+	"./ka.js": 81,
+	"./kk": 82,
+	"./kk.js": 82,
+	"./km": 83,
+	"./km.js": 83,
+	"./kn": 84,
+	"./kn.js": 84,
+	"./ko": 85,
+	"./ko.js": 85,
+	"./ku": 86,
+	"./ku.js": 86,
+	"./ky": 87,
+	"./ky.js": 87,
+	"./lb": 88,
+	"./lb.js": 88,
+	"./lo": 89,
+	"./lo.js": 89,
+	"./lt": 90,
+	"./lt.js": 90,
+	"./lv": 91,
+	"./lv.js": 91,
+	"./me": 92,
+	"./me.js": 92,
+	"./mi": 93,
+	"./mi.js": 93,
+	"./mk": 94,
+	"./mk.js": 94,
+	"./ml": 95,
+	"./ml.js": 95,
+	"./mn": 96,
+	"./mn.js": 96,
+	"./mr": 97,
+	"./mr.js": 97,
+	"./ms": 99,
+	"./ms-my": 98,
+	"./ms-my.js": 98,
+	"./ms.js": 99,
+	"./mt": 100,
+	"./mt.js": 100,
+	"./my": 101,
+	"./my.js": 101,
+	"./nb": 102,
+	"./nb.js": 102,
+	"./ne": 103,
+	"./ne.js": 103,
+	"./nl": 105,
+	"./nl-be": 104,
+	"./nl-be.js": 104,
+	"./nl.js": 105,
+	"./nn": 106,
+	"./nn.js": 106,
+	"./pa-in": 107,
+	"./pa-in.js": 107,
+	"./pl": 108,
+	"./pl.js": 108,
+	"./pt": 110,
+	"./pt-br": 109,
+	"./pt-br.js": 109,
+	"./pt.js": 110,
+	"./ro": 111,
+	"./ro.js": 111,
+	"./ru": 112,
+	"./ru.js": 112,
+	"./sd": 113,
+	"./sd.js": 113,
+	"./se": 114,
+	"./se.js": 114,
+	"./si": 115,
+	"./si.js": 115,
+	"./sk": 116,
+	"./sk.js": 116,
+	"./sl": 117,
+	"./sl.js": 117,
+	"./sq": 118,
+	"./sq.js": 118,
+	"./sr": 120,
+	"./sr-cyrl": 119,
+	"./sr-cyrl.js": 119,
+	"./sr.js": 120,
+	"./ss": 121,
+	"./ss.js": 121,
+	"./sv": 122,
+	"./sv.js": 122,
+	"./sw": 123,
+	"./sw.js": 123,
+	"./ta": 124,
+	"./ta.js": 124,
+	"./te": 125,
+	"./te.js": 125,
+	"./tet": 126,
+	"./tet.js": 126,
+	"./tg": 127,
+	"./tg.js": 127,
+	"./th": 128,
+	"./th.js": 128,
+	"./tl-ph": 129,
+	"./tl-ph.js": 129,
+	"./tlh": 130,
+	"./tlh.js": 130,
+	"./tr": 131,
+	"./tr.js": 131,
+	"./tzl": 132,
+	"./tzl.js": 132,
+	"./tzm": 134,
+	"./tzm-latn": 133,
+	"./tzm-latn.js": 133,
+	"./tzm.js": 134,
+	"./ug-cn": 135,
+	"./ug-cn.js": 135,
+	"./uk": 136,
+	"./uk.js": 136,
+	"./ur": 137,
+	"./ur.js": 137,
+	"./uz": 139,
+	"./uz-latn": 138,
+	"./uz-latn.js": 138,
+	"./uz.js": 139,
+	"./vi": 140,
+	"./vi.js": 140,
+	"./x-pseudo": 141,
+	"./x-pseudo.js": 141,
+	"./yo": 142,
+	"./yo.js": 142,
+	"./zh-cn": 143,
+	"./zh-cn.js": 143,
+	"./zh-hk": 144,
+	"./zh-hk.js": 144,
+	"./zh-tw": 145,
+	"./zh-tw.js": 145
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -47101,10 +47060,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 177;
+webpackContext.id = 175;
 
 /***/ }),
-/* 178 */
+/* 176 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -47291,6 +47250,34 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 process.umask = function() { return 0; };
+
+
+/***/ }),
+/* 177 */
+/***/ (function(module, exports) {
+
+module.exports = function(module) {
+	if(!module.webpackPolyfill) {
+		module.deprecate = function() {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if(!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
 
 
 /***/ })

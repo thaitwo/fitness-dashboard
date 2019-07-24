@@ -8,10 +8,11 @@ class GraphCard {
   constructor(containerId, symbol) {
     this.container = $(containerId);
     this.symbol = symbol;
-
+    this.interval;
     this.renderCard();
     this.$cardHeader = this.container.find('.graphCard-header');
     this.$cardGraphContainer = $('.graphCard-graph-container');
+    this.renderData();
   }
 
 
@@ -27,28 +28,48 @@ class GraphCard {
     `;
 
     this.container.append(cardHtml);
-    this.fetchGraphPoints();
+  }
+
+  renderData() {
+    if (store.get(this.symbol) !== null) {
+      this.renderHeader();
+      this.renderChart();
+    } else {
+      this.fetchGraphPoints();
+    }
   }
 
 
   // FETCH DATA FOR SYMBOL
   fetchGraphPoints() {
     axios.all([
-      axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,chart&range=1m&token=${API_TOKEN}`)
+      axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=1m&token=${API_TOKEN}`)
     ])
-    .then(axios.spread((data) => {
-      this.renderHeader(data);
-      this.renderGraph(data);
-    }))
+    .then((response) => {
+      const data = response[0].data;
+      const dataToStore = {
+        chart: {
+          '1m': data.chart
+        },
+        news: data.news,
+        quote: data.quote
+      }
+      store.set(this.symbol, dataToStore);
+    })
     .catch(error => console.log(error))
+    .then(() => {
+      this.renderHeader();
+      this.renderChart();
+    })
   }
 
 
   // RENDER STOCK HEADER INFO
-  renderHeader(data) {
-    const symbol = data.data.quote.symbol;
-    const company = data.data.quote.companyName;
-    const latestPrice = data.data.quote.latestPrice;
+  renderHeader() {
+    const storedData = store.get(this.symbol);
+    const symbol = storedData.quote.symbol;
+    const company = storedData.quote.companyName;
+    const latestPrice = storedData.quote.latestPrice;
 
     const html = `
       <div>
@@ -61,11 +82,12 @@ class GraphCard {
   }
 
 
-  // RENDER GRAPH IN CARD
-  renderGraph(data) {
-    const graphPoints = data.data.chart;
-    const prices = this.getHistoricalData(graphPoints, 'close');
-    let dates = this.getHistoricalData(graphPoints, 'date');
+  // RENDER CHART IN CARD
+  renderChart() {
+    const storedData = store.get(this.symbol);
+    const graphPoints = storedData.chart['1m'];
+    const prices = this.getChartData(graphPoints, 'close');
+    let dates = this.getChartData(graphPoints, 'date');
     dates = dates.map((date) => {
       return `${date.split('-')[0]}-${date.split('-')[1]}`;
     });
@@ -127,7 +149,7 @@ class GraphCard {
 
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getHistoricalData(data, key) {
+  getChartData(data, key) {
     return data.map((day) => {
       if (key === 'date') {
         const date = day[key].split('-');

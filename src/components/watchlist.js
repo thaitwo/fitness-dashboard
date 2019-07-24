@@ -136,7 +136,7 @@ class Watchlist {
 
   // GET DATA FOR COMPANY
   fetchStockData() {
-    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&range=${this.interval}&token=${API_TOKEN}`)
+    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=${this.interval}&token=${API_TOKEN}`)
     .then((response) => {
       const chart = response.data.chart;
       const news = response.data.news;
@@ -176,31 +176,6 @@ class Watchlist {
   }
 
 
-  // DISPLAY STOCK INFO IN HEADER
-  renderStockHeader(data) {
-    const companyName = trimString(data.companyName, 36);
-    const changePercent = data.changePercent.toFixed(2);
-    const latestPrice = data.latestPrice;
-    const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
-    const latestPriceHtml = `<h2>${latestPrice}</2>`;
-    const changePercentHtml = `<h3>${plusOrMinus}${changePercent}%</h3>`;
-
-    this.$stockName.html(companyName);
-    this.$stockSymbol.html(`(${this.symbol})`);
-
-    if (changePercent >= 0) {
-      this.$changePercentContainer.removeClass('percent-change-negative');
-      this.$changePercentContainer.addClass('percent-change-positive');
-    } else {
-      this.$changePercentContainer.removeClass('percent-change-positive');
-      this.$changePercentContainer.addClass('percent-change-negative');
-    }
-
-    this.$latestPriceContainer.html(latestPriceHtml);
-    this.$changePercentContainer.html(changePercentHtml);
-  }
-
-
   // ACTIVATE EVENT LISTENERS FOR WATCHLIST
   loadStockDataHandler() {
     const that = this;
@@ -221,7 +196,7 @@ class Watchlist {
       // render name and graph for watchlist item
       that.$latestPriceContainer.empty();
       that.$changePercentContainer.empty();
-      // if stored data exists and is less than 6 hours old
+      // if stored data exists and is less than 1 day old
       if (store.get(that.symbol) !== null && !dataUpdateRequired) {
         that.renderAllData();
       }
@@ -256,19 +231,6 @@ class Watchlist {
     } else {
       return true;
     }
-  }
-
-
-  // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getChartData(data, key) {
-    return data.map((day) => {
-      if (key === 'date') {
-        const date = day[key].split('-');
-        return `${date[1].replace(/^0+/, '')}-${date[2]}-${date[0]}`;
-      } else {
-        return day[key];
-      }
-    });
   }
 
 

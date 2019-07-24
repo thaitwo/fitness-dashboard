@@ -976,6 +976,9 @@ body {
   .news-list li:hover .news-text-content {
     color: #F9A825; }
 
+.news-list .news-no-articles {
+  color: #FFFFFF; }
+
 .news-list a {
   display: flex;
   text-decoration: none; }
