@@ -5,6 +5,7 @@ import { trimString } from '../helpers/helpers.js';
 import ChartBox from './chartbox.js';
 import KeyStats from './keystats.js';
 import News from './news.js';
+import { URL_BASE, API_TOKEN } from '../const';
 
 // make latest price consistently update
 
@@ -135,7 +136,7 @@ class Watchlist {
 
   // GET DATA FOR COMPANY
   fetchStockData() {
-    axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=${this.interval}&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&range=${this.interval}&token=${API_TOKEN}`)
     .then((response) => {
       const chart = response.data.chart;
       const news = response.data.news;
@@ -153,7 +154,6 @@ class Watchlist {
           storedData.chart[this.interval] = chart.data;
           store.set(this.symbol, storedData);
         }
-        this.renderStockHeader(quote);
       }
       // otherwise create data object and store in localStorage
       else {
@@ -167,7 +167,6 @@ class Watchlist {
         }
 
         store.set(this.symbol, dataToStore);
-        this.renderStockHeader(quote);
       }
     })
     .catch(error => console.log(error))
@@ -246,14 +245,14 @@ class Watchlist {
 
   // Calculate whether local storage for stock is more than 6 hours old
   calcLocalStorageAge() {
-    const sixHours = 60 * 60 * 6 * 1000;
+    const oneDay = 60 * 60 * 24 * 1000;
     const newTime = Date.now();
     let oldTime;
 
     // if stored data exists, calculate if data needs to be updated
     if (store.get(this.symbol) !== null) {
       oldTime = store.get(this.symbol).time;
-      return (newTime - oldTime) > sixHours;
+      return (newTime - oldTime) > oneDay;
     } else {
       return true;
     }

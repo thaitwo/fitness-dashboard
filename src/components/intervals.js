@@ -2,6 +2,7 @@ import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
 import Graph from './graph.js';
+import { URL_BASE, API_TOKEN } from '../const.js';
 
 class Intervals {
   constructor(intervalsContainerId, symbol, chartContainer) {
@@ -54,7 +55,7 @@ class Intervals {
 
   // FETCH NEW DATA FOR SELECTED INTERVAL
   fetchChartData() {
-    axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.selectedInterval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    axios.get(`${URL_BASE}/${this.symbol}/chart/${this.selectedInterval}?token=${API_TOKEN}`)
     .then((response) => {
       const storedData = store.get(this.symbol);
       storedData.chart[this.selectedInterval] = response.data;

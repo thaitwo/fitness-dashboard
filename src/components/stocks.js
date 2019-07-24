@@ -1,10 +1,10 @@
 import $ from 'jquery';
-import _ from 'lodash';
 import store from 'store2';
 import axios from 'axios';
 import StockPopup from './stock-popup.js';
 import GraphCard from './graph-card.js';
 import News from './news.js';
+import { URL_BASE, API_TOKEN } from '../const.js';
 
 class Stocks {
   constructor(container) {
@@ -137,9 +137,9 @@ class Stocks {
     this.$loadingIcon.addClass('is-visible');
 
     axios.all([
-      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=mostactive&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=gainers&token=pk_a12f90684f2a44f180bcaeb4eff4086d`),
-      axios.get(`https://cloud.iexapis.com/v1/stock/market/collection/list?collectionName=losers&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+      axios.get(`${URL_BASE}/market/collection/list?collectionName=mostactive&token=${API_TOKEN}`),
+      axios.get(`${URL_BASE}/market/collection/list?collectionName=gainers&token=${API_TOKEN}`),
+      axios.get(`${URL_BASE}/market/collection/list?collectionName=losers&token=${API_TOKEN}`)
     ])
     .then(axios.spread((mostActive, gainers, losers) => {
       store.set('mostActive', mostActive.data);

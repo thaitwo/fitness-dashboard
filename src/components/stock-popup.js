@@ -5,6 +5,7 @@ import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helper
 import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
+import { URL_BASE, API_TOKEN } from '../const';
 
 class StockPopup {
   constructor(companySymbol, companyName) {
@@ -127,7 +128,7 @@ class StockPopup {
     // display loading icon
     this.$loadingIcon.addClass('is-visible');
     // request stock data
-    axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&range=1m&token=${API_TOKEN}`)
     .then((response) => {
       // store company data
       const dataToStore = {

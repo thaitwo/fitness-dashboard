@@ -2,6 +2,7 @@ import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
 import Graph from './graph';
+import { URL_BASE, API_TOKEN } from '../const';
 
 class GraphCard {
   constructor(containerId, symbol) {
@@ -33,7 +34,7 @@ class GraphCard {
   // FETCH DATA FOR SYMBOL
   fetchGraphPoints() {
     axios.all([
-      axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+      axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,chart&range=1m&token=${API_TOKEN}`)
     ])
     .then(axios.spread((data) => {
       this.renderHeader(data);
