@@ -47,13 +47,13 @@ class Intervals {
       that.selectedInterval = selectedInterval;
 
       that.updateIntervals(this);
-      that.renderGraph();
+      that.renderChart();
     });
   }
 
 
   // FETCH NEW DATA FOR SELECTED INTERVAL
-  fetchGraphData() {
+  fetchChartData() {
     axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/chart/${this.selectedInterval}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
     .then((response) => {
       const storedData = store.get(this.symbol);
@@ -64,22 +64,22 @@ class Intervals {
       console.log(error);
     })
     .finally(() => {
-      this.renderGraph();
+      this.renderChart();
     })
   }
 
 
-  // RENDER GRAPH
-  renderGraph() {
+  // RENDER CHART
+  renderChart() {
     const storedData = store.get(this.symbol);
 
     // if historical prices for selected interval does exist in localStorage
     if (this.selectedInterval in storedData.chart) {
       const storedData = store.get(this.symbol).chart[this.selectedInterval];
       // get closing prices for stock
-      const prices = this.getHistoricalData(storedData, 'close');
+      const prices = this.getChartData(storedData, 'close');
       // get dates for closing prices
-      const dates = this.getHistoricalData(storedData, 'date');
+      const dates = this.getChartData(storedData, 'date');
       
       // delete graph if any exists and create new graph
       if (this.graph) {
@@ -89,13 +89,13 @@ class Intervals {
     }
     // if it doesn't exist, make data request
     else {
-      this.fetchGraphData();
+      this.fetchChartData();
     }
   }
 
 
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getHistoricalData(data, key) {
+  getChartData(data, key) {
     // console.log(data);
     return data.map((day) => {
       if (key === 'date') {

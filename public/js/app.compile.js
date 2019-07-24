@@ -16225,15 +16225,15 @@ var Intervals = function () {
         that.selectedInterval = selectedInterval;
 
         that.updateIntervals(this);
-        that.renderGraph();
+        that.renderChart();
       });
     }
 
     // FETCH NEW DATA FOR SELECTED INTERVAL
 
   }, {
-    key: 'fetchGraphData',
-    value: function fetchGraphData() {
+    key: 'fetchChartData',
+    value: function fetchChartData() {
       var _this = this;
 
       _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.selectedInterval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
@@ -16243,24 +16243,24 @@ var Intervals = function () {
       }).catch(function (error) {
         console.log(error);
       }).finally(function () {
-        _this.renderGraph();
+        _this.renderChart();
       });
     }
 
-    // RENDER GRAPH
+    // RENDER CHART
 
   }, {
-    key: 'renderGraph',
-    value: function renderGraph() {
+    key: 'renderChart',
+    value: function renderChart() {
       var storedData = _store2.default.get(this.symbol);
 
       // if historical prices for selected interval does exist in localStorage
       if (this.selectedInterval in storedData.chart) {
         var _storedData = _store2.default.get(this.symbol).chart[this.selectedInterval];
         // get closing prices for stock
-        var prices = this.getHistoricalData(_storedData, 'close');
+        var prices = this.getChartData(_storedData, 'close');
         // get dates for closing prices
-        var dates = this.getHistoricalData(_storedData, 'date');
+        var dates = this.getChartData(_storedData, 'date');
 
         // delete graph if any exists and create new graph
         if (this.graph) {
@@ -16270,15 +16270,15 @@ var Intervals = function () {
       }
       // if it doesn't exist, make data request
       else {
-          this.fetchGraphData();
+          this.fetchChartData();
         }
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
-    key: 'getHistoricalData',
-    value: function getHistoricalData(data, key) {
+    key: 'getChartData',
+    value: function getChartData(data, key) {
       // console.log(data);
       return data.map(function (day) {
         if (key === 'date') {
@@ -32065,17 +32065,9 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _helpers = __webpack_require__(6);
 
-var _graph = __webpack_require__(5);
+var _chartbox = __webpack_require__(168);
 
-var _graph2 = _interopRequireDefault(_graph);
-
-var _intervals = __webpack_require__(8);
-
-var _intervals2 = _interopRequireDefault(_intervals);
-
-var _watchButton = __webpack_require__(10);
-
-var _watchButton2 = _interopRequireDefault(_watchButton);
+var _chartbox2 = _interopRequireDefault(_chartbox);
 
 var _keystats = __webpack_require__(16);
 
@@ -32091,12 +32083,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// make latest price consistently update
+
 var Watchlist = function () {
   function Watchlist(container) {
     _classCallCheck(this, Watchlist);
 
     this.$canvas = container;
+    this.symbol;
     this.graph;
+    this.chartBox;
     this.keyStats;
     this.latestNews;
     this.selectedStockIndex = _store2.default.get('selectedStockIndex') || 0;
@@ -32118,7 +32114,6 @@ var Watchlist = function () {
     this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
     this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
-    this.$watchlistDropdown = this.$watchlistCanvas.find('#watchlist-dropdown');
     this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-keystats-container');
     this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
     this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
@@ -32132,7 +32127,6 @@ var Watchlist = function () {
     }
 
     this.loadStockDataHandler();
-    this.udpateGraphIntervals();
   }
 
   // RENDER WATCHLIST CANVAS
@@ -32141,7 +32135,7 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHtml',
     value: function renderCanvasHtml() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div class="watchlist-chart-container">\n              <div class="watchlist-chart-header">\n                <div id="watchlist-chart-header-top-row">\n                  <div class="watchlist-chart-stock-container">\n                    <div class="watchlist-chart-name-container">\n                      <h2 id="watchlist-stock-name"></h2>\n                      <h3 id="watchlist-stock-symbol"></h3>\n                    </div>\n                  </div>\n                  <div id="watchlist-chart-header-btn-intervals">\n                    <div id="watchlist-chart-header-watch-button"></div>\n                    <div id="watchlist-intervals-container"></div>\n                  </div>\n                </div>\n                <div class="flex-hori-start" style="height: 32px;">\n                  <div id="watchlist-latest-price"></div>\n                  <div id="watchlist-change-percent"></div>\n                </div>\n              </div>\n              <canvas id="watchlist-chart" width="900" height="320"></canvas>\n            </div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div id="watchlist-chart-container" class="watchlist-chart-container"></div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
 
       this.$canvas.empty();
       this.$canvas.append(html);
@@ -32180,22 +32174,7 @@ var Watchlist = function () {
 
       this.$watchlist.empty();
       this.$watchlist.append(stocks);
-      this.renderOnUnwatch();
-    }
-
-    // RELOAD PAGE WHEN STOCK IS REMOVED FROM WATCHLIST
-
-  }, {
-    key: 'renderOnUnwatch',
-    value: function renderOnUnwatch() {
-      if (this.watchlist.length > 0) {
-        this.symbol = _store2.default.get('watchlist')[this.selectedStockIndex].symbol;
-        if (_store2.default.get(this.symbol) !== null) {
-          this.renderAllData();
-        }
-      } else {
-        this.fetchStockData('allData');
-      }
+      this.renderAllData();
     }
 
     // RENDER ALL STOCK INFO ON PAGE
@@ -32203,127 +32182,57 @@ var Watchlist = function () {
   }, {
     key: 'renderAllData',
     value: function renderAllData() {
-      var quoteData = _store2.default.get(this.symbol).quote;
-      this.renderStockHeader(quoteData);
-      this.renderChart();
-      this.keyStats = new _keystats2.default('#watchlist-keystats-container', this.symbol);
-      this.latestNews = new _news2.default('#watchlist-news-container', [this.symbol], this.symbol);
-      this.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', this.symbol, this.companyName);
-    }
-
-    // UPDATE GRAPH WITH NEW INTERVAL
-
-  }, {
-    key: 'udpateGraphIntervals',
-    value: function udpateGraphIntervals() {
-      var that = this;
-      this.$watchlistDropdown.on('change', function (event) {
-        var selectedInterval = this.value;
-        that.interval = selectedInterval; // set this.interval
-
-        that.fetchStockData('prices');
-      });
-    }
-
-    // FORMAT AJAX REQUEST BASED ON NEEDED DATA
-
-  }, {
-    key: 'formatAjaxRequest',
-    value: function formatAjaxRequest(requestType) {
-      // request data only for historical prices to update graph
-      if (requestType === 'prices') {
-        return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/chart/' + this.interval + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
+      if (_store2.default.get(this.symbol) !== null) {
+        this.chartBox = new _chartbox2.default('#watchlist-chart-container', this.symbol);
+        this.keyStats = new _keystats2.default('#watchlist-keystats-container', this.symbol);
+        this.latestNews = new _news2.default('#watchlist-news-container', [this.symbol], this.symbol);
+      } else {
+        this.fetchStockData();
       }
-      // request all data for this stock
-      else if (requestType === 'allData') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=' + this.interval + '&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
-        } else if (requestType === 'latestPrice') {
-          return [_axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/quote?displayPercent=true&token=pk_a12f90684f2a44f180bcaeb4eff4086d')];
-        }
-    }
-
-    // FORMAT HOW TO STORE DATA BASED ON NEEDED DATA
-
-  }, {
-    key: 'formatAjaxResponseAction',
-    value: function formatAjaxResponseAction(requestType) {
-      var _this2 = this;
-
-      // store historical prices
-      if (requestType === 'prices') {
-        return function (chart) {
-          var storedData = _store2.default.get(_this2.symbol);
-
-          // if data for selected interval does not exist in localStorage
-          if (!(_this2.interval in storedData.chart)) {
-            storedData.chart[_this2.interval] = chart.data;
-            _store2.default.set(_this2.symbol, storedData);
-          }
-        };
-      }
-      // store all data for the stock
-      else if (requestType === 'allData') {
-          return function (response) {
-            var chart = response.data.chart;
-            var news = response.data.news;
-            var quote = response.data.quote;
-            // if stored data exists
-            if (_store2.default.get(_this2.symbol) !== null) {
-              var storedData = _store2.default.get(_this2.symbol);
-
-              // if data for selected interval does not exist in localStorage
-              // then add data for selected interval into localStorage
-              // case: the current selected interval is 6M for stock1
-              // when we click on stock2, we need to check if data for 6M for
-              // stock2 exists in localStorage
-              if (!(_this2.interval in storedData.chart)) {
-                storedData.chart[_this2.interval] = chart.data;
-                _store2.default.set(_this2.symbol, storedData);
-              }
-              _this2.renderStockHeader(quote);
-            }
-            // otherwise create data object and store in localStorage
-            else {
-                var dataToStore = {
-                  chart: _defineProperty({}, _this2.interval, chart),
-                  news: news,
-                  quote: quote,
-                  time: Date.now()
-                };
-
-                _store2.default.set(_this2.symbol, dataToStore);
-                _this2.renderStockHeader(quote);
-              }
-          };
-        } else if (requestType === 'latestPrice') {
-          return function (quote) {
-            _this2.renderStockHeader(quote.data);
-          };
-        }
     }
 
     // GET DATA FOR COMPANY
 
   }, {
     key: 'fetchStockData',
-    value: function fetchStockData(requestType) {
-      var _this3 = this;
+    value: function fetchStockData() {
+      var _this2 = this;
 
-      var requests = this.formatAjaxRequest(requestType);
-      var responseAction = this.formatAjaxResponseAction(requestType);
+      _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=' + this.interval + '&token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
+        var chart = response.data.chart;
+        var news = response.data.news;
+        var quote = response.data.quote;
+        // if stored data exists
+        if (_store2.default.get(_this2.symbol) !== null) {
+          var storedData = _store2.default.get(_this2.symbol);
 
-      _axios2.default.all(requests).then(_axios2.default.spread(responseAction)).catch(function (error) {
+          // if data for selected interval does not exist in localStorage
+          // then add data for selected interval into localStorage
+          // case: the current selected interval is 6M for stock1
+          // when we click on stock2, we need to check if data for 6M for
+          // stock2 exists in localStorage
+          if (!(_this2.interval in storedData.chart)) {
+            storedData.chart[_this2.interval] = chart.data;
+            _store2.default.set(_this2.symbol, storedData);
+          }
+          _this2.renderStockHeader(quote);
+        }
+        // otherwise create data object and store in localStorage
+        else {
+            var dataToStore = {
+              chart: _defineProperty({}, _this2.interval, chart),
+              news: news,
+              quote: quote,
+              time: Date.now()
+            };
+
+            _store2.default.set(_this2.symbol, dataToStore);
+            _this2.renderStockHeader(quote);
+          }
+      }).catch(function (error) {
         return console.log(error);
       }).finally(function () {
-        if (requestType === 'prices') {
-          _this3.renderChart();
-        } else if (requestType === 'allData') {
-          // functions below don't receive data arguments bc they will retrieve data from localStorage
-          _this3.renderChart();
-          _this3.keyStats = new _keystats2.default('#watchlist-keystats-container', _this3.symbol);
-          _this3.latestNews = new _news2.default('#watchlist-news-container', [_this3.symbol], _this3.symbol);
-          _this3.watchButton = new _watchButton2.default('#watchlist-chart-header-watch-button', _this3.symbol, _this3.companyName);
-        }
+        _this2.renderAllData();
       });
     }
 
@@ -32383,7 +32292,7 @@ var Watchlist = function () {
         // clear stored data for stock and fetch new data
         else {
             _store2.default.remove(that.symbol);
-            that.fetchStockData('allData');
+            that.fetchStockData();
           }
 
         // get index of selected stock
@@ -32413,33 +32322,6 @@ var Watchlist = function () {
       } else {
         return true;
       }
-    }
-
-    // RENDER CHART
-
-  }, {
-    key: 'renderChart',
-    value: function renderChart() {
-      var storedData = _store2.default.get(this.symbol);
-      // if historical prices for selected interval does exist in localStorage
-      if (this.interval in storedData.chart) {
-        var _storedData = _store2.default.get(this.symbol).chart[this.interval];
-        // get closing prices for stock
-        var prices = this.getChartData(_storedData, 'close');
-        // get dates for closing prices
-        var dates = this.getChartData(_storedData, 'date');
-
-        // delete graph if any exists and create new graph
-        if (this.graph) {
-          this.graph.destroy();
-        }
-        this.graph = new _graph2.default('#watchlist-chart', prices, dates);
-        this.intervalsBar = new _intervals2.default('#watchlist-intervals-container', this.symbol, '#watchlist-chart');
-      }
-      // if it doesn't exist, make data request
-      else {
-          this.fetchStockData('prices');
-        }
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
