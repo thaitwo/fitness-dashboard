@@ -152,7 +152,7 @@ body {
   padding-left: 33px; }
 
 /* LAYOUT */
-.flex-sp-btwn {
+.flex-space-between {
   display: flex;
   flex-direction: row;
   justify-content: space-between; }
@@ -287,6 +287,8 @@ body {
 /* MODULE */
 .icon-loading {
   display: none; }
+  .icon-loading i {
+    color: #FFFFFF; }
   .icon-loading.is-visible {
     color: rgba(0, 0, 0, 0.1);
     display: block;
@@ -945,26 +947,24 @@ body {
     margin-bottom: 2rem; }
 
 .graphCard-header {
-  color: #FFFFFF;
   display: flex;
-  align-items: center; }
+  align-items: flex-start;
+  justify-content: space-between; }
 
 .graphCard-company {
+  color: #F9A825;
   font-weight: 600;
   margin-bottom: 3px; }
 
 .graphCard-symbol {
+  color: #FFFFFF;
   font-size: 14px;
   font-weight: 400;
-  opacity: .4; }
+  opacity: .8; }
 
-.graphCard-logo {
-  background-color: #FFFFFF;
-  border-radius: 100rem;
-  margin-right: 16px;
-  max-height: 24px;
-  max-width: 24px;
-  padding: 6px; }
+.graphCard-latest-price {
+  color: #FFFFFF;
+  font-size: 1rem; }
 
 .news-container {
   max-height: 376px;

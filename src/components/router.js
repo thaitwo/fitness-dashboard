@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
 import Stock from './stock';
-import Stocks from './stocks';
+import Stocks from './stocks-page';
 import Watchlist from './watchlist';
 const DASHBOARD_URL = 'stocks/';
 

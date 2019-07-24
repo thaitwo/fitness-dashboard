@@ -1,25 +1,23 @@
 .graphCard-header {
-  color: $white;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .graphCard-company {
+  color: $colorDark-accent;
   font-weight: 600;
   margin-bottom: 3px;
 }
 
 .graphCard-symbol {
+  color: $white;
   font-size: 14px;
   font-weight: 400;
-  opacity: .4;
+  opacity: .8;
 }
 
-.graphCard-logo {
-  background-color: $white;
-  border-radius: 100rem;
-  margin-right: 16px;
-  max-height: 24px;
-  max-width: 24px;
-  padding: 6px;
+.graphCard-latest-price {
+  color: $white;
+  font-size: 1rem;
 }

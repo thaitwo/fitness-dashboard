@@ -16045,7 +16045,15 @@ Object.defineProperty(exports, "__esModule", {
 exports.formatLargeNumber = formatLargeNumber;
 exports.formatNumberWithCommas = formatNumberWithCommas;
 exports.trimString = trimString;
-// FORMATE LARGE NUMBERS
+exports.calcLocalStorageAge = calcLocalStorageAge;
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Formate large numbers
 function formatLargeNumber(num) {
   return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
   // Six Zeroes for Millions 
@@ -16059,9 +16067,24 @@ function formatNumberWithCommas(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// TRIM STRINGS TO SPECIFIED LENGTH
+// Trim strings to specified length
 function trimString(string, length) {
   return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
+
+// Calculate whether local storage for stock is more than 1 day old (24 hours)
+function calcLocalStorageAge(symbol) {
+  var oneDay = 60 * 60 * 24 * 1000;
+  var newTime = Date.now();
+  var oldTime = void 0;
+
+  // if stored data exists, calculate if data needs to be updated
+  if (_store2.default.get(symbol) !== null) {
+    oldTime = _store2.default.get(symbol).time;
+    return newTime - oldTime > oneDay;
+  } else {
+    return true;
+  }
 }
 
 /***/ }),
@@ -16193,11 +16216,12 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
+var _const = __webpack_require__(5);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// issue: can't retrieve news data for specific symbol
 var News = function () {
   function News(containerId, symbolArray, localStorageKey) {
     var numOfArticlesPerStock = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 5;
@@ -16219,7 +16243,7 @@ var News = function () {
       var _this = this;
 
       return this.symbols.map(function (symbol) {
-        return _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + symbol + '/news/last/' + _this.num + '?token=pk_a12f90684f2a44f180bcaeb4eff4086d');
+        return _axios2.default.get(_const.URL_BASE + '/' + symbol + '/news/last/' + _this.num + '?token=' + _const.API_TOKEN);
       });
     }
   }, {
@@ -16556,6 +16580,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _jquery = __webpack_require__(1);
@@ -16671,8 +16697,16 @@ var ChartBox = function () {
     value: function getChartData(data, key) {
       return data.map(function (day) {
         if (key === 'date') {
-          var date = day[key].split('-');
-          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
+          var fullDate = day[key].split('-');
+
+          var _fullDate = _slicedToArray(fullDate, 3),
+              year = _fullDate[0],
+              month = _fullDate[1],
+              date = _fullDate[2];
+
+          month = month.replace(/^0+/, ''); // Remove leading '0'
+
+          return month + '-' + date + '-' + year;
         } else {
           return day[key];
         }
@@ -30870,6 +30904,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _jquery = __webpack_require__(1);
@@ -30942,7 +30978,8 @@ var GraphCard = function () {
             '1m': data.chart
           },
           news: data.news,
-          quote: data.quote
+          quote: data.quote,
+          time: Date.now()
         };
         _store2.default.set(_this.symbol, dataToStore);
       }).catch(function (error) {
@@ -30958,12 +30995,13 @@ var GraphCard = function () {
   }, {
     key: 'renderHeader',
     value: function renderHeader() {
-      var storedData = _store2.default.get(this.symbol);
-      var symbol = storedData.quote.symbol;
-      var company = storedData.quote.companyName;
-      var latestPrice = storedData.quote.latestPrice;
+      var storedData = _store2.default.get(this.symbol).quote;
+      var companyName = storedData.companyName,
+          latestPrice = storedData.latestPrice,
+          symbol = storedData.symbol;
 
-      var html = '\n      <div>\n        <h2 class="graphCard-company">' + company + '</h2>\n        <h3 class="graphCard-symbol">' + symbol + '</h3>\n      </div>\n    ';
+
+      var html = '\n      <div>\n        <h2 class="graphCard-company">' + companyName + '</h2>\n        <h3 class="graphCard-symbol">' + symbol + '</h3>\n      </div>\n      <div>\n        <h3 class="graphCard-latest-price">' + latestPrice + '</h3>\n      </div>\n    ';
 
       this.$cardHeader.append(html);
     }
@@ -31043,8 +31081,16 @@ var GraphCard = function () {
     value: function getChartData(data, key) {
       return data.map(function (day) {
         if (key === 'date') {
-          var date = day[key].split('-');
-          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
+          var fullDate = day[key].split('-');
+
+          var _fullDate = _slicedToArray(fullDate, 3),
+              year = _fullDate[0],
+              month = _fullDate[1],
+              date = _fullDate[2];
+
+          month = month.replace(/^0+/, ''); // Remove leading '0'
+
+          return month + '-' + date + '-' + year;
         } else {
           return day[key];
         }
@@ -31082,9 +31128,9 @@ var _stock = __webpack_require__(171);
 
 var _stock2 = _interopRequireDefault(_stock);
 
-var _stocks = __webpack_require__(172);
+var _stocksPage = __webpack_require__(182);
 
-var _stocks2 = _interopRequireDefault(_stocks);
+var _stocksPage2 = _interopRequireDefault(_stocksPage);
 
 var _watchlist = __webpack_require__(173);
 
@@ -31145,7 +31191,7 @@ var Router = function () {
           _this.currentPage = new _watchlist2.default(_this.$canvas);
         },
         '*': function _() {
-          _this.currentPage = new _stocks2.default(_this.$canvas);
+          _this.currentPage = new _stocksPage2.default(_this.$canvas);
         }
       }).resolve();
 
@@ -31176,6 +31222,8 @@ exports.default = Router;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -31235,6 +31283,7 @@ var StockPopup = function () {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
+
     this.intervals = new _intervals2.default('#popup-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new _watchButton2.default('#popup-watch-button', this.symbol, this.companyName);
     this.getStockData();
@@ -31251,15 +31300,130 @@ var StockPopup = function () {
       this.$mainContainer.prepend(popupModal);
     }
 
-    // REMOVE EVENT LISTENERS & DESTROY POPUP HTML
+    // RENDER STOCK CONTENT FOR POPUP
 
   }, {
-    key: 'destroy',
-    value: function destroy() {
-      this.$popupContainer.off();
-      this.$popupContentContainer.off();
-      this.graph.destroy();
-      this.$popupContainer.remove();
+    key: 'getStockData',
+    value: function getStockData() {
+
+      // check if there's locally stored data before making Ajax request
+      if (_store2.default.get(this.symbol)) {
+        this.renderStockInfo();
+        this.renderChart();
+      } else {
+        this.fetchStockData();
+      }
+    }
+
+    // FETCH STOCK DATA
+
+  }, {
+    key: 'fetchStockData',
+    value: function fetchStockData() {
+      var _this = this;
+
+      // display loading icon
+      this.$loadingIcon.addClass('is-visible');
+      // request stock data
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=' + _const.API_TOKEN).then(function (response) {
+        var dataToStore = {
+          chart: {
+            '1m': response.data.chart
+          },
+          news: response.data.news,
+          quote: response.data.quote,
+          time: Date.now()
+        };
+        _store2.default.set(_this.symbol, dataToStore);
+      }).catch(function (error) {
+        console.log(error);
+      }).then(function () {
+        _this.renderStockInfo();
+        _this.renderChart();
+        _this.$loadingIcon.removeClass('is-visible');
+      });
+    }
+
+    // RENDER TABLE WITH STOCK INFO
+
+  }, {
+    key: 'renderStockInfo',
+    value: function renderStockInfo() {
+      var stockData = _store2.default.get('' + this.symbol).quote;
+      var changePercent = stockData.changePercent,
+          close = stockData.close,
+          high = stockData.high,
+          latestPrice = stockData.latestPrice,
+          latestVolume = stockData.latestVolume,
+          low = stockData.low,
+          marketCap = stockData.marketCap,
+          open = stockData.open,
+          peRatio = stockData.peRatio,
+          week52High = stockData.week52High,
+          week52Low = stockData.week52Low;
+
+      // get stock info from local storage
+
+      changePercent = changePercent.toFixed(2);
+      latestVolume = (0, _helpers.formatNumberWithCommas)(Math.round(latestVolume));
+      marketCap = (0, _helpers.formatLargeNumber)(marketCap);
+      var companyName = (0, _helpers.trimString)(this.companyName, 36);
+      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
+
+      // render stock name
+      this.$stockName.text(companyName + ' (' + this.symbol + ')');
+      this.$latestPriceContainer.text(latestPrice);
+      this.$changePercentContainer.text('' + plusOrMinus + changePercent + '%');
+
+      if (changePercent >= 0) {
+        this.$changePercentContainer.addClass('percent-change-positive');
+      } else {
+        this.$changePercentContainer.addClass('percent-change-negative');
+      }
+
+      var row = '\n      <tr>\n        <td class="key">Close</td>\n        <td class="val">' + close + '</td>\n      </tr>\n      <tr>\n        <td class="key">Open</td>\n        <td class="val">' + open + '</td>\n      </tr>\n      <tr>\n        <td class="key">High</td>\n        <td class="val">' + high + '</td>\n      </tr>\n      <tr>\n        <td class="key">Low</td>\n        <td class="val">' + low + '</td>\n      </tr>\n      <tr>\n        <td class="key">Market Cap</td>\n        <td class="val">' + marketCap + '</td>\n      </tr>\n      <tr>\n        <td class="key">P/E Ratio</td>\n        <td class="val">' + peRatio + '</td>\n      </tr>\n      <tr>\n        <td class="key">52 Wk Range</td>\n        <td class="val">' + week52Low + ' - ' + week52High + '</td>\n      </tr>\n      <tr>\n        <td class="key">Volume</td>\n        <td class="val">' + latestVolume + '</td>\n      </tr>\n    ';
+      this.$tbody.append(row);
+    }
+
+    // RENDER CHART
+
+  }, {
+    key: 'renderChart',
+    value: function renderChart() {
+      var stockData = _store2.default.get('' + this.symbol).chart['1m'];
+
+      // get opening prices for company stock
+      var priceData = this.getChartData(stockData, 'close');
+
+      // get dates for the opening prices
+      var dateLabels = this.getChartData(stockData, 'date');
+
+      // create new graph for this company stock
+      this.graph = new _graph2.default('#popup-chart', priceData, dateLabels);
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getChartData',
+    value: function getChartData(data, key) {
+      // console.log(data);
+      return data.map(function (day) {
+        if (key === 'date') {
+          var fullDate = day[key].split('-');
+
+          var _fullDate = _slicedToArray(fullDate, 3),
+              year = _fullDate[0],
+              month = _fullDate[1],
+              date = _fullDate[2];
+
+          month = month.replace(/^0+/, ''); // Remove leading '0'
+
+          return month + '-' + date + '-' + year;
+        } else {
+          return day[key];
+        }
+      });
     }
 
     // CLOSE POPUP EVENT HANDLER
@@ -31286,132 +31450,15 @@ var StockPopup = function () {
       });
     }
 
-    // RENDER STOCK CONTENT FOR POPUP
+    // REMOVE EVENT LISTENERS & DESTROY POPUP HTML
 
   }, {
-    key: 'getStockData',
-    value: function getStockData() {
-
-      // check if there's locally stored data before making Ajax request
-      if (_store2.default.get('' + this.symbol)) {
-        this.renderStockInfo();
-        this.renderGraph();
-        this.$exitIcon.removeClass('is-hidden');
-      } else {
-        this.fetchStockData();
-        this.$exitIcon.removeClass('is-hidden');
-      }
-    }
-
-    // FETCH STOCK DATA
-
-  }, {
-    key: 'fetchStockData',
-    value: function fetchStockData() {
-      var _this = this;
-
-      // display loading icon
-      this.$loadingIcon.addClass('is-visible');
-      // request stock data
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=' + _const.API_TOKEN).then(function (response) {
-        // store company data
-        var dataToStore = {
-          chart: {
-            '1m': response.data.chart // this.interval will be set to the selected interval
-          },
-          news: response.data.news,
-          quote: response.data.quote,
-          time: Date.now()
-        };
-        _store2.default.set('' + _this.symbol, dataToStore);
-      }).catch(function (error) {
-        console.log(error);
-      }).finally(function () {
-        _this.renderStockInfo();
-        _this.renderGraph();
-        _this.$loadingIcon.removeClass('is-visible');
-        // show watchlist add/remove button
-        _this.showButton(_this.$watchlistButton);
-        // display exit icon
-        _this.showButton(_this.$exitIcon);
-      });
-    }
-
-    // RENDER TABLE WITH STOCK INFO
-
-  }, {
-    key: 'renderStockInfo',
-    value: function renderStockInfo() {
-      var stockData = _store2.default.get('' + this.symbol);
-
-      // get stock info from local storage
-      var companyName = (0, _helpers.trimString)(this.companyName, 36);
-      var latestPrice = stockData.quote.latestPrice;
-      var changePercent = stockData.quote.changePercent.toFixed(2);
-      var closePrice = stockData.quote.close;
-      var openPrice = stockData.quote.open;
-      var low = stockData.quote.low;
-      var high = stockData.quote.high;
-      var wk52High = stockData.quote.week52High;
-      var wk52Low = stockData.quote.week52Low;
-      var volume = (0, _helpers.formatNumberWithCommas)(Math.round(stockData.quote.latestVolume));
-      var peRatio = stockData.quote.peRatio;
-      var marketCap = (0, _helpers.formatLargeNumber)(stockData.quote.marketCap);
-      var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
-
-      // render stock name
-      this.$stockName.text(companyName + ' (' + this.symbol + ')');
-      this.$latestPriceContainer.text(latestPrice);
-      this.$changePercentContainer.text('' + plusOrMinus + changePercent + '%');
-      if (changePercent >= 0) {
-        this.$changePercentContainer.addClass('percent-change-positive');
-      } else {
-        this.$changePercentContainer.addClass('percent-change-negative');
-      }
-
-      var row = '\n      <tr>\n        <td class="key">Close</td>\n        <td class="val">' + closePrice + '</td>\n      </tr>\n      <tr>\n        <td class="key">Open</td>\n        <td class="val">' + openPrice + '</td>\n      </tr>\n      <tr>\n        <td class="key">High</td>\n        <td class="val">' + high + '</td>\n      </tr>\n      <tr>\n        <td class="key">Low</td>\n        <td class="val">' + low + '</td>\n      </tr>\n      <tr>\n        <td class="key">Market Cap</td>\n        <td class="val">' + marketCap + '</td>\n      </tr>\n      <tr>\n        <td class="key">P/E Ratio</td>\n        <td class="val">' + peRatio + '</td>\n      </tr>\n      <tr>\n        <td class="key">52 Wk Range</td>\n        <td class="val">' + wk52Low + ' - ' + wk52High + '</td>\n      </tr>\n      <tr>\n        <td class="key">Volume</td>\n        <td class="val">' + volume + '</td>\n      </tr>\n    ';
-      this.$tbody.append(row);
-    }
-
-    // RENDER GRAPH
-
-  }, {
-    key: 'renderGraph',
-    value: function renderGraph() {
-      var stockData = _store2.default.get('' + this.symbol).chart['1m'];
-
-      // get opening prices for company stock
-      var priceData = this.getHistoricalData(stockData, 'close');
-
-      // get dates for the opening prices
-      var dateLabels = this.getHistoricalData(stockData, 'date');
-
-      // create new graph for this company stock
-      this.graph = new _graph2.default('#popup-chart', priceData, dateLabels);
-    }
-
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getHistoricalData',
-    value: function getHistoricalData(data, key) {
-      // console.log(data);
-      return data.map(function (day) {
-        if (key === 'date') {
-          var date = day[key].split('-');
-          return date[1].replace(/^0+/, '') + '-' + date[2] + '-' + date[0];
-        } else {
-          return day[key];
-        }
-      });
-    }
-
-    // SHOW WATCHLIST ADD/REMOVE BUTTON
-
-  }, {
-    key: 'showButton',
-    value: function showButton(buttonElement) {
-      buttonElement.removeClass('is-hidden');
+    key: 'destroy',
+    value: function destroy() {
+      this.$popupContainer.off();
+      this.$popupContentContainer.off();
+      this.graph.destroy();
+      this.$popupContainer.remove();
     }
   }]);
 
@@ -31456,6 +31503,8 @@ var _keystats2 = _interopRequireDefault(_keystats);
 var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
+
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31503,7 +31552,7 @@ var Stock = function () {
     value: function fetchData() {
       var _this = this;
 
-      _axios2.default.get('https://cloud.iexapis.com/v1/stock/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d').then(function (response) {
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=1m&token=' + _const.API_TOKEN).then(function (response) {
         var symbol = _this.symbol.toUpperCase();
         var dataToStore = {
           chart: _defineProperty({}, _this.interval, response.data.chart),
@@ -31528,304 +31577,7 @@ var Stock = function () {
 exports.default = Stock;
 
 /***/ }),
-/* 172 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _stockPopup = __webpack_require__(170);
-
-var _stockPopup2 = _interopRequireDefault(_stockPopup);
-
-var _graphCard = __webpack_require__(168);
-
-var _graphCard2 = _interopRequireDefault(_graphCard);
-
-var _news = __webpack_require__(9);
-
-var _news2 = _interopRequireDefault(_news);
-
-var _const = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Stocks = function () {
-  function Stocks(container) {
-    _classCallCheck(this, Stocks);
-
-    this.$container = container;
-    this.graph;
-    this.popup;
-    this.watchlist = _store2.default.get('watchlist') || [];
-    this.render();
-    this.$stocksContainer = (0, _jquery2.default)('#most-active-container');
-    this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
-    this.$stockListContainer = (0, _jquery2.default)('.stock-list');
-
-    this.getStocks();
-    this.displayPopup();
-    this.mostActiveSymbols;
-    this.news;
-  }
-
-  // RENDER SMALL GRAPH CARDS
-
-
-  _createClass(Stocks, [{
-    key: 'renderGraphCards',
-    value: function renderGraphCards() {
-      var mostActiveSymbols = _store2.default.get('mostActive');
-
-      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
-        var symbol = stock.symbol;
-        new _graphCard2.default('#home-graphCard' + index, symbol);
-      });
-    }
-
-    // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
-
-  }, {
-    key: 'getMostActiveSymbols',
-    value: function getMostActiveSymbols() {
-      var symbols = _store2.default.get('mostActive');
-
-      return symbols.slice(0, 5).map(function (stock) {
-        return stock.symbol;
-      });
-    }
-
-    // RENDER HTML
-
-  }, {
-    key: 'render',
-    value: function render() {
-      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="home-news" class="box"></div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right">\n            <h2 class="text-header">Gainers</h2>\n            <ol id="gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="losers-container" class="box">\n            <h2 class="text-header">Losers</h2>\n            <ol id="losers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
-      this.$container.empty();
-      this.$container.append(html);
-    }
-
-    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
-
-  }, {
-    key: 'isInWatchlist',
-    value: function isInWatchlist(symbol) {
-      return this.watchlist.some(function (stock) {
-        return stock.symbol === symbol;
-      });
-    }
-
-    // RETRIEVE STOCKS FROM EITHER API OR STORE
-
-  }, {
-    key: 'getStocks',
-    value: function getStocks() {
-      var mostActive = _store2.default.get('mostActive') || [];
-      var gainers = _store2.default.get('gainers') || [];
-      var losers = _store2.default.get('losers') || [];
-
-      // check if local storage exist
-      if (mostActive.length && gainers.length && losers.length) {
-        this.mostActiveSymbols = this.getMostActiveSymbols();
-        this.renderStocks('#most-active', 'mostActive');
-        this.renderStocks('#gainers', 'gainers');
-        this.renderStocks('#losers', 'losers');
-        this.renderGraphCards();
-        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'homeNews', 1);
-      } else {
-        this.fetchStocks();
-      }
-    }
-
-    // GET LIST OF COMPANIES
-
-  }, {
-    key: 'fetchStocks',
-    value: function fetchStocks() {
-      var _this = this;
-
-      // display loading icon
-      this.$loadingIcon.addClass('is-visible');
-
-      _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
-        _store2.default.set('mostActive', mostActive.data);
-        _store2.default.set('gainers', gainers.data);
-        _store2.default.set('losers', losers.data);
-      })).catch(function (error) {
-        console.log(error);
-      }).finally(function () {
-        _this.mostActiveSymbols = _this.getMostActiveSymbols();
-        _this.$loadingIcon.removeClass('is-visible');
-        _this.renderStocks('#most-active', 'mostActive');
-        _this.renderStocks('#gainers', 'gainers');
-        _this.renderStocks('#losers', 'losers');
-        _this.renderGraphCards();
-        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'homeNews', 1);
-      });
-    }
-
-    // RENDER MOST ACTIVE
-
-  }, {
-    key: 'renderStocks',
-    value: function renderStocks(container, listType) {
-      var _this2 = this;
-
-      var stocks = _store2.default.get(listType);
-
-      // render html list for stocks
-      var list = stocks.slice(0, 5).map(function (stock) {
-        var symbol = stock.symbol,
-            companyName = stock.companyName,
-            latestPrice = stock.latestPrice,
-            change = stock.change,
-            changePercent = stock.changePercent;
-
-        var iconClass = void 0;
-        var isNegative = void 0;
-        var plusMinusSign = void 0;
-        var isSelected = '';
-
-        if (change < 0) {
-          isNegative = 'is-negative';
-          plusMinusSign = '-';
-        } else if (change == 0) {
-          plusMinusSign = '';
-        } else {
-          plusMinusSign = '+';
-        }
-
-        change = Math.abs(change);
-        changePercent = Math.abs((changePercent * 100).toFixed(2));
-
-        // if stock exist in watchlist array, dispay solid icon with gold color
-        if (_this2.isInWatchlist(symbol)) {
-          iconClass = 'fas';
-          isSelected = 'is-selected';
-        }
-        // if stock doesn't exist, display line icon with gray color
-        else {
-            iconClass = 'far';
-          }
-
-        return '\n        <li id="' + symbol + '">\n          <div class="clickable-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + changePercent + '<span>%</span></p>\n          </div>\n          <div>\n            <span class="icon-watchlist ' + isSelected + '"><i class="' + iconClass + ' fa-star"></i></span>\n          </div>\n        </li>\n      ';
-      });
-
-      (0, _jquery2.default)(container).append(list);
-      this.activateWatchlistIcon(container);
-    }
-
-    // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
-
-  }, {
-    key: 'displayPopup',
-    value: function displayPopup() {
-      var that = this;
-
-      this.$stockListContainer.on('click', '.clickable-stock-name', function (event) {
-        event.preventDefault();
-
-        var companyId = (0, _jquery2.default)(this).closest('li')[0].id;
-        var companyName = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
-
-        // create new popup
-        that.popup = new _stockPopup2.default(companyId, companyName);
-      });
-    }
-
-    // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
-
-  }, {
-    key: 'activateWatchlistIcon',
-    value: function activateWatchlistIcon(containerId) {
-      var that = this;
-
-      (0, _jquery2.default)(containerId).on('click', '.icon-watchlist', function (event) {
-        var $this = (0, _jquery2.default)(this);
-        event.stopPropagation();
-
-        // find hollow star icon
-        var $icon = $this.find('i');
-
-        // get stock id and stock name from sibling elements
-        var stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
-        var stockName = $this.closest('li').find('.stock-name')[0].innerText;
-        // console.log(stockSymbol, stockName);
-        // retrieve watchlist:
-        // not doing this causes a bug where after you click watch/unwatch and close popup,
-        // the star icon will not work on the first click attempt for the stock 
-        that.watchlist = _store2.default.get('watchlist') || [];
-
-        var isInWatchlist = that.isInWatchlist(stockSymbol);
-        // if stock is not in watchlist array
-        if (!isInWatchlist) {
-          that.watchlist.push({
-            symbol: stockSymbol,
-            name: stockName
-          });
-          // update watchlist array
-          _store2.default.set('watchlist', that.watchlist);
-          // set icon to solid icon
-          $icon.removeClass('far');
-          $icon.addClass('fas');
-          // set icon color to gold
-          $this.addClass('is-selected');
-        }
-        // if stock exist, then remove it from watchlist
-        else {
-            // get index of stock in the watchlist array
-            var index = that.watchlist.findIndex(function (stock) {
-              return stock.symbol === stockSymbol;
-            });
-            // if index exist (meaning that stock exists in watchlist), remove the stock
-            if (index != -1) {
-              that.watchlist.splice(index, 1);
-            }
-            // update watchlist array
-            _store2.default.set('watchlist', that.watchlist);
-            // set icon to line icon
-            $icon.removeClass('fas');
-            $icon.addClass('far');
-            // set icon color to gray
-            $this.removeClass('is-selected');
-          }
-      });
-    }
-  }, {
-    key: 'destroy',
-    value: function destroy() {
-      if (this.$stocksContainer) {
-        this.$container.empty();
-      }
-    }
-  }]);
-
-  return Stocks;
-}();
-
-exports.default = Stocks;
-
-/***/ }),
+/* 172 */,
 /* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -32036,7 +31788,7 @@ var Watchlist = function () {
         var clickedEl = (0, _jquery2.default)(this).parent();
         var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
         that.symbol = this.id;
-        var dataUpdateRequired = that.calcLocalStorageAge();
+        var dataUpdateRequired = (0, _helpers.calcLocalStorageAge)(that.symbol);
 
         // add active class to clicked watchlist item
         watchlistItems.removeClass('active');
@@ -32064,24 +31816,6 @@ var Watchlist = function () {
         // };
         _store2.default.set('selectedStockIndex', selectedStockIndex);
       });
-    }
-
-    // Calculate whether local storage for stock is more than 6 hours old
-
-  }, {
-    key: 'calcLocalStorageAge',
-    value: function calcLocalStorageAge() {
-      var oneDay = 60 * 60 * 24 * 1000;
-      var newTime = Date.now();
-      var oldTime = void 0;
-
-      // if stored data exists, calculate if data needs to be updated
-      if (_store2.default.get(this.symbol) !== null) {
-        oldTime = _store2.default.get(this.symbol).time;
-        return newTime - oldTime > oneDay;
-      } else {
-        return true;
-      }
     }
 
     // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
@@ -47279,6 +47013,308 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */,
+/* 182 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _stockPopup = __webpack_require__(170);
+
+var _stockPopup2 = _interopRequireDefault(_stockPopup);
+
+var _graphCard = __webpack_require__(168);
+
+var _graphCard2 = _interopRequireDefault(_graphCard);
+
+var _news = __webpack_require__(9);
+
+var _news2 = _interopRequireDefault(_news);
+
+var _const = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Stocks = function () {
+  function Stocks(container) {
+    _classCallCheck(this, Stocks);
+
+    this.$container = container;
+    this.graph;
+    this.popup;
+    this.watchlist = _store2.default.get('watchlist') || [];
+    this.render();
+    this.$stocksContainer = (0, _jquery2.default)('#most-active-container');
+    this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
+    this.$stockListContainer = (0, _jquery2.default)('.stock-list');
+
+    this.getStocks();
+    this.displayPopup();
+    this.mostActiveSymbols;
+    this.news;
+  }
+
+  // RENDER SMALL GRAPH CARDS
+
+
+  _createClass(Stocks, [{
+    key: 'renderGraphCards',
+    value: function renderGraphCards() {
+      var mostActiveSymbols = _store2.default.get('mostActive');
+
+      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
+        var symbol = stock.symbol;
+        new _graphCard2.default('#home-graphCard' + index, symbol);
+      });
+    }
+
+    // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
+
+  }, {
+    key: 'getMostActiveSymbols',
+    value: function getMostActiveSymbols() {
+      var symbols = _store2.default.get('mostActive');
+
+      return symbols.slice(0, 5).map(function (stock) {
+        return stock.symbol;
+      });
+    }
+
+    // RENDER HTML
+
+  }, {
+    key: 'render',
+    value: function render() {
+      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="most-active-container" class="box margin-right">\n            <h2 class="text-header">Most Active</h2>\n            <div class="icon-loading">\n              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n            </div>\n            <ol id="most-active" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="home-news" class="box"></div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right">\n            <h2 class="text-header">Gainers</h2>\n            <ol id="gainers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n          <div id="losers-container" class="box">\n            <h2 class="text-header">Losers</h2>\n            <ol id="losers" class="stock-list">\n              <li class="stock-list-header-row">\n                <div>Company</div>\n                <div>Last Price</div>\n                <div>Change</div>\n                <div>% Change</div>\n                <div>Watch</div>\n              </li>\n            </ol>\n          </div>\n        </div>\n      ';
+      this.$container.empty();
+      this.$container.append(html);
+    }
+
+    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
+
+  }, {
+    key: 'isInWatchlist',
+    value: function isInWatchlist(symbol) {
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === symbol;
+      });
+    }
+
+    // RETRIEVE STOCKS FROM EITHER API OR STORE
+
+  }, {
+    key: 'getStocks',
+    value: function getStocks() {
+      var mostActive = _store2.default.get('mostActive') || [];
+      var gainers = _store2.default.get('gainers') || [];
+      var losers = _store2.default.get('losers') || [];
+
+      // check if local storage exist
+      if (mostActive.length && gainers.length && losers.length) {
+        this.mostActiveSymbols = this.getMostActiveSymbols();
+        this.renderStocks('#most-active', 'mostActive');
+        this.renderStocks('#gainers', 'gainers');
+        this.renderStocks('#losers', 'losers');
+        this.renderGraphCards();
+        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'homeNews', 1);
+      } else {
+        this.fetchStocks();
+      }
+    }
+
+    // GET LIST OF COMPANIES
+
+  }, {
+    key: 'fetchStocks',
+    value: function fetchStocks() {
+      var _this = this;
+
+      // display loading icon
+      this.$loadingIcon.addClass('is-visible');
+
+      _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
+        _store2.default.set('mostActive', mostActive.data);
+        _store2.default.set('gainers', gainers.data);
+        _store2.default.set('losers', losers.data);
+      })).catch(function (error) {
+        console.log(error);
+      }).finally(function () {
+        _this.mostActiveSymbols = _this.getMostActiveSymbols();
+        _this.$loadingIcon.removeClass('is-visible');
+        _this.renderStocks('#most-active', 'mostActive');
+        _this.renderStocks('#gainers', 'gainers');
+        _this.renderStocks('#losers', 'losers');
+        _this.renderGraphCards();
+        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'homeNews', 1);
+      });
+    }
+
+    // RENDER MOST ACTIVE
+
+  }, {
+    key: 'renderStocks',
+    value: function renderStocks(container, listType) {
+      var _this2 = this;
+
+      var stocks = _store2.default.get(listType);
+
+      // render html list for stocks
+      var list = stocks.slice(0, 5).map(function (stock) {
+        var symbol = stock.symbol,
+            companyName = stock.companyName,
+            latestPrice = stock.latestPrice,
+            change = stock.change,
+            changePercent = stock.changePercent;
+
+        var iconClass = void 0;
+        var isNegative = void 0;
+        var plusMinusSign = void 0;
+        var isSelected = '';
+
+        if (change < 0) {
+          isNegative = 'is-negative';
+          plusMinusSign = '-';
+        } else if (change == 0) {
+          plusMinusSign = '';
+        } else {
+          plusMinusSign = '+';
+        }
+
+        change = Math.abs(change);
+        changePercent = Math.abs((changePercent * 100).toFixed(2));
+
+        // if stock exist in watchlist array, dispay solid icon with gold color
+        if (_this2.isInWatchlist(symbol)) {
+          iconClass = 'fas';
+          isSelected = 'is-selected';
+        }
+        // if stock doesn't exist, display line icon with gray color
+        else {
+            iconClass = 'far';
+          }
+
+        return '\n        <li id="' + symbol + '">\n          <div class="clickable-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + changePercent + '<span>%</span></p>\n          </div>\n          <div>\n            <span class="icon-watchlist ' + isSelected + '"><i class="' + iconClass + ' fa-star"></i></span>\n          </div>\n        </li>\n      ';
+      });
+
+      (0, _jquery2.default)(container).append(list);
+      this.activateWatchlistIcon(container);
+    }
+
+    // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
+
+  }, {
+    key: 'displayPopup',
+    value: function displayPopup() {
+      var that = this;
+
+      this.$stockListContainer.on('click', '.clickable-stock-name', function (event) {
+        event.preventDefault();
+
+        var companyId = (0, _jquery2.default)(this).closest('li')[0].id;
+        var companyName = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
+
+        // create new popup
+        that.popup = new _stockPopup2.default(companyId, companyName);
+      });
+    }
+
+    // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
+
+  }, {
+    key: 'activateWatchlistIcon',
+    value: function activateWatchlistIcon(containerId) {
+      var that = this;
+
+      (0, _jquery2.default)(containerId).on('click', '.icon-watchlist', function (event) {
+        var $this = (0, _jquery2.default)(this);
+        event.stopPropagation();
+
+        // find hollow star icon
+        var $icon = $this.find('i');
+
+        // get stock id and stock name from sibling elements
+        var stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
+        var stockName = $this.closest('li').find('.stock-name')[0].innerText;
+        // console.log(stockSymbol, stockName);
+        // retrieve watchlist:
+        // not doing this causes a bug where after you click watch/unwatch and close popup,
+        // the star icon will not work on the first click attempt for the stock 
+        that.watchlist = _store2.default.get('watchlist') || [];
+
+        var isInWatchlist = that.isInWatchlist(stockSymbol);
+        // if stock is not in watchlist array
+        if (!isInWatchlist) {
+          that.watchlist.push({
+            symbol: stockSymbol,
+            name: stockName
+          });
+          // update watchlist array
+          _store2.default.set('watchlist', that.watchlist);
+          // set icon to solid icon
+          $icon.removeClass('far');
+          $icon.addClass('fas');
+          // set icon color to gold
+          $this.addClass('is-selected');
+        }
+        // if stock exist, then remove it from watchlist
+        else {
+            // get index of stock in the watchlist array
+            var index = that.watchlist.findIndex(function (stock) {
+              return stock.symbol === stockSymbol;
+            });
+            // if index exist (meaning that stock exists in watchlist), remove the stock
+            if (index != -1) {
+              that.watchlist.splice(index, 1);
+            }
+            // update watchlist array
+            _store2.default.set('watchlist', that.watchlist);
+            // set icon to line icon
+            $icon.removeClass('fas');
+            $icon.addClass('far');
+            // set icon color to gray
+            $this.removeClass('is-selected');
+          }
+      });
+    }
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      if (this.$stocksContainer) {
+        this.$container.empty();
+      }
+    }
+  }]);
+
+  return Stocks;
+}();
+
+exports.default = Stocks;
 
 /***/ })
 /******/ ]);

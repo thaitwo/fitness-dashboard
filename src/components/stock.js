@@ -4,6 +4,7 @@ import axios from 'axios';
 import ChartBox from './chartbox';
 import KeyStats from './keystats.js';
 import News from './news.js';
+import { URL_BASE, API_TOKEN } from '../const';
 
 class Stock {
   constructor(symbol) {
@@ -49,7 +50,7 @@ class Stock {
 
   // FETCH DATA WITH AJAX
   fetchData() {
-    axios.get(`https://cloud.iexapis.com/v1/stock/${this.symbol}/batch?types=quote,news,chart&range=1m&token=pk_a12f90684f2a44f180bcaeb4eff4086d`)
+    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=1m&token=${API_TOKEN}`)
     .then((response) => {
       const symbol = this.symbol.toUpperCase();
       const dataToStore = {

@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
-import { trimString } from '../helpers/helpers.js';
+import { calcLocalStorageAge } from '../helpers/helpers.js';
 import ChartBox from './chartbox.js';
 import KeyStats from './keystats.js';
 import News from './news.js';
@@ -186,7 +186,7 @@ class Watchlist {
       const clickedEl = $(this).parent();
       const watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
       that.symbol = this.id;
-      const dataUpdateRequired = that.calcLocalStorageAge();
+      const dataUpdateRequired = calcLocalStorageAge(that.symbol);
 
       // add active class to clicked watchlist item
       watchlistItems.removeClass('active');
@@ -215,22 +215,6 @@ class Watchlist {
       // };
       store.set('selectedStockIndex', selectedStockIndex);
     });
-  }
-
-
-  // Calculate whether local storage for stock is more than 6 hours old
-  calcLocalStorageAge() {
-    const oneDay = 60 * 60 * 24 * 1000;
-    const newTime = Date.now();
-    let oldTime;
-
-    // if stored data exists, calculate if data needs to be updated
-    if (store.get(this.symbol) !== null) {
-      oldTime = store.get(this.symbol).time;
-      return (newTime - oldTime) > oneDay;
-    } else {
-      return true;
-    }
   }
 
 

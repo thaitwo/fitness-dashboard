@@ -1,8 +1,8 @@
 import $ from 'jquery';
 import store, { local } from 'store2';
 import axios from 'axios';
+import { URL_BASE, API_TOKEN } from '../const';
 
-// issue: can't retrieve news data for specific symbol
 class News {
   constructor(containerId, symbolArray, localStorageKey, numOfArticlesPerStock = 5) {
     this.$container = $(containerId);
@@ -17,7 +17,7 @@ class News {
 
   formatAxiosRequests() {
     return this.symbols.map((symbol) => {
-      return axios.get(`https://cloud.iexapis.com/v1/stock/${symbol}/news/last/${this.num}?token=pk_a12f90684f2a44f180bcaeb4eff4086d`);
+      return axios.get(`${URL_BASE}/${symbol}/news/last/${this.num}?token=${API_TOKEN}`);
     });
   }
 

@@ -99,8 +99,11 @@ class ChartBox {
   getChartData(data, key) {
     return data.map((day) => {
       if (key === 'date') {
-        const date = day[key].split('-');
-        return `${date[1].replace(/^0+/, '')}-${date[2]}-${date[0]}`;
+        const fullDate = day[key].split('-');
+        let [ year, month, date ] = fullDate;
+        month = month.replace(/^0+/, ''); // Remove leading '0'
+        
+        return `${month}-${date}-${year}`;
       } else {
         return day[key];
       }

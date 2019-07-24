@@ -52,7 +52,8 @@ class GraphCard {
           '1m': data.chart
         },
         news: data.news,
-        quote: data.quote
+        quote: data.quote,
+        time: Date.now()
       }
       store.set(this.symbol, dataToStore);
     })
@@ -66,15 +67,16 @@ class GraphCard {
 
   // RENDER STOCK HEADER INFO
   renderHeader() {
-    const storedData = store.get(this.symbol);
-    const symbol = storedData.quote.symbol;
-    const company = storedData.quote.companyName;
-    const latestPrice = storedData.quote.latestPrice;
+    const storedData = store.get(this.symbol).quote;
+    const { companyName, latestPrice, symbol } = storedData;
 
     const html = `
       <div>
-        <h2 class="graphCard-company">${company}</h2>
+        <h2 class="graphCard-company">${companyName}</h2>
         <h3 class="graphCard-symbol">${symbol}</h3>
+      </div>
+      <div>
+        <h3 class="graphCard-latest-price">${latestPrice}</h3>
       </div>
     `;
 
@@ -152,8 +154,11 @@ class GraphCard {
   getChartData(data, key) {
     return data.map((day) => {
       if (key === 'date') {
-        const date = day[key].split('-');
-        return `${date[1].replace(/^0+/, '')}-${date[2]}-${date[0]}`;
+        const fullDate = day[key].split('-');
+        let [ year, month, date ] = fullDate;
+        month = month.replace(/^0+/, ''); // Remove leading '0'
+        
+        return `${month}-${date}-${year}`;
       } else {
         return day[key];
       }

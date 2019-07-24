@@ -1,6 +1,10 @@
 .icon-loading {
   display: none;
 
+  i {
+    color: $white;
+  }
+
   &.is-visible {
     color: rgba($black, .1);
     display: block;
