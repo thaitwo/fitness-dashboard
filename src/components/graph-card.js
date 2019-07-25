@@ -12,7 +12,7 @@ class GraphCard {
     this.renderCard();
     this.$cardHeader = this.container.find('.graphCard-header');
     this.$cardGraphContainer = $('.graphCard-graph-container');
-    this.renderData();
+    this.renderAllData();
   }
 
 
@@ -30,7 +30,7 @@ class GraphCard {
     this.container.append(cardHtml);
   }
 
-  renderData() {
+  renderAllData() {
     if (store.get(this.symbol) !== null) {
       this.renderHeader();
       this.renderChart();
@@ -56,12 +56,16 @@ class GraphCard {
         time: Date.now()
       }
       store.set(this.symbol, dataToStore);
+
+      /* This prevents an infinite loop of requests in case the requests fail.
+        The infinite loop would be caused in renderAllData().
+        */
+      if (response.status == 200) {
+        this.renderHeader();
+        this.renderChart();
+      }
     })
-    .catch(error => console.log(error))
-    .then(() => {
-      this.renderHeader();
-      this.renderChart();
-    })
+    .catch(error => console.log(error.response.data.error))
   }
 
 

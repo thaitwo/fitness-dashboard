@@ -32,7 +32,7 @@ class StockPopup {
 
     this.intervals = new Intervals('#popup-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new WatchButton('#popup-watch-button', this.symbol, this.companyName);
-    this.getStockData();
+    this.renderAllData();
     this.closePopup();
   }
 
@@ -78,8 +78,7 @@ class StockPopup {
 
 
   // RENDER STOCK CONTENT FOR POPUP
-  getStockData() {
-
+  renderAllData() {
     // check if there's locally stored data before making Ajax request
     if (store.get(this.symbol)) {
       this.renderStockInfo();
@@ -107,15 +106,17 @@ class StockPopup {
         time: Date.now()
       }
       store.set(this.symbol, dataToStore);
+
+      /* This prevents an infinite loop of requests in case the requests fail.
+        The infinite loop would be caused in renderAllData().
+        */
+      if (response.status == 200) {
+        this.renderStockInfo();
+        this.renderChart();
+        this.$loadingIcon.removeClass('is-visible');
+      }
     })
-    .catch((error) => {
-      console.log(error);
-    })
-    .then(() => {
-      this.renderStockInfo();
-      this.renderChart();
-      this.$loadingIcon.removeClass('is-visible');
-    });
+    .catch(error => console.log(error.response.data.error))
   }
 
 

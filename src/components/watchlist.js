@@ -134,6 +134,7 @@ class Watchlist {
   }
 
 
+
   // GET DATA FOR COMPANY
   fetchStockData() {
     axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=${this.interval}&token=${API_TOKEN}`)
@@ -141,6 +142,7 @@ class Watchlist {
       const chart = response.data.chart;
       const news = response.data.news;
       const quote = response.data.quote;
+
       // if stored data exists
       if (store.get(this.symbol) !== null) {
         const storedData = store.get(this.symbol);
@@ -167,12 +169,16 @@ class Watchlist {
         }
 
         store.set(this.symbol, dataToStore);
+
+        /* This prevents an infinite loop of requests in case the requests fail.
+        The infinite loop would be caused in renderAllData().
+        */
+        if (response.status == 200) {
+          this.renderAllData();
+        }
       }
     })
-    .catch(error => console.log(error))
-    .finally(() => {
-      this.renderAllData();
-    })
+    .catch(error => console.log(error.response.data.error))
   }
 
 

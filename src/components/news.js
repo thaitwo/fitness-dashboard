@@ -36,11 +36,12 @@ class News {
         })
 
         store.set(this.localStorageKey, newsArticles);
+
+        if (response.status == 200) {
+          this.renderNews();
+        }
       }))
-      .catch(error => console.log(error))
-      .finally(() => {
-        this.renderNews();
-      })
+      .catch(error => console.log(error.response.data.error))
     }
   }
 

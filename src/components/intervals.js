@@ -60,13 +60,12 @@ class Intervals {
       const storedData = store.get(this.symbol);
       storedData.chart[this.selectedInterval] = response.data;
       store.set(this.symbol, storedData);
+
+      if (response.status == 200) {
+        this.renderChart();
+      }
     })
-    .catch((error) => {
-      console.log(error);
-    })
-    .finally(() => {
-      this.renderChart();
-    })
+    .catch(error => console.log(error))
   }
 
 
