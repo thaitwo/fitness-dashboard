@@ -1045,10 +1045,13 @@ body {
 ============================================================== */
 #search-form {
   height: 58px;
-  margin-left: 24px; }
+  margin-left: 24px;
+  max-width: 632px; }
+  #search-form .active {
+    border-radius: 3px 3px 0 0; }
 
 #search-box {
-  background-color: #ECEFF1;
+  background-color: #FFFFFF;
   border: none;
   border-radius: 3px;
   box-sizing: border-box;
@@ -1057,14 +1060,33 @@ body {
   font-size: 15px;
   font-weight: 400;
   height: 40px;
-  margin: 12px 30px 12px 0;
+  margin: 12px 30px 0 0;
   outline: none;
   padding: 0 16px;
   text-align: left;
   transition: all .3s;
-  width: 440px; }
-  #search-box:hover, #search-box:focus {
-    background-color: #FFFFFF; }
+  width: 100%; }
+  #search-box:focus {
+    background-color: #ECEFF1; }
+
+#search-suggestions {
+  background-color: #FFFFFF;
+  border-radius: 0 0 3px 3px; }
+  #search-suggestions div {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: .9rem;
+    padding: 10px 0 10px 16px; }
+    #search-suggestions div:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      cursor: pointer; }
+    #search-suggestions div .symbol {
+      display: inline-block;
+      font-weight: 600;
+      width: 48px; }
+    #search-suggestions div .name {
+      opacity: .6; }
+  #search-suggestions .suggestions-active {
+    background-color: rgba(0, 0, 0, 0.1); }
 
 ::-webkit-input-placeholder {
   color: rgba(0, 0, 0, 0.2); }

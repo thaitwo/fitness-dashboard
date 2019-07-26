@@ -29987,6 +29987,12 @@ var _navigo = __webpack_require__(146);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _const = __webpack_require__(5);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29996,30 +30002,125 @@ var Search = function () {
     _classCallCheck(this, Search);
 
     this.$searchBox = (0, _jquery2.default)('#search-box');
+    this.$searchSuggestions = (0, _jquery2.default)('#search-suggestions');
+    this.value;
+    this.currentFocus = 0;
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
     this.getSearchValue();
     this.router = new _navigo2.default(null, true);
+    this.hideSuggestionsOnOutsideClick();
   }
 
-  // RETREIVE VALUE FROM SEARCH BOX
+  // FETCH SEARCH SUGGESTIONS
 
 
   _createClass(Search, [{
-    key: 'getSearchValue',
-    value: function getSearchValue() {
+    key: 'activateSuggestions',
+    value: function activateSuggestions(value) {
       var _this = this;
 
-      this.$searchBox.keypress(function (event) {
-        var keyPressed = event.which || event.keyCode;
-        var value = event.target.value.trim();
+      _axios2.default.get('https://ticker-2e1ica8b9.now.sh/keyword/' + value).then(function (response) {
+        _this.renderSuggestionItems(response.data);
+      }).catch(function (error) {
+        return console.log(error);
+      });
+    }
 
-        if (keyPressed === _this.ENTER_KEY) {
-          event.preventDefault();
+    // DISPLAY SUGGESTIONS DROPDOWN
+
+  }, {
+    key: 'renderSuggestionItems',
+    value: function renderSuggestionItems(items) {
+      var suggestions = items.slice(0, 10).map(function (suggestion) {
+        return '\n        <div>\n          <span class="symbol">' + suggestion.symbol + '</span>\n          <span class="name">' + suggestion.name + '</span>\n        </div>\n      ';
+      });
+
+      this.$searchSuggestions.empty();
+      this.$searchSuggestions.append(suggestions);
+    }
+
+    // RETREIVE VALUE FROM SEARCH AND CREATE NEW URL
+
+  }, {
+    key: 'getSearchValue',
+    value: function getSearchValue() {
+      var _this2 = this;
+
+      // When user selects a suggestion
+      this.$searchSuggestions.on('click', 'div', function (event) {
+        event.preventDefault();
+        _this2.value = event.currentTarget.children[0].innerText;
+        _this2.router.navigate('stocks/' + _this2.value);
+        _this2.$searchBox.val('');
+        _this2.toggleSuggestionsVisibility();
+      });
+
+      // When user types input and presses 'Enter'
+      this.$searchBox.keyup(function (event) {
+        var keyPressed = event.which || event.keyCode;
+        _this2.value = event.target.value;
+
+        if (_this2.value !== '' && keyPressed !== 40) {
+          _this2.activateSuggestions(_this2.value);
+        }
+
+        _this2.toggleSuggestionsVisibility();
+
+        if (keyPressed === 40) {
+
+          // console.log(this.$searchSuggestions[0].children);
+          (0, _jquery2.default)(_this2.$searchSuggestions[0].children[0]).addClass('suggestions-active');
+        }
+
+        if (keyPressed === _this2.ENTER_KEY) {
           // Add routing to URL. Router will read URL and create new Stock page.
-          _this.router.navigate('stocks/' + value);
+          _this2.router.navigate('stocks/' + _this2.value);
           // Clear search box
-          _this.$searchBox.val('');
+          _this2.$searchBox.val('');
+        }
+      });
+    }
+
+    // DISPLAY OR HID SUGGESTIONS
+
+  }, {
+    key: 'toggleSuggestionsVisibility',
+    value: function toggleSuggestionsVisibility() {
+      this.value = this.$searchBox.val();
+
+      if (this.value === '') {
+        this.$searchSuggestions.empty();
+        this.$searchBox.removeClass('active');
+      } else {
+        this.$searchBox.addClass('active');
+      }
+    }
+
+    // HIDE SUGGESTIONS
+
+  }, {
+    key: 'hideSuggestionsOnOutsideClick',
+    value: function hideSuggestionsOnOutsideClick() {
+      var that = this;
+
+      (0, _jquery2.default)(document).on('click', function (event) {
+        var suggestionsContainer = (0, _jquery2.default)(event.target).closest('#search-suggestions').length;
+        var searchBox = (0, _jquery2.default)(event.target).closest('#search-box').length;
+
+        // If it is not the suggestions and the search box, close suggestions
+        if (!suggestionsContainer && !searchBox) {
+          that.$searchSuggestions.empty();
+          that.$searchBox.removeClass('active');
+        }
+      });
+
+      this.$searchBox.focus(function (event) {
+        var value = (0, _jquery2.default)(this).val();
+
+        if (value.length > 0) {
+          that.$searchBox.addClass('active');
+          that.activateSuggestions(this.value);
         }
       });
     }

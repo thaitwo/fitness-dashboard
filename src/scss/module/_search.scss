@@ -4,10 +4,15 @@
 #search-form {
   height: 58px;
   margin-left: 24px;
+  max-width: 632px;
+
+  .active {
+    border-radius: 3px 3px 0 0;
+  }
 }
 
 #search-box {
-  background-color: $bluegrey-50;
+  background-color: $white;
   border: none;
   border-radius: 3px;
   box-sizing: border-box;
@@ -16,16 +21,46 @@
   font-size: 15px;
   font-weight: 400;
   height: 40px;
-  margin: 12px 30px 12px 0;
+  margin: 12px 30px 0 0;
   outline: none;
   padding: 0 16px;
   text-align: left;
   transition: all .3s;
-  width: 440px;
+  width: 100%;
 
-  &:hover,
   &:focus {
-    background-color: $white;
+    background-color: $bluegrey-50;
+  }
+}
+
+#search-suggestions {
+  background-color: $white;
+  border-radius: 0 0 3px 3px;
+
+  div {
+    border-bottom: 1px solid rgba($black,.1);
+    font-size: .9rem;
+    padding: 10px 0 10px 16px;
+    
+
+    &:hover {
+      background-color: rgba($black,.1);
+      cursor: pointer;
+    }
+
+    .symbol {
+      display: inline-block;
+      font-weight: 600;
+      width: 48px;
+    }
+
+    .name {
+      opacity: .6;
+    }
+  }
+
+  .suggestions-active {
+    background-color: rgba($black,.1);
   }
 }
 
