@@ -29991,136 +29991,56 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _const = __webpack_require__(5);
+var _searchSuggestions = __webpack_require__(182);
+
+var _searchSuggestions2 = _interopRequireDefault(_searchSuggestions);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Search = function () {
-  function Search() {
+  function Search(containerId) {
     _classCallCheck(this, Search);
 
+    this.$container = (0, _jquery2.default)(containerId);
+    this.renderHtml();
     this.$searchBox = (0, _jquery2.default)('#search-box');
     this.$searchSuggestions = (0, _jquery2.default)('#search-suggestions');
+    this.router = new _navigo2.default(null, true);
     this.value;
-    this.currentFocus = 0;
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
-    this.getSearchValue();
-    this.router = new _navigo2.default(null, true);
-    this.hideSuggestionsOnOutsideClick();
+    // this.getInputAndCreateUrl();
+    new _searchSuggestions2.default('#search-box');
   }
 
-  // FETCH SEARCH SUGGESTIONS
-
-
   _createClass(Search, [{
-    key: 'activateSuggestions',
-    value: function activateSuggestions(value) {
-      var _this = this;
+    key: 'renderHtml',
+    value: function renderHtml() {
+      var html = '\n      <form id="search-form">\n        <input type="text" id="search-box" placeholder="Search">\n        <div id="search-suggestions"></div>\n      </form>\n    ';
 
-      _axios2.default.get('https://ticker-2e1ica8b9.now.sh/keyword/' + value).then(function (response) {
-        _this.renderSuggestionItems(response.data);
-      }).catch(function (error) {
-        return console.log(error);
-      });
-    }
-
-    // DISPLAY SUGGESTIONS DROPDOWN
-
-  }, {
-    key: 'renderSuggestionItems',
-    value: function renderSuggestionItems(items) {
-      var suggestions = items.slice(0, 10).map(function (suggestion) {
-        return '\n        <div>\n          <span class="symbol">' + suggestion.symbol + '</span>\n          <span class="name">' + suggestion.name + '</span>\n        </div>\n      ';
-      });
-
-      this.$searchSuggestions.empty();
-      this.$searchSuggestions.append(suggestions);
+      this.$container.empty();
+      this.$container.append(html);
     }
 
     // RETREIVE VALUE FROM SEARCH AND CREATE NEW URL
 
   }, {
-    key: 'getSearchValue',
-    value: function getSearchValue() {
-      var _this2 = this;
-
-      // When user selects a suggestion
-      this.$searchSuggestions.on('click', 'div', function (event) {
-        event.preventDefault();
-        _this2.value = event.currentTarget.children[0].innerText;
-        _this2.router.navigate('stocks/' + _this2.value);
-        _this2.$searchBox.val('');
-        _this2.toggleSuggestionsVisibility();
-      });
+    key: 'getInputAndCreateUrl',
+    value: function getInputAndCreateUrl() {
+      var _this = this;
 
       // When user types input and presses 'Enter'
       this.$searchBox.keyup(function (event) {
         var keyPressed = event.which || event.keyCode;
-        _this2.value = event.target.value;
+        _this.value = event.target.value;
 
-        if (_this2.value !== '' && keyPressed !== 40) {
-          _this2.activateSuggestions(_this2.value);
-        }
-
-        _this2.toggleSuggestionsVisibility();
-
-        if (keyPressed === 40) {
-
-          // console.log(this.$searchSuggestions[0].children);
-          (0, _jquery2.default)(_this2.$searchSuggestions[0].children[0]).addClass('suggestions-active');
-        }
-
-        if (keyPressed === _this2.ENTER_KEY) {
+        if (keyPressed === _this.ENTER_KEY && !_this.$searchSuggestions.hasClass('active')) {
           // Add routing to URL. Router will read URL and create new Stock page.
-          _this2.router.navigate('stocks/' + _this2.value);
+          _this.router.navigate('stocks/' + _this.value);
           // Clear search box
-          _this2.$searchBox.val('');
-        }
-      });
-    }
-
-    // DISPLAY OR HID SUGGESTIONS
-
-  }, {
-    key: 'toggleSuggestionsVisibility',
-    value: function toggleSuggestionsVisibility() {
-      this.value = this.$searchBox.val();
-
-      if (this.value === '') {
-        this.$searchSuggestions.empty();
-        this.$searchBox.removeClass('active');
-      } else {
-        this.$searchBox.addClass('active');
-      }
-    }
-
-    // HIDE SUGGESTIONS
-
-  }, {
-    key: 'hideSuggestionsOnOutsideClick',
-    value: function hideSuggestionsOnOutsideClick() {
-      var that = this;
-
-      (0, _jquery2.default)(document).on('click', function (event) {
-        var suggestionsContainer = (0, _jquery2.default)(event.target).closest('#search-suggestions').length;
-        var searchBox = (0, _jquery2.default)(event.target).closest('#search-box').length;
-
-        // If it is not the suggestions and the search box, close suggestions
-        if (!suggestionsContainer && !searchBox) {
-          that.$searchSuggestions.empty();
-          that.$searchBox.removeClass('active');
-        }
-      });
-
-      this.$searchBox.focus(function (event) {
-        var value = (0, _jquery2.default)(this).val();
-
-        if (value.length > 0) {
-          that.$searchBox.addClass('active');
-          that.activateSuggestions(this.value);
+          _this.$searchBox.val('');
         }
       });
     }
@@ -30990,10 +30910,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var App = function App() {
   _classCallCheck(this, App);
 
-  // ACTIVATE SIDEBAR NAVIGATION
   new _nav2.default('nav-sidebar', true);
-
-  new _search2.default();
+  new _search2.default('#top-bar');
 };
 
 new App();
@@ -47430,6 +47348,204 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 178 */,
+/* 179 */,
+/* 180 */,
+/* 181 */,
+/* 182 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _navigo = __webpack_require__(146);
+
+var _navigo2 = _interopRequireDefault(_navigo);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Suggestions = function () {
+  function Suggestions(searchBoxId) {
+    _classCallCheck(this, Suggestions);
+
+    this.$searchBox = (0, _jquery2.default)(searchBoxId);
+    this.value;
+    this.currentFocus = -1;
+    this.$searchSuggestions = (0, _jquery2.default)('#search-suggestions');
+    this.ENTER_KEY = 13;
+    this.ESCAPE_KEY = 27;
+    this.router = new _navigo2.default(null, true);
+    this.getSearchValue();
+    this.hideSuggestionsOnOutsideClick();
+  }
+
+  // FETCH SEARCH SUGGESTIONS
+
+
+  _createClass(Suggestions, [{
+    key: 'fetchSuggestions',
+    value: function fetchSuggestions() {
+      var _this = this;
+
+      _axios2.default.get('https://ticker-2e1ica8b9.now.sh/keyword/' + this.value).then(function (response) {
+        _this.renderSuggestions(response.data);
+        if (!response.data.length) {
+          _this.$searchBox.removeClass('active');
+          _this.$searchSuggestions.removeClass('active');
+        }
+      }).catch(function (error) {
+        return console.log(error);
+      });
+    }
+
+    // DISPLAY SUGGESTIONS DROPDOWN
+
+  }, {
+    key: 'renderSuggestions',
+    value: function renderSuggestions(items) {
+      var suggestions = items.slice(0, 10).map(function (suggestion) {
+        return '\n        <div>\n          <span class="symbol">' + suggestion.symbol + '</span>\n          <span class="name">' + suggestion.name + '</span>\n        </div>\n      ';
+      });
+
+      this.$searchSuggestions.empty();
+      this.$searchSuggestions.append(suggestions);
+    }
+
+    // RETREIVE VALUE FROM SEARCH AND CREATE NEW URL
+
+  }, {
+    key: 'getSearchValue',
+    value: function getSearchValue() {
+      var _this2 = this;
+
+      // When user types input
+      this.$searchBox.keyup(function (event) {
+        var keyPressed = event.which || event.keyCode;
+        _this2.value = event.target.value;
+        var arrowKeyCodes = [37, 38, 39, 40];
+        var isArrowKeys = arrowKeyCodes.indexOf(keyPressed) > -1;
+
+        /* Fetch suggestions only if value is not empty and keypress is not an arrow key.
+        We need to make sure it's not an arrow key because we need to use the arrow keys to
+        navigate the suggestions list. Otherwise pressing any arrow key will put the focus
+        back in the search box, thus preventing the navigation of suggestion items.
+        Also, the keyPress must not be the 'Enter' button because this triggers the suggestion
+        container to be visible after user selects a suggestion item by pressing 'Enter'.
+        */
+        if (_this2.value !== '' && !isArrowKeys && keyPressed !== _this2.ENTER_KEY) {
+          _this2.fetchSuggestions(_this2.value);
+        }
+
+        _this2.toggleSuggestionsVisibility();
+
+        if (keyPressed === 40) {
+          _this2.currentFocus++;
+          // Make suggestions container "active" when navigating with arrows so that when "enter" is pressed we can take the value from the 'suggestions-active' and make the ajax request
+          _this2.addActiveClass();
+        } else if (keyPressed === 38) {
+          _this2.currentFocus--;
+          _this2.addActiveClass();
+        }
+
+        // If a suggestion item is selected with 'Enter' key, simulate a click event
+        if (keyPressed === _this2.ENTER_KEY && _this2.currentFocus > -1) {
+          _this2.$searchSuggestions[0].children[_this2.currentFocus].click();
+        }
+      });
+
+      // When user selects a suggestion
+      this.$searchSuggestions.on('click', 'div', function (event) {
+        event.preventDefault();
+        _this2.value = event.currentTarget.children[0].innerText;
+        _this2.router.navigate('stocks/' + _this2.value);
+        _this2.$searchBox.val('');
+        _this2.toggleSuggestionsVisibility();
+      });
+    }
+
+    // SPECIFY THE ACTIVE SUGGESTION
+
+  }, {
+    key: 'addActiveClass',
+    value: function addActiveClass() {
+      this.removeActiveClass();
+      var suggestionItems = this.$searchSuggestions[0].children;
+
+      if (this.currentFocus >= suggestionItems.length) {
+        this.currentFocus = 0;
+      }
+      if (this.currentFocus < 0) {
+        this.currentFocus = suggestionItems.length - 1;
+      }
+
+      (0, _jquery2.default)(this.$searchSuggestions[0].children[this.currentFocus]).addClass('suggestions-active');
+    }
+  }, {
+    key: 'removeActiveClass',
+    value: function removeActiveClass() {
+      (0, _jquery2.default)(this.$searchSuggestions[0].children).removeClass('suggestions-active');
+    }
+
+    // DISPLAY OR HIDE SUGGESTIONS
+
+  }, {
+    key: 'toggleSuggestionsVisibility',
+    value: function toggleSuggestionsVisibility() {
+      this.value = this.$searchBox.val();
+
+      if (this.value === '') {
+        this.$searchSuggestions.empty();
+        this.$searchBox.removeClass('active');
+        this.$searchSuggestions.removeClass('active');
+      } else {
+        this.$searchBox.addClass('active');
+        this.$searchSuggestions.addClass('active');
+      }
+    }
+
+    // HIDE SUGGESTIONS
+
+  }, {
+    key: 'hideSuggestionsOnOutsideClick',
+    value: function hideSuggestionsOnOutsideClick() {
+      var that = this;
+
+      (0, _jquery2.default)(document).on('click', function (event) {
+        var suggestionsContainer = (0, _jquery2.default)(event.target).closest('#search-suggestions').length;
+        var searchBox = (0, _jquery2.default)(event.target).closest('#search-box').length;
+
+        // If it is not the suggestions and the search box, close suggestions
+        if (!suggestionsContainer && !searchBox) {
+          that.$searchSuggestions.empty();
+          that.$searchBox.removeClass('active');
+          that.$searchSuggestions.removeClass('active');
+        }
+      });
+    }
+  }]);
+
+  return Suggestions;
+}();
+
+exports.default = Suggestions;
 
 /***/ })
 /******/ ]);

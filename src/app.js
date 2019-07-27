@@ -4,10 +4,8 @@ import Search from './components/search.js';
 
 class App {
   constructor() {
-    // ACTIVATE SIDEBAR NAVIGATION
     new Nav('nav-sidebar', true);
-
-    new Search();
+    new Search('#top-bar');
   }
 }
 

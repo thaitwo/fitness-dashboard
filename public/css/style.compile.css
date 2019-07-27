@@ -999,7 +999,7 @@ body {
     font-size: 14px;
     opacity: .6; }
 
-.sidebar {
+#sidebar {
   background-color: #151C40;
   bottom: 0;
   display: block;
@@ -1047,7 +1047,7 @@ body {
   height: 58px;
   margin-left: 24px;
   max-width: 632px; }
-  #search-form .active {
+  #search-form #search-box.active {
     border-radius: 3px 3px 0 0; }
 
 #search-box {
@@ -1073,11 +1073,12 @@ body {
   background-color: #FFFFFF;
   border-radius: 0 0 3px 3px; }
   #search-suggestions div {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     font-size: .9rem;
     padding: 10px 0 10px 16px; }
+    #search-suggestions div:last-of-type {
+      border-bottom: none; }
     #search-suggestions div:hover {
-      background-color: rgba(0, 0, 0, 0.1);
+      background-color: #ECEFF1;
       cursor: pointer; }
     #search-suggestions div .symbol {
       display: inline-block;
@@ -1086,12 +1087,12 @@ body {
     #search-suggestions div .name {
       opacity: .6; }
   #search-suggestions .suggestions-active {
-    background-color: rgba(0, 0, 0, 0.1); }
+    background-color: #ECEFF1; }
 
 ::-webkit-input-placeholder {
   color: rgba(0, 0, 0, 0.2); }
 
-.top-bar {
+#top-bar {
   background-color: #151C40;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.12);
   height: 64px;

@@ -6,8 +6,13 @@
   margin-left: 24px;
   max-width: 632px;
 
-  .active {
+  #search-box.active {
     border-radius: 3px 3px 0 0;
+  }
+
+  #search-suggestions.active {
+    // padding: 10px 0;
+    // border-top: 1px solid $bluegrey-200;
   }
 }
 
@@ -38,13 +43,16 @@
   border-radius: 0 0 3px 3px;
 
   div {
-    border-bottom: 1px solid rgba($black,.1);
     font-size: .9rem;
     padding: 10px 0 10px 16px;
+
+    &:last-of-type {
+      border-bottom: none;
+    }
     
 
     &:hover {
-      background-color: rgba($black,.1);
+      background-color: $bluegrey-50;
       cursor: pointer;
     }
 
@@ -60,7 +68,7 @@
   }
 
   .suggestions-active {
-    background-color: rgba($black,.1);
+    background-color: $bluegrey-50;
   }
 }
 
