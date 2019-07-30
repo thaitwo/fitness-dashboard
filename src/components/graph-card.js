@@ -30,23 +30,27 @@ class GraphCard {
     this.container.append(cardHtml);
   }
 
+
+  // RENDER DATA FOR GRAPH CARD
   renderAllData() {
     if (store.get(this.symbol) !== null) {
       this.renderHeader();
       this.renderChart();
     } else {
-      this.fetchGraphPoints();
+      this.fetchChartData();
     }
   }
 
 
   // FETCH DATA FOR SYMBOL
-  fetchGraphPoints() {
+  fetchChartData() {
     axios.all([
       axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=1m&token=${API_TOKEN}`)
     ])
     .then((response) => {
       const data = response[0].data;
+      // Check that every requests returns a '200' status which means it's successful
+      const allRequestsWork = response.every(stock => stock.status == 200);
       const dataToStore = {
         chart: {
           '1m': data.chart
@@ -60,7 +64,7 @@ class GraphCard {
       /* This prevents an infinite loop of requests in case the requests fail.
         The infinite loop would be caused in renderAllData().
         */
-      if (response.status == 200) {
+      if (allRequestsWork) {
         this.renderHeader();
         this.renderChart();
       }

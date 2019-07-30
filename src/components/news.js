@@ -15,6 +15,7 @@ class News {
   }
 
 
+  // CREATE A REQUEST FOR EACH SYMBOL PROVIDED
   formatAxiosRequests() {
     return this.symbols.map((symbol) => {
       return axios.get(`${URL_BASE}/${symbol}/news/last/${this.num}?token=${API_TOKEN}`);
@@ -22,22 +23,23 @@ class News {
   }
 
 
+  // FETCH DATA FOR NEWS ARTICLES
   fetchNews() {
     // If news data for stock exists in localStorage...
     if (store.get(this.localStorageKey) !== null) {
       this.renderNews();
     } else {
       const requests = this.formatAxiosRequests();
-      
       axios.all(requests)
       .then(axios.spread((...response) => {
-        const newsArticles = response.map((companyNews) => {
-          return companyNews.data[0];
-        })
+        const newsArticles = response.map(companyNews => companyNews.data[0]);
+        // Check that every requests returns a '200' status which means it's successful
+        const allRequestsWork = response.every(article => article.status == 200);
 
         store.set(this.localStorageKey, newsArticles);
 
-        if (response.status == 200) {
+        // Only render news articles if all the requests are successful
+        if (allRequestsWork) {
           this.renderNews();
         }
       }))
@@ -51,7 +53,7 @@ class News {
     let newsArticlesData;
     let articles;
 
-    if (this.localStorageKey === 'homeNews') {
+    if (this.localStorageKey === 'home-news') {
       newsArticlesData = store.get(this.localStorageKey);
     } else {
       newsArticlesData = store.get(this.localStorageKey).news;

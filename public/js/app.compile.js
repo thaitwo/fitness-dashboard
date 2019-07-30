@@ -16237,6 +16237,9 @@ var News = function () {
     this.fetchNews();
   }
 
+  // CREATE A REQUEST FOR EACH SYMBOL PROVIDED
+
+
   _createClass(News, [{
     key: 'formatAxiosRequests',
     value: function formatAxiosRequests() {
@@ -16246,6 +16249,9 @@ var News = function () {
         return _axios2.default.get(_const.URL_BASE + '/' + symbol + '/news/last/' + _this.num + '?token=' + _const.API_TOKEN);
       });
     }
+
+    // FETCH DATA FOR NEWS ARTICLES
+
   }, {
     key: 'fetchNews',
     value: function fetchNews() {
@@ -16256,7 +16262,6 @@ var News = function () {
         this.renderNews();
       } else {
         var requests = this.formatAxiosRequests();
-
         _axios2.default.all(requests).then(_axios2.default.spread(function () {
           for (var _len = arguments.length, response = Array(_len), _key = 0; _key < _len; _key++) {
             response[_key] = arguments[_key];
@@ -16265,10 +16270,15 @@ var News = function () {
           var newsArticles = response.map(function (companyNews) {
             return companyNews.data[0];
           });
+          // Check that every requests returns a '200' status which means it's successful
+          var allRequestsWork = response.every(function (article) {
+            return article.status == 200;
+          });
 
           _store2.default.set(_this2.localStorageKey, newsArticles);
 
-          if (response.status == 200) {
+          // Only render news articles if all the requests are successful
+          if (allRequestsWork) {
             _this2.renderNews();
           }
         })).catch(function (error) {
@@ -16285,7 +16295,7 @@ var News = function () {
       var newsArticlesData = void 0;
       var articles = void 0;
 
-      if (this.localStorageKey === 'homeNews') {
+      if (this.localStorageKey === 'home-news') {
         newsArticlesData = _store2.default.get(this.localStorageKey);
       } else {
         newsArticlesData = _store2.default.get(this.localStorageKey).news;
@@ -30976,6 +30986,9 @@ var GraphCard = function () {
 
       this.container.append(cardHtml);
     }
+
+    // RENDER DATA FOR GRAPH CARD
+
   }, {
     key: 'renderAllData',
     value: function renderAllData() {
@@ -30983,19 +30996,23 @@ var GraphCard = function () {
         this.renderHeader();
         this.renderChart();
       } else {
-        this.fetchGraphPoints();
+        this.fetchChartData();
       }
     }
 
     // FETCH DATA FOR SYMBOL
 
   }, {
-    key: 'fetchGraphPoints',
-    value: function fetchGraphPoints() {
+    key: 'fetchChartData',
+    value: function fetchChartData() {
       var _this = this;
 
       _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=1m&token=' + _const.API_TOKEN)]).then(function (response) {
         var data = response[0].data;
+        // Check that every requests returns a '200' status which means it's successful
+        var allRequestsWork = response.every(function (stock) {
+          return stock.status == 200;
+        });
         var dataToStore = {
           chart: {
             '1m': data.chart
@@ -31009,7 +31026,7 @@ var GraphCard = function () {
         /* This prevents an infinite loop of requests in case the requests fail.
           The infinite loop would be caused in renderAllData().
           */
-        if (response.status == 200) {
+        if (allRequestsWork) {
           _this.renderHeader();
           _this.renderChart();
         }
@@ -31873,27 +31890,13 @@ var Stocks = function () {
     this.news;
   }
 
-  // RENDER SMALL GRAPH CARDS
+  // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
 
 
   _createClass(Stocks, [{
-    key: 'renderGraphCards',
-    value: function renderGraphCards() {
-      var mostActiveSymbols = _store2.default.get('mostActive');
-
-      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
-        var symbol = stock.symbol;
-        new _graphCard2.default('#home-graphCard' + index, symbol);
-      });
-    }
-
-    // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
-
-  }, {
     key: 'getMostActiveSymbols',
     value: function getMostActiveSymbols() {
-      var symbols = _store2.default.get('mostActive');
-
+      var symbols = _store2.default.get('most-active');
       return symbols.slice(0, 5).map(function (stock) {
         return stock.symbol;
       });
@@ -31924,21 +31927,35 @@ var Stocks = function () {
   }, {
     key: 'getStocks',
     value: function getStocks() {
-      var mostActive = _store2.default.get('mostActive') || [];
+      var mostActive = _store2.default.get('most-active') || [];
       var gainers = _store2.default.get('gainers') || [];
       var losers = _store2.default.get('losers') || [];
 
       // check if local storage exist
       if (mostActive.length && gainers.length && losers.length) {
         this.mostActiveSymbols = this.getMostActiveSymbols();
-        this.renderStocks('#most-active', 'mostActive');
+        this.renderStocks('#most-active', 'most-active');
         this.renderStocks('#gainers', 'gainers');
         this.renderStocks('#losers', 'losers');
         this.renderGraphCards();
-        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'homeNews', 1);
+        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'home-news', 1);
       } else {
         this.fetchStocks();
       }
+    }
+
+    // RENDER SMALL GRAPH CARDS
+
+  }, {
+    key: 'renderGraphCards',
+    value: function renderGraphCards() {
+      var mostActiveSymbols = _store2.default.get('most-active');
+
+      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
+        var symbol = stock.symbol;
+        console.log('working', symbol);
+        new _graphCard2.default('#home-graphCard' + index, symbol);
+      });
     }
 
     // GET LIST OF COMPANIES
@@ -31952,19 +31969,20 @@ var Stocks = function () {
       this.$loadingIcon.addClass('is-visible');
 
       _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
-        _store2.default.set('mostActive', mostActive.data);
+        _store2.default.set('most-active', mostActive.data);
         _store2.default.set('gainers', gainers.data);
         _store2.default.set('losers', losers.data);
       })).catch(function (error) {
         console.log(error);
-      }).finally(function () {
+      }).then(function () {
         _this.mostActiveSymbols = _this.getMostActiveSymbols();
         _this.$loadingIcon.removeClass('is-visible');
-        _this.renderStocks('#most-active', 'mostActive');
+        _this.renderStocks('#most-active', 'most-active');
         _this.renderStocks('#gainers', 'gainers');
         _this.renderStocks('#losers', 'losers');
         _this.renderGraphCards();
-        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'homeNews', 1);
+        // console.log('working', this.mostActiveSymbols);
+        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'home-news', 1);
       });
     }
 

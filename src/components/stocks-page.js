@@ -24,21 +24,9 @@ class Stocks {
   }
 
 
-  // RENDER SMALL GRAPH CARDS
-  renderGraphCards() {
-    const mostActiveSymbols = store.get('mostActive');
-
-    mostActiveSymbols.slice(0, 3).map((stock, index) => {
-      const symbol = stock.symbol;
-      new GraphCard(`#home-graphCard${index}`, symbol, );
-    });
-  }
-
-
   // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
   getMostActiveSymbols() {
-    const symbols = store.get('mostActive');
-
+    const symbols = store.get('most-active');
     return symbols.slice(0, 5).map((stock) => {
       return stock.symbol;
     })
@@ -112,22 +100,34 @@ class Stocks {
 
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
-    const mostActive = store.get('mostActive') || [];
+    const mostActive = store.get('most-active') || [];
     const gainers = store.get('gainers') || [];
     const losers = store.get('losers') || [];
 
     // check if local storage exist
     if (mostActive.length && gainers.length && losers.length) {
       this.mostActiveSymbols = this.getMostActiveSymbols();
-      this.renderStocks('#most-active', 'mostActive');
+      this.renderStocks('#most-active', 'most-active');
       this.renderStocks('#gainers', 'gainers');
       this.renderStocks('#losers', 'losers');
       this.renderGraphCards();
-      this.news = new News('#home-news', this.mostActiveSymbols, 'homeNews', 1);
+      this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
     }
     else {
       this.fetchStocks();
     }
+  }
+
+
+  // RENDER SMALL GRAPH CARDS
+  renderGraphCards() {
+    const mostActiveSymbols = store.get('most-active');
+    
+    mostActiveSymbols.slice(0, 3).map((stock, index) => {
+      const symbol = stock.symbol;
+      console.log('working', symbol);
+      new GraphCard(`#home-graphCard${index}`, symbol);
+    });
   }
 
 
@@ -142,21 +142,22 @@ class Stocks {
       axios.get(`${URL_BASE}/market/collection/list?collectionName=losers&token=${API_TOKEN}`)
     ])
     .then(axios.spread((mostActive, gainers, losers) => {
-      store.set('mostActive', mostActive.data);
+      store.set('most-active', mostActive.data);
       store.set('gainers', gainers.data);
       store.set('losers', losers.data);
     }))
     .catch((error) => {
       console.log(error);
     })
-    .finally(() => {
+    .then(() => {
       this.mostActiveSymbols = this.getMostActiveSymbols();
       this.$loadingIcon.removeClass('is-visible');
-      this.renderStocks('#most-active', 'mostActive');
+      this.renderStocks('#most-active', 'most-active');
       this.renderStocks('#gainers', 'gainers');
       this.renderStocks('#losers', 'losers');
       this.renderGraphCards();
-      this.news = new News('#home-news', this.mostActiveSymbols, 'homeNews', 1);
+      // console.log('working', this.mostActiveSymbols);
+      this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
     });
   }
 
