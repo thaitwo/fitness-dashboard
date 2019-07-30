@@ -17,14 +17,25 @@ class Watchlist {
     this.chartBox;
     this.keyStats;
     this.latestNews;
-    this.selectedStockIndex = store.get('selectedStockIndex') || 0;
+    this.currentWatchIndex = store.get('currentWatchIndex') || 0;
     this.watchlist = store.get('watchlist') || [];
     this.interval = '1m';
 
-    // IF WATCHLIST HAS STOCKS...
+    // If Watchlist has stocks...
     if (this.watchlist.length > 0) {
-      this.symbol = store.get('watchlist')[this.selectedStockIndex].symbol || '';
-      this.companyName = store.get('watchlist')[this.selectedStockIndex].name || '';
+      /* When the current selected Watchlist stock is the last one in the list
+      and the user clicks the star icon to unwatch the stock, we need to
+      set the currentWatchIndex to the length of the Watchlst minus 1 so
+      that when the Watchlist page reloads, it will render data for the newly 
+      updated last item in the Watchlist. Not having this condition will break
+      the Watchlist page in this scenario.
+      */
+      if (this.currentWatchIndex === this.watchlist.length) {
+        store.set('currentWatchIndex', this.watchlist.length - 1);
+        this.currentWatchIndex = store.get('currentWatchIndex');
+      }
+      this.symbol = store.get('watchlist')[this.currentWatchIndex].symbol || '';
+      this.companyName = store.get('watchlist')[this.currentWatchIndex].name || '';
       this.renderCanvasHtml();
     } else {
       this.renderEmptyWatchlistCanvas();
@@ -96,13 +107,15 @@ class Watchlist {
 
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
   displayStocks() {
+    console.log('length', this.watchlist.length);
+    console.log('currentIndex', this.currentWatchIndex);
     const stocks = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
       const name = stock.name;
       let isActive = '';
 
-      // set 'active' class to watchlist item with index that matches selectedStockIndex
-      if (index === this.selectedStockIndex) {
+      // Set 'active' class to watchlist item with index that matches selectedStockIndex
+      if (index === this.currentWatchIndex) {
         isActive = 'active';
       }
 
@@ -143,21 +156,21 @@ class Watchlist {
       const news = response.data.news;
       const quote = response.data.quote;
 
-      // if stored data exists
+      // If stored data exists
       if (store.get(this.symbol) !== null) {
         const storedData = store.get(this.symbol);
 
-        // if data for selected interval does not exist in localStorage
-        // then add data for selected interval into localStorage
-        // case: the current selected interval is 6M for stock1
-        // when we click on stock2, we need to check if data for 6M for
-        // stock2 exists in localStorage
+        /* If data for selected interval does not exist in localStorage
+        then add data for selected interval into localStorage
+        case: the current selected interval is 6M for stock1
+        when we click on stock2, we need to check if data for 6M for
+        stock2 exists in localStorage */
         if (!(this.interval in storedData.chart)) {
           storedData.chart[this.interval] = chart.data;
           store.set(this.symbol, storedData);
         }
       }
-      // otherwise create data object and store in localStorage
+      // Otherwise create data object and store in localStorage
       else {
         const dataToStore = {
           chart: {
@@ -194,32 +207,32 @@ class Watchlist {
       that.symbol = this.id;
       const dataUpdateRequired = calcLocalStorageAge(that.symbol);
 
-      // add active class to clicked watchlist item
+      // Add active class to clicked watchlist item
       watchlistItems.removeClass('active');
       clickedEl.addClass('active');
       
 
-      // render name and graph for watchlist item
+      // Render name and graph for watchlist item
       that.$latestPriceContainer.empty();
       that.$changePercentContainer.empty();
-      // if stored data exists and is less than 1 day old
+      // If stored data exists and is less than 1 day old
       if (store.get(that.symbol) !== null && !dataUpdateRequired) {
         that.renderAllData();
       }
-      // clear stored data for stock and fetch new data
+      // Clear stored data for stock and fetch new data
       else {
         store.remove(that.symbol);
         that.fetchStockData();
       }
 
-      // get index of selected stock
-      let selectedStockIndex = that.watchlist.findIndex((stock) => {
+      // Get index of selected stock
+      let currentWatchIndex = that.watchlist.findIndex((stock) => {
         return stock.symbol === that.symbol;
       });
-      // if (selectedStockIndex == (that.watchlist.length - 1)) {
-      //   selectedStockIndex = selectedStockIndex - 1;
+      // if (currentWatchIndex == (that.watchlist.length - 1)) {
+      //   currentWatchIndex = currentWatchIndex - 1;
       // };
-      store.set('selectedStockIndex', selectedStockIndex);
+      store.set('currentWatchIndex', currentWatchIndex);
     });
   }
 

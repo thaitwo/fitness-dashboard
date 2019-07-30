@@ -125,7 +125,6 @@ class Stocks {
     
     mostActiveSymbols.slice(0, 3).map((stock, index) => {
       const symbol = stock.symbol;
-      console.log('working', symbol);
       new GraphCard(`#home-graphCard${index}`, symbol);
     });
   }
@@ -133,7 +132,7 @@ class Stocks {
 
   // GET LIST OF COMPANIES
   fetchStocks() {
-    // display loading icon
+    // Display loading icon
     this.$loadingIcon.addClass('is-visible');
 
     axios.all([

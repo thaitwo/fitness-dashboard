@@ -31953,7 +31953,6 @@ var Stocks = function () {
 
       mostActiveSymbols.slice(0, 3).map(function (stock, index) {
         var symbol = stock.symbol;
-        console.log('working', symbol);
         new _graphCard2.default('#home-graphCard' + index, symbol);
       });
     }
@@ -31965,7 +31964,7 @@ var Stocks = function () {
     value: function fetchStocks() {
       var _this = this;
 
-      // display loading icon
+      // Display loading icon
       this.$loadingIcon.addClass('is-visible');
 
       _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
@@ -32186,14 +32185,25 @@ var Watchlist = function () {
     this.chartBox;
     this.keyStats;
     this.latestNews;
-    this.selectedStockIndex = _store2.default.get('selectedStockIndex') || 0;
+    this.currentWatchIndex = _store2.default.get('currentWatchIndex') || 0;
     this.watchlist = _store2.default.get('watchlist') || [];
     this.interval = '1m';
 
-    // IF WATCHLIST HAS STOCKS...
+    // If Watchlist has stocks...
     if (this.watchlist.length > 0) {
-      this.symbol = _store2.default.get('watchlist')[this.selectedStockIndex].symbol || '';
-      this.companyName = _store2.default.get('watchlist')[this.selectedStockIndex].name || '';
+      /* When the current selected Watchlist stock is the last one in the list
+      and the user clicks the star icon to unwatch the stock, we need to
+      set the currentWatchIndex to the length of the Watchlst minus 1 so
+      that when the Watchlist page reloads, it will render data for the newly 
+      updated last item in the Watchlist. Not having this condition will break
+      the Watchlist page in this scenario.
+      */
+      if (this.currentWatchIndex === this.watchlist.length) {
+        _store2.default.set('currentWatchIndex', this.watchlist.length - 1);
+        this.currentWatchIndex = _store2.default.get('currentWatchIndex');
+      }
+      this.symbol = _store2.default.get('watchlist')[this.currentWatchIndex].symbol || '';
+      this.companyName = _store2.default.get('watchlist')[this.currentWatchIndex].name || '';
       this.renderCanvasHtml();
     } else {
       this.renderEmptyWatchlistCanvas();
@@ -32250,13 +32260,15 @@ var Watchlist = function () {
     value: function displayStocks() {
       var _this = this;
 
+      console.log('length', this.watchlist.length);
+      console.log('currentIndex', this.currentWatchIndex);
       var stocks = this.watchlist.map(function (stock, index) {
         var symbol = stock.symbol;
         var name = stock.name;
         var isActive = '';
 
-        // set 'active' class to watchlist item with index that matches selectedStockIndex
-        if (index === _this.selectedStockIndex) {
+        // Set 'active' class to watchlist item with index that matches selectedStockIndex
+        if (index === _this.currentWatchIndex) {
           isActive = 'active';
         }
 
@@ -32294,21 +32306,21 @@ var Watchlist = function () {
         var news = response.data.news;
         var quote = response.data.quote;
 
-        // if stored data exists
+        // If stored data exists
         if (_store2.default.get(_this2.symbol) !== null) {
           var storedData = _store2.default.get(_this2.symbol);
 
-          // if data for selected interval does not exist in localStorage
-          // then add data for selected interval into localStorage
-          // case: the current selected interval is 6M for stock1
-          // when we click on stock2, we need to check if data for 6M for
-          // stock2 exists in localStorage
+          /* If data for selected interval does not exist in localStorage
+          then add data for selected interval into localStorage
+          case: the current selected interval is 6M for stock1
+          when we click on stock2, we need to check if data for 6M for
+          stock2 exists in localStorage */
           if (!(_this2.interval in storedData.chart)) {
             storedData.chart[_this2.interval] = chart.data;
             _store2.default.set(_this2.symbol, storedData);
           }
         }
-        // otherwise create data object and store in localStorage
+        // Otherwise create data object and store in localStorage
         else {
             var dataToStore = {
               chart: _defineProperty({}, _this2.interval, chart),
@@ -32346,31 +32358,31 @@ var Watchlist = function () {
         that.symbol = this.id;
         var dataUpdateRequired = (0, _helpers.calcLocalStorageAge)(that.symbol);
 
-        // add active class to clicked watchlist item
+        // Add active class to clicked watchlist item
         watchlistItems.removeClass('active');
         clickedEl.addClass('active');
 
-        // render name and graph for watchlist item
+        // Render name and graph for watchlist item
         that.$latestPriceContainer.empty();
         that.$changePercentContainer.empty();
-        // if stored data exists and is less than 1 day old
+        // If stored data exists and is less than 1 day old
         if (_store2.default.get(that.symbol) !== null && !dataUpdateRequired) {
           that.renderAllData();
         }
-        // clear stored data for stock and fetch new data
+        // Clear stored data for stock and fetch new data
         else {
             _store2.default.remove(that.symbol);
             that.fetchStockData();
           }
 
-        // get index of selected stock
-        var selectedStockIndex = that.watchlist.findIndex(function (stock) {
+        // Get index of selected stock
+        var currentWatchIndex = that.watchlist.findIndex(function (stock) {
           return stock.symbol === that.symbol;
         });
-        // if (selectedStockIndex == (that.watchlist.length - 1)) {
-        //   selectedStockIndex = selectedStockIndex - 1;
+        // if (currentWatchIndex == (that.watchlist.length - 1)) {
+        //   currentWatchIndex = currentWatchIndex - 1;
         // };
-        _store2.default.set('selectedStockIndex', selectedStockIndex);
+        _store2.default.set('currentWatchIndex', currentWatchIndex);
       });
     }
 
