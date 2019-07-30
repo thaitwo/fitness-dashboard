@@ -49,7 +49,7 @@ class Suggestions {
   // RETREIVE VALUE FROM SEARCH AND CREATE NEW URL
   getSearchValue() {
     // When user types input
-    this.$searchBox.keyup((event) => {
+    this.$searchBox.keydown((event) => {
       const keyPressed = event.which || event.keyCode;
       this.value = event.target.value;
       const arrowKeyCodes = [37, 38, 39, 40];
@@ -62,7 +62,7 @@ class Suggestions {
       Also, the keyPress must not be the 'Enter' button because this triggers the suggestion
       container to be visible after user selects a suggestion item by pressing 'Enter'.
       */
-      if (this.value !== '' && !isArrowKeys && keyPressed !== this.ENTER_KEY) {
+      if (this.value && !isArrowKeys && keyPressed !== this.ENTER_KEY) {
         this.fetchSuggestions(this.value);
       }
 
@@ -78,8 +78,14 @@ class Suggestions {
       }
 
       // If a suggestion item is selected with 'Enter' key, simulate a click event
-      if (keyPressed === this.ENTER_KEY && (this.currentFocus > -1)) {
-        this.$searchSuggestions[0].children[this.currentFocus].click();
+      if (keyPressed === this.ENTER_KEY) {
+        event.preventDefault();
+        /* In order to be able to select from suggestions list with arrow keys,
+        the value of 'this.currentFocus' has to be at least 0. Therefore, only
+        simulate a click event if the suggestions list is being actively navigated. */
+        if (this.currentFocus > -1) {
+          this.$searchSuggestions[0].children[this.currentFocus].click();
+        }
       }
     })
 
@@ -109,6 +115,8 @@ class Suggestions {
     $(this.$searchSuggestions[0].children[this.currentFocus]).addClass('suggestions-active');
   }
 
+  
+  // REMOVE ACTIVE CLASS FROM SUGGESTION ITEMS
   removeActiveClass() {
     $(this.$searchSuggestions[0].children).removeClass('suggestions-active');
   }

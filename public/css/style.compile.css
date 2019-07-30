@@ -941,6 +941,8 @@ body {
     color: #FFFFFF;
     font-size: 1.1rem;
     font-weight: 300; }
+  #watchlist-empty .icon-watchlist {
+    padding: 0 4px; }
   #watchlist-empty img {
     max-width: 200px;
     -webkit-filter: invert(100%);
