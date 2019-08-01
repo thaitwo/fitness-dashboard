@@ -68,24 +68,29 @@ class Suggestions {
 
       this.toggleSuggestionsVisibility();
 
-      if (keyPressed === 40) {
-        this.currentFocus++;
-        // Make suggestions container "active" when navigating with arrows so that when "enter" is pressed we can take the value from the 'suggestions-active' and make the ajax request
-        this.addActiveClass();
-      } else if (keyPressed === 38) {
-        this.currentFocus--;
-        this.addActiveClass();
-      }
-
-      // If a suggestion item is selected with 'Enter' key, simulate a click event
-      if (keyPressed === this.ENTER_KEY) {
-        event.preventDefault();
-        /* In order to be able to select from suggestions list with arrow keys,
-        the value of 'this.currentFocus' has to be at least 0. Therefore, only
-        simulate a click event if the suggestions list is being actively navigated. */
-        if (this.currentFocus > -1) {
-          this.$searchSuggestions[0].children[this.currentFocus].click();
-        }
+      switch (keyPressed) {
+        case 40:
+          this.currentFocus++;
+          console.log(this.currentFocus);
+          this.addActiveClass();
+          break;
+        case 38:
+          this.currentFocus--;
+          console.log(this.currentFocus);
+          this.addActiveClass();
+          break;
+        case 13:
+          event.preventDefault();
+          if (this.currentFocus > -1) {
+            /* In order to be able to select from suggestions list with arrow keys,
+            the value of 'this.currentFocus' has to be at least 0. Therefore, only
+            simulate a click event if the suggestions list is being actively navigated.
+            */
+            this.$searchSuggestions[0].children[this.currentFocus].click();
+          }
+          break;
+        default:
+          break;
       }
     })
 

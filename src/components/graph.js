@@ -7,15 +7,15 @@ import Chart from 'chart.js';
 * @param {String} canvasId - The id of canvas to insert graph
 * @param {Array} newData - Data to populate the graph
 * @param {Array} newLabels - Array of labels for the dates
-* @param {String} graphType (optional | default is line graph) - The type of graph to display
+* @param {String} chartType (optional | default is line graph) - The type of graph to display
 * @param {Object} options (optional) - Graph options
 * @returns {Object}
 */
 
 class Graph {
-  constructor(canvasId, newData, newLabels = '', graphType, options) {
+  constructor(canvasId, newData, newLabels = '', chartType = 'line', options) {
     this.$canvasId = $(canvasId);
-    this.graphType = graphType || 'line';
+    this.chartType = chartType;
 
     this.data = {
       labels: newLabels,
@@ -39,7 +39,7 @@ class Graph {
     };
 
     this.options = options || this.getOptions();
-    this.graph;
+    this.chart;
 
     this.renderGraph();
   }
@@ -47,8 +47,8 @@ class Graph {
 
   // DESTROY GRAPH
   destroy() {
-    if (this.graph) {
-      this.graph.destroy();
+    if (this.chart) {
+      this.chart.destroy();
     }
   }
 
@@ -110,8 +110,8 @@ class Graph {
 
   // RENDER NEW CHART
   renderGraph() {
-    this.graph = new Chart(this.$canvasId, {
-      type: this.graphType,
+    this.chart = new Chart(this.$canvasId, {
+      type: this.chartType,
       data: this.data,
       options: this.options
     });

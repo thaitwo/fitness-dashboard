@@ -60,7 +60,7 @@ class StockList {
       store.set(this.collectionName, response.data);
     })
     .catch(error => console.log(error))
-    .finally(() => {
+    .then(() => {
       this.$loadingIcon.removeClass('is-visible');
       this.renderStockList();
     })

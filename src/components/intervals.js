@@ -5,14 +5,15 @@ import Graph from './graph.js';
 import { URL_BASE, API_TOKEN } from '../const.js';
 
 class Intervals {
-  constructor(intervalsContainerId, symbol, chartContainer) {
+  constructor(intervalsContainerId, symbol, chartContainerId) {
     this.$intervalsContainer = $(intervalsContainerId);
+    this.$chartContainer = $(chartContainerId);
+    this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
+    this.$loadingIcon = $('.icon-loading');
     this.symbol = symbol;
-    this.$chartContainer = $(chartContainer);
-    this.graph;
+    this.chart;
     this.selectedInterval;
     this.renderIntervals();
-
     this.intervalsList = $('#time-intervals');
     this.intervalsItems = this.intervalsList.find('li');
     this.updateIntervalData();
@@ -47,25 +48,24 @@ class Intervals {
       const selectedInterval = $this.text().toLowerCase();
       that.selectedInterval = selectedInterval;
 
+      /* The chart canvas is being cleared in this specific place and order
+      to allow the display of the spinning icon while new data is being fetched,
+      without having both the icon and the old chart being displayed simulataneously.
+      On the initial load, that.chart will be null so in this case, we have to
+      clear the chart canvas by using JS's clearRect() method. Once an interval
+      selected, that.chart will now equal a new Chart component which includes 
+      the destroy() method that we can use to empty the chart canvas.
+      */
+      if (!that.chart) {
+        const context = that.chartCanvas.getContext('2d');
+        context.clearRect(0, 0, that.chartCanvas.width, that.chartCanvas.height);
+      } else if (that.chart) {
+        that.chart.destroy();
+      }
+
       that.updateIntervals(this);
       that.renderChart();
     });
-  }
-
-
-  // FETCH NEW DATA FOR SELECTED INTERVAL
-  fetchChartData() {
-    axios.get(`${URL_BASE}/${this.symbol}/chart/${this.selectedInterval}?token=${API_TOKEN}`)
-    .then((response) => {
-      const storedData = store.get(this.symbol);
-      storedData.chart[this.selectedInterval] = response.data;
-      store.set(this.symbol, storedData);
-
-      if (response.status == 200) {
-        this.renderChart();
-      }
-    })
-    .catch(error => console.log(error))
   }
 
 
@@ -81,11 +81,7 @@ class Intervals {
       // get dates for closing prices
       const dates = this.getChartData(storedData, 'date');
       
-      // delete graph if any exists and create new graph
-      if (this.graph) {
-        this.graph.destroy();
-      }
-      this.graph = new Graph(this.$chartContainer, prices, dates);
+      this.chart = new Graph(this.$chartContainer, prices, dates);
     }
     // if it doesn't exist, make data request
     else {
@@ -94,9 +90,29 @@ class Intervals {
   }
 
 
+  // FETCH NEW DATA FOR SELECTED INTERVAL
+  fetchChartData() {
+    this.$loadingIcon.addClass('is-visible');
+    
+    axios.get(`${URL_BASE}/${this.symbol}/chart/${this.selectedInterval}?token=${API_TOKEN}`)
+    .then((response) => {
+      const storedData = store.get(this.symbol);
+      storedData.chart[this.selectedInterval] = response.data;
+      store.set(this.symbol, storedData);
+
+      if (response.status == 200) {
+        this.renderChart();
+      }
+    })
+    .catch(error => console.log(error))
+    .then(() => {
+      this.$loadingIcon.removeClass('is-visible');      
+    })
+  }
+
+
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
   getChartData(data, key) {
-    // console.log(data);
     return data.map((day) => {
       if (key === 'date') {
         const date = day[key].split('-');

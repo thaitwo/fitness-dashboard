@@ -12,7 +12,7 @@ class StockPopup {
     this.symbol = companySymbol;
     this.companyName = companyName;
     this.$mainContainer = $('.main-container');
-    this.graph;
+    this.chart;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = store.get('watchlist') || [];
 
@@ -205,7 +205,7 @@ class StockPopup {
     let dateLabels = this.getChartData(stockData, 'date');
 
     // create new graph for this company stock
-    this.graph = new Graph('#popup-chart', priceData, dateLabels);
+    this.chart = new Graph('#popup-chart', priceData, dateLabels);
   }
 
 
@@ -252,7 +252,7 @@ class StockPopup {
   destroy() {
     this.$popupContainer.off();
     this.$popupContentContainer.off();
-    this.graph.destroy();
+    this.chart.destroy();
     this.$popupContainer.remove();
   }
 }

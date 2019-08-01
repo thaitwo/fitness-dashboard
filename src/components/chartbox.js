@@ -9,7 +9,7 @@ class ChartBox {
   constructor(containerId, symbol) {
     this.$container = $(containerId);
     this.symbol = symbol;
-    this.graph;
+    this.chart;
     this.intervalsBar;
     this.watchButton;
     this.interval = '1m';
@@ -42,7 +42,12 @@ class ChartBox {
           <div id="chartbox-change-percent" class="chartbox-change-percent"></div>
         </div>
       </div>
-      <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>
+      <div>
+        <div class="icon-loading">
+          <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        </div>
+        <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>
+      </div>
     `;
 
     this.$container.empty();
@@ -86,10 +91,10 @@ class ChartBox {
     const dates = this.getChartData(storedData, 'date');
     
     // delete graph if any exists and create new graph
-    if (this.graph) {
-      this.graph.destroy();
+    if (this.chart) {
+      this.chart.destroy();
     }
-    this.graph = new Graph('#chartbox-chart', prices, dates);
+    this.chart = new Graph('#chartbox-chart', prices, dates);
     this.intervalsBar = new Intervals('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
     this.watchButton = new WatchButton('#chartbox-watch-button', this.symbol, companyName);
   }

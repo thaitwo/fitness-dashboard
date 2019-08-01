@@ -298,7 +298,7 @@ body {
 .icon-loading {
   display: none; }
   .icon-loading i {
-    color: #FFFFFF; }
+    color: #F9A825; }
   .icon-loading.is-visible {
     color: rgba(0, 0, 0, 0.1);
     display: block;

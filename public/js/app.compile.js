@@ -15958,7 +15958,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @param {String} canvasId - The id of canvas to insert graph
 * @param {Array} newData - Data to populate the graph
 * @param {Array} newLabels - Array of labels for the dates
-* @param {String} graphType (optional | default is line graph) - The type of graph to display
+* @param {String} chartType (optional | default is line graph) - The type of graph to display
 * @param {Object} options (optional) - Graph options
 * @returns {Object}
 */
@@ -15966,13 +15966,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Graph = function () {
   function Graph(canvasId, newData) {
     var newLabels = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
-    var graphType = arguments[3];
+    var chartType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'line';
     var options = arguments[4];
 
     _classCallCheck(this, Graph);
 
     this.$canvasId = (0, _jquery2.default)(canvasId);
-    this.graphType = graphType || 'line';
+    this.chartType = chartType;
 
     this.data = {
       labels: newLabels,
@@ -15996,7 +15996,7 @@ var Graph = function () {
     };
 
     this.options = options || this.getOptions();
-    this.graph;
+    this.chart;
 
     this.renderGraph();
   }
@@ -16007,8 +16007,8 @@ var Graph = function () {
   _createClass(Graph, [{
     key: 'destroy',
     value: function destroy() {
-      if (this.graph) {
-        this.graph.destroy();
+      if (this.chart) {
+        this.chart.destroy();
       }
     }
 
@@ -16074,8 +16074,8 @@ var Graph = function () {
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
-      this.graph = new _chart2.default(this.$canvasId, {
-        type: this.graphType,
+      this.chart = new _chart2.default(this.$canvasId, {
+        type: this.chartType,
         data: this.data,
         options: this.options
       });
@@ -17344,7 +17344,7 @@ var ChartBox = function () {
 
     this.$container = (0, _jquery2.default)(containerId);
     this.symbol = symbol;
-    this.graph;
+    this.chart;
     this.intervalsBar;
     this.watchButton;
     this.interval = '1m';
@@ -17363,7 +17363,7 @@ var ChartBox = function () {
   _createClass(ChartBox, [{
     key: 'renderHtml',
     value: function renderHtml() {
-      var html = '\n      <div>\n        <div class="chartbox-header-top-row">\n          <div class="chartbox-name-container">\n            <h2 id="chartbox-stock-name" class="chartbox-stock-name"></h2>\n            <h3 id="chartbox-stock-symbol" class="chartbox-stock-symbol"></h3>\n          </div>\n          <div class="chartbox-watch-intervals-container">\n            <div id="chartbox-watch-button" class="chartbox-watchbutton"></div>\n            <div id="chartbox-intervals-container" class="chart-intervals-container"></div>\n          </div>\n        </div>\n        <div class="flex-hori-start" style="height: 32px;">\n          <div id="chartbox-latest-price" class="chartbox-latest-price"></div>\n          <div id="chartbox-change-percent" class="chartbox-change-percent"></div>\n        </div>\n      </div>\n      <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>\n    ';
+      var html = '\n      <div>\n        <div class="chartbox-header-top-row">\n          <div class="chartbox-name-container">\n            <h2 id="chartbox-stock-name" class="chartbox-stock-name"></h2>\n            <h3 id="chartbox-stock-symbol" class="chartbox-stock-symbol"></h3>\n          </div>\n          <div class="chartbox-watch-intervals-container">\n            <div id="chartbox-watch-button" class="chartbox-watchbutton"></div>\n            <div id="chartbox-intervals-container" class="chart-intervals-container"></div>\n          </div>\n        </div>\n        <div class="flex-hori-start" style="height: 32px;">\n          <div id="chartbox-latest-price" class="chartbox-latest-price"></div>\n          <div id="chartbox-change-percent" class="chartbox-change-percent"></div>\n        </div>\n      </div>\n      <div>\n        <div class="icon-loading">\n          <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n        </div>\n        <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>\n      </div>\n    ';
 
       this.$container.empty();
       this.$container.append(html);
@@ -17410,10 +17410,10 @@ var ChartBox = function () {
       var dates = this.getChartData(storedData, 'date');
 
       // delete graph if any exists and create new graph
-      if (this.graph) {
-        this.graph.destroy();
+      if (this.chart) {
+        this.chart.destroy();
       }
-      this.graph = new _graph2.default('#chartbox-chart', prices, dates);
+      this.chart = new _graph2.default('#chartbox-chart', prices, dates);
       this.intervalsBar = new _intervals2.default('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
       this.watchButton = new _watchButton2.default('#chartbox-watch-button', this.symbol, companyName);
     }
@@ -17483,16 +17483,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Intervals = function () {
-  function Intervals(intervalsContainerId, symbol, chartContainer) {
+  function Intervals(intervalsContainerId, symbol, chartContainerId) {
     _classCallCheck(this, Intervals);
 
     this.$intervalsContainer = (0, _jquery2.default)(intervalsContainerId);
+    this.$chartContainer = (0, _jquery2.default)(chartContainerId);
+    this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
+    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
     this.symbol = symbol;
-    this.$chartContainer = (0, _jquery2.default)(chartContainer);
-    this.graph;
+    this.chart;
     this.selectedInterval;
     this.renderIntervals();
-
     this.intervalsList = (0, _jquery2.default)('#time-intervals');
     this.intervalsItems = this.intervalsList.find('li');
     this.updateIntervalData();
@@ -17521,28 +17522,23 @@ var Intervals = function () {
         var selectedInterval = $this.text().toLowerCase();
         that.selectedInterval = selectedInterval;
 
+        /* The chart canvas is being cleared in this specific place and order
+        to allow the display of the spinning icon while new data is being fetched,
+        without having both the icon and the old chart being displayed simulataneously.
+        On the initial load, that.chart will be null so in this case, we have to
+        clear the chart canvas by using JS's clearRect() method. Once an interval
+        selected, that.chart will now equal a new Chart component which includes 
+        the destroy() method that we can use to empty the chart canvas.
+        */
+        if (!that.chart) {
+          var context = that.chartCanvas.getContext('2d');
+          context.clearRect(0, 0, that.chartCanvas.width, that.chartCanvas.height);
+        } else if (that.chart) {
+          that.chart.destroy();
+        }
+
         that.updateIntervals(this);
         that.renderChart();
-      });
-    }
-
-    // FETCH NEW DATA FOR SELECTED INTERVAL
-
-  }, {
-    key: 'fetchChartData',
-    value: function fetchChartData() {
-      var _this = this;
-
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.selectedInterval + '?token=' + _const.API_TOKEN).then(function (response) {
-        var storedData = _store2.default.get(_this.symbol);
-        storedData.chart[_this.selectedInterval] = response.data;
-        _store2.default.set(_this.symbol, storedData);
-
-        if (response.status == 200) {
-          _this.renderChart();
-        }
-      }).catch(function (error) {
-        return console.log(error);
       });
     }
 
@@ -17561,11 +17557,7 @@ var Intervals = function () {
         // get dates for closing prices
         var dates = this.getChartData(_storedData, 'date');
 
-        // delete graph if any exists and create new graph
-        if (this.graph) {
-          this.graph.destroy();
-        }
-        this.graph = new _graph2.default(this.$chartContainer, prices, dates);
+        this.chart = new _graph2.default(this.$chartContainer, prices, dates);
       }
       // if it doesn't exist, make data request
       else {
@@ -17573,12 +17565,35 @@ var Intervals = function () {
         }
     }
 
+    // FETCH NEW DATA FOR SELECTED INTERVAL
+
+  }, {
+    key: 'fetchChartData',
+    value: function fetchChartData() {
+      var _this = this;
+
+      this.$loadingIcon.addClass('is-visible');
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.selectedInterval + '?token=' + _const.API_TOKEN).then(function (response) {
+        var storedData = _store2.default.get(_this.symbol);
+        storedData.chart[_this.selectedInterval] = response.data;
+        _store2.default.set(_this.symbol, storedData);
+
+        if (response.status == 200) {
+          _this.renderChart();
+        }
+      }).catch(function (error) {
+        return console.log(error);
+      }).then(function () {
+        _this.$loadingIcon.removeClass('is-visible');
+      });
+    }
+
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
     key: 'getChartData',
     value: function getChartData(data, key) {
-      // console.log(data);
       return data.map(function (day) {
         if (key === 'date') {
           var date = day[key].split('-');
@@ -31365,24 +31380,29 @@ var Suggestions = function () {
 
         _this2.toggleSuggestionsVisibility();
 
-        if (keyPressed === 40) {
-          _this2.currentFocus++;
-          // Make suggestions container "active" when navigating with arrows so that when "enter" is pressed we can take the value from the 'suggestions-active' and make the ajax request
-          _this2.addActiveClass();
-        } else if (keyPressed === 38) {
-          _this2.currentFocus--;
-          _this2.addActiveClass();
-        }
-
-        // If a suggestion item is selected with 'Enter' key, simulate a click event
-        if (keyPressed === _this2.ENTER_KEY) {
-          event.preventDefault();
-          /* In order to be able to select from suggestions list with arrow keys,
-          the value of 'this.currentFocus' has to be at least 0. Therefore, only
-          simulate a click event if the suggestions list is being actively navigated. */
-          if (_this2.currentFocus > -1) {
-            _this2.$searchSuggestions[0].children[_this2.currentFocus].click();
-          }
+        switch (keyPressed) {
+          case 40:
+            _this2.currentFocus++;
+            console.log(_this2.currentFocus);
+            _this2.addActiveClass();
+            break;
+          case 38:
+            _this2.currentFocus--;
+            console.log(_this2.currentFocus);
+            _this2.addActiveClass();
+            break;
+          case 13:
+            event.preventDefault();
+            if (_this2.currentFocus > -1) {
+              /* In order to be able to select from suggestions list with arrow keys,
+              the value of 'this.currentFocus' has to be at least 0. Therefore, only
+              simulate a click event if the suggestions list is being actively navigated.
+              */
+              _this2.$searchSuggestions[0].children[_this2.currentFocus].click();
+            }
+            break;
+          default:
+            break;
         }
       });
 
@@ -31519,7 +31539,7 @@ var StockPopup = function () {
     this.symbol = companySymbol;
     this.companyName = companyName;
     this.$mainContainer = (0, _jquery2.default)('.main-container');
-    this.graph;
+    this.chart;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = _store2.default.get('watchlist') || [];
 
@@ -31656,7 +31676,7 @@ var StockPopup = function () {
       var dateLabels = this.getChartData(stockData, 'date');
 
       // create new graph for this company stock
-      this.graph = new _graph2.default('#popup-chart', priceData, dateLabels);
+      this.chart = new _graph2.default('#popup-chart', priceData, dateLabels);
     }
 
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
@@ -31714,7 +31734,7 @@ var StockPopup = function () {
     value: function destroy() {
       this.$popupContainer.off();
       this.$popupContentContainer.off();
-      this.graph.destroy();
+      this.chart.destroy();
       this.$popupContainer.remove();
     }
   }]);
@@ -31919,7 +31939,7 @@ var StockList = function () {
         _store2.default.set(_this.collectionName, response.data);
       }).catch(function (error) {
         return console.log(error);
-      }).finally(function () {
+      }).then(function () {
         _this.$loadingIcon.removeClass('is-visible');
         _this.renderStockList();
       });
@@ -32225,7 +32245,6 @@ var Watchlist = function () {
 
     this.$canvas = container;
     this.symbol;
-    this.graph;
     this.chartBox;
     this.keyStats;
     this.latestNews;

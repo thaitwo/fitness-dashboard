@@ -13,7 +13,6 @@ class Watchlist {
   constructor(container) {
     this.$canvas = container;
     this.symbol;
-    this.graph;
     this.chartBox;
     this.keyStats;
     this.latestNews;
