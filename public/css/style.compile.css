@@ -118,6 +118,16 @@ body {
   .button:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.24);
     cursor: pointer; }
+  .button.button-watchlist {
+    background-color: transparent;
+    border-radius: 4px;
+    box-sizing: border-box;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 600;
+    height: 28px;
+    line-height: 28px;
+    padding: 0; }
   .button.button-popup-watchlist {
     background-color: transparent;
     border-radius: 4px;
@@ -315,6 +325,9 @@ body {
   display: flex;
   justify-content: flex-start; }
 
+.popup-watch-button {
+  margin: 0 16px; }
+
 #popup-wbutton-intervals {
   display: flex;
   justify-content: flex-start; }
@@ -457,109 +470,6 @@ body {
 .stocks-tabs {
   height: 60px; }
 
-.stock-list #most-active-header-row {
-  border-bottom: none;
-  color: #FFFFFF;
-  display: flex;
-  font-size: 14px;
-  font-weight: 300;
-  justify-content: space-between;
-  opacity: .8;
-  padding-bottom: 16px; }
-
-.stock-list .stock-list-header-row {
-  border-bottom: none;
-  color: #FFFFFF;
-  display: flex;
-  font-size: 14px;
-  font-weight: 300;
-  justify-content: space-between;
-  opacity: .8;
-  padding-bottom: 16px; }
-
-.stock-list li {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  color: #FFFFFF;
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  position: relative; }
-  .stock-list li:last-of-type {
-    border-bottom: none; }
-  .stock-list li div {
-    flex: 2;
-    display: flex;
-    align-items: center; }
-  .stock-list li div:first-of-type {
-    display: unset;
-    flex: 4; }
-  .stock-list li div:last-of-type {
-    flex: 1;
-    display: unset;
-    max-width: 36px; }
-
-.stock-list button {
-  background: #151C40;
-  border: none;
-  box-sizing: border-box;
-  display: block;
-  outline: none;
-  padding: 4px 0;
-  position: relative;
-  text-align: left;
-  transition: all .3s;
-  width: 100%; }
-  .stock-list button:hover {
-    cursor: pointer; }
-    .stock-list button:hover .stock-name {
-      color: #F9A825; }
-
-.stock-list .clickable-stock-name:hover {
-  cursor: pointer; }
-  .stock-list .clickable-stock-name:hover .stock-name {
-    color: #F9A825; }
-
-.stock-list .stock-code {
-  color: #F9A825;
-  display: block;
-  font-family: "Mukta", sans-serif;
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px; }
-
-.stock-list .stock-name {
-  color: rgba(255, 255, 255, 0.8);
-  display: block;
-  font-family: "Mukta", sans-serif;
-  font-size: 13px;
-  font-weight: 300;
-  line-height: 16px;
-  overflow-y: hidden; }
-
-.stock-list .most-active-change,
-.stock-list .most-active-change-percent {
-  color: #43A047;
-  font-weight: 500; }
-
-.stock-list .most-active-change-percent span {
-  font-size: 13px;
-  margin-left: 2px; }
-
-.stock-list .icon-watchlist {
-  color: #CFD8DC;
-  font-size: 1.2rem;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%); }
-  .stock-list .icon-watchlist.is-selected {
-    color: #F9A825; }
-  .stock-list .icon-watchlist:hover {
-    cursor: pointer; }
-  .stock-list .icon-watchlist svg {
-    height: 24px;
-    width: auto; }
-
 #home-graph-cards-container > div {
   margin-right: 24px; }
 
@@ -568,6 +478,99 @@ body {
 
 #graphCard-graph {
   max-height: 350px; }
+
+.stocklist-watchbutton {
+  text-align: right; }
+
+.stocklist #most-active-header-row {
+  border-bottom: none;
+  color: #FFFFFF;
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  justify-content: space-between;
+  opacity: .8;
+  padding-bottom: 16px; }
+
+.stocklist .stock-list-header-row {
+  border-bottom: none;
+  color: #FFFFFF;
+  display: flex;
+  font-size: 14px;
+  font-weight: 300;
+  justify-content: space-between;
+  opacity: .8;
+  padding-bottom: 16px; }
+
+.stocklist li.stocklist-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: #FFFFFF;
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  position: relative; }
+  .stocklist li.stocklist-item:last-of-type {
+    border-bottom: none; }
+  .stocklist li.stocklist-item div {
+    flex: 2;
+    display: flex;
+    align-items: center; }
+  .stocklist li.stocklist-item div:first-of-type {
+    display: unset;
+    flex: 4; }
+  .stocklist li.stocklist-item div:last-of-type {
+    flex: 1;
+    display: unset;
+    max-width: 36px; }
+
+.stocklist .clickable-stock-name:hover {
+  cursor: pointer; }
+  .stocklist .clickable-stock-name:hover .stock-name {
+    color: #F9A825; }
+
+.stocklist .stock-code {
+  color: #F9A825;
+  display: block;
+  font-family: "Mukta", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 16px; }
+
+.stocklist .stock-name {
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+  font-family: "Mukta", sans-serif;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 16px;
+  overflow-y: hidden; }
+
+.stocklist .most-active-change,
+.stocklist .most-active-change-percent {
+  color: #43A047;
+  font-weight: 500; }
+
+.stocklist .most-active-change-percent span {
+  font-size: 13px;
+  margin-left: 2px; }
+
+.stocklist .icon-watchlist {
+  color: #CFD8DC;
+  font-size: 1.2rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%); }
+  .stocklist .icon-watchlist.is-selected {
+    color: #F9A825; }
+  .stocklist .icon-watchlist:hover {
+    cursor: pointer; }
+  .stocklist .icon-watchlist svg {
+    height: 24px;
+    width: auto; }
+
+.chartbox-watchbutton {
+  margin-right: 24px; }
 
 .chart-container {
   max-height: 320px; }

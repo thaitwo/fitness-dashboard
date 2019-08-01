@@ -12,7 +12,7 @@ class WatchButton {
     this.$watchlist = $('.watchlist-list');
 
     this.insertButton();
-    this.$watchButton = $('#watch-button');
+    this.$watchButton = $(`#${this.symbol}-watchbutton`);
     this.$starIcon = this.$watchButton.find('i');
     this.addOrRemoveFromWatchlistHandler();
   }
@@ -32,7 +32,7 @@ class WatchButton {
     }
 
     const html = `
-      <button id="watch-button" class="button button-popup-watchlist ${watchStatus}">
+      <button id="${this.symbol}-watchbutton" class="button button-watchlist ${watchStatus}">
         <i class="${iconStyle} fa-star"></i>
       </button>
     `;
@@ -47,6 +47,7 @@ class WatchButton {
     return this.watchlist.some(stock => stock.symbol === this.symbol);
   }
 
+  // Fix watch button class name, remove 'popup'
 
   // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
   addOrRemoveFromWatchlistHandler() {
@@ -56,6 +57,7 @@ class WatchButton {
     this.$watchButton.on('click', function(event) {
       event.preventDefault();
       const pageUrl = document.URL.split('#')[1];
+      that.watchlist = store.get('watchlist');
       that.toggleButtonState(that.isWatched);
 
       // if stock is not in watchlist, then add to watchlist
@@ -77,7 +79,9 @@ class WatchButton {
         // store upated watchlist array
         store.set('watchlist', that.watchlist);
         
-        // Use case for Watchlist page to refresh page when stock is removed from watchlist
+        /* For the Watchlist page, when the Watch button is clicked to remove the stock from the list,
+        reload the page so that it is no longer showing data for the stock that the user just removed.
+        */
         if (pageUrl === 'watchlist') {
           window.location.reload();
         }

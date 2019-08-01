@@ -5,6 +5,7 @@ import StockPopup from './stock-popup.js';
 import GraphCard from './graph-card.js';
 import News from './news.js';
 import { URL_BASE, API_TOKEN } from '../const.js';
+import StockList from './stocklist.js';
 
 class Stocks {
   constructor(container) {
@@ -26,7 +27,7 @@ class Stocks {
 
   // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
   getMostActiveSymbols() {
-    const symbols = store.get('most-active');
+    const symbols = store.get('mostactive');
     return symbols.slice(0, 5).map((stock) => {
       return stock.symbol;
     })
@@ -43,48 +44,12 @@ class Stocks {
           <div id="home-graphCard2"></div>
         </div>
         <div class="home-row">
-          <div id="most-active-container" class="box margin-right">
-            <h2 class="text-header">Most Active</h2>
-            <div class="icon-loading">
-              <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-            </div>
-            <ol id="most-active" class="stock-list">
-              <li class="stock-list-header-row">
-                <div>Company</div>
-                <div>Last Price</div>
-                <div>Change</div>
-                <div>% Change</div>
-                <div>Watch</div>
-              </li>
-            </ol>
-          </div>
+          <div id="mostactive-container" class="box margin-right"></div>
           <div id="home-news" class="box"></div>
         </div>
         <div class="home-row">
-          <div id="gainers-container" class="box margin-right">
-            <h2 class="text-header">Gainers</h2>
-            <ol id="gainers" class="stock-list">
-              <li class="stock-list-header-row">
-                <div>Company</div>
-                <div>Last Price</div>
-                <div>Change</div>
-                <div>% Change</div>
-                <div>Watch</div>
-              </li>
-            </ol>
-          </div>
-          <div id="losers-container" class="box">
-            <h2 class="text-header">Losers</h2>
-            <ol id="losers" class="stock-list">
-              <li class="stock-list-header-row">
-                <div>Company</div>
-                <div>Last Price</div>
-                <div>Change</div>
-                <div>% Change</div>
-                <div>Watch</div>
-              </li>
-            </ol>
-          </div>
+          <div id="gainers-container" class="box margin-right"></div>
+          <div id="losers-container" class="box"></div>
         </div>
       `;
     this.$container.empty();
@@ -100,16 +65,16 @@ class Stocks {
 
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
-    const mostActive = store.get('most-active') || [];
+    const mostActive = store.get('mostactive') || [];
     const gainers = store.get('gainers') || [];
     const losers = store.get('losers') || [];
 
     // check if local storage exist
     if (mostActive.length && gainers.length && losers.length) {
       this.mostActiveSymbols = this.getMostActiveSymbols();
-      this.renderStocks('#most-active', 'most-active');
-      this.renderStocks('#gainers', 'gainers');
-      this.renderStocks('#losers', 'losers');
+      new StockList('#mostactive-container', 'mostactive', 'Most Active');
+      new StockList('#gainers-container', 'gainers', 'Gainers');
+      new StockList('#losers-container', 'losers', 'Losers');
       this.renderGraphCards();
       this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
     }
@@ -121,7 +86,7 @@ class Stocks {
 
   // RENDER SMALL GRAPH CARDS
   renderGraphCards() {
-    const mostActiveSymbols = store.get('most-active');
+    const mostActiveSymbols = store.get('mostactive');
     
     mostActiveSymbols.slice(0, 3).map((stock, index) => {
       const symbol = stock.symbol;
@@ -141,7 +106,7 @@ class Stocks {
       axios.get(`${URL_BASE}/market/collection/list?collectionName=losers&token=${API_TOKEN}`)
     ])
     .then(axios.spread((mostActive, gainers, losers) => {
-      store.set('most-active', mostActive.data);
+      store.set('mostactive', mostActive.data);
       store.set('gainers', gainers.data);
       store.set('losers', losers.data);
     }))
@@ -151,9 +116,9 @@ class Stocks {
     .then(() => {
       this.mostActiveSymbols = this.getMostActiveSymbols();
       this.$loadingIcon.removeClass('is-visible');
-      this.renderStocks('#most-active', 'most-active');
-      this.renderStocks('#gainers', 'gainers');
-      this.renderStocks('#losers', 'losers');
+      new StockList('#mostactive-container', 'mostactive', 'Most Active');
+      new StockList('#gainers', 'gainers', 'Gainers');
+      new StockList('#losers-container', 'losers', 'Losers');
       this.renderGraphCards();
       // console.log('working', this.mostActiveSymbols);
       this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
@@ -252,7 +217,6 @@ class Stocks {
       // get stock id and stock name from sibling elements
       const stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
       const stockName = $this.closest('li').find('.stock-name')[0].innerText;
-      // console.log(stockSymbol, stockName);
       // retrieve watchlist:
       // not doing this causes a bug where after you click watch/unwatch and close popup,
       // the star icon will not work on the first click attempt for the stock 

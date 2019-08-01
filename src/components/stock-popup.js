@@ -47,7 +47,7 @@ class StockPopup {
               <h2 id="popup-stock-name"></h2>
             </div>
             <div id="popup-wbutton-intervals">
-              <div id="popup-watch-button"></div>
+              <div id="popup-watch-button" class="popup-watch-button"></div>
               <div id="popup-intervals-container"></div>
             </div>
           </div>

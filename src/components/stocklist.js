@@ -1,15 +1,20 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
+import WatchButton from './watch-button';
+import StockPopup from './stock-popup';
 
-class StocksList {
+class StockList {
   constructor(containerId, collectionName, title) {
     this.$container = $(containerId);
     this.collectionName = collectionName;
     this.title = title;
     this.watchlist = store.get('watchlist') || [];
     this.renderHeaderHtml();
+    this.$loadingIcon = $('.icon-loading');
+    this.$listContainer = $(`#${collectionName}`);
     this.renderAllData();
+    this.displayPopup();
   }
 
 
@@ -19,7 +24,7 @@ class StocksList {
       <div class="icon-loading">
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
       </div>
-      <ol id="${this.collectionName}" class="stock-list">
+      <ol id="${this.collectionName}" class="stocklist">
         <li class="stock-list-header-row">
           <div>Company</div>
           <div>Last Price</div>
@@ -37,13 +42,14 @@ class StocksList {
 
   renderAllData() {
     if (store.get(this.collectionName) !== null) {
-      this.renderStocksList();
+      this.renderStockList();
     } else {
       this.fetchStocks();
     }
   }
 
 
+  // FETCH API DATA
   fetchStocks() {
     this.$loadingIcon.addClass('is-visible');
 
@@ -55,7 +61,7 @@ class StocksList {
     .catch(error => console.log(error))
     .finally(() => {
       this.$loadingIcon.removeClass('is-visible');
-      this.renderStocksList();
+      this.renderStockList();
     })
   }
 
@@ -66,15 +72,12 @@ class StocksList {
   }
 
 
-  renderStocksList() {
+  renderStockList() {
     const stocks = store.get(this.collectionName);
 
-    const stocksList = stocks.map((stock) => {
+    const stocksList = stocks.slice(0,5).map((stock) => {
       let { symbol, companyName, latestPrice, change, changePercent } = stock;
-      let iconClass;
-      let isNegative;
-      let plusMinusSign;
-      let isSelected = '';
+      let isNegative, plusMinusSign;
 
       if (change < 0) {
         isNegative = 'is-negative';
@@ -88,18 +91,8 @@ class StocksList {
       change = Math.abs(change);
       changePercent = Math.abs((changePercent * 100).toFixed(2));
 
-      // if stock exist in watchlist array, dispay solid icon with gold color
-      if (this.isInWatchlist(symbol)) {
-        iconClass = 'fas';
-        isSelected = 'is-selected';
-      }
-      // if stock doesn't exist, display line icon with gray color
-      else {
-        iconClass = 'far';
-      }
-
       return `
-        <li id="${symbol}">
+        <li id="${symbol}-${this.collectionName}" class="stocklist-item">
           <div class="clickable-stock-name">
             <span class="stock-code">${symbol}</span>
             <span class="stock-name">${companyName}</span>
@@ -113,15 +106,34 @@ class StocksList {
           <div class="most-active-change-percent ${isNegative}">
             <p>${plusMinusSign} ${changePercent}<span>%</span></p>
           </div>
-          <div>
-            <span class="icon-watchlist ${isSelected}"><i class="${iconClass} fa-star"></i></span>
-          </div>
+          <div id="${this.collectionName}-${symbol}-watchbutton" class="stocklist-watchbutton"></div>
         </li>
       `;
     });
 
-    $(this.collectionName).append(stocksList);
-  }  
+    $(`#${this.collectionName}`).append(stocksList);
+    this.activateWatchButtons();
+  }
+
+
+  activateWatchButtons() {
+    const stocks = store.get(this.collectionName);
+
+    stocks.slice(0,5).map((stock) => {
+      const { symbol, companyName } = stock;
+      new WatchButton(`#${this.collectionName}-${symbol}-watchbutton`, symbol, companyName);
+    });
+  }
+
+
+  displayPopup() {
+    this.$listContainer.on('click', 'li.stocklist-item', function(event) {
+      event.preventDefault();
+      const symbol = $(this).find('.stock-code')[0].innerText;
+      const name = $(this).find('.stock-name')[0].innerText;
+      new StockPopup(symbol, name);
+    })
+  }
 }
 
-export default StocksList;
+export default StockList;

@@ -33,7 +33,7 @@ class ChartBox {
             <h3 id="chartbox-stock-symbol" class="chartbox-stock-symbol"></h3>
           </div>
           <div class="chartbox-watch-intervals-container">
-            <div id="chartbox-watch-button"></div>
+            <div id="chartbox-watch-button" class="chartbox-watchbutton"></div>
             <div id="chartbox-intervals-container" class="chart-intervals-container"></div>
           </div>
         </div>

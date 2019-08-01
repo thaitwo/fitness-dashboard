@@ -107,8 +107,6 @@ class Watchlist {
 
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
   displayStocks() {
-    console.log('length', this.watchlist.length);
-    console.log('currentIndex', this.currentWatchIndex);
     const stocks = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
       const name = stock.name;
