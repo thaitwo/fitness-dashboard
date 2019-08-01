@@ -511,6 +511,10 @@ body {
   position: relative; }
   .stocklist li.stocklist-item:last-of-type {
     border-bottom: none; }
+  .stocklist li.stocklist-item:hover {
+    cursor: pointer; }
+    .stocklist li.stocklist-item:hover .stock-name {
+      color: #F9A825; }
   .stocklist li.stocklist-item div {
     flex: 2;
     display: flex;
@@ -522,11 +526,6 @@ body {
     flex: 1;
     display: unset;
     max-width: 36px; }
-
-.stocklist .clickable-stock-name:hover {
-  cursor: pointer; }
-  .stocklist .clickable-stock-name:hover .stock-name {
-    color: #F9A825; }
 
 .stocklist .stock-code {
   color: #F9A825;

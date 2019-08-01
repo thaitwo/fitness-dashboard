@@ -55,7 +55,7 @@ class WatchButton {
 
     // Add/remove stock from watchlist
     this.$watchButton.on('click', function(event) {
-      event.preventDefault();
+      event.stopPropagation();
       const pageUrl = document.URL.split('#')[1];
       that.watchlist = store.get('watchlist');
       that.toggleButtonState(that.isWatched);

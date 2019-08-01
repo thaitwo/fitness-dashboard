@@ -3,6 +3,7 @@ import store from 'store2';
 import axios from 'axios';
 import WatchButton from './watch-button';
 import StockPopup from './stock-popup';
+import { trimString } from '../helpers/helpers.js';
 
 class StockList {
   constructor(containerId, collectionName, title) {
@@ -25,7 +26,7 @@ class StockList {
         <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
       </div>
       <ol id="${this.collectionName}" class="stocklist">
-        <li class="stock-list-header-row">
+        <li class="stock-list-header-row stocklist-item">
           <div>Company</div>
           <div>Last Price</div>
           <div>Change</div>
@@ -78,6 +79,7 @@ class StockList {
     const stocksList = stocks.slice(0,5).map((stock) => {
       let { symbol, companyName, latestPrice, change, changePercent } = stock;
       let isNegative, plusMinusSign;
+      companyName = trimString(companyName, 32);
 
       if (change < 0) {
         isNegative = 'is-negative';
@@ -93,7 +95,7 @@ class StockList {
 
       return `
         <li id="${symbol}-${this.collectionName}" class="stocklist-item">
-          <div class="clickable-stock-name">
+          <div>
             <span class="stock-code">${symbol}</span>
             <span class="stock-name">${companyName}</span>
           </div>

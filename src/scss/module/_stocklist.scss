@@ -38,6 +38,14 @@
       border-bottom: none;
     }
 
+    &:hover {
+      cursor: pointer;
+
+      .stock-name {
+        color: $colorDark-accent;
+      }
+    }
+
     div {
       flex: 2;
       display: flex;
@@ -53,17 +61,6 @@
       flex: 1;
       display: unset;
       max-width: 36px;
-    }
-  }
-
-  .clickable-stock-name {
-
-    &:hover {
-      cursor: pointer;
-
-      .stock-name {
-        color: $colorDark-accent;
-      }
     }
   }
 

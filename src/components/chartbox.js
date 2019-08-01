@@ -2,8 +2,8 @@ import $ from 'jquery';
 import store from 'store2';
 import Graph from './graph.js';
 import Intervals from './intervals.js';
-import { trimString } from '../helpers/helpers.js';
 import WatchButton from './watch-button.js';
+import { trimString } from '../helpers/helpers.js';
 
 class ChartBox {
   constructor(containerId, symbol) {

@@ -15882,6 +15882,61 @@ exports.API_TOKEN = API_TOKEN;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.formatLargeNumber = formatLargeNumber;
+exports.formatNumberWithCommas = formatNumberWithCommas;
+exports.trimString = trimString;
+exports.calcLocalStorageAge = calcLocalStorageAge;
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Formate large numbers
+function formatLargeNumber(num) {
+  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+}
+
+// Insert commas into numbers
+function formatNumberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Trim strings to specified length
+function trimString(string, length) {
+  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
+
+// Calculate whether local storage for stock is more than 1 day old (24 hours)
+function calcLocalStorageAge(symbol) {
+  var oneDay = 60 * 60 * 24 * 1000;
+  var newTime = Date.now();
+  var oldTime = void 0;
+
+  // if stored data exists, calculate if data needs to be updated
+  if (_store2.default.get(symbol) !== null) {
+    oldTime = _store2.default.get(symbol).time;
+    return newTime - oldTime > oneDay;
+  } else {
+    return true;
+  }
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -16031,61 +16086,6 @@ var Graph = function () {
 }();
 
 exports.default = Graph;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.formatLargeNumber = formatLargeNumber;
-exports.formatNumberWithCommas = formatNumberWithCommas;
-exports.trimString = trimString;
-exports.calcLocalStorageAge = calcLocalStorageAge;
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// Formate large numbers
-function formatLargeNumber(num) {
-  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
-  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-  // Three Zeroes for Thousands
-  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-}
-
-// Insert commas into numbers
-function formatNumberWithCommas(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// Trim strings to specified length
-function trimString(string, length) {
-  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-}
-
-// Calculate whether local storage for stock is more than 1 day old (24 hours)
-function calcLocalStorageAge(symbol) {
-  var oneDay = 60 * 60 * 24 * 1000;
-  var newTime = Date.now();
-  var oldTime = void 0;
-
-  // if stored data exists, calculate if data needs to be updated
-  if (_store2.default.get(symbol) !== null) {
-    oldTime = _store2.default.get(symbol).time;
-    return newTime - oldTime > oneDay;
-  } else {
-    return true;
-  }
-}
 
 /***/ }),
 /* 8 */
@@ -16422,7 +16422,7 @@ var WatchButton = function () {
 
       // Add/remove stock from watchlist
       this.$watchButton.on('click', function (event) {
-        event.preventDefault();
+        event.stopPropagation();
         var pageUrl = document.URL.split('#')[1];
         that.watchlist = _store2.default.get('watchlist');
         that.toggleButtonState(that.isWatched);
@@ -17320,7 +17320,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -17328,11 +17328,11 @@ var _intervals = __webpack_require__(18);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _helpers = __webpack_require__(7);
-
 var _watchButton = __webpack_require__(10);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
+
+var _helpers = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17472,7 +17472,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -17627,7 +17627,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _helpers = __webpack_require__(7);
+var _helpers = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30958,7 +30958,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -31492,9 +31492,9 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(7);
+var _helpers = __webpack_require__(6);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -31834,7 +31834,174 @@ var Stock = function () {
 exports.default = Stock;
 
 /***/ }),
-/* 173 */,
+/* 173 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _watchButton = __webpack_require__(10);
+
+var _watchButton2 = _interopRequireDefault(_watchButton);
+
+var _stockPopup = __webpack_require__(171);
+
+var _stockPopup2 = _interopRequireDefault(_stockPopup);
+
+var _helpers = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var StockList = function () {
+  function StockList(containerId, collectionName, title) {
+    _classCallCheck(this, StockList);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    this.collectionName = collectionName;
+    this.title = title;
+    this.watchlist = _store2.default.get('watchlist') || [];
+    this.renderHeaderHtml();
+    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
+    this.$listContainer = (0, _jquery2.default)('#' + collectionName);
+    this.renderAllData();
+    this.displayPopup();
+  }
+
+  _createClass(StockList, [{
+    key: 'renderHeaderHtml',
+    value: function renderHeaderHtml() {
+      var html = '\n      <h2 class="text-header">' + this.title + '</h2>\n      <div class="icon-loading">\n        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n      </div>\n      <ol id="' + this.collectionName + '" class="stocklist">\n        <li class="stock-list-header-row stocklist-item">\n          <div>Company</div>\n          <div>Last Price</div>\n          <div>Change</div>\n          <div>% Change</div>\n          <div>Watch</div>\n        </li>\n      </ol>\n    ';
+
+      this.$container.empty();
+      this.$container.append(html);
+    }
+  }, {
+    key: 'renderAllData',
+    value: function renderAllData() {
+      if (_store2.default.get(this.collectionName) !== null) {
+        this.renderStockList();
+      } else {
+        this.fetchStocks();
+      }
+    }
+
+    // FETCH API DATA
+
+  }, {
+    key: 'fetchStocks',
+    value: function fetchStocks() {
+      var _this = this;
+
+      this.$loadingIcon.addClass('is-visible');
+
+      _axios2.default.get(URL_BASE + '/market/collection/list?collectionName=' + this.collectionName + '&token=' + API_TOKEN).then(function (response) {
+        console.log(response);
+        _store2.default.set(_this.collectionName, response.data);
+      }).catch(function (error) {
+        return console.log(error);
+      }).finally(function () {
+        _this.$loadingIcon.removeClass('is-visible');
+        _this.renderStockList();
+      });
+    }
+
+    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
+
+  }, {
+    key: 'isInWatchlist',
+    value: function isInWatchlist(symbol) {
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === symbol;
+      });
+    }
+  }, {
+    key: 'renderStockList',
+    value: function renderStockList() {
+      var _this2 = this;
+
+      var stocks = _store2.default.get(this.collectionName);
+
+      var stocksList = stocks.slice(0, 5).map(function (stock) {
+        var symbol = stock.symbol,
+            companyName = stock.companyName,
+            latestPrice = stock.latestPrice,
+            change = stock.change,
+            changePercent = stock.changePercent;
+
+        var isNegative = void 0,
+            plusMinusSign = void 0;
+        companyName = (0, _helpers.trimString)(companyName, 32);
+
+        if (change < 0) {
+          isNegative = 'is-negative';
+          plusMinusSign = '-';
+        } else if (change == 0) {
+          plusMinusSign = '';
+        } else {
+          plusMinusSign = '+';
+        }
+
+        change = Math.abs(change);
+        changePercent = Math.abs((changePercent * 100).toFixed(2));
+
+        return '\n        <li id="' + symbol + '-' + _this2.collectionName + '" class="stocklist-item">\n          <div>\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + changePercent + '<span>%</span></p>\n          </div>\n          <div id="' + _this2.collectionName + '-' + symbol + '-watchbutton" class="stocklist-watchbutton"></div>\n        </li>\n      ';
+      });
+
+      (0, _jquery2.default)('#' + this.collectionName).append(stocksList);
+      this.activateWatchButtons();
+    }
+  }, {
+    key: 'activateWatchButtons',
+    value: function activateWatchButtons() {
+      var _this3 = this;
+
+      var stocks = _store2.default.get(this.collectionName);
+
+      stocks.slice(0, 5).map(function (stock) {
+        var symbol = stock.symbol,
+            companyName = stock.companyName;
+
+        new _watchButton2.default('#' + _this3.collectionName + '-' + symbol + '-watchbutton', symbol, companyName);
+      });
+    }
+  }, {
+    key: 'displayPopup',
+    value: function displayPopup() {
+      this.$listContainer.on('click', 'li.stocklist-item', function (event) {
+        event.preventDefault();
+        var symbol = (0, _jquery2.default)(this).find('.stock-code')[0].innerText;
+        var name = (0, _jquery2.default)(this).find('.stock-name')[0].innerText;
+        new _stockPopup2.default(symbol, name);
+      });
+    }
+  }]);
+
+  return StockList;
+}();
+
+exports.default = StockList;
+
+/***/ }),
 /* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -31859,10 +32026,6 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _stockPopup = __webpack_require__(171);
-
-var _stockPopup2 = _interopRequireDefault(_stockPopup);
-
 var _graphCard = __webpack_require__(168);
 
 var _graphCard2 = _interopRequireDefault(_graphCard);
@@ -31871,11 +32034,11 @@ var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _const = __webpack_require__(5);
-
-var _stocklist = __webpack_require__(184);
+var _stocklist = __webpack_require__(173);
 
 var _stocklist2 = _interopRequireDefault(_stocklist);
+
+var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31895,7 +32058,6 @@ var Stocks = function () {
     this.$stockListContainer = (0, _jquery2.default)('.stock-list');
 
     this.getStocks();
-    this.displayPopup();
     this.mostActiveSymbols;
     this.news;
   }
@@ -31994,133 +32156,6 @@ var Stocks = function () {
         _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'home-news', 1);
       });
     }
-
-    // RENDER MOST ACTIVE
-
-  }, {
-    key: 'renderStocks',
-    value: function renderStocks(container, listType) {
-      var _this2 = this;
-
-      var stocks = _store2.default.get(listType);
-
-      // render html list for stocks
-      var list = stocks.slice(0, 5).map(function (stock) {
-        var symbol = stock.symbol,
-            companyName = stock.companyName,
-            latestPrice = stock.latestPrice,
-            change = stock.change,
-            changePercent = stock.changePercent;
-
-        var iconClass = void 0;
-        var isNegative = void 0;
-        var plusMinusSign = void 0;
-        var isSelected = '';
-
-        if (change < 0) {
-          isNegative = 'is-negative';
-          plusMinusSign = '-';
-        } else if (change == 0) {
-          plusMinusSign = '';
-        } else {
-          plusMinusSign = '+';
-        }
-
-        change = Math.abs(change);
-        changePercent = Math.abs((changePercent * 100).toFixed(2));
-
-        // if stock exist in watchlist array, dispay solid icon with gold color
-        if (_this2.isInWatchlist(symbol)) {
-          iconClass = 'fas';
-          isSelected = 'is-selected';
-        }
-        // if stock doesn't exist, display line icon with gray color
-        else {
-            iconClass = 'far';
-          }
-
-        return '\n        <li id="' + symbol + '">\n          <div class="clickable-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + changePercent + '<span>%</span></p>\n          </div>\n          <div>\n            <span class="icon-watchlist ' + isSelected + '"><i class="' + iconClass + ' fa-star"></i></span>\n          </div>\n        </li>\n      ';
-      });
-
-      (0, _jquery2.default)(container).append(list);
-      this.activateWatchlistIcon(container);
-    }
-
-    // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
-
-  }, {
-    key: 'displayPopup',
-    value: function displayPopup() {
-      var that = this;
-
-      this.$stockListContainer.on('click', '.clickable-stock-name', function (event) {
-        event.preventDefault();
-
-        var companyId = (0, _jquery2.default)(this).closest('li')[0].id;
-        var companyName = (0, _jquery2.default)(this).find('span.stock-name')[0].innerText;
-
-        // create new popup
-        that.popup = new _stockPopup2.default(companyId, companyName);
-      });
-    }
-
-    // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
-
-  }, {
-    key: 'activateWatchlistIcon',
-    value: function activateWatchlistIcon(containerId) {
-      var that = this;
-
-      (0, _jquery2.default)(containerId).on('click', '.icon-watchlist', function (event) {
-        var $this = (0, _jquery2.default)(this);
-        event.stopPropagation();
-
-        // find hollow star icon
-        var $icon = $this.find('i');
-
-        // get stock id and stock name from sibling elements
-        var stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
-        var stockName = $this.closest('li').find('.stock-name')[0].innerText;
-        // retrieve watchlist:
-        // not doing this causes a bug where after you click watch/unwatch and close popup,
-        // the star icon will not work on the first click attempt for the stock 
-        that.watchlist = _store2.default.get('watchlist') || [];
-
-        var isInWatchlist = that.isInWatchlist(stockSymbol);
-        // if stock is not in watchlist array
-        if (!isInWatchlist) {
-          that.watchlist.push({
-            symbol: stockSymbol,
-            name: stockName
-          });
-          // update watchlist array
-          _store2.default.set('watchlist', that.watchlist);
-          // set icon to solid icon
-          $icon.removeClass('far');
-          $icon.addClass('fas');
-          // set icon color to gold
-          $this.addClass('is-selected');
-        }
-        // if stock exist, then remove it from watchlist
-        else {
-            // get index of stock in the watchlist array
-            var index = that.watchlist.findIndex(function (stock) {
-              return stock.symbol === stockSymbol;
-            });
-            // if index exist (meaning that stock exists in watchlist), remove the stock
-            if (index != -1) {
-              that.watchlist.splice(index, 1);
-            }
-            // update watchlist array
-            _store2.default.set('watchlist', that.watchlist);
-            // set icon to line icon
-            $icon.removeClass('fas');
-            $icon.addClass('far');
-            // set icon color to gray
-            $this.removeClass('is-selected');
-          }
-      });
-    }
   }, {
     key: 'destroy',
     value: function destroy() {
@@ -32160,8 +32195,6 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(7);
-
 var _chartbox = __webpack_require__(17);
 
 var _chartbox2 = _interopRequireDefault(_chartbox);
@@ -32173,6 +32206,8 @@ var _keystats2 = _interopRequireDefault(_keystats);
 var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
+
+var _helpers = __webpack_require__(6);
 
 var _const = __webpack_require__(5);
 
@@ -32271,7 +32306,7 @@ var Watchlist = function () {
 
       var stocks = this.watchlist.map(function (stock, index) {
         var symbol = stock.symbol;
-        var name = stock.name;
+        var companyName = (0, _helpers.trimString)(stock.name, 40);
         var isActive = '';
 
         // Set 'active' class to watchlist item with index that matches selectedStockIndex
@@ -32279,7 +32314,7 @@ var Watchlist = function () {
           isActive = 'active';
         }
 
-        return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <p class="watchlist-item-symbol">' + symbol + '</p>\n            <p class="watchlist-item-name">' + name + '</p>\n          </button>\n        </li>\n      ';
+        return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <p class="watchlist-item-symbol">' + symbol + '</p>\n            <p class="watchlist-item-name">' + companyName + '</p>\n          </button>\n        </li>\n      ';
       });
 
       this.$watchlist.empty();
@@ -32386,9 +32421,7 @@ var Watchlist = function () {
         var currentWatchIndex = that.watchlist.findIndex(function (stock) {
           return stock.symbol === that.symbol;
         });
-        // if (currentWatchIndex == (that.watchlist.length - 1)) {
-        //   currentWatchIndex = currentWatchIndex - 1;
-        // };
+
         _store2.default.set('currentWatchIndex', currentWatchIndex);
       });
     }
@@ -47588,175 +47621,6 @@ module.exports = function(module) {
 	return module;
 };
 
-
-/***/ }),
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */,
-/* 184 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _watchButton = __webpack_require__(10);
-
-var _watchButton2 = _interopRequireDefault(_watchButton);
-
-var _stockPopup = __webpack_require__(171);
-
-var _stockPopup2 = _interopRequireDefault(_stockPopup);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var StockList = function () {
-  function StockList(containerId, collectionName, title) {
-    _classCallCheck(this, StockList);
-
-    this.$container = (0, _jquery2.default)(containerId);
-    this.collectionName = collectionName;
-    this.title = title;
-    this.watchlist = _store2.default.get('watchlist') || [];
-    this.renderHeaderHtml();
-    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
-    this.$listContainer = (0, _jquery2.default)('#' + collectionName);
-    this.renderAllData();
-    this.displayPopup();
-  }
-
-  _createClass(StockList, [{
-    key: 'renderHeaderHtml',
-    value: function renderHeaderHtml() {
-      var html = '\n      <h2 class="text-header">' + this.title + '</h2>\n      <div class="icon-loading">\n        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n      </div>\n      <ol id="' + this.collectionName + '" class="stocklist">\n        <li class="stock-list-header-row">\n          <div>Company</div>\n          <div>Last Price</div>\n          <div>Change</div>\n          <div>% Change</div>\n          <div>Watch</div>\n        </li>\n      </ol>\n    ';
-
-      this.$container.empty();
-      this.$container.append(html);
-    }
-  }, {
-    key: 'renderAllData',
-    value: function renderAllData() {
-      if (_store2.default.get(this.collectionName) !== null) {
-        this.renderStockList();
-      } else {
-        this.fetchStocks();
-      }
-    }
-
-    // FETCH API DATA
-
-  }, {
-    key: 'fetchStocks',
-    value: function fetchStocks() {
-      var _this = this;
-
-      this.$loadingIcon.addClass('is-visible');
-
-      _axios2.default.get(URL_BASE + '/market/collection/list?collectionName=' + this.collectionName + '&token=' + API_TOKEN).then(function (response) {
-        console.log(response);
-        _store2.default.set(_this.collectionName, response.data);
-      }).catch(function (error) {
-        return console.log(error);
-      }).finally(function () {
-        _this.$loadingIcon.removeClass('is-visible');
-        _this.renderStockList();
-      });
-    }
-
-    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
-
-  }, {
-    key: 'isInWatchlist',
-    value: function isInWatchlist(symbol) {
-      return this.watchlist.some(function (stock) {
-        return stock.symbol === symbol;
-      });
-    }
-  }, {
-    key: 'renderStockList',
-    value: function renderStockList() {
-      var _this2 = this;
-
-      var stocks = _store2.default.get(this.collectionName);
-
-      var stocksList = stocks.slice(0, 5).map(function (stock) {
-        var symbol = stock.symbol,
-            companyName = stock.companyName,
-            latestPrice = stock.latestPrice,
-            change = stock.change,
-            changePercent = stock.changePercent;
-
-        var isNegative = void 0,
-            plusMinusSign = void 0;
-
-        if (change < 0) {
-          isNegative = 'is-negative';
-          plusMinusSign = '-';
-        } else if (change == 0) {
-          plusMinusSign = '';
-        } else {
-          plusMinusSign = '+';
-        }
-
-        change = Math.abs(change);
-        changePercent = Math.abs((changePercent * 100).toFixed(2));
-
-        return '\n        <li id="' + symbol + '-' + _this2.collectionName + '" class="stocklist-item">\n          <div class="clickable-stock-name">\n            <span class="stock-code">' + symbol + '</span>\n            <span class="stock-name">' + companyName + '</span>\n          </div>\n          <div>\n            <p>' + latestPrice + '</p>\n          </div>\n          <div class="most-active-change ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + change + '</p>\n          </div>\n          <div class="most-active-change-percent ' + isNegative + '">\n            <p>' + plusMinusSign + ' ' + changePercent + '<span>%</span></p>\n          </div>\n          <div id="' + _this2.collectionName + '-' + symbol + '-watchbutton" class="stocklist-watchbutton"></div>\n        </li>\n      ';
-      });
-
-      (0, _jquery2.default)('#' + this.collectionName).append(stocksList);
-      this.activateWatchButtons();
-    }
-  }, {
-    key: 'activateWatchButtons',
-    value: function activateWatchButtons() {
-      var _this3 = this;
-
-      var stocks = _store2.default.get(this.collectionName);
-
-      stocks.slice(0, 5).map(function (stock) {
-        var symbol = stock.symbol,
-            companyName = stock.companyName;
-
-        new _watchButton2.default('#' + _this3.collectionName + '-' + symbol + '-watchbutton', symbol, companyName);
-      });
-    }
-  }, {
-    key: 'displayPopup',
-    value: function displayPopup() {
-      this.$listContainer.on('click', 'li.stocklist-item', function (event) {
-        event.preventDefault();
-        var symbol = (0, _jquery2.default)(this).find('.stock-code')[0].innerText;
-        var name = (0, _jquery2.default)(this).find('.stock-name')[0].innerText;
-        new _stockPopup2.default(symbol, name);
-      });
-    }
-  }]);
-
-  return StockList;
-}();
-
-exports.default = StockList;
 
 /***/ })
 /******/ ]);

@@ -1,11 +1,10 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
-import StockPopup from './stock-popup.js';
 import GraphCard from './graph-card.js';
 import News from './news.js';
-import { URL_BASE, API_TOKEN } from '../const.js';
 import StockList from './stocklist.js';
+import { URL_BASE, API_TOKEN } from '../const.js';
 
 class Stocks {
   constructor(container) {
@@ -19,7 +18,6 @@ class Stocks {
     this.$stockListContainer = $('.stock-list');
 
     this.getStocks();
-    this.displayPopup();
     this.mostActiveSymbols;
     this.news;
   }
@@ -122,137 +120,6 @@ class Stocks {
       this.renderGraphCards();
       // console.log('working', this.mostActiveSymbols);
       this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
-    });
-  }
-
-
-  // RENDER MOST ACTIVE
-  renderStocks(container, listType) {
-    const stocks = store.get(listType);
-
-    // render html list for stocks
-    const list =  stocks.slice(0, 5).map((stock) => {
-      let { symbol, companyName, latestPrice, change, changePercent } = stock;
-      let iconClass;
-      let isNegative;
-      let plusMinusSign;
-      let isSelected = '';
-
-      if (change < 0) {
-        isNegative = 'is-negative';
-        plusMinusSign = '-';
-      } else if (change == 0) {
-        plusMinusSign = '';
-      } else {
-        plusMinusSign = '+';
-      }
-
-      change = Math.abs(change);
-      changePercent = Math.abs((changePercent * 100).toFixed(2));
-
-      // if stock exist in watchlist array, dispay solid icon with gold color
-      if (this.isInWatchlist(symbol)) {
-        iconClass = 'fas';
-        isSelected = 'is-selected';
-      }
-      // if stock doesn't exist, display line icon with gray color
-      else {
-        iconClass = 'far';
-      }
-      
-      return `
-        <li id="${symbol}">
-          <div class="clickable-stock-name">
-            <span class="stock-code">${symbol}</span>
-            <span class="stock-name">${companyName}</span>
-          </div>
-          <div>
-            <p>${latestPrice}</p>
-          </div>
-          <div class="most-active-change ${isNegative}">
-            <p>${plusMinusSign} ${change}</p>
-          </div>
-          <div class="most-active-change-percent ${isNegative}">
-            <p>${plusMinusSign} ${changePercent}<span>%</span></p>
-          </div>
-          <div>
-            <span class="icon-watchlist ${isSelected}"><i class="${iconClass} fa-star"></i></span>
-          </div>
-        </li>
-      `;
-    });
-    
-    $(container).append(list);
-    this.activateWatchlistIcon(container);
-  }
-
-
-  // CREATE & DISPLAY NEW POPUP MODAL WHEN A STOCK IS CLICKED
-  displayPopup() {
-    const that = this;
-
-    this.$stockListContainer.on('click', '.clickable-stock-name', function(event) {
-      event.preventDefault();
-
-      let companyId = $(this).closest('li')[0].id;
-      let companyName = $(this).find('span.stock-name')[0].innerText;
-
-      // create new popup
-      that.popup = new StockPopup(companyId, companyName);
-    });
-  }
-
-
-  // ACTIVATE ICON FOR WATCHLIST ADD/REMOVE
-  activateWatchlistIcon(containerId) {
-    const that = this;
-
-    $(containerId).on('click', '.icon-watchlist', function(event) {
-      const $this = $(this);
-      event.stopPropagation();
-
-      // find hollow star icon
-      const $icon = $this.find('i');
-
-      // get stock id and stock name from sibling elements
-      const stockSymbol = $this.closest('li').find('.stock-code')[0].innerText;
-      const stockName = $this.closest('li').find('.stock-name')[0].innerText;
-      // retrieve watchlist:
-      // not doing this causes a bug where after you click watch/unwatch and close popup,
-      // the star icon will not work on the first click attempt for the stock 
-      that.watchlist = store.get('watchlist') || [];
-
-      const isInWatchlist = that.isInWatchlist(stockSymbol);
-      // if stock is not in watchlist array
-      if (!isInWatchlist) {
-        that.watchlist.push({
-          symbol: stockSymbol,
-          name: stockName
-        });
-        // update watchlist array
-        store.set('watchlist', that.watchlist);
-        // set icon to solid icon
-        $icon.removeClass('far');
-        $icon.addClass('fas');
-        // set icon color to gold
-        $this.addClass('is-selected');
-      }
-      // if stock exist, then remove it from watchlist
-      else {
-        // get index of stock in the watchlist array
-        let index = that.watchlist.findIndex(stock => stock.symbol === stockSymbol);
-        // if index exist (meaning that stock exists in watchlist), remove the stock
-        if (index != -1) {
-          that.watchlist.splice(index, 1);
-        }
-        // update watchlist array
-        store.set('watchlist', that.watchlist);
-        // set icon to line icon
-        $icon.removeClass('fas');
-        $icon.addClass('far');
-        // set icon color to gray
-        $this.removeClass('is-selected');
-      }
     });
   }
 

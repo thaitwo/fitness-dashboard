@@ -1,10 +1,10 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
-import { calcLocalStorageAge } from '../helpers/helpers.js';
 import ChartBox from './chartbox.js';
 import KeyStats from './keystats.js';
 import News from './news.js';
+import { calcLocalStorageAge, trimString } from '../helpers/helpers.js';
 import { URL_BASE, API_TOKEN } from '../const';
 
 // make latest price consistently update
@@ -109,7 +109,7 @@ class Watchlist {
   displayStocks() {
     const stocks = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
-      const name = stock.name;
+      const companyName = trimString(stock.name, 40);
       let isActive = '';
 
       // Set 'active' class to watchlist item with index that matches selectedStockIndex
@@ -121,7 +121,7 @@ class Watchlist {
         <li class="${isActive}">
           <button id="${symbol}">
             <p class="watchlist-item-symbol">${symbol}</p>
-            <p class="watchlist-item-name">${name}</p>
+            <p class="watchlist-item-name">${companyName}</p>
           </button>
         </li>
       `;
@@ -227,9 +227,7 @@ class Watchlist {
       let currentWatchIndex = that.watchlist.findIndex((stock) => {
         return stock.symbol === that.symbol;
       });
-      // if (currentWatchIndex == (that.watchlist.length - 1)) {
-      //   currentWatchIndex = currentWatchIndex - 1;
-      // };
+      
       store.set('currentWatchIndex', currentWatchIndex);
     });
   }
