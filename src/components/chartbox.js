@@ -12,7 +12,8 @@ class ChartBox {
     this.chart;
     this.intervalsBar;
     this.watchButton;
-    this.interval = '1m';
+    this.pageUrl = document.URL.split('#')[1];
+    this.interval = (this.pageUrl === 'watchlist') ? store.get('current-interval') : '1m';
     this.renderHtml();
     this.$stockName = $('#chartbox-stock-name');
     this.$stockSymbol = $('#chartbox-stock-symbol');

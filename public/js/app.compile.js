@@ -17347,7 +17347,8 @@ var ChartBox = function () {
     this.chart;
     this.intervalsBar;
     this.watchButton;
-    this.interval = '1m';
+    this.pageUrl = document.URL.split('#')[1];
+    this.interval = this.pageUrl === 'watchlist' ? _store2.default.get('current-interval') : '1m';
     this.renderHtml();
     this.$stockName = (0, _jquery2.default)('#chartbox-stock-name');
     this.$stockSymbol = (0, _jquery2.default)('#chartbox-stock-symbol');
@@ -17491,11 +17492,13 @@ var Intervals = function () {
     this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
     this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
     this.symbol = symbol;
+    this.pageUrl = document.URL.split('#')[1];
     this.chart;
-    this.selectedInterval;
+    this.currentInterval = this.pageUrl === 'watchlist' ? _store2.default.get('current-interval') : '1m';
     this.renderIntervals();
-    this.intervalsList = (0, _jquery2.default)('#time-intervals');
-    this.intervalsItems = this.intervalsList.find('li');
+    this.$intervalsList = (0, _jquery2.default)('#time-intervals');
+    this.$intervalsItems = this.$intervalsList.find('li');
+    this.addActiveClass();
     this.updateIntervalData();
   }
 
@@ -17505,7 +17508,7 @@ var Intervals = function () {
   _createClass(Intervals, [{
     key: 'renderIntervals',
     value: function renderIntervals() {
-      var html = '\n      <ul id="time-intervals">\n        <li class="selected">1M</li>\n        <li>3M</li>\n        <li>6M</li>\n        <li>YTD</li>\n        <li>1Y</li>\n        <li>2Y</li>\n        <li>5Y</li>\n        <li>Max</li>\n      </ul>\n    ';
+      var html = '\n      <ul id="time-intervals">\n        <li id="1m">1m</li>\n        <li id="3m">3m</li>\n        <li id="6m">6m</li>\n        <li id="ytd">ytd</li>\n        <li id="1y">1y</li>\n        <li id="2y">2y</li>\n        <li id="5y">5y</li>\n        <li id="max">max</li>\n      </ul>\n    ';
 
       this.$intervalsContainer.html(html);
     }
@@ -17517,10 +17520,10 @@ var Intervals = function () {
     value: function updateIntervalData() {
       var that = this;
 
-      this.intervalsList.on('click', 'li', function (event) {
-        var $this = (0, _jquery2.default)(this);
-        var selectedInterval = $this.text().toLowerCase();
-        that.selectedInterval = selectedInterval;
+      this.$intervalsList.on('click', 'li', function (event) {
+        var selectedInterval = (0, _jquery2.default)(this).attr('id');
+        that.currentInterval = selectedInterval;
+        _store2.default.set('current-interval', selectedInterval);
 
         /* The chart canvas is being cleared in this specific place and order
         to allow the display of the spinning icon while new data is being fetched,
@@ -17537,7 +17540,7 @@ var Intervals = function () {
           that.chart.destroy();
         }
 
-        that.updateIntervals(this);
+        that.addActiveClass();
         that.renderChart();
       });
     }
@@ -17549,9 +17552,13 @@ var Intervals = function () {
     value: function renderChart() {
       var storedData = _store2.default.get(this.symbol);
 
+      if (this.pageUrl === 'watchlist') {
+        this.currentInterval = _store2.default.get('current-interval');
+      }
+
       // if historical prices for selected interval does exist in localStorage
-      if (this.selectedInterval in storedData.chart) {
-        var _storedData = _store2.default.get(this.symbol).chart[this.selectedInterval];
+      if (this.currentInterval in storedData.chart) {
+        var _storedData = _store2.default.get(this.symbol).chart[this.currentInterval];
         // get closing prices for stock
         var prices = this.getChartData(_storedData, 'close');
         // get dates for closing prices
@@ -17574,9 +17581,9 @@ var Intervals = function () {
 
       this.$loadingIcon.addClass('is-visible');
 
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.selectedInterval + '?token=' + _const.API_TOKEN).then(function (response) {
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.currentInterval + '?token=' + _const.API_TOKEN).then(function (response) {
         var storedData = _store2.default.get(_this.symbol);
-        storedData.chart[_this.selectedInterval] = response.data;
+        storedData.chart[_this.currentInterval] = response.data;
         _store2.default.set(_this.symbol, storedData);
 
         if (response.status == 200) {
@@ -17604,14 +17611,14 @@ var Intervals = function () {
       });
     }
 
-    // UPDATE STYLEING FOR SELECTED INTERVAL
+    // ADD ACTIVE CLASS TO SELECTED INTERVAL
 
   }, {
-    key: 'updateIntervals',
-    value: function updateIntervals(selectedInterval) {
-      var $selectedInterval = (0, _jquery2.default)(selectedInterval);
-
-      this.intervalsItems.removeClass('selected');
+    key: 'addActiveClass',
+    value: function addActiveClass() {
+      this.currentInterval = _store2.default.get('current-interval');
+      var $selectedInterval = this.$intervalsList.find('li#' + this.currentInterval);
+      this.$intervalsItems.removeClass('selected');
       $selectedInterval.addClass('selected');
     }
   }]);
@@ -32201,6 +32208,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _jquery = __webpack_require__(1);
@@ -32231,6 +32240,10 @@ var _helpers = __webpack_require__(6);
 
 var _const = __webpack_require__(5);
 
+var _graph = __webpack_require__(7);
+
+var _graph2 = _interopRequireDefault(_graph);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -32248,9 +32261,15 @@ var Watchlist = function () {
     this.chartBox;
     this.keyStats;
     this.latestNews;
-    this.currentWatchIndex = _store2.default.get('currentWatchIndex') || 0;
+    this.currentWatchIndex = _store2.default.get('current-watch-index') || 0;
     this.watchlist = _store2.default.get('watchlist') || [];
-    this.interval = '1m';
+
+    // If 'current-interval' doesn't exists localStorage, set it at '1m'
+    if (_store2.default.get('current-interval') === null) {
+      _store2.default.set('current-interval', '1m');
+    }
+
+    this.currentInterval = _store2.default.get('current-interval');
 
     // If Watchlist has stocks...
     if (this.watchlist.length > 0) {
@@ -32262,8 +32281,8 @@ var Watchlist = function () {
       the Watchlist page in this scenario.
       */
       if (this.currentWatchIndex === this.watchlist.length) {
-        _store2.default.set('currentWatchIndex', this.watchlist.length - 1);
-        this.currentWatchIndex = _store2.default.get('currentWatchIndex');
+        _store2.default.set('current-watch-index', this.watchlist.length - 1);
+        this.currentWatchIndex = _store2.default.get('current-watch-index');
       }
       this.symbol = _store2.default.get('watchlist')[this.currentWatchIndex].symbol || '';
       this.companyName = _store2.default.get('watchlist')[this.currentWatchIndex].name || '';
@@ -32290,7 +32309,7 @@ var Watchlist = function () {
       this.displayStocks();
     }
 
-    this.loadStockDataHandler();
+    this.renderDataOnStockSelection();
   }
 
   // RENDER WATCHLIST CANVAS
@@ -32347,12 +32366,45 @@ var Watchlist = function () {
     key: 'renderAllData',
     value: function renderAllData() {
       if (_store2.default.get(this.symbol) !== null) {
-        this.chartBox = new _chartbox2.default('#watchlist-chart-container', this.symbol);
+        this.currentInterval = _store2.default.get('current-interval');
+        /* If data for the current-interval for this stock does exist,
+        Create a new Chartbox. Else, fetch new data for the interval
+        */
+        if (_store2.default.get(this.symbol).chart[this.currentInterval]) {
+          this.chartBox = new _chartbox2.default('#watchlist-chart-container', this.symbol);
+        } else {
+          this.fetchChartData();
+        }
+
         this.keyStats = new _keystats2.default('#watchlist-keystats-container', this.symbol);
         this.latestNews = new _news2.default('#watchlist-news-container', [this.symbol], this.symbol);
       } else {
         this.fetchStockData();
       }
+    }
+  }, {
+    key: 'fetchChartData',
+    value: function fetchChartData() {
+      var _this2 = this;
+
+      this.currentInterval = _store2.default.get('current-interval');
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.currentInterval + '?token=' + _const.API_TOKEN).then(function (response) {
+        var storedData = _store2.default.get(_this2.symbol);
+
+        storedData.chart[_this2.currentInterval] = response.data;
+        _store2.default.set(_this2.symbol, storedData);
+      }).catch(function (error) {
+        return console.log(error.response.data.error);
+      }).then(function () {
+        // const storedChartData = store.get(this.symbol).chart[this.interval];
+        // // get closing prices for stock
+        // const prices = this.getChartData(storedChartData, 'close');
+        // // get dates for closing prices
+        // const dates = this.getChartData(storedChartData, 'date');
+        // new Graph('#chartbox-chart', prices, dates);
+        new _chartbox2.default('#watchlist-chart-container', _this2.symbol);
+      });
     }
 
     // GET DATA FOR COMPANY
@@ -32360,43 +32412,45 @@ var Watchlist = function () {
   }, {
     key: 'fetchStockData',
     value: function fetchStockData() {
-      var _this2 = this;
+      var _this3 = this;
 
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.interval + '&token=' + _const.API_TOKEN).then(function (response) {
+      this.currentInterval = _store2.default.get('current-interval');
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.currentInterval + '&token=' + _const.API_TOKEN).then(function (response) {
         var chart = response.data.chart;
         var news = response.data.news;
         var quote = response.data.quote;
 
         // If stored data exists
-        if (_store2.default.get(_this2.symbol) !== null) {
-          var storedData = _store2.default.get(_this2.symbol);
+        if (_store2.default.get(_this3.symbol) !== null) {
+          var storedData = _store2.default.get(_this3.symbol);
 
           /* If data for selected interval does not exist in localStorage
           then add data for selected interval into localStorage
           case: the current selected interval is 6M for stock1
           when we click on stock2, we need to check if data for 6M for
           stock2 exists in localStorage */
-          if (!(_this2.interval in storedData.chart)) {
-            storedData.chart[_this2.interval] = chart.data;
-            _store2.default.set(_this2.symbol, storedData);
+          if (!(_this3.currentInterval in storedData.chart)) {
+            storedData.chart[_this3.currentInterval] = chart.data;
+            _store2.default.set(_this3.symbol, storedData);
           }
         }
         // Otherwise create data object and store in localStorage
         else {
             var dataToStore = {
-              chart: _defineProperty({}, _this2.interval, chart),
+              chart: _defineProperty({}, _this3.currentInterval, chart),
               news: news,
               quote: quote,
               time: Date.now()
             };
 
-            _store2.default.set(_this2.symbol, dataToStore);
+            _store2.default.set(_this3.symbol, dataToStore);
 
             /* This prevents an infinite loop of requests in case the requests fail.
             The infinite loop would be caused in renderAllData().
             */
             if (response.status == 200) {
-              _this2.renderAllData();
+              _this3.renderAllData();
             }
           }
       }).catch(function (error) {
@@ -32404,11 +32458,11 @@ var Watchlist = function () {
       });
     }
 
-    // ACTIVATE EVENT LISTENERS FOR WATCHLIST
+    // RENDER NEW DATA WHEN A NEW STOCK IS SELECTED IN WATCHLIST
 
   }, {
-    key: 'loadStockDataHandler',
-    value: function loadStockDataHandler() {
+    key: 'renderDataOnStockSelection',
+    value: function renderDataOnStockSelection() {
       var that = this;
 
       // Display graph & data for watchlist item
@@ -32441,7 +32495,30 @@ var Watchlist = function () {
           return stock.symbol === that.symbol;
         });
 
-        _store2.default.set('currentWatchIndex', currentWatchIndex);
+        _store2.default.set('current-watch-index', currentWatchIndex);
+      });
+    }
+
+    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+
+  }, {
+    key: 'getChartData',
+    value: function getChartData(data, key) {
+      return data.map(function (day) {
+        if (key === 'date') {
+          var fullDate = day[key].split('-');
+
+          var _fullDate = _slicedToArray(fullDate, 3),
+              year = _fullDate[0],
+              month = _fullDate[1],
+              date = _fullDate[2];
+
+          month = month.replace(/^0+/, ''); // Remove leading '0'
+
+          return month + '-' + date + '-' + year;
+        } else {
+          return day[key];
+        }
       });
     }
 

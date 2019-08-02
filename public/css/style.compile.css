@@ -345,7 +345,8 @@ body {
     color: #FFFFFF;
     line-height: 24px;
     min-width: 48px;
-    text-align: center; }
+    text-align: center;
+    text-transform: uppercase; }
     #time-intervals li:last-child {
       border: none; }
     #time-intervals li:hover {

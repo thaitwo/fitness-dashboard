@@ -11,11 +11,13 @@ class Intervals {
     this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
     this.$loadingIcon = $('.icon-loading');
     this.symbol = symbol;
+    this.pageUrl = document.URL.split('#')[1];
     this.chart;
-    this.selectedInterval;
+    this.currentInterval = (this.pageUrl === 'watchlist') ? store.get('current-interval') : '1m';
     this.renderIntervals();
-    this.intervalsList = $('#time-intervals');
-    this.intervalsItems = this.intervalsList.find('li');
+    this.$intervalsList = $('#time-intervals');
+    this.$intervalsItems = this.$intervalsList.find('li');
+    this.addActiveClass();
     this.updateIntervalData();
   }
 
@@ -24,14 +26,14 @@ class Intervals {
   renderIntervals() {
     const html = `
       <ul id="time-intervals">
-        <li class="selected">1M</li>
-        <li>3M</li>
-        <li>6M</li>
-        <li>YTD</li>
-        <li>1Y</li>
-        <li>2Y</li>
-        <li>5Y</li>
-        <li>Max</li>
+        <li id="1m">1m</li>
+        <li id="3m">3m</li>
+        <li id="6m">6m</li>
+        <li id="ytd">ytd</li>
+        <li id="1y">1y</li>
+        <li id="2y">2y</li>
+        <li id="5y">5y</li>
+        <li id="max">max</li>
       </ul>
     `;
 
@@ -43,10 +45,10 @@ class Intervals {
   updateIntervalData() {
     const that = this;
 
-    this.intervalsList.on('click', 'li', function(event) {
-      const $this = $(this);
-      const selectedInterval = $this.text().toLowerCase();
-      that.selectedInterval = selectedInterval;
+    this.$intervalsList.on('click', 'li', function(event) {
+      const selectedInterval = $(this).attr('id');
+      that.currentInterval = selectedInterval;
+      store.set('current-interval', selectedInterval);
 
       /* The chart canvas is being cleared in this specific place and order
       to allow the display of the spinning icon while new data is being fetched,
@@ -63,7 +65,7 @@ class Intervals {
         that.chart.destroy();
       }
 
-      that.updateIntervals(this);
+      that.addActiveClass();
       that.renderChart();
     });
   }
@@ -73,9 +75,13 @@ class Intervals {
   renderChart() {
     const storedData = store.get(this.symbol);
 
+    if (this.pageUrl === 'watchlist') {
+      this.currentInterval = store.get('current-interval');
+    }
+
     // if historical prices for selected interval does exist in localStorage
-    if (this.selectedInterval in storedData.chart) {
-      const storedData = store.get(this.symbol).chart[this.selectedInterval];
+    if (this.currentInterval in storedData.chart) {
+      const storedData = store.get(this.symbol).chart[this.currentInterval];
       // get closing prices for stock
       const prices = this.getChartData(storedData, 'close');
       // get dates for closing prices
@@ -94,10 +100,10 @@ class Intervals {
   fetchChartData() {
     this.$loadingIcon.addClass('is-visible');
     
-    axios.get(`${URL_BASE}/${this.symbol}/chart/${this.selectedInterval}?token=${API_TOKEN}`)
+    axios.get(`${URL_BASE}/${this.symbol}/chart/${this.currentInterval}?token=${API_TOKEN}`)
     .then((response) => {
       const storedData = store.get(this.symbol);
-      storedData.chart[this.selectedInterval] = response.data;
+      storedData.chart[this.currentInterval] = response.data;
       store.set(this.symbol, storedData);
 
       if (response.status == 200) {
@@ -124,11 +130,11 @@ class Intervals {
   }
 
 
-  // UPDATE STYLEING FOR SELECTED INTERVAL
-  updateIntervals(selectedInterval) {
-    const $selectedInterval = $(selectedInterval);
-
-    this.intervalsItems.removeClass('selected');
+  // ADD ACTIVE CLASS TO SELECTED INTERVAL
+  addActiveClass() {
+    this.currentInterval = store.get('current-interval');
+    const $selectedInterval = this.$intervalsList.find(`li#${this.currentInterval}`);
+    this.$intervalsItems.removeClass('selected');
     $selectedInterval.addClass('selected');
   }
 }

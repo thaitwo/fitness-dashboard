@@ -6,6 +6,7 @@ import KeyStats from './keystats.js';
 import News from './news.js';
 import { calcLocalStorageAge, trimString } from '../helpers/helpers.js';
 import { URL_BASE, API_TOKEN } from '../const';
+import Graph from './graph.js';
 
 // make latest price consistently update
 
@@ -16,9 +17,15 @@ class Watchlist {
     this.chartBox;
     this.keyStats;
     this.latestNews;
-    this.currentWatchIndex = store.get('currentWatchIndex') || 0;
+    this.currentWatchIndex = store.get('current-watch-index') || 0;
     this.watchlist = store.get('watchlist') || [];
-    this.interval = '1m';
+
+    // If 'current-interval' doesn't exists localStorage, set it at '1m'
+    if (store.get('current-interval') === null) {
+      store.set('current-interval', '1m');
+    }
+
+    this.currentInterval = store.get('current-interval');
 
     // If Watchlist has stocks...
     if (this.watchlist.length > 0) {
@@ -30,8 +37,8 @@ class Watchlist {
       the Watchlist page in this scenario.
       */
       if (this.currentWatchIndex === this.watchlist.length) {
-        store.set('currentWatchIndex', this.watchlist.length - 1);
-        this.currentWatchIndex = store.get('currentWatchIndex');
+        store.set('current-watch-index', this.watchlist.length - 1);
+        this.currentWatchIndex = store.get('current-watch-index');
       }
       this.symbol = store.get('watchlist')[this.currentWatchIndex].symbol || '';
       this.companyName = store.get('watchlist')[this.currentWatchIndex].name || '';
@@ -58,7 +65,7 @@ class Watchlist {
       this.displayStocks();
     }
     
-    this.loadStockDataHandler();
+    this.renderDataOnStockSelection();
   }
 
 
@@ -135,7 +142,16 @@ class Watchlist {
   // RENDER ALL STOCK INFO ON PAGE
   renderAllData() {
     if (store.get(this.symbol) !== null) {
-      this.chartBox = new ChartBox('#watchlist-chart-container', this.symbol);
+      this.currentInterval = store.get('current-interval');
+      /* If data for the current-interval for this stock does exist,
+      Create a new Chartbox. Else, fetch new data for the interval
+      */
+      if (store.get(this.symbol).chart[this.currentInterval]) {
+        this.chartBox = new ChartBox('#watchlist-chart-container', this.symbol);
+      } else {
+        this.fetchChartData();
+      }
+
       this.keyStats = new KeyStats('#watchlist-keystats-container', this.symbol);
       this.latestNews = new News('#watchlist-news-container', [this.symbol], this.symbol);
     } else {
@@ -144,10 +160,35 @@ class Watchlist {
   }
 
 
+  fetchChartData() {
+    this.currentInterval = store.get('current-interval');
+
+    axios.get(`${URL_BASE}/${this.symbol}/chart/${this.currentInterval}?token=${API_TOKEN}`)
+    .then((response) => {
+      const storedData = store.get(this.symbol);
+
+      storedData.chart[this.currentInterval] = response.data;
+      store.set(this.symbol, storedData);
+    })
+    .catch(error => console.log(error.response.data.error))
+    .then(() => {
+      // const storedChartData = store.get(this.symbol).chart[this.interval];
+      // // get closing prices for stock
+      // const prices = this.getChartData(storedChartData, 'close');
+      // // get dates for closing prices
+      // const dates = this.getChartData(storedChartData, 'date');
+      // new Graph('#chartbox-chart', prices, dates);
+      new ChartBox('#watchlist-chart-container', this.symbol);
+    })
+  }
+
+
 
   // GET DATA FOR COMPANY
   fetchStockData() {
-    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=${this.interval}&token=${API_TOKEN}`)
+    this.currentInterval = store.get('current-interval');
+
+    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=${this.currentInterval}&token=${API_TOKEN}`)
     .then((response) => {
       const chart = response.data.chart;
       const news = response.data.news;
@@ -162,8 +203,8 @@ class Watchlist {
         case: the current selected interval is 6M for stock1
         when we click on stock2, we need to check if data for 6M for
         stock2 exists in localStorage */
-        if (!(this.interval in storedData.chart)) {
-          storedData.chart[this.interval] = chart.data;
+        if (!(this.currentInterval in storedData.chart)) {
+          storedData.chart[this.currentInterval] = chart.data;
           store.set(this.symbol, storedData);
         }
       }
@@ -171,7 +212,7 @@ class Watchlist {
       else {
         const dataToStore = {
           chart: {
-            [this.interval]: chart, // this.interval will be set to the selected interval
+            [this.currentInterval]: chart, // this.currentInterval will be set to the selected interval
           },
           news: news,
           quote: quote,
@@ -192,8 +233,8 @@ class Watchlist {
   }
 
 
-  // ACTIVATE EVENT LISTENERS FOR WATCHLIST
-  loadStockDataHandler() {
+  // RENDER NEW DATA WHEN A NEW STOCK IS SELECTED IN WATCHLIST
+  renderDataOnStockSelection() {
     const that = this;
 
     // Display graph & data for watchlist item
@@ -227,7 +268,23 @@ class Watchlist {
         return stock.symbol === that.symbol;
       });
       
-      store.set('currentWatchIndex', currentWatchIndex);
+      store.set('current-watch-index', currentWatchIndex);
+    });
+  }
+
+
+  // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
+  getChartData(data, key) {
+    return data.map((day) => {
+      if (key === 'date') {
+        const fullDate = day[key].split('-');
+        let [ year, month, date ] = fullDate;
+        month = month.replace(/^0+/, ''); // Remove leading '0'
+        
+        return `${month}-${date}-${year}`;
+      } else {
+        return day[key];
+      }
     });
   }
 
