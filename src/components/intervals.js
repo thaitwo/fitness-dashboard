@@ -6,6 +6,7 @@ import { URL_BASE, API_TOKEN } from '../const.js';
 
 class Intervals {
   constructor(intervalsContainerId, symbol, chartContainerId) {
+    this.chartContainerId = chartContainerId;
     this.$intervalsContainer = $(intervalsContainerId);
     this.$chartContainer = $(chartContainerId);
     this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
@@ -13,7 +14,17 @@ class Intervals {
     this.symbol = symbol;
     this.pageUrl = document.URL.split('#')[1];
     this.chart;
-    this.currentInterval = (this.pageUrl === 'watchlist') ? store.get('current-interval') : '1m';
+    this.currentInterval;
+    /* Only save the current interval when on the Watchlist page since this
+    is the only page where you users can shuffle through a list of stocks.
+    For any other page, just reset the current interval to '1m'. 
+    */
+    if (this.pageUrl === 'watchlist') {
+      this.currentInterval = store.get('current-interval');
+    } else {
+      store.set('current-interval', '1m');
+    }
+    // this.currentInterval = (this.pageUrl === 'watchlist') ? store.get('current-interval') : '1m';
     this.renderIntervals();
     this.$intervalsList = $('#time-intervals');
     this.$intervalsItems = this.$intervalsList.find('li');
@@ -75,9 +86,9 @@ class Intervals {
   renderChart() {
     const storedData = store.get(this.symbol);
 
-    if (this.pageUrl === 'watchlist') {
+    // if (this.pageUrl === 'watchlist') {
       this.currentInterval = store.get('current-interval');
-    }
+    // }
 
     // if historical prices for selected interval does exist in localStorage
     if (this.currentInterval in storedData.chart) {
@@ -86,8 +97,16 @@ class Intervals {
       const prices = this.getChartData(storedData, 'close');
       // get dates for closing prices
       const dates = this.getChartData(storedData, 'date');
+      console.log(this.chart);
+
+      if (this.chart === 'undefined') {
+        const context = this.chartCanvas.getContext('2d');
+        context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
+      } else if (this.chart) {
+        this.chart.destroy();
+      }
       
-      this.chart = new Graph(this.$chartContainer, prices, dates);
+      this.chart = new Graph(this.chartContainerId, prices, dates);
     }
     // if it doesn't exist, make data request
     else {
@@ -98,6 +117,7 @@ class Intervals {
 
   // FETCH NEW DATA FOR SELECTED INTERVAL
   fetchChartData() {
+    this.currentInterval = store.get('current-interval');
     this.$loadingIcon.addClass('is-visible');
     
     axios.get(`${URL_BASE}/${this.symbol}/chart/${this.currentInterval}?token=${API_TOKEN}`)

@@ -25,8 +25,6 @@ class Watchlist {
       store.set('current-interval', '1m');
     }
 
-    this.currentInterval = store.get('current-interval');
-
     // If Watchlist has stocks...
     if (this.watchlist.length > 0) {
       /* When the current selected Watchlist stock is the last one in the list

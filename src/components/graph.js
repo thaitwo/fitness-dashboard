@@ -110,6 +110,8 @@ class Graph {
 
   // RENDER NEW CHART
   renderGraph() {
+    this.destroy();
+
     this.chart = new Chart(this.$canvasId, {
       type: this.chartType,
       data: this.data,

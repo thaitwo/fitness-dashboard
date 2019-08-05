@@ -15882,61 +15882,6 @@ exports.API_TOKEN = API_TOKEN;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.formatLargeNumber = formatLargeNumber;
-exports.formatNumberWithCommas = formatNumberWithCommas;
-exports.trimString = trimString;
-exports.calcLocalStorageAge = calcLocalStorageAge;
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// Formate large numbers
-function formatLargeNumber(num) {
-  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
-  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-  // Three Zeroes for Thousands
-  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-}
-
-// Insert commas into numbers
-function formatNumberWithCommas(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// Trim strings to specified length
-function trimString(string, length) {
-  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-}
-
-// Calculate whether local storage for stock is more than 1 day old (24 hours)
-function calcLocalStorageAge(symbol) {
-  var oneDay = 60 * 60 * 24 * 1000;
-  var newTime = Date.now();
-  var oldTime = void 0;
-
-  // if stored data exists, calculate if data needs to be updated
-  if (_store2.default.get(symbol) !== null) {
-    oldTime = _store2.default.get(symbol).time;
-    return newTime - oldTime > oneDay;
-  } else {
-    return true;
-  }
-}
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -16074,6 +16019,8 @@ var Graph = function () {
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
+      this.destroy();
+
       this.chart = new _chart2.default(this.$canvasId, {
         type: this.chartType,
         data: this.data,
@@ -16086,6 +16033,68 @@ var Graph = function () {
 }();
 
 exports.default = Graph;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.updateChart = updateChart;
+exports.formatLargeNumber = formatLargeNumber;
+exports.formatNumberWithCommas = formatNumberWithCommas;
+exports.trimString = trimString;
+exports.calcLocalStorageAge = calcLocalStorageAge;
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function updateChart(Chart, prices, dates) {
+  Chart.data.datasets[0].data = prices;
+  Chart.data.labels = dates;
+  Chart.update();
+}
+
+// Formate large numbers
+function formatLargeNumber(num) {
+  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+}
+
+// Insert commas into numbers
+function formatNumberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Trim strings to specified length
+function trimString(string, length) {
+  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
+
+// Calculate whether local storage for stock is more than 1 day old (24 hours)
+function calcLocalStorageAge(symbol) {
+  var oneDay = 60 * 60 * 24 * 1000;
+  var newTime = Date.now();
+  var oldTime = void 0;
+
+  // if stored data exists, calculate if data needs to be updated
+  if (_store2.default.get(symbol) !== null) {
+    oldTime = _store2.default.get(symbol).time;
+    return newTime - oldTime > oneDay;
+  } else {
+    return true;
+  }
+}
 
 /***/ }),
 /* 8 */
@@ -16366,6 +16375,10 @@ var WatchButton = function () {
     this.symbol = symbol;
     this.companyName = companyName;
     this.refreshPage = refreshPage;
+    // Set watchlist in local storage if it doesn't exist
+    if (_store2.default.get('watchlist') === null) {
+      _store2.default.set('watchlist', []);
+    }
     this.watchlist = _store2.default.get('watchlist') || [];
     this.isWatched = this.isInWatchlist();
     this.$watchlist = (0, _jquery2.default)('.watchlist-list');
@@ -17320,7 +17333,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _graph = __webpack_require__(7);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -17332,7 +17345,7 @@ var _watchButton = __webpack_require__(10);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17348,7 +17361,7 @@ var ChartBox = function () {
     this.intervalsBar;
     this.watchButton;
     this.pageUrl = document.URL.split('#')[1];
-    this.interval = this.pageUrl === 'watchlist' ? _store2.default.get('current-interval') : '1m';
+    this.currentInterval = this.pageUrl === 'watchlist' ? _store2.default.get('current-interval') : '1m';
     this.renderHtml();
     this.$stockName = (0, _jquery2.default)('#chartbox-stock-name');
     this.$stockSymbol = (0, _jquery2.default)('#chartbox-stock-symbol');
@@ -17403,7 +17416,7 @@ var ChartBox = function () {
   }, {
     key: 'renderChart',
     value: function renderChart() {
-      var storedData = _store2.default.get(this.symbol).chart[this.interval];
+      var storedData = _store2.default.get(this.symbol).chart[this.currentInterval];
       var companyName = _store2.default.get(this.symbol).quote.companyName;
       // get closing prices for stock
       var prices = this.getChartData(storedData, 'close');
@@ -17473,7 +17486,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(7);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -17487,6 +17500,7 @@ var Intervals = function () {
   function Intervals(intervalsContainerId, symbol, chartContainerId) {
     _classCallCheck(this, Intervals);
 
+    this.chartContainerId = chartContainerId;
     this.$intervalsContainer = (0, _jquery2.default)(intervalsContainerId);
     this.$chartContainer = (0, _jquery2.default)(chartContainerId);
     this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
@@ -17494,7 +17508,17 @@ var Intervals = function () {
     this.symbol = symbol;
     this.pageUrl = document.URL.split('#')[1];
     this.chart;
-    this.currentInterval = this.pageUrl === 'watchlist' ? _store2.default.get('current-interval') : '1m';
+    this.currentInterval;
+    /* Only save the current interval when on the Watchlist page since this
+    is the only page where you users can shuffle through a list of stocks.
+    For any other page, just reset the current interval to '1m'. 
+    */
+    if (this.pageUrl === 'watchlist') {
+      this.currentInterval = _store2.default.get('current-interval');
+    } else {
+      _store2.default.set('current-interval', '1m');
+    }
+    // this.currentInterval = (this.pageUrl === 'watchlist') ? store.get('current-interval') : '1m';
     this.renderIntervals();
     this.$intervalsList = (0, _jquery2.default)('#time-intervals');
     this.$intervalsItems = this.$intervalsList.find('li');
@@ -17552,9 +17576,9 @@ var Intervals = function () {
     value: function renderChart() {
       var storedData = _store2.default.get(this.symbol);
 
-      if (this.pageUrl === 'watchlist') {
-        this.currentInterval = _store2.default.get('current-interval');
-      }
+      // if (this.pageUrl === 'watchlist') {
+      this.currentInterval = _store2.default.get('current-interval');
+      // }
 
       // if historical prices for selected interval does exist in localStorage
       if (this.currentInterval in storedData.chart) {
@@ -17563,8 +17587,16 @@ var Intervals = function () {
         var prices = this.getChartData(_storedData, 'close');
         // get dates for closing prices
         var dates = this.getChartData(_storedData, 'date');
+        console.log(this.chart);
 
-        this.chart = new _graph2.default(this.$chartContainer, prices, dates);
+        if (this.chart === 'undefined') {
+          var context = this.chartCanvas.getContext('2d');
+          context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
+        } else if (this.chart) {
+          this.chart.destroy();
+        }
+
+        this.chart = new _graph2.default(this.chartContainerId, prices, dates);
       }
       // if it doesn't exist, make data request
       else {
@@ -17579,6 +17611,7 @@ var Intervals = function () {
     value: function fetchChartData() {
       var _this = this;
 
+      this.currentInterval = _store2.default.get('current-interval');
       this.$loadingIcon.addClass('is-visible');
 
       _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.currentInterval + '?token=' + _const.API_TOKEN).then(function (response) {
@@ -17649,7 +17682,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30980,7 +31013,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(7);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -31085,6 +31118,7 @@ var GraphCard = function () {
     value: function renderChart() {
       var storedData = _store2.default.get(this.symbol);
       var graphPoints = storedData.chart['1m'];
+      console.log(storedData);
       var prices = this.getChartData(graphPoints, 'close');
       var dates = this.getChartData(graphPoints, 'date');
       dates = dates.map(function (date) {
@@ -31519,9 +31553,9 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
-var _graph = __webpack_require__(7);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -31563,6 +31597,7 @@ var StockPopup = function () {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
+    this.chartCanvas = document.getElementById('popup-chart');
 
     this.intervals = new _intervals2.default('#popup-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new _watchButton2.default('#popup-watch-button', this.symbol, this.companyName);
@@ -31681,6 +31716,13 @@ var StockPopup = function () {
 
       // get dates for the opening prices
       var dateLabels = this.getChartData(stockData, 'date');
+
+      if (this.chart === 'undefined') {
+        var context = this.chartCanvas.getContext('2d');
+        context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
+      } else if (this.chart) {
+        this.chart.destroy();
+      }
 
       // create new graph for this company stock
       this.chart = new _graph2.default('#popup-chart', priceData, dateLabels);
@@ -31893,7 +31935,7 @@ var _stockPopup = __webpack_require__(171);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32176,10 +32218,9 @@ var Stocks = function () {
         _this.mostActiveSymbols = _this.getMostActiveSymbols();
         _this.$loadingIcon.removeClass('is-visible');
         new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
-        new _stocklist2.default('#gainers', 'gainers', 'Gainers');
+        new _stocklist2.default('#gainers-container', 'gainers', 'Gainers');
         new _stocklist2.default('#losers-container', 'losers', 'Losers');
         _this.renderGraphCards();
-        // console.log('working', this.mostActiveSymbols);
         _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'home-news', 1);
       });
     }
@@ -32236,11 +32277,11 @@ var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _helpers = __webpack_require__(6);
+var _helpers = __webpack_require__(7);
 
 var _const = __webpack_require__(5);
 
-var _graph = __webpack_require__(7);
+var _graph = __webpack_require__(6);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -32268,8 +32309,6 @@ var Watchlist = function () {
     if (_store2.default.get('current-interval') === null) {
       _store2.default.set('current-interval', '1m');
     }
-
-    this.currentInterval = _store2.default.get('current-interval');
 
     // If Watchlist has stocks...
     if (this.watchlist.length > 0) {

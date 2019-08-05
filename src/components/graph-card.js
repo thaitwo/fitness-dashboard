@@ -96,6 +96,7 @@ class GraphCard {
   renderChart() {
     const storedData = store.get(this.symbol);
     const graphPoints = storedData.chart['1m'];
+    console.log(storedData);
     const prices = this.getChartData(graphPoints, 'close');
     let dates = this.getChartData(graphPoints, 'date');
     dates = dates.map((date) => {

@@ -29,6 +29,7 @@ class StockPopup {
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
     this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
+    this.chartCanvas = document.getElementById('popup-chart');
 
     this.intervals = new Intervals('#popup-intervals-container', this.symbol, '#popup-chart');
     this.watchButton = new WatchButton('#popup-watch-button', this.symbol, this.companyName);
@@ -203,6 +204,13 @@ class StockPopup {
 
     // get dates for the opening prices
     let dateLabels = this.getChartData(stockData, 'date');
+
+    if (this.chart === 'undefined') {
+      const context = this.chartCanvas.getContext('2d');
+      context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
+    } else if (this.chart) {
+      this.chart.destroy();
+    }
 
     // create new graph for this company stock
     this.chart = new Graph('#popup-chart', priceData, dateLabels);

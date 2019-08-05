@@ -1,5 +1,11 @@
 import store from 'store2';
 
+export function updateChart(Chart, prices, dates) {
+  Chart.data.datasets[0].data = prices;
+  Chart.data.labels = dates;
+  Chart.update();
+}
+
 // Formate large numbers
 export function formatLargeNumber(num) {
   return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"

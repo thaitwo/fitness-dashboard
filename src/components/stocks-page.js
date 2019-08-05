@@ -115,10 +115,9 @@ class Stocks {
       this.mostActiveSymbols = this.getMostActiveSymbols();
       this.$loadingIcon.removeClass('is-visible');
       new StockList('#mostactive-container', 'mostactive', 'Most Active');
-      new StockList('#gainers', 'gainers', 'Gainers');
+      new StockList('#gainers-container', 'gainers', 'Gainers');
       new StockList('#losers-container', 'losers', 'Losers');
       this.renderGraphCards();
-      // console.log('working', this.mostActiveSymbols);
       this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
     });
   }

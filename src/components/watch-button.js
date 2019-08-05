@@ -7,6 +7,10 @@ class WatchButton {
     this.symbol = symbol;
     this.companyName = companyName;
     this.refreshPage = refreshPage;
+    // Set watchlist in local storage if it doesn't exist
+    if (store.get('watchlist') === null) {
+      store.set('watchlist', []);
+    }
     this.watchlist = store.get('watchlist') || [];
     this.isWatched = this.isInWatchlist();
     this.$watchlist = $('.watchlist-list');
