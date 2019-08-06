@@ -1,14 +1,15 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
 import Stock from './stock';
-import Stocks from './stocks-page';
+import StocksPage from './stocks-page';
 import Watchlist from './watchlist';
 const DASHBOARD_URL = 'stocks/';
 
 
 class Router {
-  constructor() {
+  constructor(navContainerId) {
     this.$canvas = $('.canvas');
+    this.$navContainer = $(navContainerId);
 
     // INITIALIZE NAVIGO ROUTER
     this.root = null;
@@ -27,7 +28,7 @@ class Router {
       this.router.navigate(`${DASHBOARD_URL}`);
     }
     else {
-      this.router.navigate(`${pageId}`);
+      this.router.navigate(`${pageId}/`);
     }
   }
 
@@ -40,6 +41,8 @@ class Router {
       'stocks/:symbol': (params) => {
         const symbol = params.symbol.toUpperCase();
         this.currentPage = new Stock(symbol);
+        // Remove active styles for Sidenav items
+        this.$navContainer.find('.active').removeClass('active');
       },
       'compare': () => {
         // Insert functionality
@@ -48,7 +51,7 @@ class Router {
         this.currentPage = new Watchlist(this.$canvas);
       },
       '*': () => {
-        this.currentPage = new Stocks(this.$canvas);
+        this.currentPage = new StocksPage(this.$canvas);
       }
     })
     .resolve();

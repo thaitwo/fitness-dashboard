@@ -29961,13 +29961,13 @@ var Nav = function () {
     this.navContainerId = navContainerId;
     this.routeOrNot = routeBoolean || false;
 
-    this.$navContainer = (0, _jquery2.default)('#' + this.navContainerId);
+    this.$navContainer = (0, _jquery2.default)(navContainerId);
 
     // ACTIVATE ROUTER
-    this.router = new _router2.default();
+    this.router = new _router2.default(navContainerId);
     // ACTIVATE SIDEBAR NAV
     this.activateNav();
-    // this.setActiveTabOnRefresh();
+    this.setActiveTabOnRefresh();
   }
 
   // SET ACTIVE MENU ITEM ON PAGE RELOAD
@@ -29984,11 +29984,10 @@ var Nav = function () {
 
         // set dashboard menu item as active on initial app load
         if (url.indexOf('#') != -1) {
-          pageId = url.split('#')[1];
+          pageId = url.split('#')[1].split('/')[0];
         } else {
           pageId = 'stocks';
         }
-
         if (pageId.substr(-1) === '/') {
           pageId = pageId.slice(0, -1);
         }
@@ -30024,10 +30023,10 @@ var Nav = function () {
   }, {
     key: 'updateActiveClass',
     value: function updateActiveClass(activeButtonId) {
-      var buttons = this.$navContainer.find('.active');
-      var activeButton = this.$navContainer.find('a#' + activeButtonId);
-      buttons.removeClass('active');
-      activeButton.addClass('active');
+      var $buttons = this.$navContainer.find('.active');
+      var $activeButton = this.$navContainer.find('a#' + activeButtonId);
+      $buttons.removeClass('active');
+      $activeButton.addClass('active');
     }
   }]);
 
@@ -30980,7 +30979,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var App = function App() {
   _classCallCheck(this, App);
 
-  new _nav2.default('nav-sidebar', true);
+  new _nav2.default('#nav-sidebar', true);
   new _search2.default('#top-bar');
 };
 
@@ -31118,7 +31117,6 @@ var GraphCard = function () {
     value: function renderChart() {
       var storedData = _store2.default.get(this.symbol);
       var graphPoints = storedData.chart['1m'];
-      console.log(storedData);
       var prices = this.getChartData(graphPoints, 'close');
       var dates = this.getChartData(graphPoints, 'date');
       dates = dates.map(function (date) {
@@ -31249,10 +31247,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var DASHBOARD_URL = 'stocks/';
 
 var Router = function () {
-  function Router() {
+  function Router(navContainerId) {
     _classCallCheck(this, Router);
 
     this.$canvas = (0, _jquery2.default)('.canvas');
+    this.$navContainer = (0, _jquery2.default)(navContainerId);
 
     // INITIALIZE NAVIGO ROUTER
     this.root = null;
@@ -31273,7 +31272,7 @@ var Router = function () {
       if (pageId === 'stocks') {
         this.router.navigate('' + DASHBOARD_URL);
       } else {
-        this.router.navigate('' + pageId);
+        this.router.navigate(pageId + '/');
       }
     }
 
@@ -31289,6 +31288,8 @@ var Router = function () {
         'stocks/:symbol': function stocksSymbol(params) {
           var symbol = params.symbol.toUpperCase();
           _this.currentPage = new _stock2.default(symbol);
+          // Remove active styles for Sidenav items
+          _this.$navContainer.find('.active').removeClass('active');
         },
         'compare': function compare() {
           // Insert functionality
@@ -31424,12 +31425,10 @@ var Suggestions = function () {
         switch (keyPressed) {
           case 40:
             _this2.currentFocus++;
-            console.log(_this2.currentFocus);
             _this2.addActiveClass();
             break;
           case 38:
             _this2.currentFocus--;
-            console.log(_this2.currentFocus);
             _this2.addActiveClass();
             break;
           case 13:
@@ -32113,17 +32112,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Stocks = function () {
-  function Stocks(container) {
-    _classCallCheck(this, Stocks);
+var StocksPage = function () {
+  function StocksPage(container) {
+    _classCallCheck(this, StocksPage);
 
     this.$container = container;
     this.graph;
     this.popup;
     this.watchlist = _store2.default.get('watchlist') || [];
     this.render();
-    this.$stocksContainer = (0, _jquery2.default)('#most-active-container');
-    this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
+    this.$PageContainer = (0, _jquery2.default)('#most-active-container');
     this.$stockListContainer = (0, _jquery2.default)('.stock-list');
 
     this.getStocks();
@@ -32134,7 +32132,7 @@ var Stocks = function () {
   // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
 
 
-  _createClass(Stocks, [{
+  _createClass(StocksPage, [{
     key: 'getMostActiveSymbols',
     value: function getMostActiveSymbols() {
       var symbols = _store2.default.get('mostactive');
@@ -32205,9 +32203,6 @@ var Stocks = function () {
     value: function fetchStocks() {
       var _this = this;
 
-      // Display loading icon
-      this.$loadingIcon.addClass('is-visible');
-
       _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
         _store2.default.set('mostactive', mostActive.data);
         _store2.default.set('gainers', gainers.data);
@@ -32216,7 +32211,6 @@ var Stocks = function () {
         console.log(error);
       }).then(function () {
         _this.mostActiveSymbols = _this.getMostActiveSymbols();
-        _this.$loadingIcon.removeClass('is-visible');
         new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
         new _stocklist2.default('#gainers-container', 'gainers', 'Gainers');
         new _stocklist2.default('#losers-container', 'losers', 'Losers');
@@ -32233,10 +32227,10 @@ var Stocks = function () {
     }
   }]);
 
-  return Stocks;
+  return StocksPage;
 }();
 
-exports.default = Stocks;
+exports.default = StocksPage;
 
 /***/ }),
 /* 175 */

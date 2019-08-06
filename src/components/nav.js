@@ -9,13 +9,13 @@ class Nav {
     this.navContainerId = navContainerId;
     this.routeOrNot = routeBoolean || false;
 
-    this.$navContainer = $(`#${this.navContainerId}`);
+    this.$navContainer = $(navContainerId);
 
     // ACTIVATE ROUTER
-    this.router = new Router();
+    this.router = new Router(navContainerId);
     // ACTIVATE SIDEBAR NAV
     this.activateNav();
-    // this.setActiveTabOnRefresh();
+    this.setActiveTabOnRefresh();
   }
 
 
@@ -27,11 +27,10 @@ class Nav {
 
       // set dashboard menu item as active on initial app load
       if (url.indexOf('#') != -1) {
-        pageId = url.split('#')[1];
+        pageId = url.split('#')[1].split('/')[0];
       } else {
         pageId = 'stocks';
       }
-
       if (pageId.substr(-1) === '/') {
         pageId = pageId.slice(0, -1);
       }
@@ -64,10 +63,10 @@ class Nav {
 
   // UPDATE SELECTED LINK
   updateActiveClass(activeButtonId) {
-    const buttons = this.$navContainer.find('.active');
-    const activeButton = this.$navContainer.find(`a#${activeButtonId}`);
-    buttons.removeClass('active');
-    activeButton.addClass('active');
+    const $buttons = this.$navContainer.find('.active');
+    const $activeButton = this.$navContainer.find(`a#${activeButtonId}`);
+    $buttons.removeClass('active');
+    $activeButton.addClass('active');
   }
 }
 

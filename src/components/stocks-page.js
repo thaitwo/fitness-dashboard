@@ -6,15 +6,14 @@ import News from './news.js';
 import StockList from './stocklist.js';
 import { URL_BASE, API_TOKEN } from '../const.js';
 
-class Stocks {
+class StocksPage {
   constructor(container) {
     this.$container = container;
     this.graph;
     this.popup;
     this.watchlist = store.get('watchlist') || [];
     this.render();
-    this.$stocksContainer = $('#most-active-container');
-    this.$loadingIcon = this.$stocksContainer.find('.icon-loading');
+    this.$PageContainer = $('#most-active-container');
     this.$stockListContainer = $('.stock-list');
 
     this.getStocks();
@@ -95,9 +94,6 @@ class Stocks {
 
   // GET LIST OF COMPANIES
   fetchStocks() {
-    // Display loading icon
-    this.$loadingIcon.addClass('is-visible');
-
     axios.all([
       axios.get(`${URL_BASE}/market/collection/list?collectionName=mostactive&token=${API_TOKEN}`),
       axios.get(`${URL_BASE}/market/collection/list?collectionName=gainers&token=${API_TOKEN}`),
@@ -113,7 +109,6 @@ class Stocks {
     })
     .then(() => {
       this.mostActiveSymbols = this.getMostActiveSymbols();
-      this.$loadingIcon.removeClass('is-visible');
       new StockList('#mostactive-container', 'mostactive', 'Most Active');
       new StockList('#gainers-container', 'gainers', 'Gainers');
       new StockList('#losers-container', 'losers', 'Losers');
@@ -130,4 +125,4 @@ class Stocks {
   }
 }
 
-export default Stocks;
+export default StocksPage;

@@ -71,12 +71,10 @@ class Suggestions {
       switch (keyPressed) {
         case 40:
           this.currentFocus++;
-          console.log(this.currentFocus);
           this.addActiveClass();
           break;
         case 38:
           this.currentFocus--;
-          console.log(this.currentFocus);
           this.addActiveClass();
           break;
         case 13:

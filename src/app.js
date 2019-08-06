@@ -4,7 +4,7 @@ import Search from './components/search.js';
 
 class App {
   constructor() {
-    new Nav('nav-sidebar', true);
+    new Nav('#nav-sidebar', true);
     new Search('#top-bar');
   }
 }
