@@ -26,7 +26,7 @@ class Nav {
       let pageId;
 
       // set dashboard menu item as active on initial app load
-      if (url.indexOf('#') != -1) {
+      if (url.includes('#')) {
         pageId = url.split('#')[1].split('/')[0];
       } else {
         pageId = 'stocks';

@@ -3,7 +3,7 @@ import store from 'store2';
 import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
-import { trimString } from '../helpers/helpers.js';
+import { trimString, getPageId } from '../utility/utility.js';
 
 class ChartBox {
   constructor(containerId, symbol) {
@@ -12,8 +12,13 @@ class ChartBox {
     this.chart;
     this.intervalsBar;
     this.watchButton;
-    this.pageUrl = document.URL.split('#')[1];
-    this.currentInterval = (this.pageUrl === 'watchlist') ? store.get('current-interval') : '1m';
+    this.pageId = getPageId();
+    this.currentInterval;;
+    if (this.pageId === 'watchlist') {
+      this.currentInterval = store.get('current-interval');
+    } else {
+      store.set('current-interval', '1m');
+    }
     this.renderHtml();
     this.$stockName = $('#chartbox-stock-name');
     this.$stockSymbol = $('#chartbox-stock-symbol');
@@ -84,6 +89,7 @@ class ChartBox {
 
   // RENDER CHART
   renderChart() {
+    this.currentInterval = store.get('current-interval');
     const storedData = store.get(this.symbol).chart[this.currentInterval];
     const companyName = store.get(this.symbol).quote.companyName;
     // get closing prices for stock

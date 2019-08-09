@@ -4,7 +4,7 @@ import axios from 'axios';
 import ChartBox from './chartbox.js';
 import KeyStats from './keystats.js';
 import News from './news.js';
-import { calcLocalStorageAge, trimString } from '../helpers/helpers.js';
+import { calcLocalStorageAge, trimString } from '../utility/utility.js';
 import { URL_BASE, API_TOKEN } from '../const';
 import Graph from './graph.js';
 
@@ -168,7 +168,7 @@ class Watchlist {
       storedData.chart[this.currentInterval] = response.data;
       store.set(this.symbol, storedData);
     })
-    .catch(error => console.log(error.response.data.error))
+    .catch(error => console.log(error))
     .then(() => {
       // const storedChartData = store.get(this.symbol).chart[this.interval];
       // // get closing prices for stock

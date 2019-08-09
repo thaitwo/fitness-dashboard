@@ -6,6 +6,17 @@ export function updateChart(Chart, prices, dates) {
   Chart.update();
 }
 
+// Get page id
+export function getPageId() {
+  let pageId = document.URL.split('#')[1];
+
+  if (pageId.includes('/')) {
+    pageId = pageId.split('/')[0];
+  }
+
+  return pageId;
+}
+
 // Formate large numbers
 export function formatLargeNumber(num) {
   return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"

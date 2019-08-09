@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import store from 'store2';
+import { getPageId } from '../utility/utility';
 
 class WatchButton {
   constructor(containerId, symbol, companyName, refreshPage = false) {
@@ -60,7 +61,7 @@ class WatchButton {
     // Add/remove stock from watchlist
     this.$watchButton.on('click', function(event) {
       event.stopPropagation();
-      const pageUrl = document.URL.split('#')[1];
+      const pageId = getPageId();
       that.watchlist = store.get('watchlist');
       that.toggleButtonState(that.isWatched);
 
@@ -86,7 +87,7 @@ class WatchButton {
         /* For the Watchlist page, when the Watch button is clicked to remove the stock from the list,
         reload the page so that it is no longer showing data for the stock that the user just removed.
         */
-        if (pageUrl === 'watchlist') {
+        if (pageId === 'watchlist') {
           window.location.reload();
         }
       }

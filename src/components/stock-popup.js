@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
-import { formatLargeNumber, formatNumberWithCommas, trimString } from '../helpers/helpers.js';
+import { formatLargeNumber, formatNumberWithCommas, trimString } from '../utility/utility.js';
 import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';

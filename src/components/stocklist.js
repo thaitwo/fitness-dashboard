@@ -3,7 +3,7 @@ import store from 'store2';
 import axios from 'axios';
 import WatchButton from './watch-button';
 import StockPopup from './stock-popup';
-import { trimString } from '../helpers/helpers.js';
+import { trimString } from '../utility/utility.js';
 
 class StockList {
   constructor(containerId, collectionName, title) {

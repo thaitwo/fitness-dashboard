@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import store from 'store2';
-import { formatLargeNumber, formatNumberWithCommas } from '../helpers/helpers.js';
+import { formatLargeNumber, formatNumberWithCommas } from '../utility/utility.js';
 
 class KeyStats {
   constructor(containerId, symbol) {
