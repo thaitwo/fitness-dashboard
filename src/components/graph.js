@@ -13,9 +13,10 @@ import Chart from 'chart.js';
 */
 
 class Graph {
-  constructor(canvasId, newData, newLabels = '', chartType = 'line', options) {
+  constructor(canvasId, newData, newLabels, chartType = 'line', options) {
     this.$canvasId = $(canvasId);
     this.chartType = chartType;
+    this.chart;
 
     this.data = {
       labels: newLabels,
@@ -39,7 +40,6 @@ class Graph {
     };
 
     this.options = options || this.getOptions();
-    this.chart;
 
     this.renderGraph();
   }
@@ -49,6 +49,19 @@ class Graph {
   destroy() {
     if (this.chart) {
       this.chart.destroy();
+    }
+  }
+
+
+  // UPDATE CHART DATA
+  updateChart(prices, dates) {
+    if (this.chart) {
+      this.chart.data.datasets[0].data = prices;
+      this.chart.data.labels = dates;
+      this.chart.update({
+        duration: 600,
+        easing: 'easeOutCubic'
+      });
     }
   }
 
@@ -68,8 +81,8 @@ class Graph {
         display: false,
         labels: {
           // This more specific font property overrides the global property
-          fontColor: 'black',
-          fontFamily: 'Montserrat, sans-serif',
+          defaultFontColor: 'black',
+          defaultFontFamily: 'Mukta, sans-serif',
         }
       },
       scales: {
@@ -110,7 +123,6 @@ class Graph {
 
   // RENDER NEW CHART
   renderGraph() {
-    this.destroy();
 
     this.chart = new Chart(this.$canvasId, {
       type: this.chartType,

@@ -1,14 +1,12 @@
 import store from 'store2';
 
-export function updateChart(Chart, prices, dates) {
-  Chart.data.datasets[0].data = prices;
-  Chart.data.labels = dates;
-  Chart.update();
-}
-
 // Get page id
 export function getPageId() {
-  let pageId = document.URL.split('#')[1];
+  let pageId = document.URL;
+
+  if (pageId.includes('#')) {
+    pageId = pageId.split('#')[1];
+  }
 
   if (pageId.includes('/')) {
     pageId = pageId.split('/')[0];

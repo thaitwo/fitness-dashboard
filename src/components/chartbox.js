@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import store from 'store2';
-import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
 import { trimString, getPageId } from '../utility/utility.js';
@@ -49,9 +48,6 @@ class ChartBox {
         </div>
       </div>
       <div>
-        <div class="icon-loading">
-          <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-        </div>
         <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>
       </div>
     `;
@@ -92,16 +88,7 @@ class ChartBox {
     this.currentInterval = store.get('current-interval');
     const storedData = store.get(this.symbol).chart[this.currentInterval];
     const companyName = store.get(this.symbol).quote.companyName;
-    // get closing prices for stock
-    const prices = this.getChartData(storedData, 'close');
-    // get dates for closing prices
-    const dates = this.getChartData(storedData, 'date');
     
-    // delete graph if any exists and create new graph
-    if (this.chart) {
-      this.chart.destroy();
-    }
-    this.chart = new Graph('#chartbox-chart', prices, dates);
     this.intervalsBar = new Intervals('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
     this.watchButton = new WatchButton('#chartbox-watch-button', this.symbol, companyName);
   }

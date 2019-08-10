@@ -11,7 +11,6 @@ class Intervals {
     this.$intervalsContainer = $(intervalsContainerId);
     this.$chartContainer = $(chartContainerId);
     this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
-    this.$loadingIcon = $('.icon-loading');
     this.symbol = symbol;
     this.pageId = getPageId();
     this.chart;
@@ -25,6 +24,7 @@ class Intervals {
     } else {
       store.set('current-interval', '1m');
     }
+    this.renderChart();
     this.renderIntervals();
     this.$intervalsList = $('#time-intervals');
     this.$intervalsItems = this.$intervalsList.find('li');
@@ -61,21 +61,6 @@ class Intervals {
       that.currentInterval = selectedInterval;
       store.set('current-interval', selectedInterval);
 
-      /* The chart canvas is being cleared in this specific place and order
-      to allow the display of the spinning icon while new data is being fetched,
-      without having both the icon and the old chart being displayed simulataneously.
-      On the initial load, that.chart will be null so in this case, we have to
-      clear the chart canvas by using JS's clearRect() method. Once an interval
-      selected, that.chart will now equal a new Chart component which includes 
-      the destroy() method that we can use to empty the chart canvas.
-      */
-      if (!that.chart) {
-        const context = that.chartCanvas.getContext('2d');
-        context.clearRect(0, 0, that.chartCanvas.width, that.chartCanvas.height);
-      } else if (that.chart) {
-        that.chart.destroy();
-      }
-
       that.addActiveClass();
       that.renderChart();
     });
@@ -95,14 +80,14 @@ class Intervals {
       // get dates for closing prices
       const dates = this.getChartData(storedData, 'date');
 
-      if (this.chart === 'undefined') {
-        const context = this.chartCanvas.getContext('2d');
-        context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
-      } else if (this.chart) {
-        this.chart.destroy();
+      // If a chart already exists, just update chart with new data
+      if (this.chart) {
+        this.chart.updateChart(prices, dates);
       }
-      
-      this.chart = new Graph(this.chartContainerId, prices, dates);
+      // Otherwise, if no chart exists, create a new one.
+      else {
+        this.chart = new Graph(this.chartContainerId, prices, dates);
+      }
     }
     // if it doesn't exist, make data request
     else {
@@ -114,7 +99,6 @@ class Intervals {
   // FETCH NEW DATA FOR SELECTED INTERVAL
   fetchChartData() {
     this.currentInterval = store.get('current-interval');
-    this.$loadingIcon.addClass('is-visible');
     
     axios.get(`${URL_BASE}/${this.symbol}/chart/${this.currentInterval}?token=${API_TOKEN}`)
     .then((response) => {
@@ -127,9 +111,6 @@ class Intervals {
       }
     })
     .catch(error => console.log(error))
-    .then(() => {
-      this.$loadingIcon.removeClass('is-visible');      
-    })
   }
 
 

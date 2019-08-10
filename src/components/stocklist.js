@@ -12,7 +12,6 @@ class StockList {
     this.title = title;
     this.watchlist = store.get('watchlist') || [];
     this.renderHeaderHtml();
-    this.$loadingIcon = $('.icon-loading');
     this.$listContainer = $(`#${collectionName}`);
     this.renderAllData();
     this.displayPopup();
@@ -52,8 +51,6 @@ class StockList {
 
   // FETCH API DATA
   fetchStocks() {
-    this.$loadingIcon.addClass('is-visible');
-
     axios.get(`${URL_BASE}/market/collection/list?collectionName=${this.collectionName}&token=${API_TOKEN}`)
     .then((response) => {
       console.log(response);
@@ -61,7 +58,6 @@ class StockList {
     })
     .catch(error => console.log(error))
     .then(() => {
-      this.$loadingIcon.removeClass('is-visible');
       this.renderStockList();
     })
   }

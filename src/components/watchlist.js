@@ -170,12 +170,6 @@ class Watchlist {
     })
     .catch(error => console.log(error))
     .then(() => {
-      // const storedChartData = store.get(this.symbol).chart[this.interval];
-      // // get closing prices for stock
-      // const prices = this.getChartData(storedChartData, 'close');
-      // // get dates for closing prices
-      // const dates = this.getChartData(storedChartData, 'date');
-      // new Graph('#chartbox-chart', prices, dates);
       new ChartBox('#watchlist-chart-container', this.symbol);
     })
   }

@@ -2,7 +2,6 @@ import $ from 'jquery';
 import store from 'store2';
 import axios from 'axios';
 import { formatLargeNumber, formatNumberWithCommas, trimString } from '../utility/utility.js';
-import Graph from './graph.js';
 import Intervals from './intervals.js';
 import WatchButton from './watch-button.js';
 import { URL_BASE, API_TOKEN } from '../const';
@@ -27,11 +26,10 @@ class StockPopup {
     this.$stockName = this.$popupContainer.find('#popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
-    this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
     this.chartCanvas = document.getElementById('popup-chart');
 
-    this.intervals = new Intervals('#popup-intervals-container', this.symbol, '#popup-chart');
+    this.intervals;
     this.watchButton = new WatchButton('#popup-watch-button', this.symbol, this.companyName);
     this.renderAllData();
     this.closePopup();
@@ -64,9 +62,6 @@ class StockPopup {
               </table>
             </div>
             <div class="popup-chart-container">
-              <div class="icon-loading">
-                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
-              </div>
               <canvas id="popup-chart" width="660" height="400"></canvas>
             </div>
           </div>
@@ -83,7 +78,8 @@ class StockPopup {
     // check if there's locally stored data before making Ajax request
     if (store.get(this.symbol)) {
       this.renderStockInfo();
-      this.renderChart();
+      // new Intervals will dynamically create 
+      this.intervals = new Intervals('#popup-intervals-container', this.symbol, '#popup-chart');
     }
     else {
       this.fetchStockData();
@@ -93,9 +89,6 @@ class StockPopup {
 
   // FETCH STOCK DATA
   fetchStockData() {
-    // display loading icon
-    this.$loadingIcon.addClass('is-visible');
-    // request stock data
     axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&range=1m&token=${API_TOKEN}`)
     .then((response) => {
       const dataToStore = {
@@ -113,11 +106,10 @@ class StockPopup {
         */
       if (response.status == 200) {
         this.renderStockInfo();
-        this.renderChart();
-        this.$loadingIcon.removeClass('is-visible');
+        this.renderAllData();
       }
     })
-    .catch(error => console.log(error.response.data.error))
+    .catch(error => console.log(error))
   }
 
 
@@ -195,31 +187,8 @@ class StockPopup {
   }
 
 
-  // RENDER CHART
-  renderChart() {
-    const stockData = store.get(`${this.symbol}`).chart['1m'];
-
-    // get opening prices for company stock
-    let priceData = this.getChartData(stockData, 'close');
-
-    // get dates for the opening prices
-    let dateLabels = this.getChartData(stockData, 'date');
-
-    if (this.chart === 'undefined') {
-      const context = this.chartCanvas.getContext('2d');
-      context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
-    } else if (this.chart) {
-      this.chart.destroy();
-    }
-
-    // create new graph for this company stock
-    this.chart = new Graph('#popup-chart', priceData, dateLabels);
-  }
-
-
   // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
   getChartData(data, key) {
-    // console.log(data);
     return data.map((day) => {
       if (key === 'date') {
         const fullDate = day[key].split('-');
@@ -260,7 +229,6 @@ class StockPopup {
   destroy() {
     this.$popupContainer.off();
     this.$popupContentContainer.off();
-    this.chart.destroy();
     this.$popupContainer.remove();
   }
 }

@@ -15882,6 +15882,77 @@ exports.API_TOKEN = API_TOKEN;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.getPageId = getPageId;
+exports.formatLargeNumber = formatLargeNumber;
+exports.formatNumberWithCommas = formatNumberWithCommas;
+exports.trimString = trimString;
+exports.calcLocalStorageAge = calcLocalStorageAge;
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// Get page id
+function getPageId() {
+  var pageId = document.URL;
+
+  if (pageId.includes('#')) {
+    pageId = pageId.split('#')[1];
+  }
+
+  if (pageId.includes('/')) {
+    pageId = pageId.split('/')[0];
+  }
+
+  return pageId;
+}
+
+// Formate large numbers
+function formatLargeNumber(num) {
+  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
+  // Six Zeroes for Millions 
+  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
+  // Three Zeroes for Thousands
+  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
+}
+
+// Insert commas into numbers
+function formatNumberWithCommas(num) {
+  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Trim strings to specified length
+function trimString(string, length) {
+  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
+}
+
+// Calculate whether local storage for stock is more than 1 day old (24 hours)
+function calcLocalStorageAge(symbol) {
+  var oneDay = 60 * 60 * 24 * 1000;
+  var newTime = Date.now();
+  var oldTime = void 0;
+
+  // if stored data exists, calculate if data needs to be updated
+  if (_store2.default.get(symbol) !== null) {
+    oldTime = _store2.default.get(symbol).time;
+    return newTime - oldTime > oneDay;
+  } else {
+    return true;
+  }
+}
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -15909,8 +15980,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 */
 
 var Graph = function () {
-  function Graph(canvasId, newData) {
-    var newLabels = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
+  function Graph(canvasId, newData, newLabels) {
     var chartType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'line';
     var options = arguments[4];
 
@@ -15918,6 +15988,7 @@ var Graph = function () {
 
     this.$canvasId = (0, _jquery2.default)(canvasId);
     this.chartType = chartType;
+    this.chart;
 
     this.data = {
       labels: newLabels,
@@ -15941,7 +16012,6 @@ var Graph = function () {
     };
 
     this.options = options || this.getOptions();
-    this.chart;
 
     this.renderGraph();
   }
@@ -15954,6 +16024,21 @@ var Graph = function () {
     value: function destroy() {
       if (this.chart) {
         this.chart.destroy();
+      }
+    }
+
+    // UPDATE CHART DATA
+
+  }, {
+    key: 'updateChart',
+    value: function updateChart(prices, dates) {
+      if (this.chart) {
+        this.chart.data.datasets[0].data = prices;
+        this.chart.data.labels = dates;
+        this.chart.update({
+          duration: 600,
+          easing: 'easeOutCubic'
+        });
       }
     }
 
@@ -15975,8 +16060,8 @@ var Graph = function () {
           display: false,
           labels: {
             // This more specific font property overrides the global property
-            fontColor: 'black',
-            fontFamily: 'Montserrat, sans-serif'
+            defaultFontColor: 'black',
+            defaultFontFamily: 'Mukta, sans-serif'
           }
         },
         scales: {
@@ -16019,7 +16104,6 @@ var Graph = function () {
   }, {
     key: 'renderGraph',
     value: function renderGraph() {
-      this.destroy();
 
       this.chart = new _chart2.default(this.$canvasId, {
         type: this.chartType,
@@ -16035,7 +16119,6 @@ var Graph = function () {
 exports.default = Graph;
 
 /***/ }),
-/* 7 */,
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -16300,7 +16383,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _utility = __webpack_require__(184);
+var _utility = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17274,10 +17357,6 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _graph = __webpack_require__(6);
-
-var _graph2 = _interopRequireDefault(_graph);
-
 var _intervals = __webpack_require__(18);
 
 var _intervals2 = _interopRequireDefault(_intervals);
@@ -17286,7 +17365,7 @@ var _watchButton = __webpack_require__(10);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _utility = __webpack_require__(184);
+var _utility = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17323,7 +17402,7 @@ var ChartBox = function () {
   _createClass(ChartBox, [{
     key: 'renderHtml',
     value: function renderHtml() {
-      var html = '\n      <div>\n        <div class="chartbox-header-top-row">\n          <div class="chartbox-name-container">\n            <h2 id="chartbox-stock-name" class="chartbox-stock-name"></h2>\n            <h3 id="chartbox-stock-symbol" class="chartbox-stock-symbol"></h3>\n          </div>\n          <div class="chartbox-watch-intervals-container">\n            <div id="chartbox-watch-button" class="chartbox-watchbutton"></div>\n            <div id="chartbox-intervals-container" class="chart-intervals-container"></div>\n          </div>\n        </div>\n        <div class="flex-hori-start" style="height: 32px;">\n          <div id="chartbox-latest-price" class="chartbox-latest-price"></div>\n          <div id="chartbox-change-percent" class="chartbox-change-percent"></div>\n        </div>\n      </div>\n      <div>\n        <div class="icon-loading">\n          <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n        </div>\n        <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>\n      </div>\n    ';
+      var html = '\n      <div>\n        <div class="chartbox-header-top-row">\n          <div class="chartbox-name-container">\n            <h2 id="chartbox-stock-name" class="chartbox-stock-name"></h2>\n            <h3 id="chartbox-stock-symbol" class="chartbox-stock-symbol"></h3>\n          </div>\n          <div class="chartbox-watch-intervals-container">\n            <div id="chartbox-watch-button" class="chartbox-watchbutton"></div>\n            <div id="chartbox-intervals-container" class="chart-intervals-container"></div>\n          </div>\n        </div>\n        <div class="flex-hori-start" style="height: 32px;">\n          <div id="chartbox-latest-price" class="chartbox-latest-price"></div>\n          <div id="chartbox-change-percent" class="chartbox-change-percent"></div>\n        </div>\n      </div>\n      <div>\n        <canvas id="chartbox-chart" class="chart-container" width="900" height="320"></canvas>\n      </div>\n    ';
 
       this.$container.empty();
       this.$container.append(html);
@@ -17365,16 +17444,7 @@ var ChartBox = function () {
       this.currentInterval = _store2.default.get('current-interval');
       var storedData = _store2.default.get(this.symbol).chart[this.currentInterval];
       var companyName = _store2.default.get(this.symbol).quote.companyName;
-      // get closing prices for stock
-      var prices = this.getChartData(storedData, 'close');
-      // get dates for closing prices
-      var dates = this.getChartData(storedData, 'date');
 
-      // delete graph if any exists and create new graph
-      if (this.chart) {
-        this.chart.destroy();
-      }
-      this.chart = new _graph2.default('#chartbox-chart', prices, dates);
       this.intervalsBar = new _intervals2.default('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
       this.watchButton = new _watchButton2.default('#chartbox-watch-button', this.symbol, companyName);
     }
@@ -17433,13 +17503,13 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
 var _const = __webpack_require__(5);
 
-var _utility = __webpack_require__(184);
+var _utility = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17453,7 +17523,6 @@ var Intervals = function () {
     this.$intervalsContainer = (0, _jquery2.default)(intervalsContainerId);
     this.$chartContainer = (0, _jquery2.default)(chartContainerId);
     this.chartCanvas = document.getElementById(chartContainerId.substring(1)); // Used to clear initial canvas. See updateIntervalData()
-    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
     this.symbol = symbol;
     this.pageId = (0, _utility.getPageId)();
     this.chart;
@@ -17467,6 +17536,7 @@ var Intervals = function () {
     } else {
       _store2.default.set('current-interval', '1m');
     }
+    this.renderChart();
     this.renderIntervals();
     this.$intervalsList = (0, _jquery2.default)('#time-intervals');
     this.$intervalsItems = this.$intervalsList.find('li');
@@ -17497,21 +17567,6 @@ var Intervals = function () {
         that.currentInterval = selectedInterval;
         _store2.default.set('current-interval', selectedInterval);
 
-        /* The chart canvas is being cleared in this specific place and order
-        to allow the display of the spinning icon while new data is being fetched,
-        without having both the icon and the old chart being displayed simulataneously.
-        On the initial load, that.chart will be null so in this case, we have to
-        clear the chart canvas by using JS's clearRect() method. Once an interval
-        selected, that.chart will now equal a new Chart component which includes 
-        the destroy() method that we can use to empty the chart canvas.
-        */
-        if (!that.chart) {
-          var context = that.chartCanvas.getContext('2d');
-          context.clearRect(0, 0, that.chartCanvas.width, that.chartCanvas.height);
-        } else if (that.chart) {
-          that.chart.destroy();
-        }
-
         that.addActiveClass();
         that.renderChart();
       });
@@ -17533,14 +17588,14 @@ var Intervals = function () {
         // get dates for closing prices
         var dates = this.getChartData(_storedData, 'date');
 
-        if (this.chart === 'undefined') {
-          var context = this.chartCanvas.getContext('2d');
-          context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
-        } else if (this.chart) {
-          this.chart.destroy();
+        // If a chart already exists, just update chart with new data
+        if (this.chart) {
+          this.chart.updateChart(prices, dates);
         }
-
-        this.chart = new _graph2.default(this.chartContainerId, prices, dates);
+        // Otherwise, if no chart exists, create a new one.
+        else {
+            this.chart = new _graph2.default(this.chartContainerId, prices, dates);
+          }
       }
       // if it doesn't exist, make data request
       else {
@@ -17556,7 +17611,6 @@ var Intervals = function () {
       var _this = this;
 
       this.currentInterval = _store2.default.get('current-interval');
-      this.$loadingIcon.addClass('is-visible');
 
       _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.currentInterval + '?token=' + _const.API_TOKEN).then(function (response) {
         var storedData = _store2.default.get(_this.symbol);
@@ -17568,8 +17622,6 @@ var Intervals = function () {
         }
       }).catch(function (error) {
         return console.log(error);
-      }).then(function () {
-        _this.$loadingIcon.removeClass('is-visible');
       });
     }
 
@@ -17626,7 +17678,7 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _utility = __webpack_require__(184);
+var _utility = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -30956,7 +31008,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -31496,11 +31548,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _utility = __webpack_require__(184);
-
-var _graph = __webpack_require__(6);
-
-var _graph2 = _interopRequireDefault(_graph);
+var _utility = __webpack_require__(6);
 
 var _intervals = __webpack_require__(18);
 
@@ -31538,11 +31586,10 @@ var StockPopup = function () {
     this.$stockName = this.$popupContainer.find('#popup-stock-name');
     this.$tbody = this.$popupContainer.find('table tbody');
     this.$exitIcon = this.$popupContainer.find('.exit-icon');
-    this.$loadingIcon = this.$popupContainer.find('.icon-loading');
     this.$watchlistButton = this.$popupContainer.find('#popup-button-watchlist');
     this.chartCanvas = document.getElementById('popup-chart');
 
-    this.intervals = new _intervals2.default('#popup-intervals-container', this.symbol, '#popup-chart');
+    this.intervals;
     this.watchButton = new _watchButton2.default('#popup-watch-button', this.symbol, this.companyName);
     this.renderAllData();
     this.closePopup();
@@ -31554,7 +31601,7 @@ var StockPopup = function () {
   _createClass(StockPopup, [{
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n            </div>\n            <div id="popup-wbutton-intervals">\n              <div id="popup-watch-button" class="popup-watch-button"></div>\n              <div id="popup-intervals-container"></div>\n            </div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <div class="icon-loading">\n                <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>\n              </div>\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n            </div>\n            <div id="popup-wbutton-intervals">\n              <div id="popup-watch-button" class="popup-watch-button"></div>\n              <div id="popup-intervals-container"></div>\n            </div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -31566,7 +31613,8 @@ var StockPopup = function () {
       // check if there's locally stored data before making Ajax request
       if (_store2.default.get(this.symbol)) {
         this.renderStockInfo();
-        this.renderChart();
+        // new Intervals will dynamically create 
+        this.intervals = new _intervals2.default('#popup-intervals-container', this.symbol, '#popup-chart');
       } else {
         this.fetchStockData();
       }
@@ -31579,9 +31627,6 @@ var StockPopup = function () {
     value: function fetchStockData() {
       var _this = this;
 
-      // display loading icon
-      this.$loadingIcon.addClass('is-visible');
-      // request stock data
       _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&range=1m&token=' + _const.API_TOKEN).then(function (response) {
         var dataToStore = {
           chart: {
@@ -31598,11 +31643,10 @@ var StockPopup = function () {
           */
         if (response.status == 200) {
           _this.renderStockInfo();
-          _this.renderChart();
-          _this.$loadingIcon.removeClass('is-visible');
+          _this.renderAllData();
         }
       }).catch(function (error) {
-        return console.log(error.response.data.error);
+        return console.log(error);
       });
     }
 
@@ -31647,36 +31691,11 @@ var StockPopup = function () {
       this.$tbody.append(row);
     }
 
-    // RENDER CHART
-
-  }, {
-    key: 'renderChart',
-    value: function renderChart() {
-      var stockData = _store2.default.get('' + this.symbol).chart['1m'];
-
-      // get opening prices for company stock
-      var priceData = this.getChartData(stockData, 'close');
-
-      // get dates for the opening prices
-      var dateLabels = this.getChartData(stockData, 'date');
-
-      if (this.chart === 'undefined') {
-        var context = this.chartCanvas.getContext('2d');
-        context.clearRect(0, 0, this.chartCanvas.width, this.chartCanvas.height);
-      } else if (this.chart) {
-        this.chart.destroy();
-      }
-
-      // create new graph for this company stock
-      this.chart = new _graph2.default('#popup-chart', priceData, dateLabels);
-    }
-
     // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
 
   }, {
     key: 'getChartData',
     value: function getChartData(data, key) {
-      // console.log(data);
       return data.map(function (day) {
         if (key === 'date') {
           var fullDate = day[key].split('-');
@@ -31726,7 +31745,6 @@ var StockPopup = function () {
     value: function destroy() {
       this.$popupContainer.off();
       this.$popupContentContainer.off();
-      this.chart.destroy();
       this.$popupContainer.remove();
     }
   }]);
@@ -31878,7 +31896,7 @@ var _stockPopup = __webpack_require__(171);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
-var _utility = __webpack_require__(184);
+var _utility = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31893,7 +31911,6 @@ var StockList = function () {
     this.title = title;
     this.watchlist = _store2.default.get('watchlist') || [];
     this.renderHeaderHtml();
-    this.$loadingIcon = (0, _jquery2.default)('.icon-loading');
     this.$listContainer = (0, _jquery2.default)('#' + collectionName);
     this.renderAllData();
     this.displayPopup();
@@ -31924,15 +31941,12 @@ var StockList = function () {
     value: function fetchStocks() {
       var _this = this;
 
-      this.$loadingIcon.addClass('is-visible');
-
       _axios2.default.get(URL_BASE + '/market/collection/list?collectionName=' + this.collectionName + '&token=' + API_TOKEN).then(function (response) {
         console.log(response);
         _store2.default.set(_this.collectionName, response.data);
       }).catch(function (error) {
         return console.log(error);
       }).then(function () {
-        _this.$loadingIcon.removeClass('is-visible');
         _this.renderStockList();
       });
     }
@@ -32215,11 +32229,11 @@ var _news = __webpack_require__(9);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _utility = __webpack_require__(184);
+var _utility = __webpack_require__(6);
 
 var _const = __webpack_require__(5);
 
-var _graph = __webpack_require__(6);
+var _graph = __webpack_require__(7);
 
 var _graph2 = _interopRequireDefault(_graph);
 
@@ -32374,12 +32388,6 @@ var Watchlist = function () {
       }).catch(function (error) {
         return console.log(error);
       }).then(function () {
-        // const storedChartData = store.get(this.symbol).chart[this.interval];
-        // // get closing prices for stock
-        // const prices = this.getChartData(storedChartData, 'close');
-        // // get dates for closing prices
-        // const dates = this.getChartData(storedChartData, 'date');
-        // new Graph('#chartbox-chart', prices, dates);
         new _chartbox2.default('#watchlist-chart-container', _this2.symbol);
       });
     }
@@ -47694,84 +47702,6 @@ module.exports = function(module) {
 	return module;
 };
 
-
-/***/ }),
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */,
-/* 184 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.updateChart = updateChart;
-exports.getPageId = getPageId;
-exports.formatLargeNumber = formatLargeNumber;
-exports.formatNumberWithCommas = formatNumberWithCommas;
-exports.trimString = trimString;
-exports.calcLocalStorageAge = calcLocalStorageAge;
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function updateChart(Chart, prices, dates) {
-  Chart.data.datasets[0].data = prices;
-  Chart.data.labels = dates;
-  Chart.update();
-}
-
-// Get page id
-function getPageId() {
-  var pageId = document.URL.split('#')[1];
-
-  if (pageId.includes('/')) {
-    pageId = pageId.split('/')[0];
-  }
-
-  return pageId;
-}
-
-// Formate large numbers
-function formatLargeNumber(num) {
-  return Math.abs(Number(num)) >= 1.0e+9 ? (Math.abs(Number(num)) / 1.0e+9).toFixed(2) + "B"
-  // Six Zeroes for Millions 
-  : Math.abs(Number(num)) >= 1.0e+6 ? (Math.abs(Number(num)) / 1.0e+6).toFixed(2) + "M"
-  // Three Zeroes for Thousands
-  : Math.abs(Number(num)) >= 1.0e+3 ? (Math.abs(Number(num)) / 1.0e+3).toFixed(2) + "K" : Math.abs(Number(num)).toFixed(2);
-}
-
-// Insert commas into numbers
-function formatNumberWithCommas(num) {
-  return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// Trim strings to specified length
-function trimString(string, length) {
-  return string.length > length ? string.substring(0, length - 3) + '...' : string.substring(0, length);
-}
-
-// Calculate whether local storage for stock is more than 1 day old (24 hours)
-function calcLocalStorageAge(symbol) {
-  var oneDay = 60 * 60 * 24 * 1000;
-  var newTime = Date.now();
-  var oldTime = void 0;
-
-  // if stored data exists, calculate if data needs to be updated
-  if (_store2.default.get(symbol) !== null) {
-    oldTime = _store2.default.get(symbol).time;
-    return newTime - oldTime > oneDay;
-  } else {
-    return true;
-  }
-}
 
 /***/ })
 /******/ ]);
