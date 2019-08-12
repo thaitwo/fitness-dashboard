@@ -131,7 +131,7 @@ class StockPopup {
     } = stockData;
 
     // get stock info from local storage
-    changePercent = changePercent.toFixed(2);
+    changePercent = changePercent ? `${changePercent.toFixed(2)}%` : '';
     latestVolume = formatNumberWithCommas(Math.round(latestVolume));
     marketCap = formatLargeNumber(marketCap);
     const companyName = trimString(this.companyName, 36);
@@ -140,7 +140,7 @@ class StockPopup {
     // render stock name
     this.$stockName.text(`${companyName} (${this.symbol})`);
     this.$latestPriceContainer.text(latestPrice);
-    this.$changePercentContainer.text(`${plusOrMinus}${changePercent}%`);
+    this.$changePercentContainer.text(`${plusOrMinus}${changePercent}`);
     
     if (changePercent >= 0) {
       this.$changePercentContainer.addClass('percent-change-positive');

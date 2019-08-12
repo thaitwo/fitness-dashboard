@@ -61,11 +61,11 @@ class ChartBox {
   renderHeader() {
     const storeData = store.get(this.symbol).quote;
     const companyName = trimString(storeData.companyName, 36);
-    const changePercent = storeData.changePercent.toFixed(2);
+    const changePercent = storeData.changePercent ? `${storeData.changePercent.toFixed(2)}%` : '';
     const latestPrice = storeData.latestPrice;
     const plusOrMinus = (changePercent > 0) ? '+' : ''; // else condition is not '-' since data includes negative sign
     const latestPriceHtml = `<h2>${latestPrice}</2>`;
-    const changePercentHtml = `<h3>${plusOrMinus}${changePercent}%</h3>`;
+    const changePercentHtml = `<h3>${plusOrMinus}${changePercent}</h3>`;
 
     this.$stockName.html(companyName);
     this.$stockSymbol.html(`(${this.symbol})`);

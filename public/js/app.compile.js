@@ -17422,11 +17422,11 @@ var ChartBox = function () {
     value: function renderHeader() {
       var storeData = _store2.default.get(this.symbol).quote;
       var companyName = (0, _utility.trimString)(storeData.companyName, 36);
-      var changePercent = storeData.changePercent.toFixed(2);
+      var changePercent = storeData.changePercent ? storeData.changePercent.toFixed(2) + '%' : '';
       var latestPrice = storeData.latestPrice;
       var plusOrMinus = changePercent > 0 ? '+' : ''; // else condition is not '-' since data includes negative sign
       var latestPriceHtml = '<h2>' + latestPrice + '</2>';
-      var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '%</h3>';
+      var changePercentHtml = '<h3>' + plusOrMinus + changePercent + '</h3>';
 
       this.$stockName.html(companyName);
       this.$stockSymbol.html('(' + this.symbol + ')');
@@ -31658,7 +31658,7 @@ var StockPopup = function () {
 
       // get stock info from local storage
 
-      changePercent = changePercent.toFixed(2);
+      changePercent = changePercent ? changePercent.toFixed(2) + '%' : '';
       latestVolume = (0, _utility.formatNumberWithCommas)(Math.round(latestVolume));
       marketCap = (0, _utility.formatLargeNumber)(marketCap);
       var companyName = (0, _utility.trimString)(this.companyName, 36);
@@ -31667,7 +31667,7 @@ var StockPopup = function () {
       // render stock name
       this.$stockName.text(companyName + ' (' + this.symbol + ')');
       this.$latestPriceContainer.text(latestPrice);
-      this.$changePercentContainer.text('' + plusOrMinus + changePercent + '%');
+      this.$changePercentContainer.text('' + plusOrMinus + changePercent);
 
       if (changePercent >= 0) {
         this.$changePercentContainer.addClass('percent-change-positive');
