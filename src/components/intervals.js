@@ -5,6 +5,12 @@ import Graph from './graph.js';
 import { URL_BASE, API_TOKEN } from '../const.js';
 import { getPageId } from '../utility/utility.js';
 
+/* Any chart that is displayed along with a list of intervals will be created
+by this Intervals component. This allows this Intervals component to have
+reference to the chart so that it can update the chart data instead of having
+to create new chart.
+*/
+
 class Intervals {
   constructor(intervalsContainerId, symbol, chartContainerId) {
     this.chartContainerId = chartContainerId;

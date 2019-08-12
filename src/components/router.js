@@ -8,7 +8,6 @@ const DASHBOARD_URL = 'stocks/';
 
 class Router {
   constructor(navContainerId) {
-    this.$canvas = $('.canvas');
     this.$navContainer = $(navContainerId);
 
     // INITIALIZE NAVIGO ROUTER
@@ -48,10 +47,10 @@ class Router {
         // Insert functionality
       },
       'watchlist': () => {
-        this.currentPage = new Watchlist(this.$canvas);
+        this.currentPage = new Watchlist('#canvas');
       },
       '*': () => {
-        this.currentPage = new StocksPage(this.$canvas);
+        this.currentPage = new StocksPage('#canvas');
       }
     })
     .resolve();
@@ -59,8 +58,8 @@ class Router {
     // Global hook => clear page & event handlers before loading new route/page
     this.router.hooks({
       before: (done) => {
-        if (this.currentPage && this.currentPage.destroy) {
-          this.currentPage.destroy();
+        if (this.currentPage && this.currentPage.destroyPage) {
+          this.currentPage.destroyPage();
         }
         done();
       }

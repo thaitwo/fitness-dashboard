@@ -89,24 +89,9 @@ class ChartBox {
     const storedData = store.get(this.symbol).chart[this.currentInterval];
     const companyName = store.get(this.symbol).quote.companyName;
     
+    // Intervals component will create a list of intervals AND a chart
     this.intervalsBar = new Intervals('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
     this.watchButton = new WatchButton('#chartbox-watch-button', this.symbol, companyName);
-  }
-
-
-  // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getChartData(data, key) {
-    return data.map((day) => {
-      if (key === 'date') {
-        const fullDate = day[key].split('-');
-        let [ year, month, date ] = fullDate;
-        month = month.replace(/^0+/, ''); // Remove leading '0'
-        
-        return `${month}-${date}-${year}`;
-      } else {
-        return day[key];
-      }
-    });
   }
 }
 

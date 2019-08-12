@@ -187,22 +187,6 @@ class StockPopup {
   }
 
 
-  // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getChartData(data, key) {
-    return data.map((day) => {
-      if (key === 'date') {
-        const fullDate = day[key].split('-');
-        let [ year, month, date ] = fullDate;
-        month = month.replace(/^0+/, ''); // Remove leading '0'
-
-        return `${month}-${date}-${year}`;
-      } else {
-        return day[key];
-      }
-    });
-  }
-
-
   // CLOSE POPUP EVENT HANDLER
   closePopup() {
     const that = this;
@@ -215,18 +199,16 @@ class StockPopup {
     // Remove popup modal on click of exit icon
     this.$exitIcon.on('click', function(event) {
       event.stopPropagation();
-      that.destroy();
+      that.destroyPopup();
     });
 
     // Remove popup modal on click outside of modal
-    this.$popupContainer.on('click', function() {
-      that.destroy();
-    });
+    this.$popupContainer.on('click', () => this.destroyPopup());
   }
 
 
   // REMOVE EVENT LISTENERS & DESTROY POPUP HTML
-  destroy() {
+  destroyPopup() {
     this.$popupContainer.off();
     this.$popupContentContainer.off();
     this.$popupContainer.remove();

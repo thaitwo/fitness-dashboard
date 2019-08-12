@@ -12,6 +12,9 @@ import Chart from 'chart.js';
 * @returns {Object}
 */
 
+/* This component is name Graph instead of Chart to avoid a duplication conflict
+with the the Chart Prototype from Chart.js
+*/
 class Graph {
   constructor(canvasId, newData, newLabels, chartType = 'line', options) {
     this.$canvasId = $(canvasId);
@@ -41,12 +44,12 @@ class Graph {
 
     this.options = options || this.getOptions();
 
-    this.renderGraph();
+    this.renderChart();
   }
 
 
   // DESTROY GRAPH
-  destroy() {
+  destroyChart() {
     if (this.chart) {
       this.chart.destroy();
     }
@@ -56,8 +59,11 @@ class Graph {
   // UPDATE CHART DATA
   updateChart(prices, dates) {
     if (this.chart) {
+      // To update chart, simply assign new data to the two data values below. Both are arrays.
       this.chart.data.datasets[0].data = prices;
       this.chart.data.labels = dates;
+
+      // Then update chart by calling the update() method from the Chart Prototype
       this.chart.update({
         duration: 600,
         easing: 'easeOutCubic'
@@ -122,7 +128,7 @@ class Graph {
 
 
   // RENDER NEW CHART
-  renderGraph() {
+  renderChart() {
 
     this.chart = new Chart(this.$canvasId, {
       type: this.chartType,

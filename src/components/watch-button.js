@@ -52,8 +52,7 @@ class WatchButton {
     return this.watchlist.some(stock => stock.symbol === this.symbol);
   }
 
-  // Fix watch button class name, remove 'popup'
-
+  
   // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
   addOrRemoveFromWatchlistHandler() {
     const that = this;

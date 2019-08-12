@@ -9,7 +9,7 @@ import { URL_BASE, API_TOKEN } from '../const';
 class Stock {
   constructor(symbol) {
     this.symbol = symbol;
-    this.$canvas = $('.canvas');
+    this.$canvas = $('#canvas');
     this.interval = '1m';
     this.renderHtml();
 
@@ -71,6 +71,14 @@ class Stock {
       new KeyStats('#singlestock-keystats-container', this.symbol);
       new News('#singlestock-news-container', [this.symbol], this.symbol);
     })
+  }
+
+
+  // DESTROY PAGE
+  destroyPage() {
+    if (this.$canvas) {
+      this.$canvas.empty();
+    }
   }
 }
 

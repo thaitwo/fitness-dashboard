@@ -15869,6 +15869,11 @@ Object.defineProperty(exports, "__esModule", {
 var URL_BASE = 'https://cloud.iexapis.com/v1/stock';
 var API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
 
+/* SANDBOX VARIABLES FOR DEV ENVIRONMENT
+URL_BASE = https://sandbox.iexapis.com/v1/stock
+API_TOKEN = Tpk_8d25ed3be77a45ddb7919558e730257f
+*/
+
 exports.URL_BASE = URL_BASE;
 exports.API_TOKEN = API_TOKEN;
 
@@ -16083,6 +16088,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * @returns {Object}
 */
 
+/* This component is name Graph instead of Chart to avoid a duplication conflict
+with the the Chart Prototype from Chart.js
+*/
 var Graph = function () {
   function Graph(canvasId, newData, newLabels) {
     var chartType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'line';
@@ -16117,15 +16125,15 @@ var Graph = function () {
 
     this.options = options || this.getOptions();
 
-    this.renderGraph();
+    this.renderChart();
   }
 
   // DESTROY GRAPH
 
 
   _createClass(Graph, [{
-    key: 'destroy',
-    value: function destroy() {
+    key: 'destroyChart',
+    value: function destroyChart() {
       if (this.chart) {
         this.chart.destroy();
       }
@@ -16137,8 +16145,11 @@ var Graph = function () {
     key: 'updateChart',
     value: function updateChart(prices, dates) {
       if (this.chart) {
+        // To update chart, simply assign new data to the two data values below. Both are arrays.
         this.chart.data.datasets[0].data = prices;
         this.chart.data.labels = dates;
+
+        // Then update chart by calling the update() method from the Chart Prototype
         this.chart.update({
           duration: 600,
           easing: 'easeOutCubic'
@@ -16206,8 +16217,8 @@ var Graph = function () {
     // RENDER NEW CHART
 
   }, {
-    key: 'renderGraph',
-    value: function renderGraph() {
+    key: 'renderChart',
+    value: function renderChart() {
 
       this.chart = new _chart2.default(this.$canvasId, {
         type: this.chartType,
@@ -16447,8 +16458,6 @@ var WatchButton = function () {
         return stock.symbol === _this.symbol;
       });
     }
-
-    // Fix watch button class name, remove 'popup'
 
     // ADD/REMOVE FROM WATCHLIST CLICK HANDLER
 
@@ -17345,8 +17354,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _jquery = __webpack_require__(1);
@@ -17445,31 +17452,9 @@ var ChartBox = function () {
       var storedData = _store2.default.get(this.symbol).chart[this.currentInterval];
       var companyName = _store2.default.get(this.symbol).quote.companyName;
 
+      // Intervals component will create a list of intervals AND a chart
       this.intervalsBar = new _intervals2.default('#chartbox-intervals-container', this.symbol, '#chartbox-chart');
       this.watchButton = new _watchButton2.default('#chartbox-watch-button', this.symbol, companyName);
-    }
-
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getChartData',
-    value: function getChartData(data, key) {
-      return data.map(function (day) {
-        if (key === 'date') {
-          var fullDate = day[key].split('-');
-
-          var _fullDate = _slicedToArray(fullDate, 3),
-              year = _fullDate[0],
-              month = _fullDate[1],
-              date = _fullDate[2];
-
-          month = month.replace(/^0+/, ''); // Remove leading '0'
-
-          return month + '-' + date + '-' + year;
-        } else {
-          return day[key];
-        }
-      });
     }
   }]);
 
@@ -17514,6 +17499,12 @@ var _utility = __webpack_require__(6);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Any chart that is displayed along with a list of intervals will be created
+by this Intervals component. This allows this Intervals component to have
+reference to the chart so that it can update the chart data instead of having
+to create new chart.
+*/
 
 var Intervals = function () {
   function Intervals(intervalsContainerId, symbol, chartContainerId) {
@@ -17689,7 +17680,7 @@ var KeyStats = function () {
     _classCallCheck(this, KeyStats);
 
     this.$container = (0, _jquery2.default)(containerId);
-    // If data for stock exists in localStorage...
+    // If data for stock exists in localStorage, retrieve it.
     if (_store2.default.get(symbol).quote !== null) {
       this.data = _store2.default.get(symbol).quote;
       this.close = this.data.close;
@@ -31246,7 +31237,6 @@ var Router = function () {
   function Router(navContainerId) {
     _classCallCheck(this, Router);
 
-    this.$canvas = (0, _jquery2.default)('.canvas');
     this.$navContainer = (0, _jquery2.default)(navContainerId);
 
     // INITIALIZE NAVIGO ROUTER
@@ -31291,18 +31281,18 @@ var Router = function () {
           // Insert functionality
         },
         'watchlist': function watchlist() {
-          _this.currentPage = new _watchlist2.default(_this.$canvas);
+          _this.currentPage = new _watchlist2.default('#canvas');
         },
         '*': function _() {
-          _this.currentPage = new _stocksPage2.default(_this.$canvas);
+          _this.currentPage = new _stocksPage2.default('#canvas');
         }
       }).resolve();
 
       // Global hook => clear page & event handlers before loading new route/page
       this.router.hooks({
         before: function before(done) {
-          if (_this.currentPage && _this.currentPage.destroy) {
-            _this.currentPage.destroy();
+          if (_this.currentPage && _this.currentPage.destroyPage) {
+            _this.currentPage.destroyPage();
           }
           done();
         }
@@ -31532,8 +31522,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _jquery = __webpack_require__(1);
@@ -31691,34 +31679,13 @@ var StockPopup = function () {
       this.$tbody.append(row);
     }
 
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getChartData',
-    value: function getChartData(data, key) {
-      return data.map(function (day) {
-        if (key === 'date') {
-          var fullDate = day[key].split('-');
-
-          var _fullDate = _slicedToArray(fullDate, 3),
-              year = _fullDate[0],
-              month = _fullDate[1],
-              date = _fullDate[2];
-
-          month = month.replace(/^0+/, ''); // Remove leading '0'
-
-          return month + '-' + date + '-' + year;
-        } else {
-          return day[key];
-        }
-      });
-    }
-
     // CLOSE POPUP EVENT HANDLER
 
   }, {
     key: 'closePopup',
     value: function closePopup() {
+      var _this2 = this;
+
       var that = this;
 
       // Disable closing of viewer upon click on popup container
@@ -31729,20 +31696,20 @@ var StockPopup = function () {
       // Remove popup modal on click of exit icon
       this.$exitIcon.on('click', function (event) {
         event.stopPropagation();
-        that.destroy();
+        that.destroyPopup();
       });
 
       // Remove popup modal on click outside of modal
       this.$popupContainer.on('click', function () {
-        that.destroy();
+        return _this2.destroyPopup();
       });
     }
 
     // REMOVE EVENT LISTENERS & DESTROY POPUP HTML
 
   }, {
-    key: 'destroy',
-    value: function destroy() {
+    key: 'destroyPopup',
+    value: function destroyPopup() {
       this.$popupContainer.off();
       this.$popupContentContainer.off();
       this.$popupContainer.remove();
@@ -31804,7 +31771,7 @@ var Stock = function () {
     _classCallCheck(this, Stock);
 
     this.symbol = symbol;
-    this.$canvas = (0, _jquery2.default)('.canvas');
+    this.$canvas = (0, _jquery2.default)('#canvas');
     this.interval = '1m';
     this.renderHtml();
 
@@ -31855,6 +31822,16 @@ var Stock = function () {
         new _keystats2.default('#singlestock-keystats-container', _this.symbol);
         new _news2.default('#singlestock-news-container', [_this.symbol], _this.symbol);
       });
+    }
+
+    // DESTROY PAGE
+
+  }, {
+    key: 'destroyPage',
+    value: function destroyPage() {
+      if (this.$canvas) {
+        this.$canvas.empty();
+      }
     }
   }]);
 
@@ -31913,8 +31890,11 @@ var StockList = function () {
     this.renderHeaderHtml();
     this.$listContainer = (0, _jquery2.default)('#' + collectionName);
     this.renderAllData();
-    this.displayPopup();
+    this.renderPopupOnClick();
   }
+
+  // DISPLAY THE HEADER FOR THE LIST OF STOCKS
+
 
   _createClass(StockList, [{
     key: 'renderHeaderHtml',
@@ -31924,6 +31904,9 @@ var StockList = function () {
       this.$container.empty();
       this.$container.append(html);
     }
+
+    // CHECK FOR STORED DATA BEFORE RENDERING LIST OF STOCKS
+
   }, {
     key: 'renderAllData',
     value: function renderAllData() {
@@ -31960,6 +31943,9 @@ var StockList = function () {
         return stock.symbol === symbol;
       });
     }
+
+    // DISPLAY LIST OF STOCKS
+
   }, {
     key: 'renderStockList',
     value: function renderStockList() {
@@ -31994,11 +31980,14 @@ var StockList = function () {
       });
 
       (0, _jquery2.default)('#' + this.collectionName).append(stocksList);
-      this.activateWatchButtons();
+      this.renderWatchButtons();
     }
+
+    // DISPLAY WATCH BUTTONS FOR THE STOCKS
+
   }, {
-    key: 'activateWatchButtons',
-    value: function activateWatchButtons() {
+    key: 'renderWatchButtons',
+    value: function renderWatchButtons() {
       var _this3 = this;
 
       var stocks = _store2.default.get(this.collectionName);
@@ -32010,9 +31999,12 @@ var StockList = function () {
         new _watchButton2.default('#' + _this3.collectionName + '-' + symbol + '-watchbutton', symbol, companyName);
       });
     }
+
+    // DISPLAY POPUP WHEN STOCK IS CLICKED ON
+
   }, {
-    key: 'displayPopup',
-    value: function displayPopup() {
+    key: 'renderPopupOnClick',
+    value: function renderPopupOnClick() {
       this.$listContainer.on('click', 'li.stocklist-item', function (event) {
         event.preventDefault();
         var symbol = (0, _jquery2.default)(this).find('.stock-code')[0].innerText;
@@ -32071,10 +32063,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var StocksPage = function () {
-  function StocksPage(container) {
+  function StocksPage(canvasId) {
     _classCallCheck(this, StocksPage);
 
-    this.$container = container;
+    this.$canvas = (0, _jquery2.default)(canvasId);
     this.graph;
     this.popup;
     this.watchlist = _store2.default.get('watchlist') || [];
@@ -32105,8 +32097,8 @@ var StocksPage = function () {
     key: 'render',
     value: function render() {
       var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="mostactive-container" class="box margin-right"></div>\n          <div id="home-news" class="box"></div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right"></div>\n          <div id="losers-container" class="box"></div>\n        </div>\n      ';
-      this.$container.empty();
-      this.$container.append(html);
+      this.$canvas.empty();
+      this.$canvas.append(html);
     }
 
     // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
@@ -32176,11 +32168,14 @@ var StocksPage = function () {
         _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'home-news', 1);
       });
     }
+
+    // DESTROY PAGE
+
   }, {
-    key: 'destroy',
-    value: function destroy() {
-      if (this.$stocksContainer) {
-        this.$container.empty();
+    key: 'destroyPage',
+    value: function destroyPage() {
+      if (this.$canvas) {
+        this.$canvas.empty();
       }
     }
   }]);
@@ -32200,8 +32195,6 @@ exports.default = StocksPage;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -32243,13 +32236,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// make latest price consistently update
-
 var Watchlist = function () {
-  function Watchlist(container) {
+  function Watchlist(canvasId) {
     _classCallCheck(this, Watchlist);
 
-    this.$canvas = container;
+    this.$canvas = (0, _jquery2.default)(canvasId);
     this.symbol;
     this.chartBox;
     this.keyStats;
@@ -32283,7 +32274,6 @@ var Watchlist = function () {
     }
 
     this.$watchlistCanvas = (0, _jquery2.default)('.watchlist-canvas');
-    this.$watchlistContainer = this.$watchlistCanvas.find('.watchlist-container');
     this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
     this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
@@ -32359,7 +32349,7 @@ var Watchlist = function () {
       if (_store2.default.get(this.symbol) !== null) {
         this.currentInterval = _store2.default.get('current-interval');
         /* If data for the current-interval for this stock does exist,
-        Create a new Chartbox. Else, fetch new data for the interval
+        Create a new Chartbox. Else, fetch new data for the interval.
         */
         if (_store2.default.get(this.symbol).chart[this.currentInterval]) {
           this.chartBox = new _chartbox2.default('#watchlist-chart-container', this.symbol);
@@ -32373,6 +32363,9 @@ var Watchlist = function () {
         this.fetchStockData();
       }
     }
+
+    // MAKE API CALL TO FETCH DATA FOR THE SELECTED STOCK
+
   }, {
     key: 'fetchChartData',
     value: function fetchChartData() {
@@ -32484,34 +32477,11 @@ var Watchlist = function () {
       });
     }
 
-    // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-
-  }, {
-    key: 'getChartData',
-    value: function getChartData(data, key) {
-      return data.map(function (day) {
-        if (key === 'date') {
-          var fullDate = day[key].split('-');
-
-          var _fullDate = _slicedToArray(fullDate, 3),
-              year = _fullDate[0],
-              month = _fullDate[1],
-              date = _fullDate[2];
-
-          month = month.replace(/^0+/, ''); // Remove leading '0'
-
-          return month + '-' + date + '-' + year;
-        } else {
-          return day[key];
-        }
-      });
-    }
-
     // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
 
   }, {
-    key: 'destroy',
-    value: function destroy() {
+    key: 'destroyPage',
+    value: function destroyPage() {
       if (this.$watchlistCanvas) {
         this.$canvas.empty();
       }

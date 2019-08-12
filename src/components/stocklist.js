@@ -14,10 +14,11 @@ class StockList {
     this.renderHeaderHtml();
     this.$listContainer = $(`#${collectionName}`);
     this.renderAllData();
-    this.displayPopup();
+    this.renderPopupOnClick();
   }
 
 
+  // DISPLAY THE HEADER FOR THE LIST OF STOCKS
   renderHeaderHtml() {
     const html = `
       <h2 class="text-header">${this.title}</h2>
@@ -40,6 +41,7 @@ class StockList {
   }
 
 
+  // CHECK FOR STORED DATA BEFORE RENDERING LIST OF STOCKS
   renderAllData() {
     if (store.get(this.collectionName) !== null) {
       this.renderStockList();
@@ -69,6 +71,7 @@ class StockList {
   }
 
 
+  // DISPLAY LIST OF STOCKS
   renderStockList() {
     const stocks = store.get(this.collectionName);
 
@@ -110,11 +113,12 @@ class StockList {
     });
 
     $(`#${this.collectionName}`).append(stocksList);
-    this.activateWatchButtons();
+    this.renderWatchButtons();
   }
 
 
-  activateWatchButtons() {
+  // DISPLAY WATCH BUTTONS FOR THE STOCKS
+  renderWatchButtons() {
     const stocks = store.get(this.collectionName);
 
     stocks.slice(0,5).map((stock) => {
@@ -124,7 +128,8 @@ class StockList {
   }
 
 
-  displayPopup() {
+  // DISPLAY POPUP WHEN STOCK IS CLICKED ON
+  renderPopupOnClick() {
     this.$listContainer.on('click', 'li.stocklist-item', function(event) {
       event.preventDefault();
       const symbol = $(this).find('.stock-code')[0].innerText;

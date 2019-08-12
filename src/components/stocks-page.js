@@ -7,8 +7,8 @@ import StockList from './stocklist.js';
 import { URL_BASE, API_TOKEN } from '../const.js';
 
 class StocksPage {
-  constructor(container) {
-    this.$container = container;
+  constructor(canvasId) {
+    this.$canvas = $(canvasId);
     this.graph;
     this.popup;
     this.watchlist = store.get('watchlist') || [];
@@ -49,8 +49,8 @@ class StocksPage {
           <div id="losers-container" class="box"></div>
         </div>
       `;
-    this.$container.empty();
-    this.$container.append(html);
+    this.$canvas.empty();
+    this.$canvas.append(html);
   }
 
 
@@ -117,10 +117,10 @@ class StocksPage {
     });
   }
 
-
-  destroy() {
-    if (this.$stocksContainer) {
-      this.$container.empty();
+  // DESTROY PAGE
+  destroyPage() {
+    if (this.$canvas) {
+      this.$canvas.empty();
     }
   }
 }

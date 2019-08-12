@@ -8,11 +8,9 @@ import { calcLocalStorageAge, trimString } from '../utility/utility.js';
 import { URL_BASE, API_TOKEN } from '../const';
 import Graph from './graph.js';
 
-// make latest price consistently update
-
 class Watchlist {
-  constructor(container) {
-    this.$canvas = container;
+  constructor(canvasId) {
+    this.$canvas = $(canvasId);
     this.symbol;
     this.chartBox;
     this.keyStats;
@@ -46,7 +44,6 @@ class Watchlist {
     }
 
     this.$watchlistCanvas = $('.watchlist-canvas');
-    this.$watchlistContainer = this.$watchlistCanvas.find('.watchlist-container');
     this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
     this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
     this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
@@ -142,7 +139,7 @@ class Watchlist {
     if (store.get(this.symbol) !== null) {
       this.currentInterval = store.get('current-interval');
       /* If data for the current-interval for this stock does exist,
-      Create a new Chartbox. Else, fetch new data for the interval
+      Create a new Chartbox. Else, fetch new data for the interval.
       */
       if (store.get(this.symbol).chart[this.currentInterval]) {
         this.chartBox = new ChartBox('#watchlist-chart-container', this.symbol);
@@ -158,6 +155,7 @@ class Watchlist {
   }
 
 
+  // MAKE API CALL TO FETCH DATA FOR THE SELECTED STOCK
   fetchChartData() {
     this.currentInterval = store.get('current-interval');
 
@@ -265,24 +263,8 @@ class Watchlist {
   }
 
 
-  // GET SPECIFIC DATA ARRAY OF COMPANY (STOCK OPEN PRICES, DATES, ETC.)
-  getChartData(data, key) {
-    return data.map((day) => {
-      if (key === 'date') {
-        const fullDate = day[key].split('-');
-        let [ year, month, date ] = fullDate;
-        month = month.replace(/^0+/, ''); // Remove leading '0'
-        
-        return `${month}-${date}-${year}`;
-      } else {
-        return day[key];
-      }
-    });
-  }
-
-
   // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
-  destroy() {
+  destroyPage() {
     if (this.$watchlistCanvas) {
       this.$canvas.empty();
     }

@@ -5,7 +5,7 @@ import { formatLargeNumber, formatNumberWithCommas } from '../utility/utility.js
 class KeyStats {
   constructor(containerId, symbol) {
     this.$container = $(containerId);
-    // If data for stock exists in localStorage...
+    // If data for stock exists in localStorage, retrieve it.
     if (store.get(symbol).quote !== null) {
       this.data = store.get(symbol).quote;
       this.close = this.data.close;
