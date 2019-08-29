@@ -24,7 +24,7 @@ The IEX Cloud API was used for this application. To learn more about the IEX CLo
 	- Open **const.js** file
 	- Change `URL_BASE` and `API_TOKEN` variables to the sandbox variables provide in the comment section of this file
 	- This sandbox environment allows for unlimited calls to the API
-	- NOTE: API calls will not work unless the `URL_BASE` and `API_TOKEN` variables are updated to the sanbox variables
+	- NOTE: API calls will not work unless the `URL_BASE` and `API_TOKEN` variables are updated to the sandbox variables
 2. From the root directory run `python -m SimpleHTTPServer 8000`
 3. To compile changes, run `webpack --watch`
 4. Open browser to [localhost:8000](http://localhost:8000)
