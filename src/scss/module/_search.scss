@@ -7,19 +7,18 @@
   max-width: 632px;
 
   #search-box.active {
-    border-radius: 3px 3px 0 0;
+    border-radius: 6px 6px 0 0;
   }
 
   #search-suggestions.active {
-    // padding: 10px 0;
-    // border-top: 1px solid $bluegrey-200;
+    overflow: hidden;
   }
 }
 
 #search-box {
-  background-color: $white;
+  background-color: rgba($white, 0.6);
   border: none;
-  border-radius: 3px;
+  border-radius: 6px;
   box-sizing: border-box;
   color: rgba(0, 0, 0, 0.8);
   font-family: "Roboto", sans-serif;
@@ -33,14 +32,15 @@
   transition: all .3s;
   width: 100%;
 
-  &:focus {
+  &:focus,
+  &:hover {
     background-color: $bluegrey-50;
   }
 }
 
 #search-suggestions {
   background-color: $white;
-  border-radius: 0 0 3px 3px;
+  border-radius: 0 0 6px 6px;
 
   div {
     font-size: .9rem;

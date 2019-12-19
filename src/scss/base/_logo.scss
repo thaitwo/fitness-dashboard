@@ -1,11 +1,24 @@
 .logo {
   background-color: $colorDark-dark;
   color: $colorDark-accent;
+  cursor: pointer;
+  display: block;
   font-family: $font-primary;
   font-size: 24px;
   font-weight: 600;
   line-height: 64px;
   height: 64px;
-  margin: 0;
-  padding-left: 33px;
+  width: 64px;
+  margin: 0 auto;
+
+  img {
+    height: 100%;
+    opacity: .6;
+    transition: all 0.1s;
+    width: 100%;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 }

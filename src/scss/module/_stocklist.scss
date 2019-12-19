@@ -29,6 +29,7 @@
   li.stocklist-item {
     border-bottom: 1px solid rgba($white, .06);
     color: $white;
+    cursor: pointer;
     display: flex;
     justify-content: space-between;
     padding: 8px 0;
@@ -38,12 +39,8 @@
       border-bottom: none;
     }
 
-    &:hover {
-      cursor: pointer;
-
-      .stock-name {
-        color: $colorDark-accent;
-      }
+    &:hover .stock-name {
+      color: $colorDark-accent;
     }
 
     div {

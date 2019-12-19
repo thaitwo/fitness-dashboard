@@ -1,10 +1,10 @@
 import './scss/style.scss';
-import Nav from './components/nav.js';
-import Search from './components/search.js';
+import Nav from './js/components/nav.js';
+import Search from './js/components/search.js';
 
 class App {
   constructor() {
-    new Nav('#nav-sidebar', true);
+    new Nav('#sidebar-nav', true);
     new Search('#top-bar');
   }
 }

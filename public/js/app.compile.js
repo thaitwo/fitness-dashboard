@@ -15866,13 +15866,13 @@ module.exports = __webpack_require__(150);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+/*** PRODUCTION ENVIRONMENT ***/
 var URL_BASE = 'https://cloud.iexapis.com/v1/stock';
 var API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
 
-/* SANDBOX VARIABLES FOR DEV ENVIRONMENT
-URL_BASE = https://sandbox.iexapis.com/v1/stock
-API_TOKEN = Tpk_8d25ed3be77a45ddb7919558e730257f
-*/
+/*** SANDBOX ENVIRONMENT ***/
+// const URL_BASE = 'https://sandbox.iexapis.com/v1/stock';
+// const API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
 
 exports.URL_BASE = URL_BASE;
 exports.API_TOKEN = API_TOKEN;
@@ -16473,6 +16473,11 @@ var WatchButton = function () {
         that.watchlist = _store2.default.get('watchlist');
         that.toggleButtonState(that.isWatched);
 
+        // const $stockListWatchButton = $(`#canvas #${that.symbol}-watchbutton`);
+        // $stockListWatchButton.toggleClass('isWatched');
+        // console.log($stockListWatchButton.attr('class'));
+
+
         // if stock is not in watchlist, then add to watchlist
         if (!that.isWatched) {
           that.watchlist.push({
@@ -16510,14 +16515,14 @@ var WatchButton = function () {
   }, {
     key: 'updateStarIcon',
     value: function updateStarIcon(isWatched) {
-      var $starIconWrapper = (0, _jquery2.default)('.stock-list').find('li#' + this.symbol + ' .icon-watchlist');
+      var $starIconWrapper = (0, _jquery2.default)('.stocklist').find('#' + this.symbol + '-watchbutton');
       var $starIcon = $starIconWrapper.find('i');
 
       if (isWatched) {
-        $starIconWrapper.removeClass('is-selected');
+        $starIconWrapper.removeClass('isWatched');
         $starIcon.removeClass('fas').addClass('far');
       } else {
-        $starIconWrapper.addClass('is-selected');
+        $starIconWrapper.addClass('isWatched');
         $starIcon.removeClass('far').addClass('fas');
       }
     }
@@ -30966,7 +30971,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var App = function App() {
   _classCallCheck(this, App);
 
-  new _nav2.default('#nav-sidebar', true);
+  new _nav2.default('#sidebar-nav', true);
   new _search2.default('#top-bar');
 };
 
@@ -31215,15 +31220,15 @@ var _navigo = __webpack_require__(11);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stock = __webpack_require__(172);
+var _stockPage = __webpack_require__(175);
 
-var _stock2 = _interopRequireDefault(_stock);
+var _stockPage2 = _interopRequireDefault(_stockPage);
 
-var _stocksPage = __webpack_require__(174);
+var _homePage = __webpack_require__(174);
 
-var _stocksPage2 = _interopRequireDefault(_stocksPage);
+var _homePage2 = _interopRequireDefault(_homePage);
 
-var _watchlist = __webpack_require__(175);
+var _watchlist = __webpack_require__(173);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -31273,7 +31278,7 @@ var Router = function () {
       this.router.on({
         'stocks/:symbol': function stocksSymbol(params) {
           var symbol = params.symbol.toUpperCase();
-          _this.currentPage = new _stock2.default(symbol);
+          _this.currentPage = new _stockPage2.default(symbol);
           // Remove active styles for Sidenav items
           _this.$navContainer.find('.active').removeClass('active');
         },
@@ -31284,7 +31289,7 @@ var Router = function () {
           _this.currentPage = new _watchlist2.default('#canvas');
         },
         '*': function _() {
-          _this.currentPage = new _stocksPage2.default('#canvas');
+          _this.currentPage = new _homePage2.default('#canvas');
         }
       }).resolve();
 
@@ -31746,125 +31751,6 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _chartbox = __webpack_require__(17);
-
-var _chartbox2 = _interopRequireDefault(_chartbox);
-
-var _keystats = __webpack_require__(19);
-
-var _keystats2 = _interopRequireDefault(_keystats);
-
-var _news = __webpack_require__(9);
-
-var _news2 = _interopRequireDefault(_news);
-
-var _const = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Stock = function () {
-  function Stock(symbol) {
-    _classCallCheck(this, Stock);
-
-    this.symbol = symbol;
-    this.$canvas = (0, _jquery2.default)('#canvas');
-    this.interval = '1m';
-    this.renderHtml();
-
-    // If data exists in local storage...
-    if (_store2.default.get(this.symbol) !== null) {
-      new _chartbox2.default('#singlestock-chart-container', this.symbol);
-      new _keystats2.default('#singlestock-keystats-container', this.symbol);
-      new _news2.default('#singlestock-news-container', [this.symbol], this.symbol);
-    }
-    // If data doesn't exist...
-    else {
-        this.fetchData();
-      }
-  }
-
-  // RENDER HTML LAYOUT
-
-
-  _createClass(Stock, [{
-    key: 'renderHtml',
-    value: function renderHtml() {
-      var html = '\n      <div>\n        <div>\n          <div>\n            <div id="singlestock-chart-container" class="box"></div>\n          </div>\n          <div class="stock-summary-container">\n            <div id="singlestock-keystats-container" class="box margin-right"></div>\n            <div id="singlestock-news-container" class="news-container box">\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
-
-      this.$canvas.empty();
-      this.$canvas.append(html);
-    }
-
-    // FETCH DATA WITH AJAX
-
-  }, {
-    key: 'fetchData',
-    value: function fetchData() {
-      var _this = this;
-
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=1m&token=' + _const.API_TOKEN).then(function (response) {
-        var symbol = _this.symbol.toUpperCase();
-        var dataToStore = {
-          chart: _defineProperty({}, _this.interval, response.data.chart),
-          news: response.data.news,
-          quote: response.data.quote,
-          time: Date.now()
-        };
-        _store2.default.set(symbol, dataToStore);
-      }).catch(function (error) {
-        console.log(error);
-      }).finally(function () {
-        new _chartbox2.default('#singlestock-chart-container', _this.symbol);
-        new _keystats2.default('#singlestock-keystats-container', _this.symbol);
-        new _news2.default('#singlestock-news-container', [_this.symbol], _this.symbol);
-      });
-    }
-
-    // DESTROY PAGE
-
-  }, {
-    key: 'destroyPage',
-    value: function destroyPage() {
-      if (this.$canvas) {
-        this.$canvas.empty();
-      }
-    }
-  }]);
-
-  return Stock;
-}();
-
-exports.default = Stock;
-
-/***/ }),
-/* 173 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
 var _watchButton = __webpack_require__(10);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
@@ -31925,7 +31811,6 @@ var StockList = function () {
       var _this = this;
 
       _axios2.default.get(URL_BASE + '/market/collection/list?collectionName=' + this.collectionName + '&token=' + API_TOKEN).then(function (response) {
-        console.log(response);
         _store2.default.set(_this.collectionName, response.data);
       }).catch(function (error) {
         return console.log(error);
@@ -32020,173 +31905,7 @@ var StockList = function () {
 exports.default = StockList;
 
 /***/ }),
-/* 174 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _graphCard = __webpack_require__(168);
-
-var _graphCard2 = _interopRequireDefault(_graphCard);
-
-var _news = __webpack_require__(9);
-
-var _news2 = _interopRequireDefault(_news);
-
-var _stocklist = __webpack_require__(173);
-
-var _stocklist2 = _interopRequireDefault(_stocklist);
-
-var _const = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var StocksPage = function () {
-  function StocksPage(canvasId) {
-    _classCallCheck(this, StocksPage);
-
-    this.$canvas = (0, _jquery2.default)(canvasId);
-    this.graph;
-    this.popup;
-    this.watchlist = _store2.default.get('watchlist') || [];
-    this.render();
-    this.$PageContainer = (0, _jquery2.default)('#most-active-container');
-    this.$stockListContainer = (0, _jquery2.default)('.stock-list');
-
-    this.getStocks();
-    this.mostActiveSymbols;
-    this.news;
-  }
-
-  // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
-
-
-  _createClass(StocksPage, [{
-    key: 'getMostActiveSymbols',
-    value: function getMostActiveSymbols() {
-      var symbols = _store2.default.get('mostactive');
-      return symbols.slice(0, 5).map(function (stock) {
-        return stock.symbol;
-      });
-    }
-
-    // RENDER HTML
-
-  }, {
-    key: 'render',
-    value: function render() {
-      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="mostactive-container" class="box margin-right"></div>\n          <div id="home-news" class="box"></div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right"></div>\n          <div id="losers-container" class="box"></div>\n        </div>\n      ';
-      this.$canvas.empty();
-      this.$canvas.append(html);
-    }
-
-    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
-
-  }, {
-    key: 'isInWatchlist',
-    value: function isInWatchlist(symbol) {
-      return this.watchlist.some(function (stock) {
-        return stock.symbol === symbol;
-      });
-    }
-
-    // RETRIEVE STOCKS FROM EITHER API OR STORE
-
-  }, {
-    key: 'getStocks',
-    value: function getStocks() {
-      var mostActive = _store2.default.get('mostactive') || [];
-      var gainers = _store2.default.get('gainers') || [];
-      var losers = _store2.default.get('losers') || [];
-
-      // check if local storage exist
-      if (mostActive.length && gainers.length && losers.length) {
-        this.mostActiveSymbols = this.getMostActiveSymbols();
-        new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
-        new _stocklist2.default('#gainers-container', 'gainers', 'Gainers');
-        new _stocklist2.default('#losers-container', 'losers', 'Losers');
-        this.renderGraphCards();
-        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'home-news', 1);
-      } else {
-        this.fetchStocks();
-      }
-    }
-
-    // RENDER SMALL GRAPH CARDS
-
-  }, {
-    key: 'renderGraphCards',
-    value: function renderGraphCards() {
-      var mostActiveSymbols = _store2.default.get('mostactive');
-
-      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
-        var symbol = stock.symbol;
-        new _graphCard2.default('#home-graphCard' + index, symbol);
-      });
-    }
-
-    // GET LIST OF COMPANIES
-
-  }, {
-    key: 'fetchStocks',
-    value: function fetchStocks() {
-      var _this = this;
-
-      _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
-        _store2.default.set('mostactive', mostActive.data);
-        _store2.default.set('gainers', gainers.data);
-        _store2.default.set('losers', losers.data);
-      })).catch(function (error) {
-        console.log(error);
-      }).then(function () {
-        _this.mostActiveSymbols = _this.getMostActiveSymbols();
-        new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
-        new _stocklist2.default('#gainers-container', 'gainers', 'Gainers');
-        new _stocklist2.default('#losers-container', 'losers', 'Losers');
-        _this.renderGraphCards();
-        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'home-news', 1);
-      });
-    }
-
-    // DESTROY PAGE
-
-  }, {
-    key: 'destroyPage',
-    value: function destroyPage() {
-      if (this.$canvas) {
-        this.$canvas.empty();
-      }
-    }
-  }]);
-
-  return StocksPage;
-}();
-
-exports.default = StocksPage;
-
-/***/ }),
-/* 175 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32492,6 +32211,300 @@ var Watchlist = function () {
 }();
 
 exports.default = Watchlist;
+
+/***/ }),
+/* 174 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _graphCard = __webpack_require__(168);
+
+var _graphCard2 = _interopRequireDefault(_graphCard);
+
+var _news = __webpack_require__(9);
+
+var _news2 = _interopRequireDefault(_news);
+
+var _stocklist = __webpack_require__(172);
+
+var _stocklist2 = _interopRequireDefault(_stocklist);
+
+var _const = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var HomePage = function () {
+  function HomePage(canvasId) {
+    _classCallCheck(this, HomePage);
+
+    this.$canvas = (0, _jquery2.default)(canvasId);
+    this.graph;
+    this.popup;
+    this.watchlist = _store2.default.get('watchlist') || [];
+    this.render();
+    this.$PageContainer = (0, _jquery2.default)('#most-active-container');
+    this.$stockListContainer = (0, _jquery2.default)('.stock-list');
+
+    this.getStocks();
+    this.mostActiveSymbols;
+    this.news;
+
+    // window.addEventListener('storage', function(event) {
+    //   console.log(event);
+    //   console.log('changes made');
+    // }, false);
+
+    // window.addEventListener('click', function(event) {
+    //   console.log('hey', event.target);
+    // });
+  }
+
+  // RETRIEVE SYMBOLS FOR MOST ACTIVE STOCKS
+
+
+  _createClass(HomePage, [{
+    key: 'getMostActiveSymbols',
+    value: function getMostActiveSymbols() {
+      var symbols = _store2.default.get('mostactive');
+      return symbols.slice(0, 5).map(function (stock) {
+        return stock.symbol;
+      });
+    }
+
+    // RENDER HTML
+
+  }, {
+    key: 'render',
+    value: function render() {
+      var html = '\n        <div id="home-graph-cards-container" class="home-row">\n          <div id="home-graphCard0"></div>\n          <div id="home-graphCard1"></div>\n          <div id="home-graphCard2"></div>\n        </div>\n        <div class="home-row">\n          <div id="mostactive-container" class="box margin-right"></div>\n          <div id="home-news" class="box"></div>\n        </div>\n        <div class="home-row">\n          <div id="gainers-container" class="box margin-right"></div>\n          <div id="losers-container" class="box"></div>\n        </div>\n      ';
+      this.$canvas.empty();
+      this.$canvas.append(html);
+    }
+
+    // CHECK IF WATCHLIST HAS STOCK. RETURNS A BOOLEAN.
+
+  }, {
+    key: 'isInWatchlist',
+    value: function isInWatchlist(symbol) {
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === symbol;
+      });
+    }
+
+    // RETRIEVE STOCKS FROM EITHER API OR STORE
+
+  }, {
+    key: 'getStocks',
+    value: function getStocks() {
+      var mostActive = _store2.default.get('mostactive') || [];
+      var gainers = _store2.default.get('gainers') || [];
+      var losers = _store2.default.get('losers') || [];
+
+      // check if local storage exist
+      if (mostActive.length && gainers.length && losers.length) {
+        this.mostActiveSymbols = this.getMostActiveSymbols();
+        new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
+        new _stocklist2.default('#gainers-container', 'gainers', 'Gainers');
+        new _stocklist2.default('#losers-container', 'losers', 'Losers');
+        this.renderGraphCards();
+        this.news = new _news2.default('#home-news', this.mostActiveSymbols, 'home-news', 1);
+      } else {
+        this.fetchStocks();
+      }
+    }
+
+    // RENDER SMALL GRAPH CARDS
+
+  }, {
+    key: 'renderGraphCards',
+    value: function renderGraphCards() {
+      var mostActiveSymbols = _store2.default.get('mostactive');
+
+      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
+        var symbol = stock.symbol;
+        new _graphCard2.default('#home-graphCard' + index, symbol);
+      });
+    }
+
+    // GET LIST OF COMPANIES
+
+  }, {
+    key: 'fetchStocks',
+    value: function fetchStocks() {
+      var _this = this;
+
+      _axios2.default.all([_axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=mostactive&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=gainers&token=' + _const.API_TOKEN), _axios2.default.get(_const.URL_BASE + '/market/collection/list?collectionName=losers&token=' + _const.API_TOKEN)]).then(_axios2.default.spread(function (mostActive, gainers, losers) {
+        _store2.default.set('mostactive', mostActive.data);
+        _store2.default.set('gainers', gainers.data);
+        _store2.default.set('losers', losers.data);
+      })).catch(function (error) {
+        console.log(error);
+      }).then(function () {
+        _this.mostActiveSymbols = _this.getMostActiveSymbols();
+        new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
+        new _stocklist2.default('#gainers-container', 'gainers', 'Gainers');
+        new _stocklist2.default('#losers-container', 'losers', 'Losers');
+        _this.renderGraphCards();
+        _this.news = new _news2.default('#home-news', _this.mostActiveSymbols, 'home-news', 1);
+      });
+    }
+
+    // DESTROY PAGE
+
+  }, {
+    key: 'destroyPage',
+    value: function destroyPage() {
+      if (this.$canvas) {
+        this.$canvas.empty();
+      }
+    }
+  }]);
+
+  return HomePage;
+}();
+
+exports.default = HomePage;
+
+/***/ }),
+/* 175 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(3);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _chartbox = __webpack_require__(17);
+
+var _chartbox2 = _interopRequireDefault(_chartbox);
+
+var _keystats = __webpack_require__(19);
+
+var _keystats2 = _interopRequireDefault(_keystats);
+
+var _news = __webpack_require__(9);
+
+var _news2 = _interopRequireDefault(_news);
+
+var _const = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Stock = function () {
+  function Stock(symbol) {
+    _classCallCheck(this, Stock);
+
+    this.symbol = symbol;
+    this.$canvas = (0, _jquery2.default)('#canvas');
+    this.interval = '1m';
+    this.renderHtml();
+
+    // If data exists in local storage...
+    if (_store2.default.get(this.symbol) !== null) {
+      new _chartbox2.default('#singlestock-chart-container', this.symbol);
+      new _keystats2.default('#singlestock-keystats-container', this.symbol);
+      new _news2.default('#singlestock-news-container', [this.symbol], this.symbol);
+    }
+    // If data doesn't exist...
+    else {
+        this.fetchData();
+      }
+  }
+
+  // RENDER HTML LAYOUT
+
+
+  _createClass(Stock, [{
+    key: 'renderHtml',
+    value: function renderHtml() {
+      var html = '\n      <div>\n        <div>\n          <div>\n            <div id="singlestock-chart-container" class="box"></div>\n          </div>\n          <div class="stock-summary-container">\n            <div id="singlestock-keystats-container" class="box margin-right"></div>\n            <div id="singlestock-news-container" class="news-container box">\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+
+      this.$canvas.empty();
+      this.$canvas.append(html);
+    }
+
+    // FETCH DATA WITH AJAX
+
+  }, {
+    key: 'fetchData',
+    value: function fetchData() {
+      var _this = this;
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=1m&token=' + _const.API_TOKEN).then(function (response) {
+        var symbol = _this.symbol.toUpperCase();
+        var dataToStore = {
+          chart: _defineProperty({}, _this.interval, response.data.chart),
+          news: response.data.news,
+          quote: response.data.quote,
+          time: Date.now()
+        };
+        _store2.default.set(symbol, dataToStore);
+      }).catch(function (error) {
+        console.log(error);
+      }).finally(function () {
+        new _chartbox2.default('#singlestock-chart-container', _this.symbol);
+        new _keystats2.default('#singlestock-keystats-container', _this.symbol);
+        new _news2.default('#singlestock-news-container', [_this.symbol], _this.symbol);
+      });
+    }
+
+    // DESTROY PAGE
+
+  }, {
+    key: 'destroyPage',
+    value: function destroyPage() {
+      if (this.$canvas) {
+        this.$canvas.empty();
+      }
+    }
+  }]);
+
+  return Stock;
+}();
+
+exports.default = Stock;
 
 /***/ }),
 /* 176 */

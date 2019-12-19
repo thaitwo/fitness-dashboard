@@ -22,12 +22,15 @@ The IEX Cloud API was used for this application. To learn more about the IEX CLo
 
 1. Set up Sanbox environment
 	- Open **const.js** file
-	- Change `URL_BASE` and `API_TOKEN` variables to the sandbox variables provide in the comment section of this file
+	- Comment out the `URL_BASE` and `API_TOKEN` variables under PRODUCTION ENVIRONMENT and uncomment the variables under SANDBOX ENVIRONMENT
 	- This sandbox environment allows for unlimited calls to the API
 	- NOTE: API calls will not work unless the `URL_BASE` and `API_TOKEN` variables are updated to the sandbox variables
-2. From the root directory run `python -m SimpleHTTPServer 8000`
-3. To compile changes, run `webpack --watch`
-4. Open browser to [localhost:8000](http://localhost:8000)
+
+2. Log into [IEX Cloud Console](https://iexcloud.io/console/)
+	- On the left sidebar near the bottom, click on **SANDBOX TESTING**. The status should now read `ON`.
+3. Go to terminal and from the root directory run `npm start`
+4. To compile changes, run `npm run build`
+5. Open browser to [localhost:8000](http://localhost:8000)
 
 ### DEPLOYING TO PRODUCTION
 

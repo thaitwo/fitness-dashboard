@@ -12,7 +12,11 @@
   z-index: 2;
 }
 
-.nav-sidebar li a {
+.sidebar-nav {
+  margin-top: 24px;
+}
+
+.sidebar-nav li a {
   border-left: 4px solid transparent;
   color: rgba($white, .3);
   display: block;
