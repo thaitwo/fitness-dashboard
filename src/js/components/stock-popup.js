@@ -132,6 +132,10 @@ class StockPopup {
 
     // get stock info from local storage
     changePercent = changePercent ? `${changePercent.toFixed(2)}%` : '';
+    close = close !== null ? close : '--';
+    high = high !== null ? high : '--';
+    low = low !== null ? low : '--';
+    open = open !== null ? open : '--';
     latestVolume = formatNumberWithCommas(Math.round(latestVolume));
     marketCap = formatLargeNumber(marketCap);
     const companyName = trimString(this.companyName, 36);

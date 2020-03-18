@@ -17688,10 +17688,10 @@ var KeyStats = function () {
     // If data for stock exists in localStorage, retrieve it.
     if (_store2.default.get(symbol).quote !== null) {
       this.data = _store2.default.get(symbol).quote;
-      this.close = this.data.close;
-      this.open = this.data.open;
-      this.high = this.data.high;
-      this.low = this.data.low;
+      this.close = this.data.close || '--';
+      this.open = this.data.open || '--';
+      this.high = this.data.high || '--';
+      this.low = this.data.low || '--';
       this.marketCap = (0, _utility.formatLargeNumber)(this.data.marketCap);
       this.peRatio = this.data.peRatio;
       this.wk52High = this.data.week52High;
@@ -31664,6 +31664,10 @@ var StockPopup = function () {
       // get stock info from local storage
 
       changePercent = changePercent ? changePercent.toFixed(2) + '%' : '';
+      close = close !== null ? close : '--';
+      high = high !== null ? high : '--';
+      low = low !== null ? low : '--';
+      open = open !== null ? open : '--';
       latestVolume = (0, _utility.formatNumberWithCommas)(Math.round(latestVolume));
       marketCap = (0, _utility.formatLargeNumber)(marketCap);
       var companyName = (0, _utility.trimString)(this.companyName, 36);
@@ -32029,7 +32033,7 @@ var Watchlist = function () {
   }, {
     key: 'renderEmptyWatchlistCanvas',
     value: function renderEmptyWatchlistCanvas() {
-      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol next to a company\'s name.</p>\n        </div>\n      </div>\n    ';
+      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol.</p>\n        </div>\n      </div>\n    ';
 
       this.$canvas.empty();
       this.$canvas.append(html);

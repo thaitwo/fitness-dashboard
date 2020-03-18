@@ -422,7 +422,7 @@ body {
         color: #FFFFFF; }
   .popup-stock-container .fa-times {
     color: #2B3152;
-    font-size: 1.2rem; }
+    font-size: 1.6rem; }
   .popup-stock-container #popup-summary-table {
     float: left;
     margin-top: 16px;
@@ -1069,9 +1069,9 @@ body {
     overflow: hidden; }
 
 #search-box {
-  background-color: rgba(255, 255, 255, 0.6);
+  background-color: #FFFFFF;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   box-sizing: border-box;
   color: rgba(0, 0, 0, 0.8);
   font-family: "Roboto", sans-serif;
@@ -1089,7 +1089,7 @@ body {
 
 #search-suggestions {
   background-color: #FFFFFF;
-  border-radius: 0 0 6px 6px; }
+  border-radius: 0 0 4px 4px; }
   #search-suggestions div {
     font-size: .9rem;
     padding: 10px 0 10px 16px; }
@@ -1108,7 +1108,7 @@ body {
     background-color: #ECEFF1; }
 
 ::-webkit-input-placeholder {
-  color: rgba(0, 0, 0, 0.2); }
+  color: rgba(0, 0, 0, 0.4); }
 
 #top-bar {
   background-color: #151C40;

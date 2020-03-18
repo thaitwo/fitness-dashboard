@@ -8,10 +8,10 @@ class KeyStats {
     // If data for stock exists in localStorage, retrieve it.
     if (store.get(symbol).quote !== null) {
       this.data = store.get(symbol).quote;
-      this.close = this.data.close;
-      this.open = this.data.open;
-      this.high = this.data.high;
-      this.low = this.data.low;
+      this.close = this.data.close || '--';
+      this.open = this.data.open || '--';
+      this.high = this.data.high || '--';
+      this.low = this.data.low || '--';
       this.marketCap = formatLargeNumber(this.data.marketCap);
       this.peRatio = this.data.peRatio;
       this.wk52High = this.data.week52High;
