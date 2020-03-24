@@ -332,7 +332,24 @@ body {
 
 #popup-header {
   display: flex;
-  justify-content: flex-start; }
+  justify-content: flex-start;
+  align-items: center;
+  transition: all .2s; }
+  #popup-header .fa-angle-right {
+    color: #F9A825;
+    padding-left: 8px;
+    padding-top: 2px;
+    transition: all .2s; }
+  #popup-header:hover {
+    cursor: pointer;
+    opacity: .8; }
+    #popup-header:hover .fa-angle-right {
+      transform: translateX(2px); }
+
+#popup-stock-name {
+  color: #F9A825;
+  font-size: 1.2rem;
+  font-weight: 500; }
 
 .popup-watch-button {
   margin: 0 16px; }
@@ -395,11 +412,6 @@ body {
 .percent-change-negative {
   color: #e53935; }
 
-#popup-stock-name {
-  color: #F9A825;
-  font-size: 1.2rem;
-  font-weight: 500; }
-
 .popup-stock-container {
   background: #151C40;
   border: 6px solid #2B3152;
@@ -411,7 +423,7 @@ body {
   width: 960px; }
   .popup-stock-container .exit-icon {
     background-color: transparent;
-    padding: 4px 8px 3px;
+    padding: 8px 12px 7px;
     position: absolute;
     right: 0;
     top: 0;
@@ -419,7 +431,7 @@ body {
     .popup-stock-container .exit-icon:hover {
       cursor: pointer; }
       .popup-stock-container .exit-icon:hover .fa-times {
-        color: #FFFFFF; }
+        color: rgba(255, 255, 255, 0.6); }
   .popup-stock-container .fa-times {
     color: #2B3152;
     font-size: 1.6rem; }
@@ -963,6 +975,16 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between; }
+
+.graphCard-graph-container {
+  position: relative; }
+
+.graphCard-range-label {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 300;
+  position: absolute;
+  top: 20px; }
 
 .graphCard-company {
   color: #F9A825;

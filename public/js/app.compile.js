@@ -15867,12 +15867,12 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 /*** PRODUCTION ENVIRONMENT ***/
-var URL_BASE = 'https://cloud.iexapis.com/v1/stock';
-var API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
+// const URL_BASE = 'https://cloud.iexapis.com/v1/stock';
+// const API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
 
 /*** SANDBOX ENVIRONMENT ***/
-// const URL_BASE = 'https://sandbox.iexapis.com/v1/stock';
-// const API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
+var URL_BASE = 'https://sandbox.iexapis.com/v1/stock';
+var API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
 
 exports.URL_BASE = URL_BASE;
 exports.API_TOKEN = API_TOKEN;
@@ -31033,7 +31033,7 @@ var GraphCard = function () {
   _createClass(GraphCard, [{
     key: 'renderCard',
     value: function renderCard() {
-      var cardHtml = '\n      <div class="graphCard-small box">\n        <div class="graphCard-header"></div>\n        <div class="graphCard-graph-container">\n          <canvas id="graphCard-graph-' + this.symbol + '" width="300" height="140"></canvas>  \n        </div>\n      </div>\n    ';
+      var cardHtml = '\n      <div class="graphCard-small box">\n        <div class="graphCard-header"></div>\n        <div class="graphCard-graph-container">\n          <p class="graphCard-range-label">month</p>\n          <canvas id="graphCard-graph-' + this.symbol + '" width="300" height="140"></canvas>  \n        </div>\n      </div>\n    ';
 
       this.container.append(cardHtml);
     }
@@ -31537,6 +31537,10 @@ var _store = __webpack_require__(3);
 
 var _store2 = _interopRequireDefault(_store);
 
+var _navigo = __webpack_require__(11);
+
+var _navigo2 = _interopRequireDefault(_navigo);
+
 var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
@@ -31564,6 +31568,7 @@ var StockPopup = function () {
     this.symbol = companySymbol;
     this.companyName = companyName;
     this.$mainContainer = (0, _jquery2.default)('.main-container');
+    this.router = new _navigo2.default(null, true);
     this.chart;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = _store2.default.get('watchlist') || [];
@@ -31594,7 +31599,7 @@ var StockPopup = function () {
   _createClass(StockPopup, [{
     key: 'render',
     value: function render() {
-      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n            </div>\n            <div id="popup-wbutton-intervals">\n              <div id="popup-watch-button" class="popup-watch-button"></div>\n              <div id="popup-intervals-container"></div>\n            </div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
+      var popupModal = '\n      <div class="popup-modal">\n        <div class="popup-stock-container">\n          <div id="popup-top-container">\n            <div id="popup-header">\n              <h2 id="popup-stock-name"></h2>\n              <span><i class="fas fa-angle-right"></i></span>\n            </div>\n            <div id="popup-wbutton-intervals">\n              <div id="popup-watch-button" class="popup-watch-button"></div>\n              <div id="popup-intervals-container"></div>\n            </div>\n          </div>\n          <div id="popup-data-container">\n            <div id="popup-summary-container">\n              <div id="popup-price-container">\n                <h2 id="popup-latest-price"></h2>\n                <h3 id="popup-change-percent"></h3>\n              </div>\n              <table id="popup-summary-table">\n                <tbody>\n                </tbody>\n              </table>\n            </div>\n            <div class="popup-chart-container">\n              <canvas id="popup-chart" width="660" height="400"></canvas>\n            </div>\n          </div>\n          <div class="exit-icon"><i class="fas fa-times"></i></div>\n        </div>\n      </div>\n    ';
       this.$mainContainer.prepend(popupModal);
     }
 
@@ -31686,6 +31691,18 @@ var StockPopup = function () {
 
       var row = '\n      <tr>\n        <td class="key">Close</td>\n        <td class="val">' + close + '</td>\n      </tr>\n      <tr>\n        <td class="key">Open</td>\n        <td class="val">' + open + '</td>\n      </tr>\n      <tr>\n        <td class="key">High</td>\n        <td class="val">' + high + '</td>\n      </tr>\n      <tr>\n        <td class="key">Low</td>\n        <td class="val">' + low + '</td>\n      </tr>\n      <tr>\n        <td class="key">Market Cap</td>\n        <td class="val">' + marketCap + '</td>\n      </tr>\n      <tr>\n        <td class="key">P/E Ratio</td>\n        <td class="val">' + peRatio + '</td>\n      </tr>\n      <tr>\n        <td class="key">52 Wk Range</td>\n        <td class="val">' + week52Low + ' - ' + week52High + '</td>\n      </tr>\n      <tr>\n        <td class="key">Volume</td>\n        <td class="val">' + latestVolume + '</td>\n      </tr>\n    ';
       this.$tbody.append(row);
+      this.routeToStockPage();
+    }
+  }, {
+    key: 'routeToStockPage',
+    value: function routeToStockPage() {
+      var that = this;
+
+      this.$stockName.on('click', function (event) {
+        event.preventDefault();
+        that.destroyPopup();
+        that.router.navigate('stocks/' + that.symbol);
+      });
     }
 
     // CLOSE POPUP EVENT HANDLER
@@ -32344,10 +32361,9 @@ var HomePage = function () {
   }, {
     key: 'renderGraphCards',
     value: function renderGraphCards() {
-      var mostActiveSymbols = _store2.default.get('mostactive');
+      var mainStocks = ['SPY', 'DIA', 'QQQ'];
 
-      mostActiveSymbols.slice(0, 3).map(function (stock, index) {
-        var symbol = stock.symbol;
+      mainStocks.slice(0, 3).map(function (symbol, index) {
         new _graphCard2.default('#home-graphCard' + index, symbol);
       });
     }

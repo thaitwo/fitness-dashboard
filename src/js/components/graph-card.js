@@ -22,6 +22,7 @@ class GraphCard {
       <div class="graphCard-small box">
         <div class="graphCard-header"></div>
         <div class="graphCard-graph-container">
+          <p class="graphCard-range-label">month</p>
           <canvas id="graphCard-graph-${this.symbol}" width="300" height="140"></canvas>  
         </div>
       </div>

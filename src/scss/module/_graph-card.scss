@@ -4,6 +4,18 @@
   justify-content: space-between;
 }
 
+.graphCard-graph-container {
+  position: relative;
+}
+
+.graphCard-range-label {
+  color: rgba($white, 0.6);
+  font-size: 12px;
+  font-weight: 300;
+  position: absolute;
+  top: 20px;
+}
+
 .graphCard-company {
   color: $colorDark-accent;
   font-weight: 600;

@@ -92,10 +92,9 @@ class HomePage {
 
   // RENDER SMALL GRAPH CARDS
   renderGraphCards() {
-    const mostActiveSymbols = store.get('mostactive');
+    const mainStocks = ['SPY', 'DIA', 'QQQ']
     
-    mostActiveSymbols.slice(0, 3).map((stock, index) => {
-      const symbol = stock.symbol;
+    mainStocks.slice(0, 3).map((symbol, index) => {
       new GraphCard(`#home-graphCard${index}`, symbol);
     });
   }

@@ -1,5 +1,6 @@
 import $ from 'jquery';
 import store from 'store2';
+import Navigo from 'navigo';
 import axios from 'axios';
 import { formatLargeNumber, formatNumberWithCommas, trimString } from '../../utility/utility.js';
 import Intervals from './intervals.js';
@@ -11,6 +12,7 @@ class StockPopup {
     this.symbol = companySymbol;
     this.companyName = companyName;
     this.$mainContainer = $('.main-container');
+    this.router = new Navigo(null, true);
     this.chart;
     // RETRIEVE WATCHLIST FROM ARRAY STORAGE
     this.watchlist = store.get('watchlist') || [];
@@ -44,6 +46,7 @@ class StockPopup {
           <div id="popup-top-container">
             <div id="popup-header">
               <h2 id="popup-stock-name"></h2>
+              <span><i class="fas fa-angle-right"></i></span>
             </div>
             <div id="popup-wbutton-intervals">
               <div id="popup-watch-button" class="popup-watch-button"></div>
@@ -188,6 +191,18 @@ class StockPopup {
       </tr>
     `;
     this.$tbody.append(row);
+    this.routeToStockPage();
+  }
+
+
+  routeToStockPage() {
+    const that = this;
+
+    this.$stockName.on('click', function(event) {
+      event.preventDefault();
+      that.destroyPopup();
+      that.router.navigate(`stocks/${that.symbol}`);
+    });
   }
 
 

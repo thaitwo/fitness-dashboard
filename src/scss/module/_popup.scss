@@ -21,6 +21,30 @@
 #popup-header {
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+  transition: all .2s;
+
+  .fa-angle-right {
+    color: $colorDark-accent;
+    padding-left: 8px;
+    padding-top: 2px;
+    transition: all .2s;
+  }
+
+  &:hover {
+    cursor: pointer;
+    opacity: .8;
+
+    .fa-angle-right {
+      transform: translateX(2px);
+    }
+  }
+}
+
+#popup-stock-name {
+  color: $colorDark-accent;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .popup-watch-button {
@@ -102,12 +126,6 @@
   color: $red-600;
 }
 
-#popup-stock-name {
-  color: $colorDark-accent;
-  font-size: 1.2rem;
-  font-weight: 500;
-}
-
 .popup-stock-container {
   background: $colorDark-dark;
   border: 6px solid $colorDark-light;
@@ -120,7 +138,7 @@
 
   .exit-icon {
     background-color: transparent;
-    padding: 4px 8px 3px;
+    padding: 8px 12px 7px;
     position: absolute;
     right: 0;
     top: 0;
@@ -130,7 +148,7 @@
       cursor: pointer;
 
       .fa-times {
-        color: $white;
+        color: rgba(white, 0.6);
       }
     }
   }
