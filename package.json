@@ -22,7 +22,7 @@
     "axios": "^0.18.1",
     "chart.js": "^2.8.0",
     "dotenv-webpack": "^1.7.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "moment": "^2.24.0",
     "navigo": "^5.3.3",
     "store2": "^2.7.1"
