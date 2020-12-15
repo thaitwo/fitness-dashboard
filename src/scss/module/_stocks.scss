@@ -19,31 +19,10 @@
 }
 
 #gainers-container {
-  background: $colorDark-dark;
-  border-radius: 10px;
   flex: 1;
   min-width: 500px;
 }
 
 .stocks-tabs {
   height: 60px;
-}
-
-#home-graph-cards-container {
-
-  > div {
-    margin-right: 24px;
-  }
-
-  > div:last-of-type {
-    margin-right: 0;
-  }
-}
-
-.graphCard-small {
-  // max-width: 30%;
-}
-
-#graphCard-graph {
-  max-height: 350px;
 }

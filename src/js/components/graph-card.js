@@ -19,10 +19,10 @@ class GraphCard {
   // RENDER HTML FOR CARD
   renderCard() {
     const cardHtml = `
-      <div class="graphCard-small box">
+      <div class="graphCard-small">
         <div class="graphCard-header"></div>
         <div class="graphCard-graph-container">
-          <p class="graphCard-range-label">month</p>
+          <p class="graphCard-range-label">Past month</p>
           <canvas id="graphCard-graph-${this.symbol}" width="300" height="140"></canvas>  
         </div>
       </div>
@@ -46,9 +46,10 @@ class GraphCard {
   // FETCH DATA FOR SYMBOL
   fetchChartData() {
     axios.all([
-      axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=1m&token=${API_TOKEN}`)
+      axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&range=1m&token=${API_TOKEN}`)
     ])
     .then((response) => {
+      console.log(response);
       const data = response[0].data;
       // Check that every requests returns a '200' status which means it's successful
       const allRequestsWork = response.every(stock => stock.status == 200);
@@ -81,7 +82,6 @@ class GraphCard {
 
     const html = `
       <div>
-        <h2 class="graphCard-company">${companyName}</h2>
         <h3 class="graphCard-symbol">${symbol}</h3>
       </div>
       <div>
@@ -109,7 +109,7 @@ class GraphCard {
       layout: {
         padding: {
           top: 40,
-          bottom: 0,
+          bottom: -20,
         }
       },
       legend: {
@@ -140,11 +140,13 @@ class GraphCard {
           position: 'right',
           gridLines: {
             color: 'rgba(255,255,255,0.03)',
+            display: false,
             drawBorder: false,
             zeroLineColor: 'rgba(0,0,0,0.04)',
             tickMarkLength: 0
           },
           ticks: {
+            display: false,
             beginAtZero: false,
             fontColor: '#B0BEC5',
             fontFamily: 'Mukta, sans-serif',

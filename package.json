@@ -22,7 +22,7 @@
     "axios": "^0.18.1",
     "chart.js": "^2.8.0",
     "dotenv-webpack": "^1.7.0",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "moment": "^2.24.0",
     "navigo": "^5.3.3",
     "store2": "^2.7.1"
@@ -37,7 +37,7 @@
     "eslint-plugin-promise": "^3.8.0",
     "eslint-plugin-standard": "^2.0.0",
     "extract-text-webpack-plugin": "^2.1.2",
-    "node-sass": "^4.12.0",
+    "node-sass": "^4.14.1",
     "sass-loader": "^6.0.7",
     "style-loader": "^0.18.2",
     "webpack": "^2.7.0"

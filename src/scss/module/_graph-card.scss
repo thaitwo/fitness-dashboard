@@ -17,19 +17,55 @@
 }
 
 .graphCard-company {
-  color: $colorDark-accent;
-  font-weight: 600;
-  margin-bottom: 3px;
-}
-
-.graphCard-symbol {
   color: $white;
   font-size: 14px;
   font-weight: 400;
+  margin-bottom: 3px;
   opacity: .8;
+}
+
+.graphCard-symbol {
+  color: $colorDark-accent;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 .graphCard-latest-price {
   color: $white;
   font-size: 1rem;
+  font-weight: 600;
+}
+
+#home-graph-cards-container {
+  background: $colorDark-light;
+  margin-bottom: 24px;
+  padding: 1.5rem;
+
+  > div {
+    border-right: 1px solid rgba($white,0.04);
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    // margin-right: 24px;
+  }
+
+  > div:first-of-type {
+    padding-left: 0;
+  }
+
+  > div:last-of-type {
+    border-right: 0;
+    margin-right: 0;
+    padding-right: 0;
+  }
+}
+
+.graphCard-small {
+
+  &:last-of-type {
+    padding-right: 0;
+  }
+}
+
+#graphCard-graph {
+  max-height: 350px;
 }

@@ -20,7 +20,7 @@ class Search {
   renderHtml() {
     const html = `
       <form id="search-form">
-        <input type="text" id="search-box" placeholder="Search">
+        <input type="text" id="search-box" placeholder="Search companies">
         <div id="search-suggestions"></div>
       </form>
     `;

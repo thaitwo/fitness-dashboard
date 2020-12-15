@@ -3,7 +3,7 @@ import Navigo from 'navigo';
 import StockPage from '../pages/stock-page';
 import HomePage from '../pages/home-page';
 import Watchlist from './watchlist';
-const DASHBOARD_URL = 'stocks/';
+const DASHBOARD_URL = 'home/';
 
 
 class Router {
@@ -23,7 +23,7 @@ class Router {
 
   // CHANGE PAGE / RENDER URL
   changePage(pageId) {
-    if (pageId === 'stocks') {
+    if (pageId === 'home') {
       this.router.navigate(`${DASHBOARD_URL}`);
     }
     else {

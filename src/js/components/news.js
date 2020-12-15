@@ -7,7 +7,7 @@ class News {
   constructor(containerId, symbolArray, localStorageKey, numOfArticlesPerStock = 5) {
     this.$container = $(containerId);
     this.symbols = symbolArray;
-    this.num = numOfArticlesPerStock;
+    this.num = 1;
     this.numOfStocks = symbolArray.length;
     this.localStorageKey = localStorageKey;
 
