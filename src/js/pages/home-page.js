@@ -5,6 +5,7 @@ import GraphCard from '../components/graph-card.js';
 import News from '../components/news.js';
 import StockList from '../components/stocklist.js';
 import { URL_BASE, API_TOKEN } from '../../const.js';
+import Watchlist from '../components/watchlist.js';
 
 class HomePage {
   constructor(canvasId) {
@@ -12,7 +13,7 @@ class HomePage {
     this.graph;
     this.popup;
     this.watchlist = store.get('watchlist') || [];
-    this.render();
+    this.renderHTML();
     this.$PageContainer = $('#most-active-container');
     this.$stockListContainer = $('.stock-list');
 
@@ -41,7 +42,7 @@ class HomePage {
 
 
   // RENDER HTML
-  render() {
+  renderHTML() {
     let html =
       `
         <div id="homePage">
@@ -56,9 +57,6 @@ class HomePage {
               </div>
           </div>
           <div id="homeRightCol">
-            <div id="watchlist">
-              <div id="mostactive-container" class="box"></div>
-            </div>
           </div>
         </div>
       `;
@@ -75,22 +73,23 @@ class HomePage {
 
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
-    const mostActive = store.get('mostactive') || [];
+    // const mostActive = store.get('mostactive') || [];
     // const gainers = store.get('gainers') || [];
     // const losers = store.get('losers') || [];
 
     // check if local storage exist
-    if (mostActive.length) {
-      this.mostActiveSymbols = this.getMostActiveSymbols();
-      new StockList('#mostactive-container', 'mostactive', 'Most Active');
+    this.renderGraphCards();
+    new Watchlist('#homeRightCol');
+    // if (mostActive.length) {
+      // this.mostActiveSymbols = this.getMostActiveSymbols();
+      // new StockList('#mostactive-container', 'mostactive', 'Most Active');
       // new StockList('#gainers-container', 'gainers', 'Gainers');
       // new StockList('#losers-container', 'losers', 'Losers');
-      this.renderGraphCards();
-      this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
-    }
-    else {
-      this.fetchStocks();
-    }
+      // this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
+    // }
+    // else {
+    //   this.fetchStocks();
+    // }
   }
 
 

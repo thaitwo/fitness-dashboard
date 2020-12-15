@@ -2,7 +2,7 @@ import $ from 'jquery';
 import Navigo from 'navigo';
 import StockPage from '../pages/stock-page';
 import HomePage from '../pages/home-page';
-import Watchlist from './watchlist';
+import WatchlistFull from './watchlistFull';
 const DASHBOARD_URL = 'home/';
 
 
@@ -47,7 +47,7 @@ class Router {
         // Insert functionality
       },
       'watchlist': () => {
-        this.currentPage = new Watchlist('#canvas');
+        this.currentPage = new WatchlistFull('#canvas');
       },
       '*': () => {
         this.currentPage = new HomePage('#canvas');

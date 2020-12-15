@@ -338,3 +338,73 @@
     margin-bottom: 2rem;
   }
 }
+
+.watchlistContainer {
+  background: $colorDark-light;
+  border-radius: 3px;
+  padding: 1.5rem;
+}
+
+.watchlistList {
+
+  li {
+    border-bottom: 1px solid rgba($white,.06);
+    transition: all .1s;
+
+    &.active {
+
+      .watchlist-item-symbol,
+      .watchlist-item-name {
+        color: $colorDark-accent;
+      }
+    }
+
+    &:hover {
+
+      .watchlist-item-symbol,
+      .watchlist-item-name {
+        color: rgba($colorDark-accent,.8);
+      }
+    }
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-family: $font-primary;
+    outline: none;
+    padding: .8rem 0;
+    width: 100%;
+
+    &:hover {
+      border-radius: 2px;
+      cursor: pointer;
+      transition: all .3s;
+
+      .watchlist-item-code,
+      .watchlist-item-name {
+        // color: $white;
+        transition: all .3s;
+      }
+    }
+
+    .watchlist-item-symbol {
+      color: rgba($white,.8);
+      font-size: .95rem;
+      font-weight: 500;
+      line-height: 1rem;
+      text-align: left;
+    }
+
+    .watchlist-item-name {
+      color: rgba($white,.6);
+      font-size: .85rem;
+      font-weight: 300;
+      line-height: 1rem;
+      overflow: hidden;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space:nowrap;
+    }
+  }
+}

@@ -959,6 +959,51 @@ body {
     -webkit-filter: invert(100%);
     margin-bottom: 2rem; }
 
+.watchlistContainer {
+  background: #1C223E;
+  border-radius: 3px;
+  padding: 1.5rem; }
+
+.watchlistList li {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all .1s; }
+  .watchlistList li.active .watchlist-item-symbol,
+  .watchlistList li.active .watchlist-item-name {
+    color: #F9A825; }
+  .watchlistList li:hover .watchlist-item-symbol,
+  .watchlistList li:hover .watchlist-item-name {
+    color: rgba(249, 168, 37, 0.8); }
+
+.watchlistList button {
+  background: none;
+  border: none;
+  font-family: "Mukta", sans-serif;
+  outline: none;
+  padding: .8rem 0;
+  width: 100%; }
+  .watchlistList button:hover {
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all .3s; }
+    .watchlistList button:hover .watchlist-item-code,
+    .watchlistList button:hover .watchlist-item-name {
+      transition: all .3s; }
+  .watchlistList button .watchlist-item-symbol {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: .95rem;
+    font-weight: 500;
+    line-height: 1rem;
+    text-align: left; }
+  .watchlistList button .watchlist-item-name {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: .85rem;
+    font-weight: 300;
+    line-height: 1rem;
+    overflow: hidden;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap; }
+
 .graphCard-header {
   display: flex;
   align-items: flex-start;
@@ -993,6 +1038,7 @@ body {
 
 #home-graph-cards-container {
   background: #1C223E;
+  border-radius: 3px;
   margin-bottom: 24px;
   padding: 1.5rem; }
   #home-graph-cards-container > div {
@@ -1172,6 +1218,9 @@ body {
 
 #homeLeftCol {
   margin-right: 24px; }
+
+#homeRightCol {
+  width: 100%; }
 
 /* STATE */
 /*
