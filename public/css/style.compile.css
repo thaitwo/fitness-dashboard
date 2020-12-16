@@ -988,11 +988,21 @@ body {
     .watchlistList button:hover .watchlist-item-code,
     .watchlistList button:hover .watchlist-item-name {
       transition: all .3s; }
-  .watchlistList button .watchlist-item-symbol {
-    color: rgba(255, 255, 255, 0.8);
+  .watchlistList button .topRow {
+    display: flex;
+    justify-content: space-between; }
+  .watchlistList button span {
+    color: white;
+    flex: 2;
     font-size: .95rem;
-    font-weight: 500;
     line-height: 1rem;
+    text-align: right; }
+    .watchlistList button span.green {
+      color: #43A047; }
+  .watchlistList button .watchlist-item-symbol {
+    color: #F9A825;
+    font-weight: 500;
+    flex: 1;
     text-align: left; }
   .watchlistList button .watchlist-item-name {
     color: rgba(255, 255, 255, 0.6);

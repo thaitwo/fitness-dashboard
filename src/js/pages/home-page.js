@@ -46,7 +46,7 @@ class HomePage {
     let html =
       `
         <div id="homePage">
-          <div id=homeLeftCol>
+          <div id="homeLeftCol">
             <div id="home-graph-cards-container" class="home-row">
               <div id="home-graphCard0"></div>
               <div id="home-graphCard1"></div>
@@ -73,20 +73,20 @@ class HomePage {
 
   // RETRIEVE STOCKS FROM EITHER API OR STORE
   getStocks() {
-    // const mostActive = store.get('mostactive') || [];
+    const mostActive = store.get('mostactive') || [];
     // const gainers = store.get('gainers') || [];
     // const losers = store.get('losers') || [];
 
     // check if local storage exist
     this.renderGraphCards();
     new Watchlist('#homeRightCol');
-    // if (mostActive.length) {
-      // this.mostActiveSymbols = this.getMostActiveSymbols();
-      // new StockList('#mostactive-container', 'mostactive', 'Most Active');
+    if (mostActive.length) {
+      this.mostActiveSymbols = this.getMostActiveSymbols();
+      new StockList('#home-news', 'mostactive', 'Most Active');
       // new StockList('#gainers-container', 'gainers', 'Gainers');
       // new StockList('#losers-container', 'losers', 'Losers');
       // this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
-    // }
+    }
     // else {
     //   this.fetchStocks();
     // }
@@ -120,7 +120,7 @@ class HomePage {
     })
     .then(() => {
       this.mostActiveSymbols = this.getMostActiveSymbols();
-      new StockList('#mostactive-container', 'mostactive', 'Most Active');
+      new StockList('#home-news', 'mostactive', 'Most Active');
       // new StockList('#gainers-container', 'gainers', 'Gainers');
       // new StockList('#losers-container', 'losers', 'Losers');
       this.renderGraphCards();

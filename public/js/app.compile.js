@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(177)("./" + name);
+                __webpack_require__(178)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4673,7 +4673,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(179)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(180)(module)))
 
 /***/ }),
 /* 1 */
@@ -15556,12 +15556,272 @@ return jQuery;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+/*! store2 - v2.7.1 - 2018-11-15
+* Copyright (c) 2018 Nathan Bubna; Licensed (MIT OR GPL-3.0) */
+;(function(window, define) {
+    var _ = {
+        version: "2.7.1",
+        areas: {},
+        apis: {},
+
+        // utilities
+        inherit: function(api, o) {
+            for (var p in api) {
+                if (!o.hasOwnProperty(p)) {
+                    o[p] = api[p];
+                }
+            }
+            return o;
+        },
+        stringify: function(d) {
+            return d === undefined || typeof d === "function" ? d+'' : JSON.stringify(d);
+        },
+        parse: function(s) {
+            // if it doesn't parse, return as is
+            try{ return JSON.parse(s); }catch(e){ return s; }
+        },
+
+        // extension hooks
+        fn: function(name, fn) {
+            _.storeAPI[name] = fn;
+            for (var api in _.apis) {
+                _.apis[api][name] = fn;
+            }
+        },
+        get: function(area, key){ return area.getItem(key); },
+        set: function(area, key, string){ area.setItem(key, string); },
+        remove: function(area, key){ area.removeItem(key); },
+        key: function(area, i){ return area.key(i); },
+        length: function(area){ return area.length; },
+        clear: function(area){ area.clear(); },
+
+        // core functions
+        Store: function(id, area, namespace) {
+            var store = _.inherit(_.storeAPI, function(key, data, overwrite) {
+                if (arguments.length === 0){ return store.getAll(); }
+                if (typeof data === "function"){ return store.transact(key, data, overwrite); }// fn=data, alt=overwrite
+                if (data !== undefined){ return store.set(key, data, overwrite); }
+                if (typeof key === "string" || typeof key === "number"){ return store.get(key); }
+                if (!key){ return store.clear(); }
+                return store.setAll(key, data);// overwrite=data, data=key
+            });
+            store._id = id;
+            try {
+                var testKey = '_-bad-_';
+                area.setItem(testKey, 'wolf');
+                store._area = area;
+                area.removeItem(testKey);
+            } catch (e) {}
+            if (!store._area) {
+                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
+            }
+            store._ns = namespace || '';
+            if (!_.areas[id]) {
+                _.areas[id] = store._area;
+            }
+            if (!_.apis[store._ns+store._id]) {
+                _.apis[store._ns+store._id] = store;
+            }
+            return store;
+        },
+        storeAPI: {
+            // admin functions
+            area: function(id, area) {
+                var store = this[id];
+                if (!store || !store.area) {
+                    store = _.Store(id, area, this._ns);//new area-specific api in this namespace
+                    if (!this[id]){ this[id] = store; }
+                }
+                return store;
+            },
+            namespace: function(namespace, noSession) {
+                if (!namespace){
+                    return this._ns ? this._ns.substring(0,this._ns.length-1) : '';
+                }
+                var ns = namespace, store = this[ns];
+                if (!store || !store.namespace) {
+                    store = _.Store(this._id, this._area, this._ns+ns+'.');//new namespaced api
+                    if (!this[ns]){ this[ns] = store; }
+                    if (!noSession){ store.area('session', _.areas.session); }
+                }
+                return store;
+            },
+            isFake: function(){ return this._area.name === 'fake'; },
+            toString: function() {
+                return 'store'+(this._ns?'.'+this.namespace():'')+'['+this._id+']';
+            },
+
+            // storage functions
+            has: function(key) {
+                if (this._area.has) {
+                    return this._area.has(this._in(key));//extension hook
+                }
+                return !!(this._in(key) in this._area);
+            },
+            size: function(){ return this.keys().length; },
+            each: function(fn, value) {// value is used by keys(fillList) and getAll(fillList))
+                for (var i=0, m=_.length(this._area); i<m; i++) {
+                    var key = this._out(_.key(this._area, i));
+                    if (key !== undefined) {
+                        if (fn.call(this, key, value || this.get(key)) === false) {
+                            break;
+                        }
+                    }
+                    if (m > _.length(this._area)) { m--; i--; }// in case of removeItem
+                }
+                return value || this;
+            },
+            keys: function(fillList) {
+                return this.each(function(k, list){ list.push(k); }, fillList || []);
+            },
+            get: function(key, alt) {
+                var s = _.get(this._area, this._in(key));
+                return s !== null ? _.parse(s) : alt || s;// support alt for easy default mgmt
+            },
+            getAll: function(fillObj) {
+                return this.each(function(k, all){ all[k] = this.get(k); }, fillObj || {});
+            },
+            transact: function(key, fn, alt) {
+                var val = this.get(key, alt),
+                    ret = fn(val);
+                this.set(key, ret === undefined ? val : ret);
+                return this;
+            },
+            set: function(key, data, overwrite) {
+                var d = this.get(key);
+                if (d != null && overwrite === false) {
+                    return data;
+                }
+                return _.set(this._area, this._in(key), _.stringify(data), overwrite) || d;
+            },
+            setAll: function(data, overwrite) {
+                var changed, val;
+                for (var key in data) {
+                    val = data[key];
+                    if (this.set(key, val, overwrite) !== val) {
+                        changed = true;
+                    }
+                }
+                return changed;
+            },
+            add: function(key, data) {
+                var d = this.get(key);
+                if (d instanceof Array) {
+                    data = d.concat(data);
+                } else if (d !== null) {
+                    var type = typeof d;
+                    if (type === typeof data && type === 'object') {
+                        for (var k in data) {
+                            d[k] = data[k];
+                        }
+                        data = d;
+                    } else {
+                        data = d + data;
+                    }
+                }
+                _.set(this._area, this._in(key), _.stringify(data));
+                return data;
+            },
+            remove: function(key) {
+                var d = this.get(key);
+                _.remove(this._area, this._in(key));
+                return d;
+            },
+            clear: function() {
+                if (!this._ns) {
+                    _.clear(this._area);
+                } else {
+                    this.each(function(k){ _.remove(this._area, this._in(k)); }, 1);
+                }
+                return this;
+            },
+            clearAll: function() {
+                var area = this._area;
+                for (var id in _.areas) {
+                    if (_.areas.hasOwnProperty(id)) {
+                        this._area = _.areas[id];
+                        this.clear();
+                    }
+                }
+                this._area = area;
+                return this;
+            },
+
+            // internal use functions
+            _in: function(k) {
+                if (typeof k !== "string"){ k = _.stringify(k); }
+                return this._ns ? this._ns + k : k;
+            },
+            _out: function(k) {
+                return this._ns ?
+                    k && k.indexOf(this._ns) === 0 ?
+                        k.substring(this._ns.length) :
+                        undefined : // so each() knows to skip it
+                    k;
+            }
+        },// end _.storeAPI
+        storageAPI: {
+            length: 0,
+            has: function(k){ return this.items.hasOwnProperty(k); },
+            key: function(i) {
+                var c = 0;
+                for (var k in this.items){
+                    if (this.has(k) && i === c++) {
+                        return k;
+                    }
+                }
+            },
+            setItem: function(k, v) {
+                if (!this.has(k)) {
+                    this.length++;
+                }
+                this.items[k] = v;
+            },
+            removeItem: function(k) {
+                if (this.has(k)) {
+                    delete this.items[k];
+                    this.length--;
+                }
+            },
+            getItem: function(k){ return this.has(k) ? this.items[k] : null; },
+            clear: function(){ for (var k in this.items){ this.removeItem(k); } },
+            toString: function(){ return this.length+' items in '+this.name+'Storage'; }
+        }// end _.storageAPI
+    };
+
+    var store =
+        // safely set this up (throws error in IE10/32bit mode for local files)
+        _.Store("local", (function(){try{ return localStorage; }catch(e){}})());
+    store.local = store;// for completeness
+    store._ = _;// for extenders and debuggers...
+    // safely setup store.session (throws exception in FF for file:/// urls)
+    store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
+
+    if (typeof define === 'function' && define.amd !== undefined) {
+        define('store2', [], function () {
+            return store;
+        });
+    } else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = store;
+    } else {
+        // expose the primary store fn to the global object and save conflicts
+        if (window.store){ _.conflict = window.store; }
+        window.store = store;
+    }
+
+})(this, this && this.define);
+
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var bind = __webpack_require__(16);
+var bind = __webpack_require__(17);
 var isBuffer = __webpack_require__(166);
 
 /*global toString:true*/
@@ -15865,266 +16125,6 @@ module.exports = {
 
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-/*! store2 - v2.7.1 - 2018-11-15
-* Copyright (c) 2018 Nathan Bubna; Licensed (MIT OR GPL-3.0) */
-;(function(window, define) {
-    var _ = {
-        version: "2.7.1",
-        areas: {},
-        apis: {},
-
-        // utilities
-        inherit: function(api, o) {
-            for (var p in api) {
-                if (!o.hasOwnProperty(p)) {
-                    o[p] = api[p];
-                }
-            }
-            return o;
-        },
-        stringify: function(d) {
-            return d === undefined || typeof d === "function" ? d+'' : JSON.stringify(d);
-        },
-        parse: function(s) {
-            // if it doesn't parse, return as is
-            try{ return JSON.parse(s); }catch(e){ return s; }
-        },
-
-        // extension hooks
-        fn: function(name, fn) {
-            _.storeAPI[name] = fn;
-            for (var api in _.apis) {
-                _.apis[api][name] = fn;
-            }
-        },
-        get: function(area, key){ return area.getItem(key); },
-        set: function(area, key, string){ area.setItem(key, string); },
-        remove: function(area, key){ area.removeItem(key); },
-        key: function(area, i){ return area.key(i); },
-        length: function(area){ return area.length; },
-        clear: function(area){ area.clear(); },
-
-        // core functions
-        Store: function(id, area, namespace) {
-            var store = _.inherit(_.storeAPI, function(key, data, overwrite) {
-                if (arguments.length === 0){ return store.getAll(); }
-                if (typeof data === "function"){ return store.transact(key, data, overwrite); }// fn=data, alt=overwrite
-                if (data !== undefined){ return store.set(key, data, overwrite); }
-                if (typeof key === "string" || typeof key === "number"){ return store.get(key); }
-                if (!key){ return store.clear(); }
-                return store.setAll(key, data);// overwrite=data, data=key
-            });
-            store._id = id;
-            try {
-                var testKey = '_-bad-_';
-                area.setItem(testKey, 'wolf');
-                store._area = area;
-                area.removeItem(testKey);
-            } catch (e) {}
-            if (!store._area) {
-                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
-            }
-            store._ns = namespace || '';
-            if (!_.areas[id]) {
-                _.areas[id] = store._area;
-            }
-            if (!_.apis[store._ns+store._id]) {
-                _.apis[store._ns+store._id] = store;
-            }
-            return store;
-        },
-        storeAPI: {
-            // admin functions
-            area: function(id, area) {
-                var store = this[id];
-                if (!store || !store.area) {
-                    store = _.Store(id, area, this._ns);//new area-specific api in this namespace
-                    if (!this[id]){ this[id] = store; }
-                }
-                return store;
-            },
-            namespace: function(namespace, noSession) {
-                if (!namespace){
-                    return this._ns ? this._ns.substring(0,this._ns.length-1) : '';
-                }
-                var ns = namespace, store = this[ns];
-                if (!store || !store.namespace) {
-                    store = _.Store(this._id, this._area, this._ns+ns+'.');//new namespaced api
-                    if (!this[ns]){ this[ns] = store; }
-                    if (!noSession){ store.area('session', _.areas.session); }
-                }
-                return store;
-            },
-            isFake: function(){ return this._area.name === 'fake'; },
-            toString: function() {
-                return 'store'+(this._ns?'.'+this.namespace():'')+'['+this._id+']';
-            },
-
-            // storage functions
-            has: function(key) {
-                if (this._area.has) {
-                    return this._area.has(this._in(key));//extension hook
-                }
-                return !!(this._in(key) in this._area);
-            },
-            size: function(){ return this.keys().length; },
-            each: function(fn, value) {// value is used by keys(fillList) and getAll(fillList))
-                for (var i=0, m=_.length(this._area); i<m; i++) {
-                    var key = this._out(_.key(this._area, i));
-                    if (key !== undefined) {
-                        if (fn.call(this, key, value || this.get(key)) === false) {
-                            break;
-                        }
-                    }
-                    if (m > _.length(this._area)) { m--; i--; }// in case of removeItem
-                }
-                return value || this;
-            },
-            keys: function(fillList) {
-                return this.each(function(k, list){ list.push(k); }, fillList || []);
-            },
-            get: function(key, alt) {
-                var s = _.get(this._area, this._in(key));
-                return s !== null ? _.parse(s) : alt || s;// support alt for easy default mgmt
-            },
-            getAll: function(fillObj) {
-                return this.each(function(k, all){ all[k] = this.get(k); }, fillObj || {});
-            },
-            transact: function(key, fn, alt) {
-                var val = this.get(key, alt),
-                    ret = fn(val);
-                this.set(key, ret === undefined ? val : ret);
-                return this;
-            },
-            set: function(key, data, overwrite) {
-                var d = this.get(key);
-                if (d != null && overwrite === false) {
-                    return data;
-                }
-                return _.set(this._area, this._in(key), _.stringify(data), overwrite) || d;
-            },
-            setAll: function(data, overwrite) {
-                var changed, val;
-                for (var key in data) {
-                    val = data[key];
-                    if (this.set(key, val, overwrite) !== val) {
-                        changed = true;
-                    }
-                }
-                return changed;
-            },
-            add: function(key, data) {
-                var d = this.get(key);
-                if (d instanceof Array) {
-                    data = d.concat(data);
-                } else if (d !== null) {
-                    var type = typeof d;
-                    if (type === typeof data && type === 'object') {
-                        for (var k in data) {
-                            d[k] = data[k];
-                        }
-                        data = d;
-                    } else {
-                        data = d + data;
-                    }
-                }
-                _.set(this._area, this._in(key), _.stringify(data));
-                return data;
-            },
-            remove: function(key) {
-                var d = this.get(key);
-                _.remove(this._area, this._in(key));
-                return d;
-            },
-            clear: function() {
-                if (!this._ns) {
-                    _.clear(this._area);
-                } else {
-                    this.each(function(k){ _.remove(this._area, this._in(k)); }, 1);
-                }
-                return this;
-            },
-            clearAll: function() {
-                var area = this._area;
-                for (var id in _.areas) {
-                    if (_.areas.hasOwnProperty(id)) {
-                        this._area = _.areas[id];
-                        this.clear();
-                    }
-                }
-                this._area = area;
-                return this;
-            },
-
-            // internal use functions
-            _in: function(k) {
-                if (typeof k !== "string"){ k = _.stringify(k); }
-                return this._ns ? this._ns + k : k;
-            },
-            _out: function(k) {
-                return this._ns ?
-                    k && k.indexOf(this._ns) === 0 ?
-                        k.substring(this._ns.length) :
-                        undefined : // so each() knows to skip it
-                    k;
-            }
-        },// end _.storeAPI
-        storageAPI: {
-            length: 0,
-            has: function(k){ return this.items.hasOwnProperty(k); },
-            key: function(i) {
-                var c = 0;
-                for (var k in this.items){
-                    if (this.has(k) && i === c++) {
-                        return k;
-                    }
-                }
-            },
-            setItem: function(k, v) {
-                if (!this.has(k)) {
-                    this.length++;
-                }
-                this.items[k] = v;
-            },
-            removeItem: function(k) {
-                if (this.has(k)) {
-                    delete this.items[k];
-                    this.length--;
-                }
-            },
-            getItem: function(k){ return this.has(k) ? this.items[k] : null; },
-            clear: function(){ for (var k in this.items){ this.removeItem(k); } },
-            toString: function(){ return this.length+' items in '+this.name+'Storage'; }
-        }// end _.storageAPI
-    };
-
-    var store =
-        // safely set this up (throws error in IE10/32bit mode for local files)
-        _.Store("local", (function(){try{ return localStorage; }catch(e){}})());
-    store.local = store;// for completeness
-    store._ = _;// for extenders and debuggers...
-    // safely setup store.session (throws exception in FF for file:/// urls)
-    store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
-
-    if (typeof define === 'function' && define.amd !== undefined) {
-        define('store2', [], function () {
-            return store;
-        });
-    } else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = store;
-    } else {
-        // expose the primary store fn to the global object and save conflicts
-        if (window.store){ _.conflict = window.store; }
-        window.store = store;
-    }
-
-})(this, this && this.define);
-
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -16145,7 +16145,7 @@ Object.defineProperty(exports, "__esModule", {
 // const API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
 
 /*** SANDBOX ENVIRONMENT ***/
-var URL_BASE = 'https://sandbox.iexapis.com/v1/stock';
+var URL_BASE = 'https://sandbox.iexapis.com/stable/stock';
 var API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
 
 exports.URL_BASE = URL_BASE;
@@ -16167,7 +16167,7 @@ exports.formatNumberWithCommas = formatNumberWithCommas;
 exports.trimString = trimString;
 exports.calcLocalStorageAge = calcLocalStorageAge;
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -16765,7 +16765,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process) {
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 var normalizeHeaderName = __webpack_require__(163);
 
 var DEFAULT_CONTENT_TYPE = {
@@ -16782,10 +16782,10 @@ function getDefaultAdapter() {
   var adapter;
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
-    adapter = __webpack_require__(12);
+    adapter = __webpack_require__(13);
   } else if (typeof process !== 'undefined') {
     // For node use HTTP adapter
-    adapter = __webpack_require__(12);
+    adapter = __webpack_require__(13);
   }
   return adapter;
 }
@@ -16860,7 +16860,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(178)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(179)))
 
 /***/ }),
 /* 9 */
@@ -16879,7 +16879,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _chart = __webpack_require__(176);
+var _chart = __webpack_require__(177);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -17060,7 +17060,75 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _utility = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var KeyStats = function () {
+  function KeyStats(containerId, symbol) {
+    _classCallCheck(this, KeyStats);
+
+    this.$container = (0, _jquery2.default)(containerId);
+    // If data for stock exists in localStorage, retrieve it.
+    if (_store2.default.get(symbol).quote !== null) {
+      this.data = _store2.default.get(symbol).quote;
+      this.close = this.data.close || '--';
+      this.open = this.data.open || '--';
+      this.high = this.data.high || '--';
+      this.low = this.data.low || '--';
+      this.marketCap = (0, _utility.formatLargeNumber)(this.data.marketCap);
+      this.peRatio = this.data.peRatio;
+      this.wk52High = this.data.week52High;
+      this.wk52Low = this.data.week52Low;
+      this.volume = (0, _utility.formatNumberWithCommas)(Math.round(this.data.latestVolume));
+    }
+
+    this.renderKeyStats();
+  }
+
+  // RENDER KEY STATS FOR STOCKS
+
+
+  _createClass(KeyStats, [{
+    key: 'renderKeyStats',
+    value: function renderKeyStats() {
+
+      var keyStatsHTML = '\n      <h2 class="text-header">Key Statistics</h2>\n      <table id="key-stats-table">\n        <tr>\n          <td>Close</td>\n          <td>' + this.close + '</td>\n        </tr>\n        <tr>\n          <td>Open</td>\n          <td>' + this.open + '</td>\n        </tr>\n        <tr>\n          <td>High</td>\n          <td>' + this.high + '</td>\n        </tr>\n        <tr>\n          <td>Low</td>\n          <td>' + this.low + '</td>\n        </tr>\n        <tr>\n          <td>Market Cap</td>\n          <td>' + this.marketCap + '</td>\n        </tr>\n        <tr>\n          <td>P/E Ratio</td>\n          <td>' + this.peRatio + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk High</td>\n          <td>' + this.wk52High + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk Low</td>\n          <td>' + this.wk52Low + '</td>\n        </tr>\n        <tr>\n          <td>Volume</td>\n          <td>' + this.volume + '</td>\n        </tr>\n      </table>\n    ';
+
+      this.$container.empty();
+      this.$container.append(keyStatsHTML);
+    }
+  }]);
+
+  return KeyStats;
+}();
+
+exports.default = KeyStats;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -17184,7 +17252,7 @@ var News = function () {
 exports.default = News;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17200,7 +17268,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -17373,18 +17441,18 @@ var WatchButton = function () {
 exports.default = WatchButton;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 var settle = __webpack_require__(156);
 var buildURL = __webpack_require__(158);
 var parseHeaders = __webpack_require__(164);
 var isURLSameOrigin = __webpack_require__(162);
-var createError = __webpack_require__(15);
+var createError = __webpack_require__(16);
 
 module.exports = function xhrAdapter(config) {
   return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -17542,7 +17610,7 @@ module.exports = function xhrAdapter(config) {
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17568,7 +17636,7 @@ module.exports = Cancel;
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17580,7 +17648,7 @@ module.exports = function isCancel(value) {
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17605,7 +17673,7 @@ module.exports = function createError(message, config, code, request, response) 
 
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17623,7 +17691,7 @@ module.exports = function bind(fn, thisArg) {
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17639,15 +17707,15 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _intervals = __webpack_require__(18);
+var _intervals = __webpack_require__(19);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _watchButton = __webpack_require__(11);
+var _watchButton = __webpack_require__(12);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
@@ -17743,7 +17811,7 @@ var ChartBox = function () {
 exports.default = ChartBox;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17759,7 +17827,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -17926,74 +17994,6 @@ var Intervals = function () {
 }();
 
 exports.default = Intervals;
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _utility = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var KeyStats = function () {
-  function KeyStats(containerId, symbol) {
-    _classCallCheck(this, KeyStats);
-
-    this.$container = (0, _jquery2.default)(containerId);
-    // If data for stock exists in localStorage, retrieve it.
-    if (_store2.default.get(symbol).quote !== null) {
-      this.data = _store2.default.get(symbol).quote;
-      this.close = this.data.close || '--';
-      this.open = this.data.open || '--';
-      this.high = this.data.high || '--';
-      this.low = this.data.low || '--';
-      this.marketCap = (0, _utility.formatLargeNumber)(this.data.marketCap);
-      this.peRatio = this.data.peRatio;
-      this.wk52High = this.data.week52High;
-      this.wk52Low = this.data.week52Low;
-      this.volume = (0, _utility.formatNumberWithCommas)(Math.round(this.data.latestVolume));
-    }
-
-    this.renderKeyStats();
-  }
-
-  // RENDER KEY STATS FOR STOCKS
-
-
-  _createClass(KeyStats, [{
-    key: 'renderKeyStats',
-    value: function renderKeyStats() {
-
-      var keyStatsHTML = '\n      <h2 class="text-header">Key Statistics</h2>\n      <table id="key-stats-table">\n        <tr>\n          <td>Close</td>\n          <td>' + this.close + '</td>\n        </tr>\n        <tr>\n          <td>Open</td>\n          <td>' + this.open + '</td>\n        </tr>\n        <tr>\n          <td>High</td>\n          <td>' + this.high + '</td>\n        </tr>\n        <tr>\n          <td>Low</td>\n          <td>' + this.low + '</td>\n        </tr>\n        <tr>\n          <td>Market Cap</td>\n          <td>' + this.marketCap + '</td>\n        </tr>\n        <tr>\n          <td>P/E Ratio</td>\n          <td>' + this.peRatio + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk High</td>\n          <td>' + this.wk52High + '</td>\n        </tr>\n        <tr>\n          <td>52 Wk Low</td>\n          <td>' + this.wk52Low + '</td>\n        </tr>\n        <tr>\n          <td>Volume</td>\n          <td>' + this.volume + '</td>\n        </tr>\n      </table>\n    ';
-
-      this.$container.empty();
-      this.$container.append(keyStatsHTML);
-    }
-  }]);
-
-  return KeyStats;
-}();
-
-exports.default = KeyStats;
 
 /***/ }),
 /* 20 */
@@ -30399,8 +30399,8 @@ exports.default = Search;
 "use strict";
 
 
-var utils = __webpack_require__(2);
-var bind = __webpack_require__(16);
+var utils = __webpack_require__(3);
+var bind = __webpack_require__(17);
 var Axios = __webpack_require__(152);
 var defaults = __webpack_require__(8);
 
@@ -30435,9 +30435,9 @@ axios.create = function create(instanceConfig) {
 };
 
 // Expose Cancel & CancelToken
-axios.Cancel = __webpack_require__(13);
+axios.Cancel = __webpack_require__(14);
 axios.CancelToken = __webpack_require__(151);
-axios.isCancel = __webpack_require__(14);
+axios.isCancel = __webpack_require__(15);
 
 // Expose all/spread
 axios.all = function all(promises) {
@@ -30458,7 +30458,7 @@ module.exports.default = axios;
 "use strict";
 
 
-var Cancel = __webpack_require__(13);
+var Cancel = __webpack_require__(14);
 
 /**
  * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -30523,7 +30523,7 @@ module.exports = CancelToken;
 
 
 var defaults = __webpack_require__(8);
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 var InterceptorManager = __webpack_require__(153);
 var dispatchRequest = __webpack_require__(154);
 
@@ -30608,7 +30608,7 @@ module.exports = Axios;
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 function InterceptorManager() {
   this.handlers = [];
@@ -30667,9 +30667,9 @@ module.exports = InterceptorManager;
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 var transformData = __webpack_require__(157);
-var isCancel = __webpack_require__(14);
+var isCancel = __webpack_require__(15);
 var defaults = __webpack_require__(8);
 var isAbsoluteURL = __webpack_require__(161);
 var combineURLs = __webpack_require__(159);
@@ -30788,7 +30788,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 "use strict";
 
 
-var createError = __webpack_require__(15);
+var createError = __webpack_require__(16);
 
 /**
  * Resolve or reject a Promise based on response status.
@@ -30821,7 +30821,7 @@ module.exports = function settle(resolve, reject, response) {
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 /**
  * Transform the data for a request or a response
@@ -30848,7 +30848,7 @@ module.exports = function transformData(data, headers, fns) {
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 function encode(val) {
   return encodeURIComponent(val).
@@ -30942,7 +30942,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -31023,7 +31023,7 @@ module.exports = function isAbsoluteURL(url) {
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 module.exports = (
   utils.isStandardBrowserEnv() ?
@@ -31098,7 +31098,7 @@ module.exports = (
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 module.exports = function normalizeHeaderName(headers, normalizedName) {
   utils.forEach(headers, function processHeader(value, name) {
@@ -31117,7 +31117,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 "use strict";
 
 
-var utils = __webpack_require__(2);
+var utils = __webpack_require__(3);
 
 // Headers whose duplicates are ignored by node
 // c.f. https://nodejs.org/api/http.html#http_message_headers
@@ -31270,7 +31270,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -31497,15 +31497,15 @@ var _navigo = __webpack_require__(7);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stockPage = __webpack_require__(175);
+var _stockPage = __webpack_require__(176);
 
 var _stockPage2 = _interopRequireDefault(_stockPage);
 
-var _homePage = __webpack_require__(174);
+var _homePage = __webpack_require__(175);
 
 var _homePage2 = _interopRequireDefault(_homePage);
 
-var _watchlistFull = __webpack_require__(184);
+var _watchlistFull = __webpack_require__(174);
 
 var _watchlistFull2 = _interopRequireDefault(_watchlistFull);
 
@@ -31810,7 +31810,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -31824,11 +31824,11 @@ var _axios2 = _interopRequireDefault(_axios);
 
 var _utility = __webpack_require__(6);
 
-var _intervals = __webpack_require__(18);
+var _intervals = __webpack_require__(19);
 
 var _intervals2 = _interopRequireDefault(_intervals);
 
-var _watchButton = __webpack_require__(11);
+var _watchButton = __webpack_require__(12);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
@@ -32041,7 +32041,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -32049,7 +32049,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _watchButton = __webpack_require__(11);
+var _watchButton = __webpack_require__(12);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
@@ -32219,7 +32219,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -32227,7 +32227,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _keystats = __webpack_require__(19);
+var _keystats = __webpack_require__(10);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
@@ -32236,6 +32236,8 @@ var _utility = __webpack_require__(6);
 var _const = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -32248,16 +32250,17 @@ var Watchlist = function () {
     this.watchlist = _store2.default.get('watchlist') || [];
 
     this.renderCanvasHtml();
+
     // If Watchlist has stocks...
     if (this.watchlist.length > 0) {
-      console.log("TRRRRUUUEE");
+      this.getStockData();
     } else {
       this.renderEmptyWatchlistCanvas();
     }
 
-    if (this.watchlist.length > 0) {
-      this.displayStocks();
-    }
+    // if (this.watchlist.length > 0) {
+    //   this.displayStocks();
+    // }
 
     this.$watchlistContainer;
   }
@@ -32273,6 +32276,250 @@ var Watchlist = function () {
       this.$canvas.empty();
       this.$canvas.append(html);
       this.$watchlistContainer = (0, _jquery2.default)('.watchlistList');
+    }
+
+    // RENDER CANVAS WITH NO WATCHLIST
+
+  }, {
+    key: 'renderEmptyWatchlistCanvas',
+    value: function renderEmptyWatchlistCanvas() {
+      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol.</p>\n        </div>\n      </div>\n    ';
+
+      this.$canvas.empty();
+      this.$canvas.append(html);
+    }
+  }, {
+    key: 'getStockData',
+    value: function getStockData() {
+      var _this = this;
+
+      // console.log(this.watchlist);
+      this.watchlist.map(function (company) {
+        var companyData = _store2.default.get(company.symbol);
+
+        if (companyData) {
+          // console.log(company.symbol, companyData);
+          _this.displayStocks();
+        } else {
+          // console.log(false);
+          _axios2.default.get(_const.URL_BASE + '/' + company.symbol + '/quote?token=' + _const.API_TOKEN).then(function (res) {
+            _store2.default.set(company.symbol, res.data);
+          }).catch(function (error) {
+            return console.log(error.res.data.error);
+          }).then(function () {
+            _this.displayStocks();
+          });
+        }
+        // console.log(company)
+      });
+    }
+
+    // GET DATA FOR COMPANY
+
+  }, {
+    key: 'fetchStockData',
+    value: function fetchStockData() {
+      var _this2 = this;
+
+      this.currentInterval = _store2.default.get('current-interval');
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.currentInterval + '&token=' + _const.API_TOKEN).then(function (response) {
+        var chart = response.data.chart;
+        var news = response.data.news;
+        var quote = response.data.quote;
+
+        // If stored data exists
+        if (_store2.default.get(_this2.symbol) !== null) {
+          var storedData = _store2.default.get(_this2.symbol);
+
+          /* If data for selected interval does not exist in localStorage
+          then add data for selected interval into localStorage
+          case: the current selected interval is 6M for stock1
+          when we click on stock2, we need to check if data for 6M for
+          stock2 exists in localStorage */
+          if (!(_this2.currentInterval in storedData.chart)) {
+            storedData.chart[_this2.currentInterval] = chart.data;
+            _store2.default.set(_this2.symbol, storedData);
+          }
+        }
+        // Otherwise create data object and store in localStorage
+        else {
+            var dataToStore = {
+              chart: _defineProperty({}, _this2.currentInterval, chart),
+              news: news,
+              quote: quote,
+              time: Date.now()
+            };
+
+            _store2.default.set(_this2.symbol, dataToStore);
+
+            /* This prevents an infinite loop of requests in case the requests fail.
+            The infinite loop would be caused in renderAllData().
+            */
+            if (response.status == 200) {
+              _this2.renderAllData();
+            }
+          }
+      }).catch(function (error) {
+        return console.log(error.response.data.error);
+      });
+    }
+
+    // POPULATE WATCHLIST CONTAINER WITH STOCKS
+
+  }, {
+    key: 'displayStocks',
+    value: function displayStocks() {
+      var _this3 = this;
+
+      var stocks = this.watchlist.map(function (stock, index) {
+        var symbol = stock.symbol;
+        var stockData = _store2.default.get(symbol);
+        console.log('stockdata', stockData);
+        var companyName = (0, _utility.trimString)(stockData.companyName, 40);
+        var price = stockData.delayedPrice;
+        var change = stockData.change;
+        var changePercent = stockData.changePercent;
+
+        var isActive = '';
+
+        // Set 'active' class to watchlist item with index that matches selectedStockIndex
+        if (index === _this3.currentWatchIndex) {
+          isActive = 'active';
+        }
+
+        return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <div class="topRow">\n              <span class="watchlist-item-symbol">' + symbol + '</span>\n              <span>' + price + '</span>\n              <span class="green">' + change + '</span>\n              <span class="green">' + changePercent + '</span>\n            </div>\n            <p class="watchlist-item-name">' + companyName + '</p>\n          </button>\n        </li>\n      ';
+      });
+
+      this.$watchlistContainer.empty();
+      this.$watchlistContainer.append(stocks);
+      // this.renderAllData();
+    }
+  }]);
+
+  return Watchlist;
+}();
+
+exports.default = Watchlist;
+
+/***/ }),
+/* 174 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(2);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _chartbox = __webpack_require__(18);
+
+var _chartbox2 = _interopRequireDefault(_chartbox);
+
+var _keystats = __webpack_require__(10);
+
+var _keystats2 = _interopRequireDefault(_keystats);
+
+var _news = __webpack_require__(11);
+
+var _news2 = _interopRequireDefault(_news);
+
+var _utility = __webpack_require__(6);
+
+var _const = __webpack_require__(5);
+
+var _graph = __webpack_require__(9);
+
+var _graph2 = _interopRequireDefault(_graph);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var WatchlistFull = function () {
+  function WatchlistFull(canvasId) {
+    _classCallCheck(this, WatchlistFull);
+
+    this.$canvas = (0, _jquery2.default)(canvasId);
+    this.symbol;
+    this.chartBox;
+    this.keyStats;
+    this.latestNews;
+    this.currentWatchIndex = _store2.default.get('current-watch-index') || 0;
+    this.watchlist = _store2.default.get('watchlist') || [];
+
+    // If 'current-interval' doesn't exists localStorage, set it at '1m'
+    if (_store2.default.get('current-interval') === null) {
+      _store2.default.set('current-interval', '1m');
+    }
+
+    // If Watchlist has stocks...
+    if (this.watchlist.length > 0) {
+      /* When the current selected Watchlist stock is the last one in the list
+      and the user clicks the star icon to unwatch the stock, we need to
+      set the currentWatchIndex to the length of the Watchlst minus 1 so
+      that when the Watchlist page reloads, it will render data for the newly 
+      updated last item in the Watchlist. Not having this condition will break
+      the Watchlist page in this scenario.
+      */
+      if (this.currentWatchIndex === this.watchlist.length) {
+        _store2.default.set('current-watch-index', this.watchlist.length - 1);
+        this.currentWatchIndex = _store2.default.get('current-watch-index');
+      }
+      this.symbol = _store2.default.get('watchlist')[this.currentWatchIndex].symbol || '';
+      this.companyName = _store2.default.get('watchlist')[this.currentWatchIndex].name || '';
+      this.renderCanvasHtml();
+    } else {
+      this.renderEmptyWatchlistCanvas();
+    }
+
+    this.$watchlistCanvas = (0, _jquery2.default)('.watchlist-canvas');
+    this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
+    this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
+    this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
+    this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
+    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-keystats-container');
+    this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
+    this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
+    this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
+    this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
+    this.intervalsBar;
+    this.watchButton;
+
+    if (this.watchlist.length > 0) {
+      this.displayStocks();
+    }
+
+    this.renderDataOnStockSelection();
+  }
+
+  // RENDER WATCHLIST CANVAS
+
+
+  _createClass(WatchlistFull, [{
+    key: 'renderCanvasHtml',
+    value: function renderCanvasHtml() {
+      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div id="watchlist-chart-container" class="watchlist-chart-container"></div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
+
+      this.$canvas.empty();
+      this.$canvas.append(html);
     }
 
     // RENDER CANVAS WITH NO WATCHLIST
@@ -32306,19 +32553,165 @@ var Watchlist = function () {
         return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <p class="watchlist-item-symbol">' + symbol + '</p>\n            <p class="watchlist-item-name">' + companyName + '</p>\n          </button>\n        </li>\n      ';
       });
 
-      this.$watchlistContainer.empty();
-      this.$watchlistContainer.append(stocks);
-      // this.renderAllData();
+      this.$watchlist.empty();
+      this.$watchlist.append(stocks);
+      this.renderAllData();
+    }
+
+    // RENDER ALL STOCK INFO ON PAGE
+
+  }, {
+    key: 'renderAllData',
+    value: function renderAllData() {
+      if (_store2.default.get(this.symbol) !== null) {
+        this.currentInterval = _store2.default.get('current-interval');
+        /* If data for the current-interval for this stock does exist,
+        Create a new Chartbox. Else, fetch new data for the interval.
+        */
+        if (_store2.default.get(this.symbol).chart[this.currentInterval]) {
+          this.chartBox = new _chartbox2.default('#watchlist-chart-container', this.symbol);
+        } else {
+          this.fetchChartData();
+        }
+
+        this.keyStats = new _keystats2.default('#watchlist-keystats-container', this.symbol);
+        this.latestNews = new _news2.default('#watchlist-news-container', [this.symbol], this.symbol);
+      } else {
+        this.fetchStockData();
+      }
+    }
+
+    // MAKE API CALL TO FETCH DATA FOR THE SELECTED STOCK
+
+  }, {
+    key: 'fetchChartData',
+    value: function fetchChartData() {
+      var _this2 = this;
+
+      this.currentInterval = _store2.default.get('current-interval');
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.currentInterval + '?token=' + _const.API_TOKEN).then(function (response) {
+        var storedData = _store2.default.get(_this2.symbol);
+
+        storedData.chart[_this2.currentInterval] = response.data;
+        _store2.default.set(_this2.symbol, storedData);
+      }).catch(function (error) {
+        return console.log(error);
+      }).then(function () {
+        new _chartbox2.default('#watchlist-chart-container', _this2.symbol);
+      });
+    }
+
+    // GET DATA FOR COMPANY
+
+  }, {
+    key: 'fetchStockData',
+    value: function fetchStockData() {
+      var _this3 = this;
+
+      this.currentInterval = _store2.default.get('current-interval');
+
+      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.currentInterval + '&token=' + _const.API_TOKEN).then(function (response) {
+        var chart = response.data.chart;
+        var news = response.data.news;
+        var quote = response.data.quote;
+
+        // If stored data exists
+        if (_store2.default.get(_this3.symbol) !== null) {
+          var storedData = _store2.default.get(_this3.symbol);
+
+          /* If data for selected interval does not exist in localStorage
+          then add data for selected interval into localStorage
+          case: the current selected interval is 6M for stock1
+          when we click on stock2, we need to check if data for 6M for
+          stock2 exists in localStorage */
+          if (!(_this3.currentInterval in storedData.chart)) {
+            storedData.chart[_this3.currentInterval] = chart.data;
+            _store2.default.set(_this3.symbol, storedData);
+          }
+        }
+        // Otherwise create data object and store in localStorage
+        else {
+            var dataToStore = {
+              chart: _defineProperty({}, _this3.currentInterval, chart),
+              news: news,
+              quote: quote,
+              time: Date.now()
+            };
+
+            _store2.default.set(_this3.symbol, dataToStore);
+
+            /* This prevents an infinite loop of requests in case the requests fail.
+            The infinite loop would be caused in renderAllData().
+            */
+            if (response.status == 200) {
+              _this3.renderAllData();
+            }
+          }
+      }).catch(function (error) {
+        return console.log(error.response.data.error);
+      });
+    }
+
+    // RENDER NEW DATA WHEN A NEW STOCK IS SELECTED IN WATCHLIST
+
+  }, {
+    key: 'renderDataOnStockSelection',
+    value: function renderDataOnStockSelection() {
+      var that = this;
+
+      // Display graph & data for watchlist item
+      this.$watchlist.on('click', 'button', function (event) {
+        event.preventDefault();
+        var clickedEl = (0, _jquery2.default)(this).parent();
+        var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
+        that.symbol = this.id;
+        var dataUpdateRequired = (0, _utility.calcLocalStorageAge)(that.symbol);
+
+        // Add active class to clicked watchlist item
+        watchlistItems.removeClass('active');
+        clickedEl.addClass('active');
+
+        // Render name and graph for watchlist item
+        that.$latestPriceContainer.empty();
+        that.$changePercentContainer.empty();
+        // If stored data exists and is less than 1 day old
+        if (_store2.default.get(that.symbol) !== null && !dataUpdateRequired) {
+          that.renderAllData();
+        }
+        // Clear stored data for stock and fetch new data
+        else {
+            _store2.default.remove(that.symbol);
+            that.fetchStockData();
+          }
+
+        // Get index of selected stock
+        var currentWatchIndex = that.watchlist.findIndex(function (stock) {
+          return stock.symbol === that.symbol;
+        });
+
+        _store2.default.set('current-watch-index', currentWatchIndex);
+      });
+    }
+
+    // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
+
+  }, {
+    key: 'destroyPage',
+    value: function destroyPage() {
+      if (this.$watchlistCanvas) {
+        this.$canvas.empty();
+      }
     }
   }]);
 
-  return Watchlist;
+  return WatchlistFull;
 }();
 
-exports.default = Watchlist;
+exports.default = WatchlistFull;
 
 /***/ }),
-/* 174 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32334,7 +32727,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -32346,7 +32739,7 @@ var _graphCard = __webpack_require__(168);
 
 var _graphCard2 = _interopRequireDefault(_graphCard);
 
-var _news = __webpack_require__(10);
+var _news = __webpack_require__(11);
 
 var _news2 = _interopRequireDefault(_news);
 
@@ -32407,7 +32800,7 @@ var HomePage = function () {
   }, {
     key: 'renderHTML',
     value: function renderHTML() {
-      var html = '\n        <div id="homePage">\n          <div id=homeLeftCol>\n            <div id="home-graph-cards-container" class="home-row">\n              <div id="home-graphCard0"></div>\n              <div id="home-graphCard1"></div>\n              <div id="home-graphCard2"></div>\n            </div>\n              <div id="home-news" class="box">\n                <h2 class="text-header">Latest News</h2>\n              </div>\n          </div>\n          <div id="homeRightCol">\n          </div>\n        </div>\n      ';
+      var html = '\n        <div id="homePage">\n          <div id="homeLeftCol">\n            <div id="home-graph-cards-container" class="home-row">\n              <div id="home-graphCard0"></div>\n              <div id="home-graphCard1"></div>\n              <div id="home-graphCard2"></div>\n            </div>\n              <div id="home-news" class="box">\n                <h2 class="text-header">Latest News</h2>\n              </div>\n          </div>\n          <div id="homeRightCol">\n          </div>\n        </div>\n      ';
       this.$canvas.empty();
       this.$canvas.append(html);
     }
@@ -32427,20 +32820,20 @@ var HomePage = function () {
   }, {
     key: 'getStocks',
     value: function getStocks() {
-      // const mostActive = store.get('mostactive') || [];
+      var mostActive = _store2.default.get('mostactive') || [];
       // const gainers = store.get('gainers') || [];
       // const losers = store.get('losers') || [];
 
       // check if local storage exist
       this.renderGraphCards();
       new _watchlist2.default('#homeRightCol');
-      // if (mostActive.length) {
-      // this.mostActiveSymbols = this.getMostActiveSymbols();
-      // new StockList('#mostactive-container', 'mostactive', 'Most Active');
-      // new StockList('#gainers-container', 'gainers', 'Gainers');
-      // new StockList('#losers-container', 'losers', 'Losers');
-      // this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
-      // }
+      if (mostActive.length) {
+        this.mostActiveSymbols = this.getMostActiveSymbols();
+        new _stocklist2.default('#home-news', 'mostactive', 'Most Active');
+        // new StockList('#gainers-container', 'gainers', 'Gainers');
+        // new StockList('#losers-container', 'losers', 'Losers');
+        // this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
+      }
       // else {
       //   this.fetchStocks();
       // }
@@ -32476,7 +32869,7 @@ var HomePage = function () {
         console.log(error);
       }).then(function () {
         _this.mostActiveSymbols = _this.getMostActiveSymbols();
-        new _stocklist2.default('#mostactive-container', 'mostactive', 'Most Active');
+        new _stocklist2.default('#home-news', 'mostactive', 'Most Active');
         // new StockList('#gainers-container', 'gainers', 'Gainers');
         // new StockList('#losers-container', 'losers', 'Losers');
         _this.renderGraphCards();
@@ -32501,7 +32894,7 @@ var HomePage = function () {
 exports.default = HomePage;
 
 /***/ }),
-/* 175 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32517,7 +32910,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(3);
+var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
@@ -32525,15 +32918,15 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _chartbox = __webpack_require__(17);
+var _chartbox = __webpack_require__(18);
 
 var _chartbox2 = _interopRequireDefault(_chartbox);
 
-var _keystats = __webpack_require__(19);
+var _keystats = __webpack_require__(10);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
-var _news = __webpack_require__(10);
+var _news = __webpack_require__(11);
 
 var _news2 = _interopRequireDefault(_news);
 
@@ -32620,7 +33013,7 @@ var Stock = function () {
 exports.default = Stock;
 
 /***/ }),
-/* 176 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -47306,7 +47699,7 @@ return src;
 
 
 /***/ }),
-/* 177 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -47579,10 +47972,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 177;
+webpackContext.id = 178;
 
 /***/ }),
-/* 178 */
+/* 179 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -47772,7 +48165,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 179 */
+/* 180 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -47798,318 +48191,6 @@ module.exports = function(module) {
 	return module;
 };
 
-
-/***/ }),
-/* 180 */,
-/* 181 */,
-/* 182 */,
-/* 183 */,
-/* 184 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _store = __webpack_require__(3);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
-var _chartbox = __webpack_require__(17);
-
-var _chartbox2 = _interopRequireDefault(_chartbox);
-
-var _keystats = __webpack_require__(19);
-
-var _keystats2 = _interopRequireDefault(_keystats);
-
-var _news = __webpack_require__(10);
-
-var _news2 = _interopRequireDefault(_news);
-
-var _utility = __webpack_require__(6);
-
-var _const = __webpack_require__(5);
-
-var _graph = __webpack_require__(9);
-
-var _graph2 = _interopRequireDefault(_graph);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var WatchlistFull = function () {
-  function WatchlistFull(canvasId) {
-    _classCallCheck(this, WatchlistFull);
-
-    this.$canvas = (0, _jquery2.default)(canvasId);
-    this.symbol;
-    this.chartBox;
-    this.keyStats;
-    this.latestNews;
-    this.currentWatchIndex = _store2.default.get('current-watch-index') || 0;
-    this.watchlist = _store2.default.get('watchlist') || [];
-
-    // If 'current-interval' doesn't exists localStorage, set it at '1m'
-    if (_store2.default.get('current-interval') === null) {
-      _store2.default.set('current-interval', '1m');
-    }
-
-    // If Watchlist has stocks...
-    if (this.watchlist.length > 0) {
-      /* When the current selected Watchlist stock is the last one in the list
-      and the user clicks the star icon to unwatch the stock, we need to
-      set the currentWatchIndex to the length of the Watchlst minus 1 so
-      that when the Watchlist page reloads, it will render data for the newly 
-      updated last item in the Watchlist. Not having this condition will break
-      the Watchlist page in this scenario.
-      */
-      if (this.currentWatchIndex === this.watchlist.length) {
-        _store2.default.set('current-watch-index', this.watchlist.length - 1);
-        this.currentWatchIndex = _store2.default.get('current-watch-index');
-      }
-      this.symbol = _store2.default.get('watchlist')[this.currentWatchIndex].symbol || '';
-      this.companyName = _store2.default.get('watchlist')[this.currentWatchIndex].name || '';
-      this.renderCanvasHtml();
-    } else {
-      this.renderEmptyWatchlistCanvas();
-    }
-
-    this.$watchlistCanvas = (0, _jquery2.default)('.watchlist-canvas');
-    this.$watchlist = this.$watchlistCanvas.find('.watchlist-list');
-    this.$watchlistChart = this.$watchlistCanvas.find('#watchlist-chart');
-    this.$stockName = this.$watchlistCanvas.find('#watchlist-stock-name');
-    this.$stockSymbol = this.$watchlistCanvas.find('#watchlist-stock-symbol');
-    this.$keyStatsContainer = this.$watchlistCanvas.find('#watchlist-keystats-container');
-    this.$newsContainer = this.$watchlistCanvas.find('#watchlist-news-container');
-    this.$latestPriceContainer = this.$watchlistCanvas.find('#watchlist-latest-price');
-    this.$changePercentContainer = this.$watchlistCanvas.find('#watchlist-change-percent');
-    this.$watchButtonContainer = this.$watchlistCanvas.find('#watchlist-chart-header-watch-button');
-    this.intervalsBar;
-    this.watchButton;
-
-    if (this.watchlist.length > 0) {
-      this.displayStocks();
-    }
-
-    this.renderDataOnStockSelection();
-  }
-
-  // RENDER WATCHLIST CANVAS
-
-
-  _createClass(WatchlistFull, [{
-    key: 'renderCanvasHtml',
-    value: function renderCanvasHtml() {
-      var html = '\n      <div class="watchlist-canvas">\n        <div class="watchlist-container">\n          <h2 class="watchlist-title">Watchlist</h2>\n          <ul class="watchlist-list"></ul>\n        </div>\n        <div class="watchlist-data-container">\n          <div class="watchlist-data-inner-container">\n            <div id="watchlist-chart-container" class="watchlist-chart-container"></div>\n            <div id="watchlist-summary-container">\n              <div id="watchlist-keystats-container" class="box margin-right"></div>\n              <div id="watchlist-news-container" class="box"></div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ';
-
-      this.$canvas.empty();
-      this.$canvas.append(html);
-    }
-
-    // RENDER CANVAS WITH NO WATCHLIST
-
-  }, {
-    key: 'renderEmptyWatchlistCanvas',
-    value: function renderEmptyWatchlistCanvas() {
-      var html = '\n      <div id="watchlist-empty">\n        <div class="watchlist-empty-content">\n          <img src="https://raw.githubusercontent.com/thaitwo/charts/master/public/images/watchlist-icon.png" />\n          <h3>Your Watchlist will appear here</h3>\n          <p>Add stocks to your Watchlist by clicking the <span class="icon-watchlist"><i class="far fa-star"></i></span> symbol.</p>\n        </div>\n      </div>\n    ';
-
-      this.$canvas.empty();
-      this.$canvas.append(html);
-    }
-
-    // POPULATE WATCHLIST CONTAINER WITH STOCKS
-
-  }, {
-    key: 'displayStocks',
-    value: function displayStocks() {
-      var _this = this;
-
-      var stocks = this.watchlist.map(function (stock, index) {
-        var symbol = stock.symbol;
-        var companyName = (0, _utility.trimString)(stock.name, 40);
-        var isActive = '';
-
-        // Set 'active' class to watchlist item with index that matches selectedStockIndex
-        if (index === _this.currentWatchIndex) {
-          isActive = 'active';
-        }
-
-        return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <p class="watchlist-item-symbol">' + symbol + '</p>\n            <p class="watchlist-item-name">' + companyName + '</p>\n          </button>\n        </li>\n      ';
-      });
-
-      this.$watchlist.empty();
-      this.$watchlist.append(stocks);
-      this.renderAllData();
-    }
-
-    // RENDER ALL STOCK INFO ON PAGE
-
-  }, {
-    key: 'renderAllData',
-    value: function renderAllData() {
-      if (_store2.default.get(this.symbol) !== null) {
-        this.currentInterval = _store2.default.get('current-interval');
-        /* If data for the current-interval for this stock does exist,
-        Create a new Chartbox. Else, fetch new data for the interval.
-        */
-        if (_store2.default.get(this.symbol).chart[this.currentInterval]) {
-          this.chartBox = new _chartbox2.default('#watchlist-chart-container', this.symbol);
-        } else {
-          this.fetchChartData();
-        }
-
-        this.keyStats = new _keystats2.default('#watchlist-keystats-container', this.symbol);
-        this.latestNews = new _news2.default('#watchlist-news-container', [this.symbol], this.symbol);
-      } else {
-        this.fetchStockData();
-      }
-    }
-
-    // MAKE API CALL TO FETCH DATA FOR THE SELECTED STOCK
-
-  }, {
-    key: 'fetchChartData',
-    value: function fetchChartData() {
-      var _this2 = this;
-
-      this.currentInterval = _store2.default.get('current-interval');
-
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/chart/' + this.currentInterval + '?token=' + _const.API_TOKEN).then(function (response) {
-        var storedData = _store2.default.get(_this2.symbol);
-
-        storedData.chart[_this2.currentInterval] = response.data;
-        _store2.default.set(_this2.symbol, storedData);
-      }).catch(function (error) {
-        return console.log(error);
-      }).then(function () {
-        new _chartbox2.default('#watchlist-chart-container', _this2.symbol);
-      });
-    }
-
-    // GET DATA FOR COMPANY
-
-  }, {
-    key: 'fetchStockData',
-    value: function fetchStockData() {
-      var _this3 = this;
-
-      this.currentInterval = _store2.default.get('current-interval');
-
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.currentInterval + '&token=' + _const.API_TOKEN).then(function (response) {
-        var chart = response.data.chart;
-        var news = response.data.news;
-        var quote = response.data.quote;
-
-        // If stored data exists
-        if (_store2.default.get(_this3.symbol) !== null) {
-          var storedData = _store2.default.get(_this3.symbol);
-
-          /* If data for selected interval does not exist in localStorage
-          then add data for selected interval into localStorage
-          case: the current selected interval is 6M for stock1
-          when we click on stock2, we need to check if data for 6M for
-          stock2 exists in localStorage */
-          if (!(_this3.currentInterval in storedData.chart)) {
-            storedData.chart[_this3.currentInterval] = chart.data;
-            _store2.default.set(_this3.symbol, storedData);
-          }
-        }
-        // Otherwise create data object and store in localStorage
-        else {
-            var dataToStore = {
-              chart: _defineProperty({}, _this3.currentInterval, chart),
-              news: news,
-              quote: quote,
-              time: Date.now()
-            };
-
-            _store2.default.set(_this3.symbol, dataToStore);
-
-            /* This prevents an infinite loop of requests in case the requests fail.
-            The infinite loop would be caused in renderAllData().
-            */
-            if (response.status == 200) {
-              _this3.renderAllData();
-            }
-          }
-      }).catch(function (error) {
-        return console.log(error.response.data.error);
-      });
-    }
-
-    // RENDER NEW DATA WHEN A NEW STOCK IS SELECTED IN WATCHLIST
-
-  }, {
-    key: 'renderDataOnStockSelection',
-    value: function renderDataOnStockSelection() {
-      var that = this;
-
-      // Display graph & data for watchlist item
-      this.$watchlist.on('click', 'button', function (event) {
-        event.preventDefault();
-        var clickedEl = (0, _jquery2.default)(this).parent();
-        var watchlistItems = that.$watchlistCanvas.find('.watchlist-list li');
-        that.symbol = this.id;
-        var dataUpdateRequired = (0, _utility.calcLocalStorageAge)(that.symbol);
-
-        // Add active class to clicked watchlist item
-        watchlistItems.removeClass('active');
-        clickedEl.addClass('active');
-
-        // Render name and graph for watchlist item
-        that.$latestPriceContainer.empty();
-        that.$changePercentContainer.empty();
-        // If stored data exists and is less than 1 day old
-        if (_store2.default.get(that.symbol) !== null && !dataUpdateRequired) {
-          that.renderAllData();
-        }
-        // Clear stored data for stock and fetch new data
-        else {
-            _store2.default.remove(that.symbol);
-            that.fetchStockData();
-          }
-
-        // Get index of selected stock
-        var currentWatchIndex = that.watchlist.findIndex(function (stock) {
-          return stock.symbol === that.symbol;
-        });
-
-        _store2.default.set('current-watch-index', currentWatchIndex);
-      });
-    }
-
-    // CLEAR WATCHLIST CANVAS WHEN SWITCHING BETWEEN PAGES
-
-  }, {
-    key: 'destroyPage',
-    value: function destroyPage() {
-      if (this.$watchlistCanvas) {
-        this.$canvas.empty();
-      }
-    }
-  }]);
-
-  return WatchlistFull;
-}();
-
-exports.default = WatchlistFull;
 
 /***/ })
 /******/ ]);
