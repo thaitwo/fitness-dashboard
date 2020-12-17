@@ -87,9 +87,9 @@ class HomePage {
       // new StockList('#losers-container', 'losers', 'Losers');
       // this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
     }
-    // else {
-    //   this.fetchStocks();
-    // }
+    else {
+      this.fetchStocks();
+    }
   }
 
 

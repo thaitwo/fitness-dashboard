@@ -4,6 +4,7 @@ import axios from 'axios';
 import KeyStats from './keystats.js';
 import { calcLocalStorageAge, trimString } from '../../utility/utility.js';
 import { URL_BASE, API_TOKEN } from '../../const';
+import AddStockButton from './addStockButton.js';
 
 class Watchlist {
   constructor(canvasId) {
@@ -33,15 +34,29 @@ class Watchlist {
   // RENDER WATCHLIST CANVAS
   renderCanvasHtml() {
     let html = `
-      <div class="watchlistContainer">
-        <h2 class="watchlist-title">Watchlist</h2>
+      <div id="watchlistContainer" class="watchlistContainer">
+        <div class="headerWrapper">
+          <a class="headerLinkWrapper" href="/#watchlist">
+            <h2 class="watchlist-title">Watchlist</h2>
+            <i data-feather="chevron-right" class="featherIcon--small"></i>
+          </a>
+          <div id="addStockContainer"></div>
+        </div>
+        <div class="watchlistListHeader">
+          <div>Symbol</div>
+          <div>Price</div>
+          <div>Change</div>
+          <div>% Change</div>
+        </div>
         <ul class="watchlistList"></ul>
       </div>
     `;
+    // this.$addStockContainer = $('#addStockContainer');
 
     this.$canvas.empty();
     this.$canvas.append(html);
     this.$watchlistContainer = $('.watchlistList');
+    new AddStockButton('#addStockContainer');
   }
 
 
@@ -67,10 +82,13 @@ class Watchlist {
     this.watchlist.map((company) => {
       const companyData = store.get(company.symbol);
 
+      // If data for the stock already exists in DataStore, then use the stored data
       if (companyData) {
         // console.log(company.symbol, companyData);
-        this.displayStocks();
-      } else {
+        // this.displayStocks();
+      } 
+      // Else, data for this stock is not stored, then make an API call to fetch data
+      else {
         // console.log(false);
         axios.get(`${URL_BASE}/${company.symbol}/quote?token=${API_TOKEN}`)
           .then((res) => {
@@ -78,66 +96,23 @@ class Watchlist {
           })
           .catch(error => console.log(error.res.data.error))
           .then(() => {
+            console.log('CALLed');
             this.displayStocks();
           })
       }
+      
       // console.log(company)
-    })
+    });
+
+    this.displayStocks();
     
-  }
-
-
-  // GET DATA FOR COMPANY
-  fetchStockData() {
-    this.currentInterval = store.get('current-interval');
-
-    axios.get(`${URL_BASE}/${this.symbol}/batch?types=quote,news,chart&last=5&range=${this.currentInterval}&token=${API_TOKEN}`)
-    .then((response) => {
-      const chart = response.data.chart;
-      const news = response.data.news;
-      const quote = response.data.quote;
-
-      // If stored data exists
-      if (store.get(this.symbol) !== null) {
-        const storedData = store.get(this.symbol);
-
-        /* If data for selected interval does not exist in localStorage
-        then add data for selected interval into localStorage
-        case: the current selected interval is 6M for stock1
-        when we click on stock2, we need to check if data for 6M for
-        stock2 exists in localStorage */
-        if (!(this.currentInterval in storedData.chart)) {
-          storedData.chart[this.currentInterval] = chart.data;
-          store.set(this.symbol, storedData);
-        }
-      }
-      // Otherwise create data object and store in localStorage
-      else {
-        const dataToStore = {
-          chart: {
-            [this.currentInterval]: chart, // this.currentInterval will be set to the selected interval
-          },
-          news: news,
-          quote: quote,
-          time: Date.now()
-        }
-
-        store.set(this.symbol, dataToStore);
-
-        /* This prevents an infinite loop of requests in case the requests fail.
-        The infinite loop would be caused in renderAllData().
-        */
-        if (response.status == 200) {
-          this.renderAllData();
-        }
-      }
-    })
-    .catch(error => console.log(error.response.data.error))
   }
 
 
   // POPULATE WATCHLIST CONTAINER WITH STOCKS
   displayStocks() {
+    this.$watchlistContainer.empty();
+
     const stocks = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
       const stockData = store.get(symbol);
@@ -169,7 +144,6 @@ class Watchlist {
       `;
     });
 
-    this.$watchlistContainer.empty();
     this.$watchlistContainer.append(stocks);
     // this.renderAllData();
   }

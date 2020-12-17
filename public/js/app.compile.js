@@ -30322,10 +30322,6 @@ var _navigo = __webpack_require__(7);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
 var _searchSuggestions = __webpack_require__(170);
 
 var _searchSuggestions2 = _interopRequireDefault(_searchSuggestions);
@@ -30338,22 +30334,23 @@ var Search = function () {
   function Search(containerId) {
     _classCallCheck(this, Search);
 
+    this.containerId = containerId.substring(1);
     this.$container = (0, _jquery2.default)(containerId);
     this.renderHtml();
-    this.$searchBox = (0, _jquery2.default)('#search-box');
-    this.$searchSuggestions = (0, _jquery2.default)('#search-suggestions');
+    this.$searchBox = (0, _jquery2.default)('#' + this.containerId + '-search-box');
+    this.$searchSuggestions = (0, _jquery2.default)('#' + this.containerId + '-search-suggestions');
     this.router = new _navigo2.default(null, true);
     this.value;
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
     // this.getInputAndCreateUrl();
-    new _searchSuggestions2.default('#search-box');
+    new _searchSuggestions2.default('#' + this.containerId + '-search-box', '#' + this.containerId + '-search-suggestions');
   }
 
   _createClass(Search, [{
     key: 'renderHtml',
     value: function renderHtml() {
-      var html = '\n      <form id="search-form">\n        <input type="text" id="search-box" placeholder="Search companies">\n        <div id="search-suggestions"></div>\n      </form>\n    ';
+      var html = '\n      <form id="' + this.containerId + '-search-form" class="search-form">\n        <input type="text" id="' + this.containerId + '-search-box" class="search-box" placeholder="Search companies">\n        <div id="' + this.containerId + '-search-suggestions" class="search-suggestions"></div>\n      </form>\n    ';
 
       this.$container.empty();
       this.$container.append(html);
@@ -31617,13 +31614,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Suggestions = function () {
-  function Suggestions(searchBoxId) {
+  function Suggestions(searchBoxId, suggestionsBoxId) {
     _classCallCheck(this, Suggestions);
 
     this.$searchBox = (0, _jquery2.default)(searchBoxId);
     this.value;
     this.currentFocus = -1;
-    this.$searchSuggestions = (0, _jquery2.default)('#search-suggestions');
+    this.$searchSuggestions = (0, _jquery2.default)(suggestionsBoxId);
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
     this.router = new _navigo2.default(null, true);
@@ -32136,7 +32133,7 @@ var StockList = function () {
 
       var stocks = _store2.default.get(this.collectionName);
 
-      var stocksList = stocks.slice(0, 5).map(function (stock) {
+      var stocksList = stocks.slice(0, 10).map(function (stock) {
         var symbol = stock.symbol,
             companyName = stock.companyName,
             latestPrice = stock.latestPrice,
@@ -32175,7 +32172,7 @@ var StockList = function () {
 
       var stocks = _store2.default.get(this.collectionName);
 
-      stocks.slice(0, 5).map(function (stock) {
+      stocks.map(function (stock) {
         var symbol = stock.symbol,
             companyName = stock.companyName;
 
@@ -32235,9 +32232,11 @@ var _utility = __webpack_require__(6);
 
 var _const = __webpack_require__(5);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _addStockButton = __webpack_require__(185);
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+var _addStockButton2 = _interopRequireDefault(_addStockButton);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -32271,11 +32270,13 @@ var Watchlist = function () {
   _createClass(Watchlist, [{
     key: 'renderCanvasHtml',
     value: function renderCanvasHtml() {
-      var html = '\n      <div class="watchlistContainer">\n        <h2 class="watchlist-title">Watchlist</h2>\n        <ul class="watchlistList"></ul>\n      </div>\n    ';
+      var html = '\n      <div id="watchlistContainer" class="watchlistContainer">\n        <div class="headerWrapper">\n          <a class="headerLinkWrapper" href="/#watchlist">\n            <h2 class="watchlist-title">Watchlist</h2>\n            <i data-feather="chevron-right" class="featherIcon--small"></i>\n          </a>\n          <div id="addStockContainer"></div>\n        </div>\n        <div class="watchlistListHeader">\n          <div>Symbol</div>\n          <div>Price</div>\n          <div>Change</div>\n          <div>% Change</div>\n        </div>\n        <ul class="watchlistList"></ul>\n      </div>\n    ';
+      // this.$addStockContainer = $('#addStockContainer');
 
       this.$canvas.empty();
       this.$canvas.append(html);
       this.$watchlistContainer = (0, _jquery2.default)('.watchlistList');
+      new _addStockButton2.default('#addStockContainer');
     }
 
     // RENDER CANVAS WITH NO WATCHLIST
@@ -32297,72 +32298,28 @@ var Watchlist = function () {
       this.watchlist.map(function (company) {
         var companyData = _store2.default.get(company.symbol);
 
-        if (companyData) {
-          // console.log(company.symbol, companyData);
-          _this.displayStocks();
-        } else {
-          // console.log(false);
-          _axios2.default.get(_const.URL_BASE + '/' + company.symbol + '/quote?token=' + _const.API_TOKEN).then(function (res) {
-            _store2.default.set(company.symbol, res.data);
-          }).catch(function (error) {
-            return console.log(error.res.data.error);
-          }).then(function () {
-            _this.displayStocks();
-          });
-        }
+        // If data for the stock already exists in DataStore, then use the stored data
+        if (companyData) {}
+        // console.log(company.symbol, companyData);
+        // this.displayStocks();
+
+        // Else, data for this stock is not stored, then make an API call to fetch data
+        else {
+            // console.log(false);
+            _axios2.default.get(_const.URL_BASE + '/' + company.symbol + '/quote?token=' + _const.API_TOKEN).then(function (res) {
+              _store2.default.set(company.symbol, res.data);
+            }).catch(function (error) {
+              return console.log(error.res.data.error);
+            }).then(function () {
+              console.log('CALLed');
+              _this.displayStocks();
+            });
+          }
+
         // console.log(company)
       });
-    }
 
-    // GET DATA FOR COMPANY
-
-  }, {
-    key: 'fetchStockData',
-    value: function fetchStockData() {
-      var _this2 = this;
-
-      this.currentInterval = _store2.default.get('current-interval');
-
-      _axios2.default.get(_const.URL_BASE + '/' + this.symbol + '/batch?types=quote,news,chart&last=5&range=' + this.currentInterval + '&token=' + _const.API_TOKEN).then(function (response) {
-        var chart = response.data.chart;
-        var news = response.data.news;
-        var quote = response.data.quote;
-
-        // If stored data exists
-        if (_store2.default.get(_this2.symbol) !== null) {
-          var storedData = _store2.default.get(_this2.symbol);
-
-          /* If data for selected interval does not exist in localStorage
-          then add data for selected interval into localStorage
-          case: the current selected interval is 6M for stock1
-          when we click on stock2, we need to check if data for 6M for
-          stock2 exists in localStorage */
-          if (!(_this2.currentInterval in storedData.chart)) {
-            storedData.chart[_this2.currentInterval] = chart.data;
-            _store2.default.set(_this2.symbol, storedData);
-          }
-        }
-        // Otherwise create data object and store in localStorage
-        else {
-            var dataToStore = {
-              chart: _defineProperty({}, _this2.currentInterval, chart),
-              news: news,
-              quote: quote,
-              time: Date.now()
-            };
-
-            _store2.default.set(_this2.symbol, dataToStore);
-
-            /* This prevents an infinite loop of requests in case the requests fail.
-            The infinite loop would be caused in renderAllData().
-            */
-            if (response.status == 200) {
-              _this2.renderAllData();
-            }
-          }
-      }).catch(function (error) {
-        return console.log(error.response.data.error);
-      });
+      this.displayStocks();
     }
 
     // POPULATE WATCHLIST CONTAINER WITH STOCKS
@@ -32370,7 +32327,9 @@ var Watchlist = function () {
   }, {
     key: 'displayStocks',
     value: function displayStocks() {
-      var _this3 = this;
+      var _this2 = this;
+
+      this.$watchlistContainer.empty();
 
       var stocks = this.watchlist.map(function (stock, index) {
         var symbol = stock.symbol;
@@ -32384,14 +32343,13 @@ var Watchlist = function () {
         var isActive = '';
 
         // Set 'active' class to watchlist item with index that matches selectedStockIndex
-        if (index === _this3.currentWatchIndex) {
+        if (index === _this2.currentWatchIndex) {
           isActive = 'active';
         }
 
         return '\n        <li class="' + isActive + '">\n          <button id="' + symbol + '">\n            <div class="topRow">\n              <span class="watchlist-item-symbol">' + symbol + '</span>\n              <span>' + price + '</span>\n              <span class="green">' + change + '</span>\n              <span class="green">' + changePercent + '</span>\n            </div>\n            <p class="watchlist-item-name">' + companyName + '</p>\n          </button>\n        </li>\n      ';
       });
 
-      this.$watchlistContainer.empty();
       this.$watchlistContainer.append(stocks);
       // this.renderAllData();
     }
@@ -32833,10 +32791,9 @@ var HomePage = function () {
         // new StockList('#gainers-container', 'gainers', 'Gainers');
         // new StockList('#losers-container', 'losers', 'Losers');
         // this.news = new News('#home-news', this.mostActiveSymbols, 'home-news', 1);
+      } else {
+        this.fetchStocks();
       }
-      // else {
-      //   this.fetchStocks();
-      // }
     }
 
     // RENDER SMALL GRAPH CARDS
@@ -48191,6 +48148,79 @@ module.exports = function(module) {
 	return module;
 };
 
+
+/***/ }),
+/* 181 */,
+/* 182 */,
+/* 183 */,
+/* 184 */,
+/* 185 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(2);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _utility = __webpack_require__(6);
+
+var _search = __webpack_require__(148);
+
+var _search2 = _interopRequireDefault(_search);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AddStockButton = function () {
+  function AddStockButton(buttonContainerId) {
+    _classCallCheck(this, AddStockButton);
+
+    this.$buttonContainer = (0, _jquery2.default)(buttonContainerId);
+    this.$button;
+
+    this.renderHTML();
+    this.openSearchOnClick();
+  }
+
+  _createClass(AddStockButton, [{
+    key: 'renderHTML',
+    value: function renderHTML() {
+      var html = '\n      <button id="addStockButton" class="buttonGhost">Add</button>\n    ';
+
+      this.$buttonContainer.append(html);
+      this.$button = (0, _jquery2.default)('#addStockButton');
+    }
+  }, {
+    key: 'openSearchOnClick',
+    value: function openSearchOnClick() {
+      this.$button.on('click', function (event) {
+        event.stopPropagation();
+
+        new _search2.default('#addStockContainer');
+      });
+    }
+  }, {
+    key: 'addToWatchlist',
+    value: function addToWatchlist() {}
+  }]);
+
+  return AddStockButton;
+}();
+
+exports.default = AddStockButton;
 
 /***/ })
 /******/ ]);

@@ -6,6 +6,8 @@
   <link rel="stylesheet" href="public/css/style.compile.css">
   <link rel="shortcut icon" href="https://thaitwo.github.io/charts/favicon.png">
   <title>MarketView</title>
+  <!-- <script src="https://unpkg.com/feather-icons"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 </head>
 <body>
   <div class="main-container">
@@ -16,13 +18,13 @@
       <ul id="sidebar-nav" class="sidebar-nav">
           <li>
               <a href="/" id="home">
-                <i class="fas fa-chart-line"></i>
+                <i data-feather="home"></i>
                 <p>Home</p>
               </a>
             </li>
         <li>
           <a href="#watchlist/" id="watchlist">
-              <i class="fas fa-list-alt"></i>
+            <i data-feather="star"></i>
             <p>Watchlist</p>
           </a>
         </li>
@@ -35,5 +37,7 @@
   </div>
 
   <script src="public/js/app.compile.js"></script>
+
+  <script>feather.replace()</script>
 </body>
 </html>

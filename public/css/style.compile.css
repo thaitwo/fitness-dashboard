@@ -105,6 +105,19 @@ body {
   margin-left: 24px;
   text-transform: capitalize; }
 
+.headerWrapper {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-bottom: 2rem; }
+
+.headerLinkWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  text-decoration: none; }
+
 .button {
   height: 32px;
   text-transform: uppercase;
@@ -149,6 +162,19 @@ body {
     .button.has-warning:hover {
       background: #e57373;
       cursor: pointer; }
+
+.buttonGhost {
+  background: none;
+  border: none;
+  border-radius: 3px;
+  color: #F9A825;
+  height: 24px;
+  outline: none;
+  padding: 0 8px;
+  transition: all .1s; }
+  .buttonGhost:hover {
+    background: rgba(255, 255, 255, 0.08);
+    cursor: pointer; }
 
 .logo {
   background-color: #0D132F;
@@ -312,6 +338,13 @@ body {
     display: block;
     margin-top: 80px;
     text-align: center; }
+
+.feather {
+  color: #FFFFFF; }
+
+.featherIcon--small {
+  height: 20px;
+  width: 20px; }
 
 .popup-modal {
   background: rgba(0, 0, 0, 0.8);
@@ -730,8 +763,7 @@ body {
 .watchlist-title {
   color: #FFFFFF;
   font-size: 1.2rem;
-  font-weight: 500;
-  margin-bottom: 2rem; }
+  font-weight: 500; }
 
 #watchlist-chart-header-btn-intervals {
   display: flex;
@@ -1006,13 +1038,25 @@ body {
     text-align: left; }
   .watchlistList button .watchlist-item-name {
     color: rgba(255, 255, 255, 0.6);
-    font-size: .85rem;
+    font-size: .8rem;
     font-weight: 300;
     line-height: 1rem;
+    margin-top: 4px;
     overflow: hidden;
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap; }
+
+.watchlistListHeader {
+  color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  font-size: .8rem;
+  justify-content: space-between; }
+  .watchlistListHeader > div:first-of-type {
+    flex: 1; }
+  .watchlistListHeader > div {
+    flex: 2;
+    text-align: right; }
 
 .graphCard-header {
   display: flex;
@@ -1119,16 +1163,18 @@ body {
 
 .sidebar-nav li a {
   border-left: 4px solid transparent;
-  color: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
   display: block;
   font-family: "Mukta", sans-serif;
   font-weight: 400;
   outline: none;
+  opacity: .8;
   padding: 1rem 0;
   text-align: center;
   text-decoration: none;
   transition: all .3s; }
-  .sidebar-nav li a i {
+  .sidebar-nav li a svg {
+    color: #FFFFFF;
     font-size: 1.5rem;
     height: auto;
     width: 1.8rem !important;
@@ -1140,24 +1186,24 @@ body {
     background: none; }
   .sidebar-nav li a.active {
     background-color: none;
-    border-right: 4px solid #F9A825;
+    box-shadow: -4px 0 0 inset #F9A825;
     color: #FFFFFF; }
-    .sidebar-nav li a.active i,
+    .sidebar-nav li a.active svg,
     .sidebar-nav li a.active p {
       color: #F9A825; }
 
 /* SEARCH
 ============================================================== */
-#search-form {
+.search-form {
   height: 58px;
   margin-left: 24px;
   max-width: 632px; }
-  #search-form #search-box.active {
+  .search-form #search-box.active {
     border-radius: 6px 6px 0 0; }
-  #search-form #search-suggestions.active {
+  .search-form #search-suggestions.active {
     overflow: hidden; }
 
-#search-box {
+.search-box {
   background-color: #FFFFFF;
   border: none;
   border-radius: 3px;
@@ -1173,27 +1219,27 @@ body {
   text-align: left;
   transition: all .3s;
   width: 100%; }
-  #search-box:focus, #search-box:hover {
+  .search-box:focus, .search-box:hover {
     background-color: #ECEFF1; }
 
-#search-suggestions {
+.search-suggestions {
   background-color: #FFFFFF;
   border-radius: 0 0 4px 4px; }
-  #search-suggestions div {
+  .search-suggestions div {
     font-size: .9rem;
     padding: 10px 0 10px 16px; }
-    #search-suggestions div:last-of-type {
+    .search-suggestions div:last-of-type {
       border-bottom: none; }
-    #search-suggestions div:hover {
+    .search-suggestions div:hover {
       background-color: #ECEFF1;
       cursor: pointer; }
-    #search-suggestions div .symbol {
+    .search-suggestions div .symbol {
       display: inline-block;
       font-weight: 600;
       width: 48px; }
-    #search-suggestions div .name {
+    .search-suggestions div .name {
       opacity: .6; }
-  #search-suggestions .suggestions-active {
+  .search-suggestions .suggestions-active {
     background-color: #ECEFF1; }
 
 ::-webkit-input-placeholder {

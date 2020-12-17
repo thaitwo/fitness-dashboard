@@ -3,11 +3,11 @@ import axios from 'axios';
 import Navigo from 'navigo';
 
 class Suggestions {
-  constructor(searchBoxId) {
+  constructor(searchBoxId, suggestionsBoxId) {
     this.$searchBox = $(searchBoxId);
     this.value;
     this.currentFocus = -1;
-    this.$searchSuggestions = $('#search-suggestions');
+    this.$searchSuggestions = $(suggestionsBoxId);
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
     this.router = new Navigo(null, true);

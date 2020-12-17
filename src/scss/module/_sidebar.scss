@@ -18,17 +18,19 @@
 
 .sidebar-nav li a {
   border-left: 4px solid transparent;
-  color: rgba($white, .3);
+  color: $white;
   display: block;
   font-family: $font-primary;
   font-weight: 400;
   outline: none;
+  opacity: .8;
   padding: 1rem 0;
   text-align: center;
   text-decoration: none;
   transition: all .3s;
 
-  i {
+  svg {
+    color: $white;
     font-size: 1.5rem;
     height: auto;
     width: 1.8rem !important;
@@ -46,10 +48,10 @@
 
   &.active {
     background-color: none;
-    border-right: 4px solid $colorDark-accent;
+    box-shadow: -4px 0 0 inset $colorDark-accent;
     color: $white;
 
-    i,
+    svg,
     p {
       color: $colorDark-accent;
     }

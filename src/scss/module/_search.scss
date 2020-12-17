@@ -1,7 +1,7 @@
 /* SEARCH
 ============================================================== */
 
-#search-form {
+.search-form {
   height: 58px;
   margin-left: 24px;
   max-width: 632px;
@@ -15,7 +15,7 @@
   }
 }
 
-#search-box {
+.search-box {
   background-color: $white;
   border: none;
   border-radius: 3px;
@@ -38,7 +38,7 @@
   }
 }
 
-#search-suggestions {
+.search-suggestions {
   background-color: $white;
   border-radius: 0 0 4px 4px;
 

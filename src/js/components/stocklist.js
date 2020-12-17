@@ -74,7 +74,7 @@ class StockList {
   renderStockList() {
     const stocks = store.get(this.collectionName);
 
-    const stocksList = stocks.slice(0,5).map((stock) => {
+    const stocksList = stocks.slice(0,10).map((stock) => {
       let { symbol, companyName, latestPrice, change, changePercent } = stock;
       let isNegative, plusMinusSign;
       companyName = trimString(companyName, 32);
@@ -120,7 +120,7 @@ class StockList {
   renderWatchButtons() {
     const stocks = store.get(this.collectionName);
 
-    stocks.slice(0,5).map((stock) => {
+    stocks.map((stock) => {
       const { symbol, companyName } = stock;
       new WatchButton(`#${this.collectionName}-${symbol}-watchbutton`, symbol, companyName);
     });

@@ -1,27 +1,27 @@
 import $ from 'jquery';
 import Navigo from 'navigo';
-import axios from 'axios';
 import Suggestions from './search-suggestions';
 
 class Search {
   constructor(containerId) {
+    this.containerId = containerId.substring(1);
     this.$container = $(containerId);
     this.renderHtml();
-    this.$searchBox = $('#search-box');
-    this.$searchSuggestions = $('#search-suggestions');
+    this.$searchBox = $(`#${this.containerId}-search-box`);
+    this.$searchSuggestions = $(`#${this.containerId}-search-suggestions`);
     this.router = new Navigo(null, true);
     this.value;
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
     // this.getInputAndCreateUrl();
-    new Suggestions('#search-box');
+    new Suggestions(`#${this.containerId}-search-box`, `#${this.containerId}-search-suggestions`);
   }
 
   renderHtml() {
     const html = `
-      <form id="search-form">
-        <input type="text" id="search-box" placeholder="Search companies">
-        <div id="search-suggestions"></div>
+      <form id="${this.containerId}-search-form" class="search-form">
+        <input type="text" id="${this.containerId}-search-box" class="search-box" placeholder="Search companies">
+        <div id="${this.containerId}-search-suggestions" class="search-suggestions"></div>
       </form>
     `;
 
