@@ -96,7 +96,7 @@ class Watchlist {
           })
           .catch(error => console.log(error.res.data.error))
           .then(() => {
-            console.log('CALLed');
+            // console.log('CALLed');
             this.displayStocks();
           })
       }
@@ -116,7 +116,7 @@ class Watchlist {
     const stocks = this.watchlist.map((stock, index) => {
       const symbol = stock.symbol;
       const stockData = store.get(symbol);
-      console.log('stockdata', stockData);
+      // console.log('stockdata', stockData);
       const companyName = trimString(stockData.companyName, 40);
       const price = stockData.delayedPrice;
       const change = stockData.change;

@@ -63,7 +63,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 167);
+/******/ 	return __webpack_require__(__webpack_require__.s = 168);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1922,7 +1922,7 @@
             try {
                 oldLocale = globalLocale._abbr;
                 var aliasedRequire = require;
-                __webpack_require__(178)("./" + name);
+                __webpack_require__(180)("./" + name);
                 getSetGlobalLocale(oldLocale);
             } catch (e) {}
         }
@@ -4673,7 +4673,7 @@
 
 })));
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(180)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(182)(module)))
 
 /***/ }),
 /* 1 */
@@ -15822,7 +15822,7 @@ return jQuery;
 
 
 var bind = __webpack_require__(17);
-var isBuffer = __webpack_require__(166);
+var isBuffer = __webpack_require__(167);
 
 /*global toString:true*/
 
@@ -16128,31 +16128,10 @@ module.exports = {
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(150);
+module.exports = __webpack_require__(151);
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-/*** PRODUCTION ENVIRONMENT ***/
-// const URL_BASE = 'https://cloud.iexapis.com/v1/stock';
-// const API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
-
-/*** SANDBOX ENVIRONMENT ***/
-var URL_BASE = 'https://sandbox.iexapis.com/stable/stock';
-var API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
-
-exports.URL_BASE = URL_BASE;
-exports.API_TOKEN = API_TOKEN;
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16221,6 +16200,27 @@ function calcLocalStorageAge(symbol) {
     return true;
   }
 }
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*** PRODUCTION ENVIRONMENT ***/
+// const URL_BASE = 'https://cloud.iexapis.com/v1/stock';
+// const API_TOKEN = 'pk_a12f90684f2a44f180bcaeb4eff4086d';
+
+/*** SANDBOX ENVIRONMENT ***/
+var URL_BASE = 'https://sandbox.iexapis.com/stable/stock';
+var API_TOKEN = 'Tpk_8d25ed3be77a45ddb7919558e730257f';
+
+exports.URL_BASE = URL_BASE;
+exports.API_TOKEN = API_TOKEN;
 
 /***/ }),
 /* 7 */
@@ -16766,7 +16766,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* WEBPACK VAR INJECTION */(function(process) {
 
 var utils = __webpack_require__(3);
-var normalizeHeaderName = __webpack_require__(163);
+var normalizeHeaderName = __webpack_require__(164);
 
 var DEFAULT_CONTENT_TYPE = {
   'Content-Type': 'application/x-www-form-urlencoded'
@@ -16860,7 +16860,7 @@ utils.forEach(['post', 'put', 'patch'], function forEachMethodWithData(method) {
 
 module.exports = defaults;
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(179)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(181)))
 
 /***/ }),
 /* 9 */
@@ -16879,7 +16879,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _chart = __webpack_require__(177);
+var _chart = __webpack_require__(179);
 
 var _chart2 = _interopRequireDefault(_chart);
 
@@ -17064,7 +17064,7 @@ var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17136,7 +17136,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17272,7 +17272,7 @@ var _store = __webpack_require__(2);
 
 var _store2 = _interopRequireDefault(_store);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17448,10 +17448,10 @@ exports.default = WatchButton;
 
 
 var utils = __webpack_require__(3);
-var settle = __webpack_require__(156);
-var buildURL = __webpack_require__(158);
-var parseHeaders = __webpack_require__(164);
-var isURLSameOrigin = __webpack_require__(162);
+var settle = __webpack_require__(157);
+var buildURL = __webpack_require__(159);
+var parseHeaders = __webpack_require__(165);
+var isURLSameOrigin = __webpack_require__(163);
 var createError = __webpack_require__(16);
 
 module.exports = function xhrAdapter(config) {
@@ -17532,7 +17532,7 @@ module.exports = function xhrAdapter(config) {
     // This is only done if running in a standard browser environment.
     // Specifically not if we're in a web worker, or react-native.
     if (utils.isStandardBrowserEnv()) {
-      var cookies = __webpack_require__(160);
+      var cookies = __webpack_require__(161);
 
       // Add xsrf header
       var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -17654,7 +17654,7 @@ module.exports = function isCancel(value) {
 "use strict";
 
 
-var enhanceError = __webpack_require__(155);
+var enhanceError = __webpack_require__(156);
 
 /**
  * Create an Error with the specified message, config, error code, request and response.
@@ -17719,7 +17719,7 @@ var _watchButton = __webpack_require__(12);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17839,9 +17839,9 @@ var _graph = __webpack_require__(9);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17999,6 +17999,267 @@ exports.default = Intervals;
 /* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(2);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _axios = __webpack_require__(4);
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _navigo = __webpack_require__(7);
+
+var _navigo2 = _interopRequireDefault(_navigo);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Suggestions = function () {
+  function Suggestions(searchBoxId, suggestionsBoxId, type) {
+    _classCallCheck(this, Suggestions);
+
+    this.$searchBox = (0, _jquery2.default)(searchBoxId);
+    this.type = type;
+    this.symbol;
+    this.name;
+    this.currentFocus = -1;
+    this.$searchSuggestions = (0, _jquery2.default)(suggestionsBoxId);
+    this.ENTER_KEY = 13;
+    this.ESCAPE_KEY = 27;
+    this.router = new _navigo2.default(null, true);
+    this.getSearchValue();
+    // this.hideSuggestionsOnOutsideClick();
+
+    this.watchlist = _store2.default.get('watchlist') || [];
+    // this.isWatched = this.isInWatchlist();
+  }
+
+  // FETCH SEARCH SUGGESTIONS
+
+
+  _createClass(Suggestions, [{
+    key: 'fetchSuggestions',
+    value: function fetchSuggestions() {
+      var _this = this;
+
+      _axios2.default.get('https://ticker-2e1ica8b9.now.sh/keyword/' + this.value).then(function (response) {
+        _this.renderSuggestions(response.data);
+        if (!response.data.length) {
+          _this.$searchBox.removeClass('active');
+          _this.$searchSuggestions.removeClass('active');
+        }
+      }).catch(function (error) {
+        return console.log(error);
+      });
+    }
+
+    // CHECK IF WATCHLIST HAS THIS STOCK
+
+  }, {
+    key: 'isInWatchlist',
+    value: function isInWatchlist() {
+      var _this2 = this;
+
+      return this.watchlist.some(function (stock) {
+        return stock.symbol === _this2.symbol;
+      });
+    }
+
+    // DISPLAY SUGGESTIONS DROPDOWN
+
+  }, {
+    key: 'renderSuggestions',
+    value: function renderSuggestions(items) {
+      var _this3 = this;
+
+      var suggestions = items.slice(0, 10).map(function (suggestion) {
+
+        if (_this3.type = 'secondary') {
+          return '\n          <div class="suggestionsSecondaryContainer">\n            <i data-feather="plus"></i>\n            <i data-feather="chevron-right"></i>\n            <div class="suggestionsNameContainer">\n              <span class="symbol">' + suggestion.symbol + '</span>\n              <span class="name">' + suggestion.name + '</span>\n            </div>\n          </div>\n        ';
+        }
+
+        return '\n        <div class="suggestionsContainer">\n          <span class="symbol">' + suggestion.symbol + '</span>\n          <span class="name">' + suggestion.name + '</span>\n        </div>\n      ';
+      });
+      feather.replace();
+      this.$searchSuggestions.empty();
+      this.$searchSuggestions.append(suggestions);
+    }
+
+    // RETREIVE VALUE FROM SEARCH AND CREATE NEW URL
+
+  }, {
+    key: 'getSearchValue',
+    value: function getSearchValue() {
+      var _this4 = this;
+
+      // When user types input
+      this.$searchBox.keydown(function (event) {
+        var keyPressed = event.which || event.keyCode;
+        _this4.value = event.target.value;
+        var arrowKeyCodes = [37, 38, 39, 40];
+        var isArrowKeys = arrowKeyCodes.indexOf(keyPressed) > -1;
+
+        /* Fetch suggestions only if value is not empty and keypress is not an arrow key.
+        We need to make sure it's not an arrow key because we need to use the arrow keys to
+        navigate the suggestions list. Otherwise pressing any arrow key will put the focus
+        back in the search box, thus preventing the navigation of suggestion items.
+        Also, the keyPress must not be the 'Enter' button because this triggers the suggestion
+        container to be visible after user selects a suggestion item by pressing 'Enter'.
+        */
+        if (_this4.value && !isArrowKeys && keyPressed !== _this4.ENTER_KEY) {
+          _this4.fetchSuggestions(_this4.value);
+        }
+
+        _this4.toggleSuggestionsVisibility();
+
+        switch (keyPressed) {
+          case 40:
+            _this4.currentFocus++;
+            _this4.addActiveClass();
+            break;
+          case 38:
+            _this4.currentFocus--;
+            _this4.addActiveClass();
+            break;
+          case 13:
+            event.preventDefault();
+            if (_this4.currentFocus > -1) {
+              /* In order to be able to select from suggestions list with arrow keys,
+              the value of 'this.currentFocus' has to be at least 0. Therefore, only
+              simulate a click event if the suggestions list is being actively navigated.
+              */
+              _this4.$searchSuggestions[0].children[_this4.currentFocus].click();
+            }
+            break;
+          default:
+            break;
+        }
+      });
+
+      // When user selects a suggestion
+      this.$searchSuggestions.off('click').on('click', 'div.suggestionsSecondaryContainer', function (event) {
+        event.preventDefault();
+        _this4.symbol = event.currentTarget.children[2].children[0].innerText;
+        _this4.name = event.currentTarget.children[2].children[1].innerText;
+
+        if (_this4.type = 'secondary') {
+          _this4.addToWatchlist();
+          // console.log(this.watchlist)
+          // this.watchlist.pop();
+          // store.set('watchlist', this.watchlist);
+        } else {
+          _this4.router.navigate('stocks/' + _this4.value);
+        }
+        _this4.$searchBox.val('');
+        _this4.toggleSuggestionsVisibility();
+      });
+    }
+  }, {
+    key: 'addToWatchlist',
+    value: function addToWatchlist() {
+      var _this5 = this;
+
+      var isWatched = this.watchlist.some(function (stock) {
+        return stock.symbol === _this5.symbol;
+      });
+
+      if (!isWatched) {
+        this.watchlist.push({
+          symbol: this.symbol,
+          name: this.name
+        });
+        _store2.default.set('watchlist', this.watchlist);
+      }
+    }
+
+    // SPECIFY THE ACTIVE SUGGESTION
+
+  }, {
+    key: 'addActiveClass',
+    value: function addActiveClass() {
+      this.removeActiveClass();
+      var suggestionItems = this.$searchSuggestions[0].children;
+
+      if (this.currentFocus >= suggestionItems.length) {
+        this.currentFocus = 0;
+      }
+      if (this.currentFocus < 0) {
+        this.currentFocus = suggestionItems.length - 1;
+      }
+
+      (0, _jquery2.default)(this.$searchSuggestions[0].children[this.currentFocus]).addClass('suggestions-active');
+    }
+
+    // REMOVE ACTIVE CLASS FROM SUGGESTION ITEMS
+
+  }, {
+    key: 'removeActiveClass',
+    value: function removeActiveClass() {
+      (0, _jquery2.default)(this.$searchSuggestions[0].children).removeClass('suggestions-active');
+    }
+
+    // DISPLAY OR HIDE SUGGESTIONS
+
+  }, {
+    key: 'toggleSuggestionsVisibility',
+    value: function toggleSuggestionsVisibility() {
+      this.value = this.$searchBox.val();
+
+      if (this.value === '') {
+        this.$searchSuggestions.empty();
+        this.$searchBox.removeClass('active');
+        this.$searchSuggestions.removeClass('active');
+      } else {
+        this.$searchBox.addClass('active');
+        this.$searchSuggestions.addClass('active');
+      }
+    }
+
+    // HIDE SUGGESTIONS
+
+  }, {
+    key: 'hideSuggestionsOnOutsideClick',
+    value: function hideSuggestionsOnOutsideClick() {
+      var that = this;
+
+      (0, _jquery2.default)(document).on('click', function (event) {
+        console.log('clicked');
+        var suggestionsContainer = (0, _jquery2.default)(event.target).closest('#search-suggestions').length;
+        var searchBox = (0, _jquery2.default)(event.target).closest('#search-box').length;
+
+        // If it is not the suggestions and the search box, close suggestions
+        if (!suggestionsContainer && !searchBox) {
+          that.$searchSuggestions.empty();
+          that.$searchBox.removeClass('active');
+          that.$searchSuggestions.removeClass('active');
+        }
+      });
+    }
+  }]);
+
+  return Suggestions;
+}();
+
+exports.default = Suggestions;
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
 //! moment.js locale configuration
 
 ;(function (global, factory) {
@@ -18073,7 +18334,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18136,7 +18397,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18199,7 +18460,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18325,7 +18586,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18388,7 +18649,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18496,7 +18757,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18559,7 +18820,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18698,7 +18959,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18807,7 +19068,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -18943,7 +19204,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19037,7 +19298,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19099,7 +19360,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19222,7 +19483,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19345,7 +19606,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19457,7 +19718,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19612,7 +19873,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19704,7 +19965,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19880,7 +20141,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -19947,7 +20208,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20031,7 +20292,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20095,7 +20356,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20175,7 +20436,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20255,7 +20516,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20335,7 +20596,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20438,7 +20699,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20542,7 +20803,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20613,7 +20874,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20684,7 +20945,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20751,7 +21012,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20822,7 +21083,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20893,7 +21154,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -20959,7 +21220,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21030,7 +21291,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21105,7 +21366,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21201,7 +21462,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21297,7 +21558,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21393,7 +21654,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21477,7 +21738,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21547,7 +21808,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21657,7 +21918,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21770,7 +22031,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21834,7 +22095,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21912,7 +22173,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -21994,7 +22255,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22081,7 +22342,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22160,7 +22421,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22241,7 +22502,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22321,7 +22582,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22402,7 +22663,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22529,7 +22790,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22657,7 +22918,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22758,7 +23019,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -22886,7 +23147,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23044,7 +23305,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23158,7 +23419,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23257,7 +23518,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23343,7 +23604,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23479,7 +23740,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23552,7 +23813,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23625,7 +23886,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23721,7 +23982,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23807,7 +24068,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23900,7 +24161,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -23991,7 +24252,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24105,7 +24366,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24235,7 +24496,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24320,7 +24581,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24443,7 +24704,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24534,7 +24795,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24674,7 +24935,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24748,7 +25009,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24870,7 +25131,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -24971,7 +25232,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25087,7 +25348,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25155,7 +25416,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25249,7 +25510,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25334,7 +25595,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25442,7 +25703,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25606,7 +25867,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25692,7 +25953,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25778,7 +26039,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25842,7 +26103,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -25939,7 +26200,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26005,7 +26266,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26132,7 +26393,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26223,7 +26484,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26314,7 +26575,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26378,7 +26639,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26506,7 +26767,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26636,7 +26897,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26701,7 +26962,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26770,7 +27031,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -26849,7 +27110,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27035,7 +27296,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27137,7 +27398,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27201,7 +27462,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27276,7 +27537,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27436,7 +27697,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27613,7 +27874,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27685,7 +27946,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27800,7 +28061,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -27915,7 +28176,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28007,7 +28268,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28080,7 +28341,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28143,7 +28404,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28276,7 +28537,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28369,7 +28630,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28440,7 +28701,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28560,7 +28821,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28631,7 +28892,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28697,7 +28958,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -28823,7 +29084,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -28921,7 +29182,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29016,7 +29277,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29078,7 +29339,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29140,7 +29401,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js language configuration
@@ -29263,7 +29524,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29421,7 +29682,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29523,7 +29784,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29585,7 +29846,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29647,7 +29908,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29730,7 +29991,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29802,7 +30063,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29866,7 +30127,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -29980,7 +30241,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30087,7 +30348,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //! moment.js locale configuration
@@ -30194,7 +30455,7 @@ exports.default = Intervals;
 
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30210,7 +30471,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _router = __webpack_require__(169);
+var _router = __webpack_require__(171);
 
 var _router2 = _interopRequireDefault(_router);
 
@@ -30302,7 +30563,7 @@ var Nav = function () {
 exports.default = Nav;
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30322,7 +30583,7 @@ var _navigo = __webpack_require__(7);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _searchSuggestions = __webpack_require__(170);
+var _searchSuggestions = __webpack_require__(20);
 
 var _searchSuggestions2 = _interopRequireDefault(_searchSuggestions);
 
@@ -30331,11 +30592,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Search = function () {
-  function Search(containerId) {
+  function Search(containerId, addStock) {
     _classCallCheck(this, Search);
 
     this.containerId = containerId.substring(1);
     this.$container = (0, _jquery2.default)(containerId);
+    this.addStock = addStock === 'addStock';
     this.renderHtml();
     this.$searchBox = (0, _jquery2.default)('#' + this.containerId + '-search-box');
     this.$searchSuggestions = (0, _jquery2.default)('#' + this.containerId + '-search-suggestions');
@@ -30345,14 +30607,16 @@ var Search = function () {
     this.ESCAPE_KEY = 27;
     // this.getInputAndCreateUrl();
     new _searchSuggestions2.default('#' + this.containerId + '-search-box', '#' + this.containerId + '-search-suggestions');
+    // this.hideSearchOnOutterClick();
   }
 
   _createClass(Search, [{
     key: 'renderHtml',
     value: function renderHtml() {
-      var html = '\n      <form id="' + this.containerId + '-search-form" class="search-form">\n        <input type="text" id="' + this.containerId + '-search-box" class="search-box" placeholder="Search companies">\n        <div id="' + this.containerId + '-search-suggestions" class="search-suggestions"></div>\n      </form>\n    ';
+      var isHidden = this.addStock ? 'isHidden' : '';
 
-      this.$container.empty();
+      var html = '\n      <form id="' + this.containerId + '-search-form" class="topSearchForm ' + isHidden + '">\n        <input type="text" id="' + this.containerId + '-search-box" placeholder="Search companies" autofocus>\n        <div id="' + this.containerId + '-search-suggestions" class="search-suggestions"></div>\n      </form>\n    ';
+
       this.$container.append(html);
     }
 
@@ -30376,6 +30640,28 @@ var Search = function () {
         }
       });
     }
+
+    // HIDE SUGGESTIONS
+
+  }, {
+    key: 'hideSearchOnOutterClick',
+    value: function hideSearchOnOutterClick() {
+      var that = this;
+
+      (0, _jquery2.default)(document).on('click', function (event) {
+        console.log('clicked');
+        // console.log("clicked outside", event.target.closest());
+        // const searchContainer = $(event.target).closest(`${this.containerId}-search-form`).length;
+        var searchBox = (0, _jquery2.default)(event.target).closest('#' + this.containerId + '-search-box').length;
+
+        // If the click is not on the suggestions and the search box, close suggestions
+        if (!searchBox) {
+          // that.$searchSuggestions.empty();
+          that.$searchBox.addClass('isHidden');
+          // that.$searchSuggestions.removeClass('active');
+        }
+      });
+    }
   }]);
 
   return Search;
@@ -30384,13 +30670,13 @@ var Search = function () {
 exports.default = Search;
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30398,7 +30684,7 @@ exports.default = Search;
 
 var utils = __webpack_require__(3);
 var bind = __webpack_require__(17);
-var Axios = __webpack_require__(152);
+var Axios = __webpack_require__(153);
 var defaults = __webpack_require__(8);
 
 /**
@@ -30433,14 +30719,14 @@ axios.create = function create(instanceConfig) {
 
 // Expose Cancel & CancelToken
 axios.Cancel = __webpack_require__(14);
-axios.CancelToken = __webpack_require__(151);
+axios.CancelToken = __webpack_require__(152);
 axios.isCancel = __webpack_require__(15);
 
 // Expose all/spread
 axios.all = function all(promises) {
   return Promise.all(promises);
 };
-axios.spread = __webpack_require__(165);
+axios.spread = __webpack_require__(166);
 
 module.exports = axios;
 
@@ -30449,7 +30735,7 @@ module.exports.default = axios;
 
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30513,7 +30799,7 @@ module.exports = CancelToken;
 
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30521,8 +30807,8 @@ module.exports = CancelToken;
 
 var defaults = __webpack_require__(8);
 var utils = __webpack_require__(3);
-var InterceptorManager = __webpack_require__(153);
-var dispatchRequest = __webpack_require__(154);
+var InterceptorManager = __webpack_require__(154);
+var dispatchRequest = __webpack_require__(155);
 
 /**
  * Create a new instance of Axios
@@ -30599,7 +30885,7 @@ module.exports = Axios;
 
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30658,18 +30944,18 @@ module.exports = InterceptorManager;
 
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var utils = __webpack_require__(3);
-var transformData = __webpack_require__(157);
+var transformData = __webpack_require__(158);
 var isCancel = __webpack_require__(15);
 var defaults = __webpack_require__(8);
-var isAbsoluteURL = __webpack_require__(161);
-var combineURLs = __webpack_require__(159);
+var isAbsoluteURL = __webpack_require__(162);
+var combineURLs = __webpack_require__(160);
 
 /**
  * Throws a `Cancel` if cancellation has been requested.
@@ -30751,7 +31037,7 @@ module.exports = function dispatchRequest(config) {
 
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30779,7 +31065,7 @@ module.exports = function enhanceError(error, config, code, request, response) {
 
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30812,7 +31098,7 @@ module.exports = function settle(resolve, reject, response) {
 
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30839,7 +31125,7 @@ module.exports = function transformData(data, headers, fns) {
 
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30912,7 +31198,7 @@ module.exports = function buildURL(url, params, paramsSerializer) {
 
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30933,7 +31219,7 @@ module.exports = function combineURLs(baseURL, relativeURL) {
 
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30993,7 +31279,7 @@ module.exports = (
 
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31014,7 +31300,7 @@ module.exports = function isAbsoluteURL(url) {
 
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31089,7 +31375,7 @@ module.exports = (
 
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31108,7 +31394,7 @@ module.exports = function normalizeHeaderName(headers, normalizedName) {
 
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31168,7 +31454,7 @@ module.exports = function parseHeaders(headers) {
 
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31202,7 +31488,7 @@ module.exports = function spread(callback) {
 
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports) {
 
 /*!
@@ -31219,21 +31505,21 @@ module.exports = function isBuffer (obj) {
 
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-__webpack_require__(149);
+__webpack_require__(150);
 
-var _nav = __webpack_require__(147);
+var _nav = __webpack_require__(148);
 
 var _nav2 = _interopRequireDefault(_nav);
 
-var _search = __webpack_require__(148);
+var _topBar = __webpack_require__(187);
 
-var _search2 = _interopRequireDefault(_search);
+var _topBar2 = _interopRequireDefault(_topBar);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31243,13 +31529,92 @@ var App = function App() {
   _classCallCheck(this, App);
 
   new _nav2.default('#sidebar-nav', true);
-  new _search2.default('#top-bar');
+  new _topBar2.default('#top-bar');
 };
 
 new App();
 
+feather.replace();
+
 /***/ }),
-/* 168 */
+/* 169 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _store = __webpack_require__(2);
+
+var _store2 = _interopRequireDefault(_store);
+
+var _utility = __webpack_require__(5);
+
+var _searchAddStock = __webpack_require__(172);
+
+var _searchAddStock2 = _interopRequireDefault(_searchAddStock);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var AddStockButton = function () {
+  function AddStockButton(buttonContainerId) {
+    _classCallCheck(this, AddStockButton);
+
+    this.$buttonContainer = (0, _jquery2.default)(buttonContainerId);
+    this.$button;
+
+    this.renderHTML();
+    this.$searchForm = (0, _jquery2.default)('#searchFormAddStock');
+    this.openSearchOnClick();
+  }
+
+  _createClass(AddStockButton, [{
+    key: 'renderHTML',
+    value: function renderHTML() {
+      var html = '\n      <button id="addStockButton" class="buttonGhost">Add</button>\n    ';
+
+      this.$buttonContainer.append(html);
+      this.$button = (0, _jquery2.default)('#addStockButton');
+      new _searchAddStock2.default('#addStockContainer');
+    }
+  }, {
+    key: 'openSearchOnClick',
+    value: function openSearchOnClick() {
+      var _this = this;
+
+      this.$button.on('click', function (event) {
+        // event.stopPropagation();
+        // console.log(this.$button[0].id);
+
+        (0, _jquery2.default)('#addStockContainer').addClass('fullWidth');
+        _this.$button.addClass('isHidden');
+        _this.$searchForm.removeClass('isHidden');
+        document.getElementById('searchBoxSecondary').focus();
+      });
+    }
+  }, {
+    key: 'addToWatchlist',
+    value: function addToWatchlist() {}
+  }]);
+
+  return AddStockButton;
+}();
+
+exports.default = AddStockButton;
+
+/***/ }),
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31279,7 +31644,7 @@ var _graph = __webpack_require__(9);
 
 var _graph2 = _interopRequireDefault(_graph);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -31474,7 +31839,7 @@ var GraphCard = function () {
 exports.default = GraphCard;
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31494,15 +31859,15 @@ var _navigo = __webpack_require__(7);
 
 var _navigo2 = _interopRequireDefault(_navigo);
 
-var _stockPage = __webpack_require__(176);
+var _stockPage = __webpack_require__(178);
 
 var _stockPage2 = _interopRequireDefault(_stockPage);
 
-var _homePage = __webpack_require__(175);
+var _homePage = __webpack_require__(177);
 
 var _homePage2 = _interopRequireDefault(_homePage);
 
-var _watchlistFull = __webpack_require__(174);
+var _watchlistFull = __webpack_require__(176);
 
 var _watchlistFull2 = _interopRequireDefault(_watchlistFull);
 
@@ -31585,7 +31950,7 @@ var Router = function () {
 exports.default = Router;
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31601,197 +31966,96 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _axios = __webpack_require__(4);
-
-var _axios2 = _interopRequireDefault(_axios);
-
 var _navigo = __webpack_require__(7);
 
 var _navigo2 = _interopRequireDefault(_navigo);
+
+var _searchSuggestions = __webpack_require__(20);
+
+var _searchSuggestions2 = _interopRequireDefault(_searchSuggestions);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Suggestions = function () {
-  function Suggestions(searchBoxId, suggestionsBoxId) {
-    _classCallCheck(this, Suggestions);
+var SearchAddStock = function () {
+  function SearchAddStock(containerId) {
+    _classCallCheck(this, SearchAddStock);
 
-    this.$searchBox = (0, _jquery2.default)(searchBoxId);
+    this.containerId = containerId.substring(1);
+    this.$container = (0, _jquery2.default)(containerId);
+    this.renderHtml();
+    this.$searchBox = (0, _jquery2.default)('#searchFormAddStock');
+    this.$searchSuggestions = (0, _jquery2.default)('#search-suggestions');
+    this.$addStockButton = (0, _jquery2.default)('#addStockButton');
+    this.$addStockContainer = (0, _jquery2.default)('#addStockContainer');
+    this.router = new _navigo2.default(null, true);
     this.value;
-    this.currentFocus = -1;
-    this.$searchSuggestions = (0, _jquery2.default)(suggestionsBoxId);
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
-    this.router = new _navigo2.default(null, true);
-    this.getSearchValue();
-    this.hideSuggestionsOnOutsideClick();
+
+    new _searchSuggestions2.default('#searchBoxSecondary', '#searchSuggestionsSecondary', 'secondary');
+    // this.hideSearchOnOutterClick();
   }
 
-  // FETCH SEARCH SUGGESTIONS
+  _createClass(SearchAddStock, [{
+    key: 'renderHtml',
+    value: function renderHtml() {
 
+      var html = '\n      <form id="searchFormAddStock" class="search-form isHidden">\n        <input type="text" id="searchBoxSecondary" class="search-box" placeholder="Search companies">\n        <div id="searchSuggestionsSecondary" class="search-suggestions"></div>\n      </form>\n    ';
 
-  _createClass(Suggestions, [{
-    key: 'fetchSuggestions',
-    value: function fetchSuggestions() {
-      var _this = this;
-
-      _axios2.default.get('https://ticker-2e1ica8b9.now.sh/keyword/' + this.value).then(function (response) {
-        _this.renderSuggestions(response.data);
-        if (!response.data.length) {
-          _this.$searchBox.removeClass('active');
-          _this.$searchSuggestions.removeClass('active');
-        }
-      }).catch(function (error) {
-        return console.log(error);
-      });
-    }
-
-    // DISPLAY SUGGESTIONS DROPDOWN
-
-  }, {
-    key: 'renderSuggestions',
-    value: function renderSuggestions(items) {
-      var suggestions = items.slice(0, 10).map(function (suggestion) {
-        return '\n        <div>\n          <span class="symbol">' + suggestion.symbol + '</span>\n          <span class="name">' + suggestion.name + '</span>\n        </div>\n      ';
-      });
-
-      this.$searchSuggestions.empty();
-      this.$searchSuggestions.append(suggestions);
+      this.$container.append(html);
     }
 
     // RETREIVE VALUE FROM SEARCH AND CREATE NEW URL
 
   }, {
-    key: 'getSearchValue',
-    value: function getSearchValue() {
-      var _this2 = this;
+    key: 'getInputAndCreateUrl',
+    value: function getInputAndCreateUrl() {
+      var _this = this;
 
-      // When user types input
-      this.$searchBox.keydown(function (event) {
+      // When user types input and presses 'Enter'
+      this.$searchBox.keyup(function (event) {
         var keyPressed = event.which || event.keyCode;
-        _this2.value = event.target.value;
-        var arrowKeyCodes = [37, 38, 39, 40];
-        var isArrowKeys = arrowKeyCodes.indexOf(keyPressed) > -1;
+        _this.value = event.target.value;
 
-        /* Fetch suggestions only if value is not empty and keypress is not an arrow key.
-        We need to make sure it's not an arrow key because we need to use the arrow keys to
-        navigate the suggestions list. Otherwise pressing any arrow key will put the focus
-        back in the search box, thus preventing the navigation of suggestion items.
-        Also, the keyPress must not be the 'Enter' button because this triggers the suggestion
-        container to be visible after user selects a suggestion item by pressing 'Enter'.
-        */
-        if (_this2.value && !isArrowKeys && keyPressed !== _this2.ENTER_KEY) {
-          _this2.fetchSuggestions(_this2.value);
-        }
-
-        _this2.toggleSuggestionsVisibility();
-
-        switch (keyPressed) {
-          case 40:
-            _this2.currentFocus++;
-            _this2.addActiveClass();
-            break;
-          case 38:
-            _this2.currentFocus--;
-            _this2.addActiveClass();
-            break;
-          case 13:
-            event.preventDefault();
-            if (_this2.currentFocus > -1) {
-              /* In order to be able to select from suggestions list with arrow keys,
-              the value of 'this.currentFocus' has to be at least 0. Therefore, only
-              simulate a click event if the suggestions list is being actively navigated.
-              */
-              _this2.$searchSuggestions[0].children[_this2.currentFocus].click();
-            }
-            break;
-          default:
-            break;
+        if (keyPressed === _this.ENTER_KEY && !_this.$searchSuggestions.hasClass('active')) {
+          // Add routing to URL. Router will read URL and create new Stock page.
+          _this.router.navigate('stocks/' + _this.value);
+          // Clear search box
+          _this.$searchBox.val('');
         }
       });
-
-      // When user selects a suggestion
-      this.$searchSuggestions.on('click', 'div', function (event) {
-        event.preventDefault();
-        _this2.value = event.currentTarget.children[0].innerText;
-        _this2.router.navigate('stocks/' + _this2.value);
-        _this2.$searchBox.val('');
-        _this2.toggleSuggestionsVisibility();
-      });
-    }
-
-    // SPECIFY THE ACTIVE SUGGESTION
-
-  }, {
-    key: 'addActiveClass',
-    value: function addActiveClass() {
-      this.removeActiveClass();
-      var suggestionItems = this.$searchSuggestions[0].children;
-
-      if (this.currentFocus >= suggestionItems.length) {
-        this.currentFocus = 0;
-      }
-      if (this.currentFocus < 0) {
-        this.currentFocus = suggestionItems.length - 1;
-      }
-
-      (0, _jquery2.default)(this.$searchSuggestions[0].children[this.currentFocus]).addClass('suggestions-active');
-    }
-
-    // REMOVE ACTIVE CLASS FROM SUGGESTION ITEMS
-
-  }, {
-    key: 'removeActiveClass',
-    value: function removeActiveClass() {
-      (0, _jquery2.default)(this.$searchSuggestions[0].children).removeClass('suggestions-active');
-    }
-
-    // DISPLAY OR HIDE SUGGESTIONS
-
-  }, {
-    key: 'toggleSuggestionsVisibility',
-    value: function toggleSuggestionsVisibility() {
-      this.value = this.$searchBox.val();
-
-      if (this.value === '') {
-        this.$searchSuggestions.empty();
-        this.$searchBox.removeClass('active');
-        this.$searchSuggestions.removeClass('active');
-      } else {
-        this.$searchBox.addClass('active');
-        this.$searchSuggestions.addClass('active');
-      }
     }
 
     // HIDE SUGGESTIONS
 
   }, {
-    key: 'hideSuggestionsOnOutsideClick',
-    value: function hideSuggestionsOnOutsideClick() {
+    key: 'hideSearchOnOutterClick',
+    value: function hideSearchOnOutterClick() {
       var that = this;
 
       (0, _jquery2.default)(document).on('click', function (event) {
-        var suggestionsContainer = (0, _jquery2.default)(event.target).closest('#search-suggestions').length;
-        var searchBox = (0, _jquery2.default)(event.target).closest('#search-box').length;
+        var searchBox = (0, _jquery2.default)(event.target).closest('#searchFormAddStock').length;
+        var addStockButton = (0, _jquery2.default)(event.target).closest('#addStockButton').length;
 
-        // If it is not the suggestions and the search box, close suggestions
-        if (!suggestionsContainer && !searchBox) {
-          that.$searchSuggestions.empty();
-          that.$searchBox.removeClass('active');
-          that.$searchSuggestions.removeClass('active');
+        // If the click is not on the suggestions and the search box, close suggestions
+        if (!addStockButton && !searchBox) {
+          that.$searchBox.addClass('isHidden');
+          that.$addStockButton.removeClass('isHidden');
+          that.$addStockContainer.removeClass('fullWidth');
         }
       });
     }
   }]);
 
-  return Suggestions;
+  return SearchAddStock;
 }();
 
-exports.default = Suggestions;
+exports.default = SearchAddStock;
 
 /***/ }),
-/* 171 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31819,7 +32083,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
 var _intervals = __webpack_require__(19);
 
@@ -31829,7 +32093,7 @@ var _watchButton = __webpack_require__(12);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32022,7 +32286,7 @@ var StockPopup = function () {
 exports.default = StockPopup;
 
 /***/ }),
-/* 172 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32050,11 +32314,11 @@ var _watchButton = __webpack_require__(12);
 
 var _watchButton2 = _interopRequireDefault(_watchButton);
 
-var _stockPopup = __webpack_require__(171);
+var _stockPopup = __webpack_require__(173);
 
 var _stockPopup2 = _interopRequireDefault(_stockPopup);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32200,7 +32464,7 @@ var StockList = function () {
 exports.default = StockList;
 
 /***/ }),
-/* 173 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32228,11 +32492,11 @@ var _keystats = __webpack_require__(10);
 
 var _keystats2 = _interopRequireDefault(_keystats);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
-var _addStockButton = __webpack_require__(185);
+var _addStockButton = __webpack_require__(169);
 
 var _addStockButton2 = _interopRequireDefault(_addStockButton);
 
@@ -32311,7 +32575,7 @@ var Watchlist = function () {
             }).catch(function (error) {
               return console.log(error.res.data.error);
             }).then(function () {
-              console.log('CALLed');
+              // console.log('CALLed');
               _this.displayStocks();
             });
           }
@@ -32334,7 +32598,7 @@ var Watchlist = function () {
       var stocks = this.watchlist.map(function (stock, index) {
         var symbol = stock.symbol;
         var stockData = _store2.default.get(symbol);
-        console.log('stockdata', stockData);
+        // console.log('stockdata', stockData);
         var companyName = (0, _utility.trimString)(stockData.companyName, 40);
         var price = stockData.delayedPrice;
         var change = stockData.change;
@@ -32361,7 +32625,7 @@ var Watchlist = function () {
 exports.default = Watchlist;
 
 /***/ }),
-/* 174 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32397,9 +32661,9 @@ var _news = __webpack_require__(11);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _utility = __webpack_require__(6);
+var _utility = __webpack_require__(5);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
 var _graph = __webpack_require__(9);
 
@@ -32669,7 +32933,7 @@ var WatchlistFull = function () {
 exports.default = WatchlistFull;
 
 /***/ }),
-/* 175 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32693,7 +32957,7 @@ var _axios = __webpack_require__(4);
 
 var _axios2 = _interopRequireDefault(_axios);
 
-var _graphCard = __webpack_require__(168);
+var _graphCard = __webpack_require__(170);
 
 var _graphCard2 = _interopRequireDefault(_graphCard);
 
@@ -32701,13 +32965,13 @@ var _news = __webpack_require__(11);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _stocklist = __webpack_require__(172);
+var _stocklist = __webpack_require__(174);
 
 var _stocklist2 = _interopRequireDefault(_stocklist);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
-var _watchlist = __webpack_require__(173);
+var _watchlist = __webpack_require__(175);
 
 var _watchlist2 = _interopRequireDefault(_watchlist);
 
@@ -32851,7 +33115,7 @@ var HomePage = function () {
 exports.default = HomePage;
 
 /***/ }),
-/* 176 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32887,7 +33151,7 @@ var _news = __webpack_require__(11);
 
 var _news2 = _interopRequireDefault(_news);
 
-var _const = __webpack_require__(5);
+var _const = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -32970,7 +33234,7 @@ var Stock = function () {
 exports.default = Stock;
 
 /***/ }),
-/* 177 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /*!
@@ -47656,264 +47920,264 @@ return src;
 
 
 /***/ }),
-/* 178 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 20,
-	"./af.js": 20,
-	"./ar": 27,
-	"./ar-dz": 21,
-	"./ar-dz.js": 21,
-	"./ar-kw": 22,
-	"./ar-kw.js": 22,
-	"./ar-ly": 23,
-	"./ar-ly.js": 23,
-	"./ar-ma": 24,
-	"./ar-ma.js": 24,
-	"./ar-sa": 25,
-	"./ar-sa.js": 25,
-	"./ar-tn": 26,
-	"./ar-tn.js": 26,
-	"./ar.js": 27,
-	"./az": 28,
-	"./az.js": 28,
-	"./be": 29,
-	"./be.js": 29,
-	"./bg": 30,
-	"./bg.js": 30,
-	"./bm": 31,
-	"./bm.js": 31,
-	"./bn": 32,
-	"./bn.js": 32,
-	"./bo": 33,
-	"./bo.js": 33,
-	"./br": 34,
-	"./br.js": 34,
-	"./bs": 35,
-	"./bs.js": 35,
-	"./ca": 36,
-	"./ca.js": 36,
-	"./cs": 37,
-	"./cs.js": 37,
-	"./cv": 38,
-	"./cv.js": 38,
-	"./cy": 39,
-	"./cy.js": 39,
-	"./da": 40,
-	"./da.js": 40,
-	"./de": 43,
-	"./de-at": 41,
-	"./de-at.js": 41,
-	"./de-ch": 42,
-	"./de-ch.js": 42,
-	"./de.js": 43,
-	"./dv": 44,
-	"./dv.js": 44,
-	"./el": 45,
-	"./el.js": 45,
-	"./en-SG": 46,
-	"./en-SG.js": 46,
-	"./en-au": 47,
-	"./en-au.js": 47,
-	"./en-ca": 48,
-	"./en-ca.js": 48,
-	"./en-gb": 49,
-	"./en-gb.js": 49,
-	"./en-ie": 50,
-	"./en-ie.js": 50,
-	"./en-il": 51,
-	"./en-il.js": 51,
-	"./en-nz": 52,
-	"./en-nz.js": 52,
-	"./eo": 53,
-	"./eo.js": 53,
-	"./es": 56,
-	"./es-do": 54,
-	"./es-do.js": 54,
-	"./es-us": 55,
-	"./es-us.js": 55,
-	"./es.js": 56,
-	"./et": 57,
-	"./et.js": 57,
-	"./eu": 58,
-	"./eu.js": 58,
-	"./fa": 59,
-	"./fa.js": 59,
-	"./fi": 60,
-	"./fi.js": 60,
-	"./fo": 61,
-	"./fo.js": 61,
-	"./fr": 64,
-	"./fr-ca": 62,
-	"./fr-ca.js": 62,
-	"./fr-ch": 63,
-	"./fr-ch.js": 63,
-	"./fr.js": 64,
-	"./fy": 65,
-	"./fy.js": 65,
-	"./ga": 66,
-	"./ga.js": 66,
-	"./gd": 67,
-	"./gd.js": 67,
-	"./gl": 68,
-	"./gl.js": 68,
-	"./gom-latn": 69,
-	"./gom-latn.js": 69,
-	"./gu": 70,
-	"./gu.js": 70,
-	"./he": 71,
-	"./he.js": 71,
-	"./hi": 72,
-	"./hi.js": 72,
-	"./hr": 73,
-	"./hr.js": 73,
-	"./hu": 74,
-	"./hu.js": 74,
-	"./hy-am": 75,
-	"./hy-am.js": 75,
-	"./id": 76,
-	"./id.js": 76,
-	"./is": 77,
-	"./is.js": 77,
-	"./it": 79,
-	"./it-ch": 78,
-	"./it-ch.js": 78,
-	"./it.js": 79,
-	"./ja": 80,
-	"./ja.js": 80,
-	"./jv": 81,
-	"./jv.js": 81,
-	"./ka": 82,
-	"./ka.js": 82,
-	"./kk": 83,
-	"./kk.js": 83,
-	"./km": 84,
-	"./km.js": 84,
-	"./kn": 85,
-	"./kn.js": 85,
-	"./ko": 86,
-	"./ko.js": 86,
-	"./ku": 87,
-	"./ku.js": 87,
-	"./ky": 88,
-	"./ky.js": 88,
-	"./lb": 89,
-	"./lb.js": 89,
-	"./lo": 90,
-	"./lo.js": 90,
-	"./lt": 91,
-	"./lt.js": 91,
-	"./lv": 92,
-	"./lv.js": 92,
-	"./me": 93,
-	"./me.js": 93,
-	"./mi": 94,
-	"./mi.js": 94,
-	"./mk": 95,
-	"./mk.js": 95,
-	"./ml": 96,
-	"./ml.js": 96,
-	"./mn": 97,
-	"./mn.js": 97,
-	"./mr": 98,
-	"./mr.js": 98,
-	"./ms": 100,
-	"./ms-my": 99,
-	"./ms-my.js": 99,
-	"./ms.js": 100,
-	"./mt": 101,
-	"./mt.js": 101,
-	"./my": 102,
-	"./my.js": 102,
-	"./nb": 103,
-	"./nb.js": 103,
-	"./ne": 104,
-	"./ne.js": 104,
-	"./nl": 106,
-	"./nl-be": 105,
-	"./nl-be.js": 105,
-	"./nl.js": 106,
-	"./nn": 107,
-	"./nn.js": 107,
-	"./pa-in": 108,
-	"./pa-in.js": 108,
-	"./pl": 109,
-	"./pl.js": 109,
-	"./pt": 111,
-	"./pt-br": 110,
-	"./pt-br.js": 110,
-	"./pt.js": 111,
-	"./ro": 112,
-	"./ro.js": 112,
-	"./ru": 113,
-	"./ru.js": 113,
-	"./sd": 114,
-	"./sd.js": 114,
-	"./se": 115,
-	"./se.js": 115,
-	"./si": 116,
-	"./si.js": 116,
-	"./sk": 117,
-	"./sk.js": 117,
-	"./sl": 118,
-	"./sl.js": 118,
-	"./sq": 119,
-	"./sq.js": 119,
-	"./sr": 121,
-	"./sr-cyrl": 120,
-	"./sr-cyrl.js": 120,
-	"./sr.js": 121,
-	"./ss": 122,
-	"./ss.js": 122,
-	"./sv": 123,
-	"./sv.js": 123,
-	"./sw": 124,
-	"./sw.js": 124,
-	"./ta": 125,
-	"./ta.js": 125,
-	"./te": 126,
-	"./te.js": 126,
-	"./tet": 127,
-	"./tet.js": 127,
-	"./tg": 128,
-	"./tg.js": 128,
-	"./th": 129,
-	"./th.js": 129,
-	"./tl-ph": 130,
-	"./tl-ph.js": 130,
-	"./tlh": 131,
-	"./tlh.js": 131,
-	"./tr": 132,
-	"./tr.js": 132,
-	"./tzl": 133,
-	"./tzl.js": 133,
-	"./tzm": 135,
-	"./tzm-latn": 134,
-	"./tzm-latn.js": 134,
-	"./tzm.js": 135,
-	"./ug-cn": 136,
-	"./ug-cn.js": 136,
-	"./uk": 137,
-	"./uk.js": 137,
-	"./ur": 138,
-	"./ur.js": 138,
-	"./uz": 140,
-	"./uz-latn": 139,
-	"./uz-latn.js": 139,
-	"./uz.js": 140,
-	"./vi": 141,
-	"./vi.js": 141,
-	"./x-pseudo": 142,
-	"./x-pseudo.js": 142,
-	"./yo": 143,
-	"./yo.js": 143,
-	"./zh-cn": 144,
-	"./zh-cn.js": 144,
-	"./zh-hk": 145,
-	"./zh-hk.js": 145,
-	"./zh-tw": 146,
-	"./zh-tw.js": 146
+	"./af": 21,
+	"./af.js": 21,
+	"./ar": 28,
+	"./ar-dz": 22,
+	"./ar-dz.js": 22,
+	"./ar-kw": 23,
+	"./ar-kw.js": 23,
+	"./ar-ly": 24,
+	"./ar-ly.js": 24,
+	"./ar-ma": 25,
+	"./ar-ma.js": 25,
+	"./ar-sa": 26,
+	"./ar-sa.js": 26,
+	"./ar-tn": 27,
+	"./ar-tn.js": 27,
+	"./ar.js": 28,
+	"./az": 29,
+	"./az.js": 29,
+	"./be": 30,
+	"./be.js": 30,
+	"./bg": 31,
+	"./bg.js": 31,
+	"./bm": 32,
+	"./bm.js": 32,
+	"./bn": 33,
+	"./bn.js": 33,
+	"./bo": 34,
+	"./bo.js": 34,
+	"./br": 35,
+	"./br.js": 35,
+	"./bs": 36,
+	"./bs.js": 36,
+	"./ca": 37,
+	"./ca.js": 37,
+	"./cs": 38,
+	"./cs.js": 38,
+	"./cv": 39,
+	"./cv.js": 39,
+	"./cy": 40,
+	"./cy.js": 40,
+	"./da": 41,
+	"./da.js": 41,
+	"./de": 44,
+	"./de-at": 42,
+	"./de-at.js": 42,
+	"./de-ch": 43,
+	"./de-ch.js": 43,
+	"./de.js": 44,
+	"./dv": 45,
+	"./dv.js": 45,
+	"./el": 46,
+	"./el.js": 46,
+	"./en-SG": 47,
+	"./en-SG.js": 47,
+	"./en-au": 48,
+	"./en-au.js": 48,
+	"./en-ca": 49,
+	"./en-ca.js": 49,
+	"./en-gb": 50,
+	"./en-gb.js": 50,
+	"./en-ie": 51,
+	"./en-ie.js": 51,
+	"./en-il": 52,
+	"./en-il.js": 52,
+	"./en-nz": 53,
+	"./en-nz.js": 53,
+	"./eo": 54,
+	"./eo.js": 54,
+	"./es": 57,
+	"./es-do": 55,
+	"./es-do.js": 55,
+	"./es-us": 56,
+	"./es-us.js": 56,
+	"./es.js": 57,
+	"./et": 58,
+	"./et.js": 58,
+	"./eu": 59,
+	"./eu.js": 59,
+	"./fa": 60,
+	"./fa.js": 60,
+	"./fi": 61,
+	"./fi.js": 61,
+	"./fo": 62,
+	"./fo.js": 62,
+	"./fr": 65,
+	"./fr-ca": 63,
+	"./fr-ca.js": 63,
+	"./fr-ch": 64,
+	"./fr-ch.js": 64,
+	"./fr.js": 65,
+	"./fy": 66,
+	"./fy.js": 66,
+	"./ga": 67,
+	"./ga.js": 67,
+	"./gd": 68,
+	"./gd.js": 68,
+	"./gl": 69,
+	"./gl.js": 69,
+	"./gom-latn": 70,
+	"./gom-latn.js": 70,
+	"./gu": 71,
+	"./gu.js": 71,
+	"./he": 72,
+	"./he.js": 72,
+	"./hi": 73,
+	"./hi.js": 73,
+	"./hr": 74,
+	"./hr.js": 74,
+	"./hu": 75,
+	"./hu.js": 75,
+	"./hy-am": 76,
+	"./hy-am.js": 76,
+	"./id": 77,
+	"./id.js": 77,
+	"./is": 78,
+	"./is.js": 78,
+	"./it": 80,
+	"./it-ch": 79,
+	"./it-ch.js": 79,
+	"./it.js": 80,
+	"./ja": 81,
+	"./ja.js": 81,
+	"./jv": 82,
+	"./jv.js": 82,
+	"./ka": 83,
+	"./ka.js": 83,
+	"./kk": 84,
+	"./kk.js": 84,
+	"./km": 85,
+	"./km.js": 85,
+	"./kn": 86,
+	"./kn.js": 86,
+	"./ko": 87,
+	"./ko.js": 87,
+	"./ku": 88,
+	"./ku.js": 88,
+	"./ky": 89,
+	"./ky.js": 89,
+	"./lb": 90,
+	"./lb.js": 90,
+	"./lo": 91,
+	"./lo.js": 91,
+	"./lt": 92,
+	"./lt.js": 92,
+	"./lv": 93,
+	"./lv.js": 93,
+	"./me": 94,
+	"./me.js": 94,
+	"./mi": 95,
+	"./mi.js": 95,
+	"./mk": 96,
+	"./mk.js": 96,
+	"./ml": 97,
+	"./ml.js": 97,
+	"./mn": 98,
+	"./mn.js": 98,
+	"./mr": 99,
+	"./mr.js": 99,
+	"./ms": 101,
+	"./ms-my": 100,
+	"./ms-my.js": 100,
+	"./ms.js": 101,
+	"./mt": 102,
+	"./mt.js": 102,
+	"./my": 103,
+	"./my.js": 103,
+	"./nb": 104,
+	"./nb.js": 104,
+	"./ne": 105,
+	"./ne.js": 105,
+	"./nl": 107,
+	"./nl-be": 106,
+	"./nl-be.js": 106,
+	"./nl.js": 107,
+	"./nn": 108,
+	"./nn.js": 108,
+	"./pa-in": 109,
+	"./pa-in.js": 109,
+	"./pl": 110,
+	"./pl.js": 110,
+	"./pt": 112,
+	"./pt-br": 111,
+	"./pt-br.js": 111,
+	"./pt.js": 112,
+	"./ro": 113,
+	"./ro.js": 113,
+	"./ru": 114,
+	"./ru.js": 114,
+	"./sd": 115,
+	"./sd.js": 115,
+	"./se": 116,
+	"./se.js": 116,
+	"./si": 117,
+	"./si.js": 117,
+	"./sk": 118,
+	"./sk.js": 118,
+	"./sl": 119,
+	"./sl.js": 119,
+	"./sq": 120,
+	"./sq.js": 120,
+	"./sr": 122,
+	"./sr-cyrl": 121,
+	"./sr-cyrl.js": 121,
+	"./sr.js": 122,
+	"./ss": 123,
+	"./ss.js": 123,
+	"./sv": 124,
+	"./sv.js": 124,
+	"./sw": 125,
+	"./sw.js": 125,
+	"./ta": 126,
+	"./ta.js": 126,
+	"./te": 127,
+	"./te.js": 127,
+	"./tet": 128,
+	"./tet.js": 128,
+	"./tg": 129,
+	"./tg.js": 129,
+	"./th": 130,
+	"./th.js": 130,
+	"./tl-ph": 131,
+	"./tl-ph.js": 131,
+	"./tlh": 132,
+	"./tlh.js": 132,
+	"./tr": 133,
+	"./tr.js": 133,
+	"./tzl": 134,
+	"./tzl.js": 134,
+	"./tzm": 136,
+	"./tzm-latn": 135,
+	"./tzm-latn.js": 135,
+	"./tzm.js": 136,
+	"./ug-cn": 137,
+	"./ug-cn.js": 137,
+	"./uk": 138,
+	"./uk.js": 138,
+	"./ur": 139,
+	"./ur.js": 139,
+	"./uz": 141,
+	"./uz-latn": 140,
+	"./uz-latn.js": 140,
+	"./uz.js": 141,
+	"./vi": 142,
+	"./vi.js": 142,
+	"./x-pseudo": 143,
+	"./x-pseudo.js": 143,
+	"./yo": 144,
+	"./yo.js": 144,
+	"./zh-cn": 145,
+	"./zh-cn.js": 145,
+	"./zh-hk": 146,
+	"./zh-hk.js": 146,
+	"./zh-tw": 147,
+	"./zh-tw.js": 147
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -47929,10 +48193,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 178;
+webpackContext.id = 180;
 
 /***/ }),
-/* 179 */
+/* 181 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -48122,7 +48386,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 180 */
+/* 182 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -48150,11 +48414,11 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 181 */,
-/* 182 */,
 /* 183 */,
 /* 184 */,
-/* 185 */
+/* 185 */,
+/* 186 */,
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -48170,13 +48434,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _store = __webpack_require__(2);
-
-var _store2 = _interopRequireDefault(_store);
-
-var _utility = __webpack_require__(6);
-
-var _search = __webpack_require__(148);
+var _search = __webpack_require__(149);
 
 var _search2 = _interopRequireDefault(_search);
 
@@ -48184,43 +48442,29 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var AddStockButton = function () {
-  function AddStockButton(buttonContainerId) {
-    _classCallCheck(this, AddStockButton);
+var TopBar = function () {
+  function TopBar(containerId) {
+    _classCallCheck(this, TopBar);
 
-    this.$buttonContainer = (0, _jquery2.default)(buttonContainerId);
-    this.$button;
+    this.$container = (0, _jquery2.default)(containerId);
 
     this.renderHTML();
-    this.openSearchOnClick();
+    // new Search('#topSearchContainer');
   }
 
-  _createClass(AddStockButton, [{
-    key: 'renderHTML',
+  _createClass(TopBar, [{
+    key: "renderHTML",
     value: function renderHTML() {
-      var html = '\n      <button id="addStockButton" class="buttonGhost">Add</button>\n    ';
+      var html = "\n      <div>\n        <div id=\"topSearchContainer\"></div>\n        <div id=\"avatar\"></div>\n      </div>\n    ";
 
-      this.$buttonContainer.append(html);
-      this.$button = (0, _jquery2.default)('#addStockButton');
+      this.$container.html(html);
     }
-  }, {
-    key: 'openSearchOnClick',
-    value: function openSearchOnClick() {
-      this.$button.on('click', function (event) {
-        event.stopPropagation();
-
-        new _search2.default('#addStockContainer');
-      });
-    }
-  }, {
-    key: 'addToWatchlist',
-    value: function addToWatchlist() {}
   }]);
 
-  return AddStockButton;
+  return TopBar;
 }();
 
-exports.default = AddStockButton;
+exports.default = TopBar;
 
 /***/ })
 /******/ ]);

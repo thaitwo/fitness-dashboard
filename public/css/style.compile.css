@@ -110,7 +110,8 @@ body {
   align-items: center;
   flex-direction: row;
   justify-content: space-between;
-  margin-bottom: 2rem; }
+  margin-bottom: 2rem;
+  position: relative; }
 
 .headerLinkWrapper {
   display: flex;
@@ -763,7 +764,8 @@ body {
 .watchlist-title {
   color: #FFFFFF;
   font-size: 1.2rem;
-  font-weight: 500; }
+  font-weight: 500;
+  line-height: 24px; }
 
 #watchlist-chart-header-btn-intervals {
   display: flex;
@@ -1047,6 +1049,12 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap; }
 
+#addStockContainer.fullWidth {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0; }
+
 .watchlistListHeader {
   color: rgba(255, 255, 255, 0.8);
   display: flex;
@@ -1196,12 +1204,28 @@ body {
 ============================================================== */
 .search-form {
   height: 58px;
-  margin-left: 24px;
   max-width: 632px; }
   .search-form #search-box.active {
     border-radius: 6px 6px 0 0; }
   .search-form #search-suggestions.active {
     overflow: hidden; }
+
+.topSearchForm {
+  width: 600px; }
+  .topSearchForm input {
+    background-color: #FFFFFF;
+    border: none;
+    border-radius: 3px;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 15px;
+    font-weight: 400;
+    height: 40px;
+    outline: none;
+    padding: 0 16px;
+    text-align: left;
+    transition: all .3s;
+    width: 100%; }
 
 .search-box {
   background-color: #FFFFFF;
@@ -1209,11 +1233,9 @@ body {
   border-radius: 3px;
   box-sizing: border-box;
   color: rgba(0, 0, 0, 0.8);
-  font-family: "Roboto", sans-serif;
   font-size: 15px;
   font-weight: 400;
   height: 40px;
-  margin: 12px 30px 0 0;
   outline: none;
   padding: 0 16px;
   text-align: left;
@@ -1225,19 +1247,19 @@ body {
 .search-suggestions {
   background-color: #FFFFFF;
   border-radius: 0 0 4px 4px; }
-  .search-suggestions div {
+  .search-suggestions .suggestionsContainer {
     font-size: .9rem;
     padding: 10px 0 10px 16px; }
-    .search-suggestions div:last-of-type {
+    .search-suggestions .suggestionsContainer:last-of-type {
       border-bottom: none; }
-    .search-suggestions div:hover {
+    .search-suggestions .suggestionsContainer:hover {
       background-color: #ECEFF1;
       cursor: pointer; }
-    .search-suggestions div .symbol {
+    .search-suggestions .suggestionsContainer .symbol {
       display: inline-block;
       font-weight: 600;
       width: 48px; }
-    .search-suggestions div .name {
+    .search-suggestions .suggestionsContainer .name {
       opacity: .6; }
   .search-suggestions .suggestions-active {
     background-color: #ECEFF1; }
@@ -1245,13 +1267,36 @@ body {
 ::-webkit-input-placeholder {
   color: rgba(0, 0, 0, 0.4); }
 
+.suggestionsSecondaryContainer {
+  padding: 8px 16px; }
+  .suggestionsSecondaryContainer:hover {
+    background-color: #ECEFF1;
+    cursor: pointer; }
+  .suggestionsSecondaryContainer .symbol {
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 600;
+    padding-bottom: 4px;
+    width: 48px; }
+  .suggestionsSecondaryContainer .name {
+    font-size: .8rem;
+    font-weight: 400;
+    opacity: .6; }
+
+.suggestionsNameContainer {
+  display: flex;
+  flex-direction: column; }
+
 #top-bar {
+  align-items: center;
   background-color: #0D132F;
+  display: flex;
   height: 64px;
-  top: 0;
   left: 5rem;
+  padding: 0 24px;
   right: 0;
   position: fixed;
+  top: 0;
   z-index: 1; }
 
 #canvas {
@@ -1295,4 +1340,7 @@ body {
 **
 */
 .is-hidden {
+  display: none !important; }
+
+.isHidden {
   display: none !important; }

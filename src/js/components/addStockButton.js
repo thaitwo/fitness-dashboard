@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import store from 'store2';
 import { getPageId } from '../../utility/utility';
-import Search from './search.js';
+import SearchAddStock from './searchAddStock';
 
 class AddStockButton {
   constructor(buttonContainerId) {
@@ -9,6 +9,7 @@ class AddStockButton {
     this.$button;
 
     this.renderHTML();
+    this.$searchForm = $('#searchFormAddStock');
     this.openSearchOnClick();
   }
 
@@ -19,15 +20,18 @@ class AddStockButton {
 
     this.$buttonContainer.append(html);
     this.$button = $('#addStockButton');
-
-
+    new SearchAddStock('#addStockContainer');
   }
 
   openSearchOnClick() {
-    this.$button.on('click', function(event) {
-      event.stopPropagation();
+    this.$button.on('click', (event) => {
+      // event.stopPropagation();
+      // console.log(this.$button[0].id);
 
-      new Search('#addStockContainer');
+      $('#addStockContainer').addClass('fullWidth');
+      this.$button.addClass('isHidden');
+      this.$searchForm.removeClass('isHidden');
+      document.getElementById('searchBoxSecondary').focus();
     })
   }
 

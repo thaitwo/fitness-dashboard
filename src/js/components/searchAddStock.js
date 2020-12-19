@@ -2,30 +2,30 @@ import $ from 'jquery';
 import Navigo from 'navigo';
 import Suggestions from './search-suggestions';
 
-class Search {
-  constructor(containerId, addStock) {
+class SearchAddStock {
+  constructor(containerId) {
     this.containerId = containerId.substring(1);
     this.$container = $(containerId);
-    this.addStock = addStock === 'addStock';
     this.renderHtml();
-    this.$searchBox = $(`#${this.containerId}-search-box`);
-    this.$searchSuggestions = $(`#${this.containerId}-search-suggestions`);
+    this.$searchBox = $(`#searchFormAddStock`);
+    this.$searchSuggestions = $(`#search-suggestions`);
+    this.$addStockButton = $('#addStockButton');
+    this.$addStockContainer = $('#addStockContainer');
     this.router = new Navigo(null, true);
     this.value;
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
-    // this.getInputAndCreateUrl();
-    new Suggestions(`#${this.containerId}-search-box`, `#${this.containerId}-search-suggestions`);
+
+    new Suggestions(`#searchBoxSecondary`, `#searchSuggestionsSecondary`, 'secondary');
     // this.hideSearchOnOutterClick();
   }
 
   renderHtml() {
-    const isHidden = this.addStock ? 'isHidden' : '';
 
     const html = `
-      <form id="${this.containerId}-search-form" class="topSearchForm ${isHidden}">
-        <input type="text" id="${this.containerId}-search-box" placeholder="Search companies" autofocus>
-        <div id="${this.containerId}-search-suggestions" class="search-suggestions"></div>
+      <form id="searchFormAddStock" class="search-form isHidden">
+        <input type="text" id="searchBoxSecondary" class="search-box" placeholder="Search companies">
+        <div id="searchSuggestionsSecondary" class="search-suggestions"></div>
       </form>
     `;
 
@@ -53,21 +53,19 @@ class Search {
   // HIDE SUGGESTIONS
   hideSearchOnOutterClick() {
     const that = this;
-
+    
     $(document).on('click', function(event) {
-      console.log('clicked');
-      // console.log("clicked outside", event.target.closest());
-      // const searchContainer = $(event.target).closest(`${this.containerId}-search-form`).length;
-      const searchBox = $(event.target).closest(`#${this.containerId}-search-box`).length;
+      const searchBox = $(event.target).closest(`#searchFormAddStock`).length;
+      const addStockButton = $(event.target).closest('#addStockButton').length;
 
       // If the click is not on the suggestions and the search box, close suggestions
-      if (!searchBox) {
-        // that.$searchSuggestions.empty();
+      if (!addStockButton && !searchBox) {
         that.$searchBox.addClass('isHidden');
-        // that.$searchSuggestions.removeClass('active');
+        that.$addStockButton.removeClass('isHidden');
+        that.$addStockContainer.removeClass('fullWidth');
       }
     });
   }
 }
 
-export default Search;
+export default SearchAddStock;

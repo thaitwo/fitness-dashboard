@@ -1,18 +1,24 @@
 import $ from 'jquery';
+import store from 'store2';
 import axios from 'axios';
 import Navigo from 'navigo';
 
 class Suggestions {
-  constructor(searchBoxId, suggestionsBoxId) {
+  constructor(searchBoxId, suggestionsBoxId, type) {
     this.$searchBox = $(searchBoxId);
-    this.value;
+    this.type = type;
+    this.symbol;
+    this.name;
     this.currentFocus = -1;
     this.$searchSuggestions = $(suggestionsBoxId);
     this.ENTER_KEY = 13;
     this.ESCAPE_KEY = 27;
     this.router = new Navigo(null, true);
     this.getSearchValue();
-    this.hideSuggestionsOnOutsideClick();
+    // this.hideSuggestionsOnOutsideClick();
+
+    this.watchlist = store.get('watchlist') || [];
+    // this.isWatched = this.isInWatchlist();
   }
 
 
@@ -30,17 +36,37 @@ class Suggestions {
   }
 
 
+  // CHECK IF WATCHLIST HAS THIS STOCK
+  isInWatchlist() {
+    return this.watchlist.some(stock => stock.symbol === this.symbol);
+  }
+
+
   // DISPLAY SUGGESTIONS DROPDOWN
   renderSuggestions(items) {
     const suggestions = items.slice(0,10).map((suggestion) => {
+
+      if (this.type = 'secondary') {
+        return `
+          <div class="suggestionsSecondaryContainer">
+            <i data-feather="plus"></i>
+            <i data-feather="chevron-right"></i>
+            <div class="suggestionsNameContainer">
+              <span class="symbol">${suggestion.symbol}</span>
+              <span class="name">${suggestion.name}</span>
+            </div>
+          </div>
+        `;
+      }
+
       return `
-        <div>
+        <div class="suggestionsContainer">
           <span class="symbol">${suggestion.symbol}</span>
           <span class="name">${suggestion.name}</span>
         </div>
       `;
     });
-
+    feather.replace();
     this.$searchSuggestions.empty();
     this.$searchSuggestions.append(suggestions);
   }
@@ -93,13 +119,35 @@ class Suggestions {
     })
 
     // When user selects a suggestion
-    this.$searchSuggestions.on('click', 'div', (event) => {
+    this.$searchSuggestions.off('click').on('click', 'div.suggestionsSecondaryContainer', (event) => {
       event.preventDefault();
-      this.value = event.currentTarget.children[0].innerText;
-      this.router.navigate(`stocks/${this.value}`);
+      this.symbol = event.currentTarget.children[2].children[0].innerText;
+      this.name = event.currentTarget.children[2].children[1].innerText;
+
+      if (this.type = 'secondary') {
+        this.addToWatchlist();
+        // console.log(this.watchlist)
+        // this.watchlist.pop();
+        // store.set('watchlist', this.watchlist);
+      } else {
+        this.router.navigate(`stocks/${this.value}`);
+      }
       this.$searchBox.val('');
       this.toggleSuggestionsVisibility();
     })
+  }
+
+
+  addToWatchlist() {
+      const isWatched = this.watchlist.some(stock => stock.symbol === this.symbol);
+
+      if (!isWatched) {
+        this.watchlist.push({
+          symbol: this.symbol,
+          name: this.name
+        });
+        store.set('watchlist', this.watchlist);
+      }
   }
 
 
@@ -145,6 +193,7 @@ class Suggestions {
     const that = this;
 
     $(document).on('click', function(event) {
+      console.log('clicked')
       const suggestionsContainer = $(event.target).closest('#search-suggestions').length;
       const searchBox = $(event.target).closest('#search-box').length;
 
