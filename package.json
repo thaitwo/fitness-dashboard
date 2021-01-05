@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/thaitwo/charts#readme",
   "dependencies": {
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "chart.js": "^2.8.0",
     "dotenv-webpack": "^1.7.0",
     "jquery": "^3.4.1",
