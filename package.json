@@ -20,7 +20,7 @@
   "homepage": "https://github.com/thaitwo/charts#readme",
   "dependencies": {
     "axios": "^0.18.1",
-    "chart.js": "^2.8.0",
+    "chart.js": "^2.9.4",
     "dotenv-webpack": "^1.7.0",
     "jquery": "^3.4.1",
     "moment": "^2.24.0",
